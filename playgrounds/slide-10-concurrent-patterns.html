@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concurrent Execution Patterns</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a10; color: #e0e0e8; min-height: 100vh; display: flex; flex-direction: column;
+    overflow-x: hidden;
+  }
+
+  /* ===== Animated Background ===== */
+  #bgCanvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0; pointer-events: none; opacity: 0.35;
+  }
+
+  header {
+    text-align: center; padding: 32px 20px 16px;
+    border-bottom: 1px solid rgba(123, 97, 255, 0.15);
+    position: relative; z-index: 1;
+    background: rgba(10, 10, 16, 0.6);
+    backdrop-filter: blur(12px);
+  }
+  header h1 {
+    font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #7b61ff 0%, #a78bfa 40%, #60a5fa 70%, #5eead4 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 6s ease infinite;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px;
+  }
+  header p { color: #6a6a88; font-size: 0.88rem; letter-spacing: 0.05em; }
+
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .main {
+    flex: 1; display: flex; flex-direction: column;
+    padding: 28px 32px; gap: 24px; position: relative; z-index: 1;
+  }
+
+  .pattern-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px; max-width: 1200px; margin: 0 auto; width: 100%;
+  }
+
+  /* ===== Glassmorphism Cards ===== */
+  .pattern-card {
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    background: rgba(22, 22, 34, 0.55);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: cardEntrance 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  }
+  .pattern-card:nth-child(1) { animation-delay: 0.1s; }
+  .pattern-card:nth-child(2) { animation-delay: 0.2s; }
+  .pattern-card:nth-child(3) { animation-delay: 0.3s; }
+  .pattern-card:nth-child(4) { animation-delay: 0.4s; }
+  .pattern-card:nth-child(5) { animation-delay: 0.5s; }
+
+  @keyframes cardEntrance {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Top accent bar */
+  .pattern-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0; transition: opacity 0.4s;
+  }
+  /* Glow effect behind card */
+  .pattern-card::after {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(ellipse at center, var(--accent), transparent 70%);
+    opacity: 0; transition: opacity 0.4s; z-index: -1;
+    pointer-events: none;
+  }
+
+  .pattern-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    transform: translateY(-4px) scale(1.015);
+    box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.5);
+  }
+  .pattern-card:hover::before { opacity: 0.6; }
+  .pattern-card:hover::after { opacity: 0.04; }
+
+  .pattern-card.active {
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    box-shadow: 0 0 30px -10px var(--accent), 0 20px 60px -15px rgba(0, 0, 0, 0.5);
+  }
+  .pattern-card.active::before { opacity: 1; }
+  .pattern-card.active::after { opacity: 0.06; }
+
+  /* Pattern-specific accent colors */
+  .pattern-card[data-p="fanout"]  { --accent: #60a5fa; --accent-dim: rgba(96, 165, 250, 0.15); }
+  .pattern-card[data-p="writer"]  { --accent: #a78bfa; --accent-dim: rgba(167, 139, 250, 0.15); }
+  .pattern-card[data-p="chain"]   { --accent: #5eead4; --accent-dim: rgba(94, 234, 212, 0.15); }
+  .pattern-card[data-p="isolate"] { --accent: #f472b6; --accent-dim: rgba(244, 114, 182, 0.15); }
+  .pattern-card[data-p="headless"]{ --accent: #fbbf24; --accent-dim: rgba(251, 191, 36, 0.15); }
+
+  .p-icon { font-size: 1.5rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .p-icon-badge {
+    width: 40px; height: 40px; border-radius: 10px;
+    background: var(--accent-dim);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; flex-shrink: 0;
+    border: 1px solid color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+  .p-name {
+    font-size: 1rem; font-weight: 700; color: #d8d8ec; margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .p-short { font-size: 0.8rem; color: #8888a0; line-height: 1.6; }
+
+  /* ===== SVG Mini-Diagrams ===== */
+  .p-svg-diagram {
+    width: 100%; margin-bottom: 14px; border-radius: 10px;
+    background: rgba(10, 10, 18, 0.7); border: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 4px; overflow: hidden;
+  }
+  .p-svg-diagram svg {
+    width: 100%; height: auto; display: block;
+  }
+
+  /* SVG styling */
+  .svg-node {
+    rx: 6; ry: 6; stroke-width: 1.5;
+  }
+  .svg-node-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 9px; font-weight: 600; fill: #c8c8e0;
+    text-anchor: middle; dominant-baseline: central;
+    pointer-events: none;
+  }
+  .svg-arrow {
+    stroke-width: 1.5; fill: none; stroke-linecap: round; stroke-linejoin: round;
+  }
+  .svg-dot {
+    r: 3; opacity: 0.9;
+  }
+
+  /* ===== Expanded Details ===== */
+  .p-details {
+    max-height: 0; overflow: hidden; opacity: 0;
+    transition: max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.4s; margin-top: 0;
+  }
+  .pattern-card.active .p-details { max-height: 600px; opacity: 1; margin-top: 16px; }
+
+  .p-desc {
+    font-size: 0.8rem; color: #a0a0b8; line-height: 1.7;
+    padding-left: 14px;
+    border-left: 2px solid var(--accent-dim);
+  }
+  .p-use {
+    margin-top: 10px; font-size: 0.75rem; color: #7b7b98;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .p-use-tag {
+    display: inline-block; padding: 3px 10px; border-radius: 20px;
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.03em;
+  }
+
+  /* ===== Flow Indicators (expanded state) ===== */
+  .p-flow-steps {
+    display: flex; gap: 2px; margin: 14px 0 10px; flex-wrap: wrap; align-items: center;
+  }
+  .p-flow-step {
+    padding: 5px 12px; border-radius: 6px; font-size: 0.7rem; font-weight: 600;
+    background: rgba(255,255,255,0.03); color: #9898b0;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+  }
+  .p-flow-step.highlight {
+    background: var(--accent-dim); color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 25%, transparent);
+  }
+  .p-flow-arrow {
+    color: #44445a; font-size: 0.7rem; padding: 0 4px;
+  }
+
+  /* ===== Prompt Section ===== */
+  .prompt-section {
+    border-top: 1px solid rgba(123, 97, 255, 0.1);
+    padding: 18px 0 0; margin-top: auto;
+    opacity: 0; animation: cardEntrance 0.6s 0.7s forwards;
+  }
+  .prompt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .prompt-label {
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 2px;
+    color: #5a5a70; font-weight: 600;
+  }
+  .copy-btn {
+    padding: 6px 16px; border-radius: 8px;
+    border: 1px solid rgba(123, 97, 255, 0.2);
+    background: rgba(123, 97, 255, 0.08);
+    color: #b0b0d0; cursor: pointer; font-size: 0.75rem;
+    transition: all 0.25s; font-weight: 500;
+  }
+  .copy-btn:hover {
+    border-color: rgba(123, 97, 255, 0.4);
+    background: rgba(123, 97, 255, 0.15);
+    color: #d4c8ff;
+    box-shadow: 0 0 20px -5px rgba(123, 97, 255, 0.3);
+  }
+  .prompt-text {
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem;
+    color: #9898b0; line-height: 1.7;
+    background: rgba(14, 14, 22, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    border-radius: 10px; padding: 16px; min-height: 48px; white-space: pre-wrap;
+  }
+</style>
+</head>
+<body>
+
+<!-- Animated circuit/network background -->
+<canvas id="bgCanvas"></canvas>
+
+<header>
+  <h1>Concurrent Execution Patterns</h1>
+  <p>Parallel Agent Strategies for IaC workflows</p>
+</header>
+
+<div class="main">
+  <div class="pattern-grid" id="grid">
+
+    <!-- Fan-Out Research -->
+    <div class="pattern-card" data-p="fanout" onclick="toggle('fanout')">
+      <div class="p-icon"><div class="p-icon-badge">&#x1F52C;</div></div>
+      <div class="p-name">Fan-Out Research</div>
+      <div class="p-short">Spawn multiple subagents to investigate independent areas simultaneously, then synthesize findings</div>
+      <div class="p-details">
+        <div class="p-svg-diagram" id="diagram-fanout"></div>
+        <div class="p-flow-steps">
+          <span class="p-flow-step highlight">Dispatch</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step">Parallel Explore</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step">Collect</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step highlight">Synthesize</span>
+        </div>
+        <div class="p-desc">Each agent explores a different area of the codebase or documentation. Parent collects summaries and synthesizes a unified view. Ideal for initial investigation of unfamiliar repos.</div>
+        <div class="p-use"><span class="p-use-tag">IaC</span> Investigate modules, providers, and policies in parallel</div>
+      </div>
+    </div>
+
+    <!-- Writer / Reviewer -->
+    <div class="pattern-card" data-p="writer" onclick="toggle('writer')">
+      <div class="p-icon"><div class="p-icon-badge">&#x1F50D;</div></div>
+      <div class="p-name">Writer / Reviewer</div>
+      <div class="p-short">Two parallel sessions with distinct roles &mdash; fresh context in reviewer prevents bias toward own code</div>
+      <div class="p-details">
+        <div class="p-svg-diagram" id="diagram-writer"></div>
+        <div class="p-flow-steps">
+          <span class="p-flow-step highlight">Write</span>
+          <span class="p-flow-arrow">&#x21C4;</span>
+          <span class="p-flow-step highlight">Review</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step">Revise</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step">Approve</span>
+        </div>
+        <div class="p-desc">Writer generates code, reviewer evaluates with fresh eyes. Separate contexts ensure the reviewer doesn't inherit the writer's assumptions. Catches issues a self-review would miss.</div>
+        <div class="p-use"><span class="p-use-tag">IaC</span> One agent writes module, another reviews for compliance</div>
+      </div>
+    </div>
+
+    <!-- Subagent Chaining -->
+    <div class="pattern-card" data-p="chain" onclick="toggle('chain')">
+      <div class="p-icon"><div class="p-icon-badge">&#x26D3;&#xFE0F;</div></div>
+      <div class="p-name">Subagent Chaining</div>
+      <div class="p-short">Sequential delegation where each subagent output feeds the next &mdash; parent orchestrates context passing</div>
+      <div class="p-details">
+        <div class="p-svg-diagram" id="diagram-chain"></div>
+        <div class="p-flow-steps">
+          <span class="p-flow-step highlight">Spec</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step">Generate</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step">Test</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step highlight">Document</span>
+        </div>
+        <div class="p-desc">Pipeline pattern where each stage transforms input for the next. Parent passes relevant output from one agent to the next. Each agent has clean context focused on its stage.</div>
+        <div class="p-use"><span class="p-use-tag">IaC</span> Spec &rarr; Generate &rarr; Test &rarr; Document pipeline</div>
+      </div>
+    </div>
+
+    <!-- Isolate High-Volume -->
+    <div class="pattern-card" data-p="isolate" onclick="toggle('isolate')">
+      <div class="p-icon"><div class="p-icon-badge">&#x1F4E6;</div></div>
+      <div class="p-name">Isolate High-Volume Ops</div>
+      <div class="p-short">Delegate test suites, log analysis, doc fetching &mdash; verbose output stays in subagent context</div>
+      <div class="p-details">
+        <div class="p-svg-diagram" id="diagram-isolate"></div>
+        <div class="p-flow-steps">
+          <span class="p-flow-step highlight">Delegate</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step">Process (verbose)</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step">Filter</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step highlight">Summary</span>
+        </div>
+        <div class="p-desc">Protect the parent context from token-heavy operations. Subagent processes verbose test output, log files, or API responses and returns only a concise summary.</div>
+        <div class="p-use"><span class="p-use-tag">IaC</span> Run terraform plan in subagent, return only changes summary</div>
+      </div>
+    </div>
+
+    <!-- Headless Mode -->
+    <div class="pattern-card" data-p="headless" onclick="toggle('headless')">
+      <div class="p-icon"><div class="p-icon-badge">&#x1F916;</div></div>
+      <div class="p-name">Headless Mode</div>
+      <div class="p-short">True process-level parallelism for batch processing, CI/CD pipelines, and file migrations</div>
+      <div class="p-details">
+        <div class="p-svg-diagram" id="diagram-headless"></div>
+        <div class="p-flow-steps">
+          <span class="p-flow-step highlight">Trigger</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step">Parallel Exec</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step">Independent</span>
+          <span class="p-flow-arrow">&#x2192;</span>
+          <span class="p-flow-step highlight">Complete</span>
+        </div>
+        <div class="p-desc">Run multiple Claude instances as independent processes. No shared context &mdash; each operates on its own task. Best for batch operations that don't need coordination.</div>
+        <div class="p-use"><span class="p-use-tag">IaC</span> Migrate multiple modules in parallel, each in its own process</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="prompt-section">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt Output</span>
+      <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+    </div>
+    <div class="prompt-text" id="promptText"></div>
+  </div>
+</div>
+
+<script>
+// ===== Animated Background (Circuit / Network) =====
+(function() {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, nodes = [], edges = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    initNodes();
+  }
+
+  function initNodes() {
+    nodes = [];
+    edges = [];
+    const count = Math.floor((W * H) / 28000);
+    for (let i = 0; i < count; i++) {
+      nodes.push({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random() - 0.5) * 0.3, vy: (Math.random() - 0.5) * 0.3,
+        r: Math.random() * 1.5 + 0.5,
+        pulse: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+
+  function drawFrame() {
+    ctx.clearRect(0, 0, W, H);
+    const t = Date.now() * 0.001;
+
+    // Update positions
+    for (const n of nodes) {
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+      n.pulse += 0.02;
+    }
+
+    // Draw connections
+    const maxDist = 120;
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < maxDist) {
+          const alpha = (1 - d / maxDist) * 0.15;
+          ctx.strokeStyle = `rgba(123, 97, 255, ${alpha})`;
+          ctx.beginPath();
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Draw nodes
+    for (const n of nodes) {
+      const glow = (Math.sin(n.pulse) + 1) * 0.5;
+      const alpha = 0.2 + glow * 0.3;
+      ctx.fillStyle = `rgba(123, 97, 255, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r + glow * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    requestAnimationFrame(drawFrame);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  drawFrame();
+})();
+
+
+// ===== SVG Mini-Diagrams with Animated Dots =====
+const COLORS = {
+  fanout:  { main: '#60a5fa', dim: 'rgba(96,165,250,0.2)',  glow: 'rgba(96,165,250,0.5)' },
+  writer:  { main: '#a78bfa', dim: 'rgba(167,139,250,0.2)', glow: 'rgba(167,139,250,0.5)' },
+  chain:   { main: '#5eead4', dim: 'rgba(94,234,212,0.2)',  glow: 'rgba(94,234,212,0.5)' },
+  isolate: { main: '#f472b6', dim: 'rgba(244,114,182,0.2)', glow: 'rgba(244,114,182,0.5)' },
+  headless:{ main: '#fbbf24', dim: 'rgba(251,191,36,0.2)',  glow: 'rgba(251,191,36,0.5)' },
+};
+
+function svgEl(tag, attrs = {}) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+function createDiagram(containerId, pattern) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const c = COLORS[pattern];
+  const W = 320, H = 100;
+
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, preserveAspectRatio: 'xMidYMid meet' });
+
+  // Defs for glow filter and arrowhead
+  const defs = svgEl('defs');
+  const filter = svgEl('filter', { id: `glow-${pattern}`, x: '-50%', y: '-50%', width: '200%', height: '200%' });
+  const blur = svgEl('feGaussianBlur', { stdDeviation: '3', result: 'glow' });
+  const merge = svgEl('feMerge');
+  const mn1 = svgEl('feMergeNode', { in: 'glow' });
+  const mn2 = svgEl('feMergeNode', { in: 'SourceGraphic' });
+  merge.append(mn1, mn2);
+  filter.append(blur, merge);
+
+  const marker = svgEl('marker', {
+    id: `arrow-${pattern}`, viewBox: '0 0 10 6', refX: '10', refY: '3',
+    markerWidth: '8', markerHeight: '6', orient: 'auto'
+  });
+  const arrowPath = svgEl('path', { d: 'M0,0 L10,3 L0,6', fill: c.main, opacity: '0.6' });
+  marker.append(arrowPath);
+
+  defs.append(filter, marker);
+  svg.append(defs);
+
+  // Node renderer
+  function drawNode(x, y, label, isPrimary) {
+    const g = svgEl('g');
+    const w = label.length * 6.5 + 20, h = 26, rx = 6;
+
+    if (isPrimary) {
+      const glowRect = svgEl('rect', {
+        x: x - w / 2, y: y - h / 2, width: w, height: h, rx,
+        fill: 'none', stroke: c.main, 'stroke-width': '2',
+        filter: `url(#glow-${pattern})`, opacity: '0.5'
+      });
+      g.append(glowRect);
+    }
+
+    const rect = svgEl('rect', {
+      x: x - w / 2, y: y - h / 2, width: w, height: h, rx,
+      fill: isPrimary ? c.dim : 'rgba(26,26,40,0.8)',
+      stroke: isPrimary ? c.main : 'rgba(60,60,80,0.5)',
+      'stroke-width': isPrimary ? '1.5' : '1',
+      class: 'svg-node'
+    });
+    const text = svgEl('text', {
+      x, y: y + 1, class: 'svg-node-label',
+      fill: isPrimary ? c.main : '#9898b0'
+    });
+    text.textContent = label;
+    g.append(rect, text);
+    return g;
+  }
+
+  // Animated dot along a path
+  function animDot(pathD, dur, delay) {
+    const path = svgEl('path', { d: pathD, fill: 'none', stroke: 'none', id: `path-${pattern}-${Math.random().toString(36).slice(2)}` });
+    svg.append(path);
+
+    const circle = svgEl('circle', { r: '2.5', fill: c.main, opacity: '0' });
+    const anim = svgEl('animateMotion', {
+      dur: dur + 's', repeatCount: 'indefinite', begin: delay + 's'
+    });
+    const mpath = svgEl('mpath');
+    mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#' + path.id);
+    anim.append(mpath);
+    circle.append(anim);
+
+    const animOpacity = svgEl('animate', {
+      attributeName: 'opacity', values: '0;0.9;0.9;0', dur: dur + 's',
+      repeatCount: 'indefinite', begin: delay + 's'
+    });
+    circle.append(animOpacity);
+
+    svg.append(circle);
+  }
+
+  // Arrow line
+  function drawArrow(x1, y1, x2, y2) {
+    const line = svgEl('line', {
+      x1, y1, x2, y2, stroke: c.main, 'stroke-width': '1',
+      opacity: '0.3', 'marker-end': `url(#arrow-${pattern})`,
+      class: 'svg-arrow'
+    });
+    svg.append(line);
+    return `M${x1},${y1} L${x2},${y2}`;
+  }
+
+  // Build each diagram
+  if (pattern === 'fanout') {
+    svg.append(drawNode(55, 50, 'Parent', true));
+    svg.append(drawNode(170, 20, 'Agent A', false));
+    svg.append(drawNode(170, 50, 'Agent B', false));
+    svg.append(drawNode(170, 80, 'Agent C', false));
+    svg.append(drawNode(275, 50, 'Synthesize', true));
+    const p1 = drawArrow(85, 45, 138, 22);
+    const p2 = drawArrow(85, 50, 138, 50);
+    const p3 = drawArrow(85, 55, 138, 78);
+    const p4 = drawArrow(202, 22, 240, 45);
+    const p5 = drawArrow(202, 50, 240, 50);
+    const p6 = drawArrow(202, 78, 240, 55);
+    animDot(p1, 2.5, 0); animDot(p2, 2.5, 0.3); animDot(p3, 2.5, 0.6);
+    animDot(p4, 2.5, 1.2); animDot(p5, 2.5, 1.5); animDot(p6, 2.5, 1.8);
+  }
+  else if (pattern === 'writer') {
+    svg.append(drawNode(100, 50, 'Writer Agent', true));
+    svg.append(drawNode(220, 50, 'Reviewer Agent', true));
+    // Bidirectional arrows (top and bottom curves)
+    const topPath = `M135,42 C160,15 190,15 215,42`;
+    const botPath = `M215,58 C190,85 160,85 135,58`;
+    const topLine = svgEl('path', { d: topPath, fill: 'none', stroke: c.main, 'stroke-width': '1', opacity: '0.3', 'marker-end': `url(#arrow-${pattern})` });
+    const botLine = svgEl('path', { d: botPath, fill: 'none', stroke: c.main, 'stroke-width': '1', opacity: '0.3', 'marker-end': `url(#arrow-${pattern})` });
+    svg.append(topLine, botLine);
+
+    // Label
+    const codeLabel = svgEl('text', { x: '160', y: '28', 'text-anchor': 'middle', fill: c.main, opacity: '0.4', 'font-size': '7', 'font-family': 'system-ui' });
+    codeLabel.textContent = 'code';
+    const feedbackLabel = svgEl('text', { x: '160', y: '82', 'text-anchor': 'middle', fill: c.main, opacity: '0.4', 'font-size': '7', 'font-family': 'system-ui' });
+    feedbackLabel.textContent = 'feedback';
+    svg.append(codeLabel, feedbackLabel);
+
+    animDot(topPath, 2, 0);
+    animDot(botPath, 2, 1);
+  }
+  else if (pattern === 'chain') {
+    const labels = ['Parent', 'Stage 1', 'Stage 2', 'Stage 3'];
+    const xs = [45, 120, 200, 280];
+    labels.forEach((l, i) => svg.append(drawNode(xs[i], 50, l, i === 0)));
+    const p1 = drawArrow(78, 50, 92, 50);
+    const p2 = drawArrow(152, 50, 170, 50);
+    const p3 = drawArrow(233, 50, 250, 50);
+    animDot(p1, 3, 0); animDot(p2, 3, 1); animDot(p3, 3, 2);
+  }
+  else if (pattern === 'isolate') {
+    svg.append(drawNode(55, 50, 'Parent', true));
+    svg.append(drawNode(170, 50, 'Test Runner', false));
+    svg.append(drawNode(275, 50, 'Summary', true));
+
+    // Verbose indicator: small dots around test runner
+    for (let i = 0; i < 6; i++) {
+      const angle = (i / 6) * Math.PI * 2;
+      const cx = 170 + Math.cos(angle) * 30;
+      const cy = 50 + Math.sin(angle) * 22;
+      const dot = svgEl('circle', { cx, cy, r: '1.5', fill: c.main, opacity: '0' });
+      const a = svgEl('animate', {
+        attributeName: 'opacity', values: '0;0.5;0', dur: '2s',
+        repeatCount: 'indefinite', begin: (i * 0.3) + 's'
+      });
+      dot.append(a);
+      svg.append(dot);
+    }
+
+    const p1 = drawArrow(85, 50, 130, 50);
+    const p2 = drawArrow(210, 50, 240, 50);
+    animDot(p1, 2, 0);
+    animDot(p2, 2, 1);
+
+    // Verbose label
+    const vl = svgEl('text', { x: '170', y: '80', 'text-anchor': 'middle', fill: c.main, opacity: '0.35', 'font-size': '7', 'font-family': 'system-ui' });
+    vl.textContent = '(verbose output)';
+    svg.append(vl);
+  }
+  else if (pattern === 'headless') {
+    svg.append(drawNode(55, 50, 'CI/CD', true));
+    svg.append(drawNode(180, 20, 'Process A', false));
+    svg.append(drawNode(180, 50, 'Process B', false));
+    svg.append(drawNode(180, 80, 'Process C', false));
+
+    const p1 = drawArrow(85, 44, 145, 22);
+    const p2 = drawArrow(85, 50, 145, 50);
+    const p3 = drawArrow(85, 56, 145, 78);
+    animDot(p1, 2, 0); animDot(p2, 2, 0.4); animDot(p3, 2, 0.8);
+
+    // Independence indicators (no return arrows)
+    for (let i = 0; i < 3; i++) {
+      const y = 20 + i * 30;
+      const pulse = svgEl('circle', { cx: '220', cy: y, r: '3', fill: c.main, opacity: '0' });
+      const a1 = svgEl('animate', { attributeName: 'opacity', values: '0;0.6;0', dur: '1.5s', repeatCount: 'indefinite', begin: (i * 0.5) + 's' });
+      const a2 = svgEl('animate', { attributeName: 'r', values: '3;6;3', dur: '1.5s', repeatCount: 'indefinite', begin: (i * 0.5) + 's' });
+      pulse.append(a1, a2);
+      svg.append(pulse);
+    }
+
+    // "independent" labels
+    const il = svgEl('text', { x: '260', y: '52', 'text-anchor': 'middle', fill: c.main, opacity: '0.3', 'font-size': '7', 'font-family': 'system-ui' });
+    il.textContent = 'no shared context';
+    svg.append(il);
+  }
+
+  container.append(svg);
+}
+
+// Initialize all diagrams
+createDiagram('diagram-fanout',  'fanout');
+createDiagram('diagram-writer',  'writer');
+createDiagram('diagram-chain',   'chain');
+createDiagram('diagram-isolate', 'isolate');
+createDiagram('diagram-headless','headless');
+
+
+// ===== State & Toggle Logic =====
+const state = { active: new Set() };
+
+const DATA = {
+  fanout:  { name: 'Fan-Out Research',    desc: 'Spawn multiple subagents to investigate independent areas simultaneously, then synthesize findings. Ideal for initial codebase investigation.' },
+  writer:  { name: 'Writer/Reviewer',     desc: 'Two parallel sessions with distinct roles. Fresh context in reviewer prevents bias. Writer generates, reviewer evaluates for compliance.' },
+  chain:   { name: 'Subagent Chaining',   desc: 'Sequential delegation where each output feeds the next. Parent orchestrates context passing between stages.' },
+  isolate: { name: 'Isolate High-Volume',  desc: 'Delegate verbose operations (tests, logs, plan output) to subagents. Only summaries return to parent context.' },
+  headless:{ name: 'Headless Mode',        desc: 'True process-level parallelism. Independent Claude instances for batch processing, CI/CD pipelines, file migrations.' },
+};
+
+function toggle(p) {
+  if (state.active.has(p)) state.active.delete(p);
+  else state.active.add(p);
+  document.querySelectorAll('.pattern-card').forEach(c =>
+    c.classList.toggle('active', state.active.has(c.dataset.p))
+  );
+  updatePrompt();
+}
+
+function updatePrompt() {
+  const el = document.getElementById('promptText');
+  if (state.active.size === 0) {
+    el.textContent = 'Concurrent Execution Patterns for Agentic IaC: Fan-Out Research (parallel investigation), Writer/Reviewer (dual-role code quality), Subagent Chaining (sequential pipeline), Isolate High-Volume Operations (context protection), and Headless Mode (process-level parallelism for CI/CD).';
+    return;
+  }
+  const parts = [];
+  for (const [k, v] of Object.entries(DATA)) {
+    if (!state.active.has(k)) continue;
+    parts.push(`${v.name}: ${v.desc}`);
+  }
+  el.textContent = 'Selected patterns:\n\n' + parts.join('\n\n');
+}
+
+function copyPrompt() {
+  navigator.clipboard.writeText(document.getElementById('promptText').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+updatePrompt();
+</script>
+</body>
+</html>

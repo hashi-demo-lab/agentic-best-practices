@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Context Engineering — Static Slide</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a12;
+    color: #e0e0e8;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ---------- static gradient orbs ---------- */
+  body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 900px 700px at 15% 20%, rgba(123,97,255,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 800px 600px at 82% 75%, rgba(96,165,250,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 600px 500px at 50% 50%, rgba(94,234,212,0.03) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 400px at 75% 15%, rgba(244,114,182,0.04) 0%, transparent 70%);
+  }
+
+  /* ---------- dot grid overlay ---------- */
+  body::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(123,97,255,0.07) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* ---------- layout wrapper ---------- */
+  .slide {
+    position: relative;
+    z-index: 1;
+    width: 1920px;
+    height: 1080px;
+    display: flex;
+    flex-direction: column;
+    padding: 38px 64px 32px;
+  }
+
+  /* ---------- header ---------- */
+  .header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid rgba(123,97,255,0.15);
+    margin-bottom: 28px;
+    flex-shrink: 0;
+  }
+
+  .header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7b61ff, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+  }
+
+  .header .subtitle {
+    font-size: 0.95rem;
+    color: #8888a0;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- tiers container ---------- */
+  .tiers {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  /* ---------- connecting hierarchy line ---------- */
+  .tiers::before {
+    content: '';
+    position: absolute;
+    left: 29px;
+    top: 20px;
+    bottom: 20px;
+    width: 2.5px;
+    border-radius: 2px;
+    z-index: 2;
+    background: linear-gradient(to bottom,
+      rgba(123,97,255,0.55),
+      rgba(96,165,250,0.45),
+      rgba(94,234,212,0.40),
+      rgba(251,191,36,0.45),
+      rgba(244,114,182,0.45));
+  }
+
+  /* ---------- tier card ---------- */
+  .tier {
+    background: rgba(22,22,34,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.15);
+    padding: 18px 28px 18px 72px;
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .tier:first-child {
+    border-radius: 16px 16px 0 0;
+  }
+  .tier:last-child {
+    border-radius: 0 0 16px 16px;
+  }
+  .tier:not(:last-child) {
+    border-bottom: none;
+  }
+
+  /* color-coded left borders */
+  .tier.t1 { border-left: 4px solid #7b61ff; }
+  .tier.t2 { border-left: 4px solid #60a5fa; }
+  .tier.t3 { border-left: 4px solid #5eead4; }
+  .tier.t4 { border-left: 4px solid #fbbf24; }
+  .tier.t5 { border-left: 4px solid #f472b6; }
+
+  /* ---------- tier number badge ---------- */
+  .tier-number {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.95rem;
+    z-index: 2;
+  }
+
+  .t1 .tier-number { background: rgba(123,97,255,0.15); color: #a78bfa; border: 1px solid rgba(123,97,255,0.3); }
+  .t2 .tier-number { background: rgba(96,165,250,0.15); color: #60a5fa; border: 1px solid rgba(96,165,250,0.3); }
+  .t3 .tier-number { background: rgba(94,234,212,0.15); color: #5eead4; border: 1px solid rgba(94,234,212,0.3); }
+  .t4 .tier-number { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+  .t5 .tier-number { background: rgba(244,114,182,0.15); color: #f472b6; border: 1px solid rgba(244,114,182,0.3); }
+
+  /* ---------- tier header line ---------- */
+  .tier-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .tier-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .tier-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .t1 .tier-title { color: #c4b5fd; }
+  .t2 .tier-title { color: #93c5fd; }
+  .t3 .tier-title { color: #99f6e4; }
+  .t4 .tier-title { color: #fde68a; }
+  .t5 .tier-title { color: #f9a8d4; }
+
+  .tier-subtitle {
+    font-size: 0.8rem;
+    color: #8888a0;
+    margin-bottom: 10px;
+  }
+
+  /* ---------- practices row ---------- */
+  .practices {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .practice {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: rgba(18,18,28,0.6);
+    border: 1px solid rgba(123,97,255,0.06);
+    flex: 1;
+    min-width: 320px;
+    max-width: 880px;
+  }
+
+  .practice.anti {
+    background: rgba(30,16,16,0.5);
+    border: 1px solid rgba(239,68,68,0.08);
+  }
+
+  /* color-coded left accent on practice cards */
+  .t1 .practice { border-left: 3px solid rgba(123,97,255,0.35); }
+  .t2 .practice { border-left: 3px solid rgba(96,165,250,0.35); }
+  .t3 .practice { border-left: 3px solid rgba(94,234,212,0.35); }
+  .t4 .practice { border-left: 3px solid rgba(251,191,36,0.35); }
+  .t5 .practice { border-left: 3px solid rgba(244,114,182,0.35); }
+
+  .t1 .practice.anti,
+  .t2 .practice.anti,
+  .t3 .practice.anti,
+  .t4 .practice.anti,
+  .t5 .practice.anti {
+    border-left: 3px solid rgba(239,68,68,0.45);
+  }
+
+  /* ---------- practice icon ---------- */
+  .p-icon {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    margin-top: 1px;
+  }
+
+  .p-icon.do      { background: rgba(16,185,129,0.15); }
+  .p-icon.pattern  { background: rgba(99,102,241,0.15); }
+  .p-icon.benefit  { background: rgba(59,130,246,0.15); }
+  .p-icon.anti-i   { background: rgba(239,68,68,0.12); }
+
+  /* ---------- practice tag ---------- */
+  .p-tag {
+    font-size: 0.6rem;
+    padding: 2px 9px;
+    border-radius: 5px;
+    white-space: nowrap;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .p-tag.do      { background: rgba(16,185,129,0.15); color: #34d399; }
+  .p-tag.pattern  { background: rgba(99,102,241,0.15); color: #818cf8; }
+  .p-tag.benefit  { background: rgba(59,130,246,0.15); color: #60a5fa; }
+  .p-tag.anti-t   { background: rgba(239,68,68,0.12); color: #f87171; }
+
+  /* ---------- practice text ---------- */
+  .p-text {
+    font-size: 0.82rem;
+    color: #b8b8d0;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .practice.anti .p-text {
+    color: #d4a0a0;
+  }
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Context Engineering</h1>
+    <span class="subtitle">Best practices for structuring agentic IaC workflows</span>
+  </div>
+
+  <!-- Tiers -->
+  <div class="tiers">
+
+    <!-- Tier 1: 2-Tier Agent Architecture -->
+    <div class="tier t1">
+      <span class="tier-number">1</span>
+      <div class="tier-head">
+        <span class="tier-icon">&#127919;</span>
+        <span class="tier-title">2-Tier Agent Architecture</span>
+      </div>
+      <div class="tier-subtitle">Top-level orchestrator + specialist sub-agents</div>
+      <div class="practices">
+        <div class="practice">
+          <div class="p-icon pattern">&#9881;</div>
+          <span class="p-tag pattern">Pattern</span>
+          <span class="p-text">Top-level agent handles task tracking, orchestration initialization, and progress tracking</span>
+        </div>
+        <div class="practice">
+          <div class="p-icon pattern">&#9881;</div>
+          <span class="p-tag pattern">Pattern</span>
+          <span class="p-text">Specialist sub-agents handle execution and concurrency &mdash; isolated context, limited tools (least privilege and token efficient)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier 2: Initialization Scripts -->
+    <div class="tier t2">
+      <span class="tier-number">2</span>
+      <div class="tier-head">
+        <span class="tier-icon">&#128295;</span>
+        <span class="tier-title">Initialization Scripts</span>
+      </div>
+      <div class="tier-subtitle">Repeatable pre-requisites and context population</div>
+      <div class="practices">
+        <div class="practice">
+          <div class="p-icon do">&#10003;</div>
+          <span class="p-tag do">Do</span>
+          <span class="p-text">Use initialization scripts for repeatable pre-requisites and context population</span>
+        </div>
+        <div class="practice">
+          <div class="p-icon do">&#10003;</div>
+          <span class="p-tag do">Do</span>
+          <span class="p-text">Run validation checks &mdash; verify mandatory environment variables are set before starting</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier 3: Minimal Tool Enablement -->
+    <div class="tier t3">
+      <span class="tier-number">3</span>
+      <div class="tier-head">
+        <span class="tier-icon">&#128736;&#65039;</span>
+        <span class="tier-title">Minimal Tool Enablement</span>
+      </div>
+      <div class="tier-subtitle">Only enable required MCP tools</div>
+      <div class="practices">
+        <div class="practice anti">
+          <div class="p-icon anti-i">&#10007;</div>
+          <span class="p-tag anti-t">Anti-pattern</span>
+          <span class="p-text">Enabling all tools "just in case" &mdash; unused tools waste context and risk instruction drift during compaction</span>
+        </div>
+        <div class="practice">
+          <div class="p-icon do">&#10003;</div>
+          <span class="p-tag do">Do</span>
+          <span class="p-text">Scope each sub-agent to only the tools it actually needs &mdash; least privilege principle applies to agent tooling</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier 4: Task-Level Commits -->
+    <div class="tier t4">
+      <span class="tier-number">4</span>
+      <div class="tier-head">
+        <span class="tier-icon">&#128190;</span>
+        <span class="tier-title">Task-Level Commits</span>
+      </div>
+      <div class="tier-subtitle">Checkpoint progress with atomic commits per task</div>
+      <div class="practices">
+        <div class="practice">
+          <div class="p-icon do">&#10003;</div>
+          <span class="p-tag do">Do</span>
+          <span class="p-text">Commit after each completed task &mdash; creates recovery points and clear audit trail</span>
+        </div>
+        <div class="practice">
+          <div class="p-icon benefit">&#9733;</div>
+          <span class="p-tag benefit">Benefit</span>
+          <span class="p-text">If a later task fails, the agent can revert to the last good state without losing all progress</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier 5: Context Window Management -->
+    <div class="tier t5">
+      <span class="tier-number">5</span>
+      <div class="tier-head">
+        <span class="tier-icon">&#128202;</span>
+        <span class="tier-title">Context Window Management</span>
+      </div>
+      <div class="tier-subtitle">Prevent compaction and context overflow</div>
+      <div class="practices">
+        <div class="practice">
+          <div class="p-icon do">&#10003;</div>
+          <span class="p-tag do">Do</span>
+          <span class="p-text">Delegate verbose operations (test suites, log analysis) to sub-agents &mdash; output stays in their context</span>
+        </div>
+        <div class="practice">
+          <div class="p-icon do">&#10003;</div>
+          <span class="p-tag do">Do</span>
+          <span class="p-text">Instruct sub-agents to return summaries, not raw data &mdash; large returns exhaust parent context</span>
+        </div>
+        <div class="practice anti">
+          <div class="p-icon anti-i">&#10007;</div>
+          <span class="p-tag anti-t">Anti-pattern</span>
+          <span class="p-text">Unbounded exploration &mdash; always specify files, directories, or patterns to scope searches</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tiers -->
+</div><!-- /slide -->
+</body>
+</html>

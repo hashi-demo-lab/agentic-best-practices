@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Skills - Extending Claude with Domain Knowledge</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a12;
+    color: #e0e0e8;
+    position: relative;
+  }
+
+  /* ===== Static Background: Dot Grid Overlay ===== */
+  body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image:
+      radial-gradient(circle, rgba(123,97,255,0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* ===== Static Gradient Orbs via pseudo-elements ===== */
+  .bg-orbs {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .bg-orbs::before {
+    content: '';
+    position: absolute;
+    width: 520px;
+    height: 520px;
+    top: -120px;
+    right: -80px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(123,97,255,0.18) 0%, transparent 70%);
+    filter: blur(60px);
+  }
+  .bg-orbs::after {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    bottom: -80px;
+    left: -60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(167,139,250,0.15) 0%, transparent 70%);
+    filter: blur(60px);
+  }
+  .orb-teal {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    top: 45%;
+    left: 42%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(94,234,212,0.10) 0%, transparent 70%);
+    filter: blur(60px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== Layout Container ===== */
+  .slide {
+    position: relative;
+    z-index: 1;
+    width: 1920px;
+    height: 1080px;
+    display: flex;
+    flex-direction: column;
+    padding: 36px 56px 32px;
+  }
+
+  /* ===== Title Bar ===== */
+  .title-bar {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(123,97,255,0.12);
+  }
+  .title-bar h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7b61ff, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+  }
+  .title-bar .subtitle {
+    font-size: 1rem;
+    color: #8888a0;
+    font-weight: 400;
+  }
+
+  /* ===== Main Content Grid ===== */
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    min-height: 0;
+  }
+
+  /* ===== Top Section: 2x2 Grid ===== */
+  .concepts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 18px;
+    flex-shrink: 0;
+  }
+
+  /* ===== Glass Card Base ===== */
+  .glass-card {
+    background: rgba(22,22,34,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.15);
+    border-radius: 16px;
+    padding: 22px 26px;
+    position: relative;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .icon-purple { background: linear-gradient(135deg, rgba(123,97,255,0.25), rgba(123,97,255,0.08)); }
+  .icon-blue { background: linear-gradient(135deg, rgba(96,165,250,0.25), rgba(96,165,250,0.08)); }
+  .icon-violet { background: linear-gradient(135deg, rgba(167,139,250,0.25), rgba(167,139,250,0.08)); }
+  .icon-teal { background: linear-gradient(135deg, rgba(94,234,212,0.25), rgba(94,234,212,0.08)); }
+
+  .card-header h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #d0d0e4;
+  }
+  .card-desc {
+    font-size: 0.88rem;
+    color: #8888a0;
+    line-height: 1.55;
+    margin-bottom: 8px;
+  }
+
+  /* ===== Detail Items within cards ===== */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .detail-item {
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(18,18,28,0.55);
+    border: 1px solid rgba(123,97,255,0.06);
+  }
+  .detail-item .label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #7b61ff;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .detail-item .val {
+    font-size: 0.82rem;
+    color: #c0c0d4;
+    line-height: 1.5;
+  }
+
+  /* ===== Tags ===== */
+  .tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+  }
+  .tag-reference {
+    background: rgba(26,41,64,0.7);
+    color: #60a5fa;
+    border: 1px solid rgba(96,165,250,0.2);
+  }
+  .tag-task {
+    background: rgba(42,26,64,0.7);
+    color: #a78bfa;
+    border: 1px solid rgba(167,139,250,0.2);
+  }
+  .tag-hybrid {
+    background: rgba(26,48,48,0.7);
+    color: #5eead4;
+    border: 1px solid rgba(94,234,212,0.2);
+  }
+
+  /* ===== Type Items (inside Skill Types card) ===== */
+  .type-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .type-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(18,18,28,0.5);
+    border: 1px solid rgba(123,97,255,0.06);
+  }
+  .type-badge {
+    flex-shrink: 0;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+    min-width: 72px;
+    text-align: center;
+    margin-top: 1px;
+  }
+  .type-row .val {
+    font-size: 0.82rem;
+    color: #b8b8d0;
+    line-height: 1.45;
+  }
+
+  /* ===== Storage Bars ===== */
+  .storage-visual {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .storage-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 0.82rem;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .storage-bar .bar-label {
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+  .storage-bar .bar-path {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+  .storage-bar .bar-desc {
+    font-size: 0.78rem;
+    opacity: 0.7;
+    margin-left: auto;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .storage-bar .priority-badge {
+    margin-left: auto;
+    font-size: 0.65rem;
+    padding: 2px 10px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.05);
+    flex-shrink: 0;
+  }
+
+  .s-enterprise {
+    background: rgba(42,26,48,0.5);
+    color: #c084fc;
+    border: 1px solid rgba(168,85,247,0.2);
+    border-left: 3px solid #a855f7;
+  }
+  .s-personal {
+    background: rgba(32,26,64,0.5);
+    color: #a78bfa;
+    border: 1px solid rgba(139,92,246,0.2);
+    border-left: 3px solid #8b5cf6;
+  }
+  .s-project {
+    background: rgba(26,32,64,0.5);
+    color: #818cf8;
+    border: 1px solid rgba(99,102,241,0.2);
+    border-left: 3px solid #6366f1;
+  }
+
+  /* ===== Bottom Section: Flow Diagram ===== */
+  .flow-section {
+    flex-shrink: 0;
+  }
+  .flow-section-inner {
+    background: rgba(22,22,34,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.15);
+    border-radius: 16px;
+    padding: 22px 32px;
+  }
+  .flow-title {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #7b61ff;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .flow-title::after {
+    content: '';
+    display: inline-block;
+    width: 30px;
+    height: 2px;
+    background: linear-gradient(90deg, #7b61ff, transparent);
+    margin-left: 10px;
+    vertical-align: middle;
+  }
+
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+  .flow-step {
+    padding: 14px 28px;
+    border-radius: 12px;
+    font-size: 0.88rem;
+    font-weight: 500;
+    position: relative;
+  }
+  .flow-arrow {
+    color: #7b61ff;
+    font-size: 1.3rem;
+    padding: 0 16px;
+    opacity: 0.6;
+  }
+
+  .fs-1 {
+    background: rgba(26,26,42,0.7);
+    border: 1px solid rgba(123,97,255,0.25);
+    color: #b8b0e0;
+  }
+  .fs-2 {
+    background: rgba(26,30,52,0.7);
+    border: 1px solid rgba(96,165,250,0.25);
+    color: #a0c0e8;
+  }
+  .fs-3 {
+    background: rgba(26,42,42,0.7);
+    border: 1px solid rgba(94,234,212,0.25);
+    color: #a0dcd0;
+  }
+  .fs-4 {
+    background: rgba(40,30,50,0.7);
+    border: 1px solid rgba(167,139,250,0.25);
+    color: #c4b8e8;
+  }
+  .fs-5 {
+    background: rgba(42,36,26,0.7);
+    border: 1px solid rgba(251,191,36,0.25);
+    color: #e0d0a0;
+  }
+
+  .flow-sub {
+    font-size: 0.72rem;
+    color: #6a6a80;
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* ===== Bottom Row: Analogy + Best Fit ===== */
+  .bottom-row {
+    display: flex;
+    gap: 18px;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  .bottom-card {
+    flex: 1;
+    background: rgba(22,22,34,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.15);
+    border-radius: 16px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .bottom-card .highlight-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .bottom-card .bottom-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #7b61ff;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .bottom-card .bottom-val {
+    font-size: 0.85rem;
+    color: #b8b8d0;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-orbs"></div>
+<div class="orb-teal"></div>
+
+<div class="slide">
+
+  <!-- ===== Title Bar ===== -->
+  <div class="title-bar">
+    <h1>Skills</h1>
+    <span class="subtitle">Extending Claude with Domain Knowledge and Workflows</span>
+  </div>
+
+  <div class="content">
+
+    <!-- ===== 2x2 Concept Grid ===== -->
+    <div class="concepts-grid">
+
+      <!-- Card 1: What are Skills? -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-icon icon-purple"><span style="font-size:1.15rem;">&#x2728;</span></div>
+          <h3>What are Skills?</h3>
+        </div>
+        <div class="card-desc">Directories containing SKILL.md files with instructions, scripts, and resources that extend Claude's capabilities with domain-specific knowledge and workflows.</div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="label">Definition</span>
+            <div class="val">A directory with a SKILL.md file that defines instructions, scripts, and resources</div>
+          </div>
+          <div class="detail-item">
+            <span class="label">Purpose</span>
+            <div class="val">Extend Claude's capabilities with domain-specific knowledge and workflows</div>
+          </div>
+          <div class="detail-item">
+            <span class="label">Key Feature</span>
+            <div class="val">On-demand loading means skills don't consume context until needed</div>
+          </div>
+          <div class="detail-item">
+            <span class="label">Analogy</span>
+            <div class="val">Like plugins for an IDE -- installed but only activated when relevant</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Progressive Disclosure -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-icon icon-blue"><span style="font-size:1.15rem;">&#x26A1;</span></div>
+          <h3>Progressive Disclosure</h3>
+        </div>
+        <div class="card-desc">Claude loads skill content on-demand -- only metadata in context until triggered, enabling unbounded context bundling.</div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="label">How It Works</span>
+            <div class="val">Only metadata (name, description, triggers) loaded at startup</div>
+          </div>
+          <div class="detail-item">
+            <span class="label">Trigger</span>
+            <div class="val">Matching pattern detected (keyword, file type, user command)</div>
+          </div>
+          <div class="detail-item">
+            <span class="label">Benefit</span>
+            <div class="val">Dozens of skills registered without exhausting context window</div>
+          </div>
+          <div class="detail-item">
+            <span class="label">Trade-off</span>
+            <div class="val">Slight latency on first trigger, but dramatically better context efficiency</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Skill Types -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-icon icon-violet"><span style="font-size:1.15rem;">&#x1F3AF;</span></div>
+          <h3>Skill Types</h3>
+        </div>
+        <div class="card-desc">Three categories of skills, each serving a different purpose.</div>
+        <div class="tags">
+          <span class="tag tag-reference">Reference</span>
+          <span class="tag tag-task">Task</span>
+          <span class="tag tag-hybrid">Hybrid</span>
+        </div>
+        <div class="type-list">
+          <div class="type-row">
+            <span class="type-badge tag-reference">Reference</span>
+            <span class="val">Conventions, coding patterns, style guides -- passive knowledge Claude consults when relevant</span>
+          </div>
+          <div class="type-row">
+            <span class="type-badge tag-task">Task</span>
+            <span class="val">Step-by-step workflows with specific actions -- like a runbook Claude follows to complete a task</span>
+          </div>
+          <div class="type-row">
+            <span class="type-badge tag-hybrid">Hybrid</span>
+            <span class="val">Combine reference knowledge with task workflows -- e.g., Terraform module skill with conventions AND creation workflow</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4: Storage Locations -->
+      <div class="glass-card">
+        <div class="card-header">
+          <div class="card-icon icon-teal"><span style="font-size:1.15rem;">&#x1F4E6;</span></div>
+          <h3>Storage Locations</h3>
+        </div>
+        <div class="card-desc">Skills stored at project, personal, or enterprise level with priority ordering.</div>
+        <div class="storage-visual">
+          <div class="storage-bar s-enterprise">
+            <span class="bar-label">Enterprise</span>
+            <span class="bar-desc">Organization-wide policies, security rules, compliance</span>
+            <span class="priority-badge">Highest priority</span>
+          </div>
+          <div class="storage-bar s-personal">
+            <span class="bar-label">Personal</span>
+            <span class="bar-path">~/.claude/skills/</span>
+            <span class="bar-desc">Individual preferences and workflows</span>
+            <span class="priority-badge">Mid priority</span>
+          </div>
+          <div class="storage-bar s-project">
+            <span class="bar-label">Project</span>
+            <span class="bar-path">.claude/skills/</span>
+            <span class="bar-desc">Shared via git, team-wide conventions</span>
+            <span class="priority-badge">Base priority</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== Flow Diagram: How Skills Work Together ===== -->
+    <div class="flow-section">
+      <div class="flow-section-inner">
+        <div class="flow-title">Progressive Disclosure Flow</div>
+        <div class="flow-diagram">
+          <div class="flow-step fs-1">
+            <strong>Metadata Loaded</strong>
+            <span class="flow-sub">Name, description, triggers registered</span>
+          </div>
+          <span class="flow-arrow">&#x2192;</span>
+          <div class="flow-step fs-2">
+            <strong>Trigger Detected</strong>
+            <span class="flow-sub">Keyword, file type, or command match</span>
+          </div>
+          <span class="flow-arrow">&#x2192;</span>
+          <div class="flow-step fs-3">
+            <strong>Full Content Injected</strong>
+            <span class="flow-sub">SKILL.md loaded into context</span>
+          </div>
+          <span class="flow-arrow">&#x2192;</span>
+          <div class="flow-step fs-4">
+            <strong>Skill Executes</strong>
+            <span class="flow-sub">Instructions, scripts, resources active</span>
+          </div>
+          <span class="flow-arrow">&#x2192;</span>
+          <div class="flow-step fs-5">
+            <strong>Context Preserved</strong>
+            <span class="flow-sub">Unbounded bundling, no waste</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== Bottom Row: Key Insights ===== -->
+    <div class="bottom-row">
+      <div class="bottom-card">
+        <div class="highlight-icon icon-purple"><span style="font-size:0.95rem;">&#x1F4A1;</span></div>
+        <div>
+          <div class="bottom-label">Key Insight</div>
+          <div class="bottom-val">On-demand loading means skills don't consume context until needed -- allowing unlimited skill bundling without exhausting the context window.</div>
+        </div>
+      </div>
+      <div class="bottom-card">
+        <div class="highlight-icon icon-teal"><span style="font-size:0.95rem;">&#x1F3D7;</span></div>
+        <div>
+          <div class="bottom-label">Best Fit for IaC</div>
+          <div class="bottom-val">Hybrid skills excel for Terraform -- they encode naming conventions, compliance rules, AND module generation steps in a single skill.</div>
+        </div>
+      </div>
+      <div class="bottom-card">
+        <div class="highlight-icon" style="background: linear-gradient(135deg, rgba(251,191,36,0.25), rgba(251,191,36,0.08));"><span style="font-size:0.95rem;">&#x1F50D;</span></div>
+        <div>
+          <div class="bottom-label">Priority Order</div>
+          <div class="bottom-val">Enterprise > Personal > Project -- higher priority skills override lower when they conflict, ensuring compliance at scale.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

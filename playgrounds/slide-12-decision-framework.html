@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decision Framework — When to Use Subagents vs Alternatives</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* --- Animated background --- */
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a12; color: #e0e0e8; min-height: 100vh; display: flex; flex-direction: column;
+    overflow-x: hidden; position: relative;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 600px 600px at 20% 20%, rgba(123,97,255,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 500px at 80% 80%, rgba(251,191,36,0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 400px 400px at 60% 30%, rgba(96,165,250,0.04) 0%, transparent 70%);
+    animation: bgShift 12s ease-in-out infinite alternate;
+  }
+  @keyframes bgShift {
+    0% { opacity: 0.7; transform: scale(1) rotate(0deg); }
+    50% { opacity: 1; transform: scale(1.05) rotate(0.5deg); }
+    100% { opacity: 0.8; transform: scale(1) rotate(-0.5deg); }
+  }
+
+  /* Animated grid pattern overlay */
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.03;
+    background-image:
+      linear-gradient(rgba(123,97,255,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(123,97,255,0.5) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridPulse 8s ease-in-out infinite alternate;
+  }
+  @keyframes gridPulse {
+    0% { opacity: 0.02; }
+    100% { opacity: 0.05; }
+  }
+
+  /* --- Header --- */
+  header {
+    text-align: center; padding: 32px 20px 16px; position: relative; z-index: 1;
+    border-bottom: 1px solid rgba(123,97,255,0.15);
+  }
+  header::after {
+    content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 2px;
+    background: linear-gradient(90deg, transparent, #7b61ff, transparent);
+  }
+  header h1 {
+    font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #7b61ff 0%, #a78bfa 40%, #c4b5fd 70%, #7b61ff 100%);
+    background-size: 200% 200%;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    animation: shimmer 4s ease-in-out infinite;
+    margin-bottom: 6px;
+  }
+  @keyframes shimmer {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  header p { color: #8888a0; font-size: 0.88rem; font-weight: 500; }
+
+  .main { flex: 1; display: flex; flex-direction: column; padding: 24px 32px; gap: 20px; position: relative; z-index: 1; }
+
+  /* --- Flowchart connector lines (SVG overlay) --- */
+  .flow-container {
+    position: relative; max-width: 940px; margin: 0 auto; width: 100%;
+  }
+  .flow-svg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; overflow: visible;
+  }
+  .flow-line {
+    stroke: rgba(123,97,255,0.12); stroke-width: 1.5; fill: none;
+    stroke-dasharray: 6 4; animation: dashFlow 2s linear infinite;
+  }
+  .flow-line-h { stroke: rgba(123,97,255,0.08); }
+  @keyframes dashFlow {
+    to { stroke-dashoffset: -20; }
+  }
+  .flow-dot {
+    fill: rgba(123,97,255,0.3); animation: dotPulse 2s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%, 100% { r: 3; opacity: 0.4; }
+    50% { r: 5; opacity: 0.8; }
+  }
+
+  /* --- 2x2 Grid --- */
+  .matrix {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+    width: 100%; position: relative; z-index: 1;
+  }
+
+  /* --- Entrance animations --- */
+  @keyframes cardEntrance {
+    from { opacity: 0; transform: translateY(30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* --- Glassmorphism card --- */
+  .option {
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    background: rgba(22,22,35,0.6);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    padding: 22px; cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative; overflow: hidden;
+    animation: cardEntrance 0.7s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .option:nth-child(1) { animation-delay: 0.1s; }
+  .option:nth-child(2) { animation-delay: 0.2s; }
+  .option:nth-child(3) { animation-delay: 0.3s; }
+  .option:nth-child(4) { animation-delay: 0.4s; }
+
+  /* Top border glow bar */
+  .option::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: 16px 16px 0 0; background: var(--gradient);
+    opacity: 0; transition: opacity 0.4s;
+  }
+  /* Corner glow effect */
+  .option::after {
+    content: ''; position: absolute; top: -40%; left: -40%; width: 80%; height: 80%;
+    background: radial-gradient(circle, var(--glow) 0%, transparent 70%);
+    opacity: 0; transition: opacity 0.5s; pointer-events: none;
+  }
+  .option:hover {
+    border-color: rgba(255,255,255,0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .option:hover::after { opacity: 0.4; }
+  .option.active {
+    border-color: var(--color);
+    box-shadow: 0 0 30px var(--shadow), 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+    transform: translateY(-3px);
+  }
+  .option.active::before { opacity: 1; }
+  .option.active::after { opacity: 0.6; }
+
+  /* Color-coded options */
+  .option[data-o="subagents"] {
+    --color: #7b61ff; --gradient: linear-gradient(135deg, #7b61ff, #a78bfa);
+    --glow: rgba(123,97,255,0.15); --shadow: rgba(123,97,255,0.15);
+  }
+  .option[data-o="main"] {
+    --color: #60a5fa; --gradient: linear-gradient(135deg, #3b82f6, #60a5fa);
+    --glow: rgba(96,165,250,0.15); --shadow: rgba(96,165,250,0.15);
+  }
+  .option[data-o="skills"] {
+    --color: #34d399; --gradient: linear-gradient(135deg, #10b981, #34d399);
+    --glow: rgba(52,211,153,0.15); --shadow: rgba(52,211,153,0.15);
+  }
+  .option[data-o="headless"] {
+    --color: #fbbf24; --gradient: linear-gradient(135deg, #f59e0b, #fbbf24);
+    --glow: rgba(251,191,36,0.15); --shadow: rgba(251,191,36,0.15);
+  }
+
+  /* --- Animated icon container --- */
+  .o-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .o-icon-wrap {
+    width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    background: var(--gradient); position: relative; overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s;
+    flex-shrink: 0;
+  }
+  .o-icon-wrap::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
+  }
+  .option:hover .o-icon-wrap {
+    transform: scale(1.1) rotate(-3deg);
+    box-shadow: 0 4px 16px var(--shadow);
+  }
+  .option.active .o-icon-wrap {
+    transform: scale(1.1) rotate(-3deg);
+    box-shadow: 0 4px 20px var(--shadow);
+  }
+  .o-icon {
+    font-size: 0; /* hide emoji fallback */ display: flex; align-items: center; justify-content: center;
+  }
+  .o-icon svg { width: 22px; height: 22px; fill: none; stroke: white; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .o-title { font-size: 1rem; font-weight: 700; color: #e0e0f0; letter-spacing: -0.01em; }
+
+  /* Badge-style label */
+  .o-badge {
+    display: inline-block; font-size: 0.65rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.8px; padding: 3px 8px; border-radius: 6px; margin-left: auto;
+    background: rgba(255,255,255,0.04); color: var(--color); border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.3s;
+  }
+  .option.active .o-badge { background: var(--glow); border-color: var(--color); }
+
+  .o-when { font-size: 0.8rem; color: #8888a0; line-height: 1.6; margin-bottom: 0; }
+
+  /* --- Expandable details --- */
+  .o-details {
+    max-height: 0; overflow: hidden; opacity: 0;
+    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s, margin-top 0.4s;
+    margin-top: 0;
+  }
+  .option.active .o-details { max-height: 400px; opacity: 1; margin-top: 16px; }
+  .option.active .o-when { margin-bottom: 6px; }
+
+  /* Divider line in expanded state */
+  .o-divider {
+    height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    margin-bottom: 14px;
+  }
+
+  .criteria { margin-top: 0; }
+  .criterion {
+    display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px;
+    padding: 10px 14px; border-radius: 10px;
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03);
+    transition: all 0.3s; opacity: 0; transform: translateX(-10px);
+  }
+  .option.active .criterion {
+    opacity: 1; transform: translateX(0);
+  }
+  .option.active .criterion:nth-child(1) { transition-delay: 0.05s; }
+  .option.active .criterion:nth-child(2) { transition-delay: 0.1s; }
+  .option.active .criterion:nth-child(3) { transition-delay: 0.15s; }
+  .option.active .criterion:nth-child(4) { transition-delay: 0.2s; }
+
+  .criterion:hover { background: rgba(255,255,255,0.04); }
+
+  /* Animated checkmark */
+  .criterion-check {
+    width: 20px; height: 20px; border-radius: 6px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.4s; margin-top: 1px;
+  }
+  .criterion-check svg {
+    width: 12px; height: 12px; fill: none; stroke: var(--color); stroke-width: 2.5;
+    stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 20; stroke-dashoffset: 20;
+    transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .option.active .criterion-check {
+    background: var(--glow); border-color: var(--color);
+  }
+  .option.active .criterion-check svg { stroke-dashoffset: 0; }
+  .option.active .criterion:nth-child(1) .criterion-check svg { transition-delay: 0.15s; }
+  .option.active .criterion:nth-child(2) .criterion-check svg { transition-delay: 0.25s; }
+  .option.active .criterion:nth-child(3) .criterion-check svg { transition-delay: 0.35s; }
+  .option.active .criterion:nth-child(4) .criterion-check svg { transition-delay: 0.45s; }
+
+  .criterion-text { font-size: 0.8rem; color: #b0b0c8; line-height: 1.55; }
+
+  /* --- Key Principle banner --- */
+  .key-principle {
+    max-width: 940px; margin: 0 auto; width: 100%; padding: 20px 28px;
+    border-radius: 14px; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, rgba(123,97,255,0.08) 0%, rgba(96,165,250,0.06) 50%, rgba(52,211,153,0.05) 100%);
+    border: 1px solid rgba(123,97,255,0.2);
+    text-align: center;
+    animation: cardEntrance 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
+  }
+  .key-principle::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(123,97,255,0.05), transparent 40%, rgba(251,191,36,0.03));
+    animation: bannerShimmer 6s ease-in-out infinite alternate;
+  }
+  @keyframes bannerShimmer {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+  .key-principle::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #7b61ff, #60a5fa, #34d399, #fbbf24);
+    background-size: 300% 100%; animation: gradientSlide 4s linear infinite;
+  }
+  @keyframes gradientSlide {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 300% 0%; }
+  }
+  .key-principle h4 {
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px;
+    background: linear-gradient(135deg, #7b61ff, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 10px; position: relative;
+  }
+  .key-principle p { font-size: 0.84rem; color: #b8b8d0; line-height: 1.65; position: relative; }
+  .key-principle strong { color: #d0d0e8; font-weight: 600; }
+
+  /* --- Decision Flow visual --- */
+  .decision-flow {
+    max-width: 940px; margin: 0 auto; width: 100%; display: flex; align-items: center;
+    justify-content: center; gap: 0; padding: 4px 0;
+    animation: cardEntrance 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.55s both;
+  }
+  .flow-node {
+    padding: 6px 14px; border-radius: 20px; font-size: 0.68rem; font-weight: 600;
+    white-space: nowrap; border: 1px solid rgba(255,255,255,0.08);
+    transition: all 0.3s; cursor: default;
+  }
+  .flow-node[data-f="start"] {
+    background: rgba(123,97,255,0.12); color: #a78bfa; border-color: rgba(123,97,255,0.25);
+  }
+  .flow-node[data-f="q1"] { background: rgba(96,165,250,0.08); color: #93bbfc; border-color: rgba(96,165,250,0.2); }
+  .flow-node[data-f="q2"] { background: rgba(52,211,153,0.08); color: #6ee7b7; border-color: rgba(52,211,153,0.2); }
+  .flow-node[data-f="q3"] { background: rgba(251,191,36,0.08); color: #fcd34d; border-color: rgba(251,191,36,0.2); }
+  .flow-arrow {
+    display: flex; align-items: center; padding: 0 4px; color: rgba(123,97,255,0.3);
+    font-size: 0.75rem;
+  }
+  .flow-arrow svg { width: 28px; height: 12px; stroke: rgba(123,97,255,0.25); stroke-width: 1.5; fill: none; }
+
+  /* --- Prompt section --- */
+  .prompt-section {
+    border-top: 1px solid rgba(255,255,255,0.05); padding: 16px 0 0; margin-top: auto;
+  }
+  .prompt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .prompt-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #6a6a80; }
+  .copy-btn {
+    padding: 6px 16px; border-radius: 8px; border: 1px solid rgba(123,97,255,0.25);
+    background: rgba(123,97,255,0.06); color: #b0b0c8; cursor: pointer; font-size: 0.75rem;
+    transition: all 0.3s; font-weight: 500;
+  }
+  .copy-btn:hover { border-color: #7b61ff; color: #d4c8ff; background: rgba(123,97,255,0.12); }
+  .copy-btn.copied { border-color: #34d399; color: #34d399; background: rgba(52,211,153,0.08); }
+  .prompt-text {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.78rem;
+    color: #a0a0b8; line-height: 1.6;
+    background: rgba(12,12,22,0.8); border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 12px; padding: 16px; min-height: 48px; white-space: pre-wrap;
+    backdrop-filter: blur(10px);
+  }
+
+  /* --- Floating particles (CSS only) --- */
+  .particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .particle {
+    position: absolute; border-radius: 50%; opacity: 0;
+    animation: floatParticle linear infinite;
+  }
+  @keyframes floatParticle {
+    0% { opacity: 0; transform: translateY(100vh) scale(0); }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particles" id="particles"></div>
+
+<header>
+  <h1>Decision Framework</h1>
+  <p>When to Use Subagents vs Alternatives</p>
+</header>
+
+<div class="main">
+
+  <!-- Decision flow bar -->
+  <div class="decision-flow">
+    <div class="flow-node" data-f="start">New Task</div>
+    <div class="flow-arrow"><svg viewBox="0 0 28 12"><path d="M2 6h20M18 2l4 4-4 4" stroke-dasharray="3 2"/></svg></div>
+    <div class="flow-node" data-f="q1">Interactive?</div>
+    <div class="flow-arrow"><svg viewBox="0 0 28 12"><path d="M2 6h20M18 2l4 4-4 4" stroke-dasharray="3 2"/></svg></div>
+    <div class="flow-node" data-f="q2">Reusable?</div>
+    <div class="flow-arrow"><svg viewBox="0 0 28 12"><path d="M2 6h20M18 2l4 4-4 4" stroke-dasharray="3 2"/></svg></div>
+    <div class="flow-node" data-f="q3">Parallel?</div>
+    <div class="flow-arrow"><svg viewBox="0 0 28 12"><path d="M2 6h20M18 2l4 4-4 4" stroke-dasharray="3 2"/></svg></div>
+    <div class="flow-node" data-f="start">Choose Model</div>
+  </div>
+
+  <div class="flow-container">
+    <!-- SVG connector lines between cards -->
+    <svg class="flow-svg" id="flowSvg"></svg>
+
+    <div class="matrix" id="matrix">
+      <!-- Subagents -->
+      <div class="option" data-o="subagents" onclick="toggle('subagents')">
+        <div class="o-header">
+          <div class="o-icon-wrap">
+            <span class="o-icon">
+              <svg viewBox="0 0 24 24"><path d="M4 6h4v4H4zM10 6h4v4h-4zM16 6h4v4h-4zM7 14h10v4H7z"/><path d="M6 10v4M18 10v4M12 10v4"/></svg>
+            </span>
+          </div>
+          <span class="o-title">Subagents</span>
+          <span class="o-badge">Isolation</span>
+        </div>
+        <div class="o-when">Verbose output, tool restrictions, self-contained work, parallel investigation</div>
+        <div class="o-details">
+          <div class="o-divider"></div>
+          <div class="criteria">
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Task produces verbose output that would bloat parent context</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Need to restrict tool access for safety or efficiency</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Work is self-contained with clear inputs and outputs</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Parallel investigation is possible across independent areas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Conversation -->
+      <div class="option" data-o="main" onclick="toggle('main')">
+        <div class="o-header">
+          <div class="o-icon-wrap">
+            <span class="o-icon">
+              <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9m-9 9a9 9 0 019-9"/></svg>
+            </span>
+          </div>
+          <span class="o-title">Main Conversation</span>
+          <span class="o-badge">Interactive</span>
+        </div>
+        <div class="o-when">Frequent back-and-forth, shared context, quick changes, latency-sensitive</div>
+        <div class="o-details">
+          <div class="o-divider"></div>
+          <div class="criteria">
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Task needs frequent back-and-forth with the user</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Multiple phases share context and build on each other</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Making quick, focused changes to a few files</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Response latency matters -- subagent round-trip adds overhead</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="option" data-o="skills" onclick="toggle('skills')">
+        <div class="o-header">
+          <div class="o-icon-wrap">
+            <span class="o-icon">
+              <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+            </span>
+          </div>
+          <span class="o-title">Skills</span>
+          <span class="o-badge">Reusable</span>
+        </div>
+        <div class="o-when">Reusable prompts/workflows, reference knowledge, invoked on trigger</div>
+        <div class="o-details">
+          <div class="o-divider"></div>
+          <div class="criteria">
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Need reusable prompts or step-by-step workflows</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Reference knowledge like conventions, patterns, style guides</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Invoked by user command or Claude detecting a matching pattern</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Domain knowledge that multiple agents or sessions can share</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Headless Mode -->
+      <div class="option" data-o="headless" onclick="toggle('headless')">
+        <div class="o-header">
+          <div class="o-icon-wrap">
+            <span class="o-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+            </span>
+          </div>
+          <span class="o-title">Headless Mode</span>
+          <span class="o-badge">Automation</span>
+        </div>
+        <div class="o-when">Process-level parallelism, batch processing, CI/CD pipelines</div>
+        <div class="o-details">
+          <div class="o-divider"></div>
+          <div class="criteria">
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">True process-level parallelism needed (not just subagent concurrency)</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Batch processing like file migrations across many modules</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">CI/CD pipeline integration -- agent runs unattended</span>
+            </div>
+            <div class="criterion">
+              <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
+              <span class="criterion-text">Tasks are fully independent with no shared state needed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="key-principle">
+    <h4>Key Principle</h4>
+    <p><strong>Match the execution model to the task characteristics.</strong> Subagents for isolation and parallelism, main conversation for interactivity, skills for reusable knowledge, headless for batch automation.</p>
+  </div>
+
+  <div class="prompt-section">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt Output</span>
+      <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+    </div>
+    <div class="prompt-text" id="promptText"></div>
+  </div>
+</div>
+
+<script>
+const state = { active: new Set() };
+
+const DATA = {
+  subagents: { name: 'Subagents', criteria: 'verbose output, tool restrictions, self-contained work, parallel investigation possible' },
+  main: { name: 'Main Conversation', criteria: 'frequent back-and-forth, shared context between phases, quick changes, latency-sensitive' },
+  skills: { name: 'Skills', criteria: 'reusable prompts/workflows, reference knowledge (conventions, patterns), triggered by user or pattern match' },
+  headless: { name: 'Headless Mode', criteria: 'true process-level parallelism, batch processing (file migrations), CI/CD pipelines, fully independent tasks' },
+};
+
+function toggle(o) {
+  if (state.active.has(o)) state.active.delete(o);
+  else state.active.add(o);
+  document.querySelectorAll('.option').forEach(el => el.classList.toggle('active', state.active.has(el.dataset.o)));
+  updatePrompt();
+  drawConnectors();
+}
+
+function updatePrompt() {
+  const el = document.getElementById('promptText');
+  if (state.active.size === 0) {
+    el.textContent = 'Agent Execution Decision Framework: Use Subagents when work is self-contained with verbose output. Use Main Conversation for interactive, context-sharing tasks. Use Skills for reusable domain knowledge and workflows. Use Headless Mode for batch processing and CI/CD. Key principle: match execution model to task characteristics.';
+    return;
+  }
+  const parts = [];
+  for (const [k, v] of Object.entries(DATA)) {
+    if (!state.active.has(k)) continue;
+    parts.push(`Use ${v.name} when: ${v.criteria}`);
+  }
+  el.textContent = parts.join('\n\n');
+}
+
+function copyPrompt() {
+  navigator.clipboard.writeText(document.getElementById('promptText').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+// Draw SVG connector lines between the 4 cards
+function drawConnectors() {
+  const svg = document.getElementById('flowSvg');
+  svg.innerHTML = '';
+  const cards = document.querySelectorAll('.option');
+  if (cards.length < 4) return;
+
+  const container = svg.parentElement.getBoundingClientRect();
+  const rects = Array.from(cards).map(c => c.getBoundingClientRect());
+
+  // Connector: vertical between top and bottom rows
+  for (let col = 0; col < 2; col++) {
+    const top = rects[col];
+    const bot = rects[col + 2];
+    const x = (top.left + top.right) / 2 - container.left;
+    const y1 = top.bottom - container.top;
+    const y2 = bot.top - container.top;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x); line.setAttribute('y1', y1);
+    line.setAttribute('x2', x); line.setAttribute('y2', y2);
+    line.setAttribute('class', 'flow-line');
+    svg.appendChild(line);
+
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', x); dot.setAttribute('cy', (y1 + y2) / 2); dot.setAttribute('r', 3);
+    dot.setAttribute('class', 'flow-dot');
+    svg.appendChild(dot);
+  }
+
+  // Connector: horizontal between left and right columns
+  for (let row = 0; row < 2; row++) {
+    const left = rects[row * 2];
+    const right = rects[row * 2 + 1];
+    const y = (left.top + left.bottom) / 2 - container.top;
+    const x1 = left.right - container.left;
+    const x2 = right.left - container.left;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1); line.setAttribute('y1', y);
+    line.setAttribute('x2', x2); line.setAttribute('y2', y);
+    line.setAttribute('class', 'flow-line flow-line-h');
+    svg.appendChild(line);
+  }
+}
+
+// Create floating particles
+function createParticles() {
+  const container = document.getElementById('particles');
+  const colors = ['rgba(123,97,255,0.3)', 'rgba(96,165,250,0.2)', 'rgba(52,211,153,0.2)', 'rgba(251,191,36,0.2)'];
+  for (let i = 0; i < 20; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = Math.random() * 3 + 1;
+    p.style.cssText = `
+      width: ${size}px; height: ${size}px;
+      left: ${Math.random() * 100}%;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration: ${Math.random() * 15 + 15}s;
+      animation-delay: ${Math.random() * 15}s;
+    `;
+    container.appendChild(p);
+  }
+}
+
+createParticles();
+updatePrompt();
+window.addEventListener('resize', drawConnectors);
+// Initial draw after entrance animations settle
+setTimeout(drawConnectors, 800);
+</script>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GitHub SpecKit — Spec-Driven Development</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #0a0a12;
+    color: #e0e0e8;
+    position: relative;
+  }
+
+  /* --- Static gradient orbs via pseudo-elements --- */
+  body::before {
+    content: '';
+    position: absolute;
+    top: -120px; left: -80px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(123,97,255,0.10) 0%, rgba(123,97,255,0.03) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: absolute;
+    bottom: -160px; right: -100px;
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(96,165,250,0.08) 0%, rgba(94,234,212,0.04) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Dot grid overlay */
+  .dot-grid {
+    position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Third orb */
+  .orb-extra {
+    position: absolute;
+    top: 300px; right: 400px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(244,114,182,0.06) 0%, rgba(167,139,250,0.03) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    width: 1920px; height: 1080px;
+    display: flex;
+    flex-direction: column;
+    padding: 38px 64px 36px;
+  }
+
+  /* --- Title bar --- */
+  .title-bar {
+    text-align: center;
+    margin-bottom: 28px;
+    flex-shrink: 0;
+  }
+  .title-bar h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7b61ff, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+  .title-bar .subtitle {
+    font-size: 1rem;
+    color: #8888a0;
+    font-weight: 400;
+  }
+
+  /* --- 7-Phase horizontal bar --- */
+  .phase-bar {
+    display: flex;
+    gap: 0;
+    margin-bottom: 28px;
+    flex-shrink: 0;
+  }
+
+  .phase-card {
+    flex: 1;
+    background: rgba(22,22,34,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.15);
+    padding: 18px 14px 16px;
+    text-align: center;
+    position: relative;
+  }
+  .phase-card:first-child {
+    border-radius: 16px 0 0 16px;
+  }
+  .phase-card:last-child {
+    border-radius: 0 16px 16px 0;
+  }
+  .phase-card:not(:last-child) {
+    border-right: none;
+  }
+
+  /* Bottom accent bar */
+  .phase-card .accent-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 0 0 0 0;
+  }
+  .phase-card:first-child .accent-bar { border-radius: 0 0 0 16px; }
+  .phase-card:last-child .accent-bar { border-radius: 0 0 16px 0; }
+
+  .phase-icon {
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .phase-num {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+    opacity: 0.7;
+  }
+  .phase-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #eeeef6;
+    margin-bottom: 5px;
+  }
+  .phase-sub {
+    font-size: 0.82rem;
+    color: #8888a0;
+    line-height: 1.35;
+  }
+
+  /* Arrow connectors between phases */
+  .phase-card:not(:last-child)::after {
+    content: '\203A';
+    position: absolute;
+    right: -7px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    color: rgba(123,97,255,0.35);
+    z-index: 2;
+    font-weight: 300;
+  }
+
+  /* --- Description row --- */
+  .desc-bar {
+    display: flex;
+    gap: 0;
+    margin-bottom: 28px;
+    flex-shrink: 0;
+  }
+  .desc-cell {
+    flex: 1;
+    background: rgba(22,22,34,0.40);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(123,97,255,0.08);
+    padding: 14px 12px;
+    font-size: 0.78rem;
+    color: #a0a0b8;
+    line-height: 1.55;
+  }
+  .desc-cell:first-child { border-radius: 12px 0 0 12px; }
+  .desc-cell:last-child { border-radius: 0 12px 12px 0; }
+  .desc-cell:not(:last-child) { border-right: none; }
+
+  /* --- Summary grid --- */
+  .summary-section-title {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #6a6a80;
+    margin-bottom: 14px;
+    flex-shrink: 0;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 14px;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .summary-card {
+    background: rgba(22,22,34,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.15);
+    border-radius: 16px;
+    padding: 18px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Top accent line on summary cards */
+  .summary-card .top-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .summary-card .card-phase {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .summary-card .card-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #e0e0e8;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .summary-card .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: auto;
+  }
+  .tag {
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    background: rgba(18,18,26,0.7);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #9898b0;
+  }
+
+  /* --- Footer summary text --- */
+  .footer-bar {
+    flex-shrink: 0;
+    margin-top: 20px;
+    background: rgba(22,22,34,0.50);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(123,97,255,0.10);
+    border-radius: 12px;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+  }
+  .footer-bar .footer-label {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #6a6a80;
+    flex-shrink: 0;
+  }
+  .footer-bar .footer-text {
+    font-size: 0.82rem;
+    color: #a0a0b8;
+    line-height: 1.55;
+  }
+  .footer-text strong {
+    color: #c8c8e0;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="dot-grid"></div>
+<div class="orb-extra"></div>
+
+<div class="wrapper">
+
+  <!-- Title Bar -->
+  <div class="title-bar">
+    <h1>GitHub SpecKit</h1>
+    <div class="subtitle">Spec-driven development -- specs become the source of truth for AI agents</div>
+  </div>
+
+  <!-- 7-Phase Horizontal Bar -->
+  <div class="phase-bar">
+    <div class="phase-card">
+      <span class="phase-icon">&#x1F4DC;</span>
+      <div class="phase-num" style="color: #f472b6;">01</div>
+      <div class="phase-name">Constitution</div>
+      <div class="phase-sub">Project Principles</div>
+      <div class="accent-bar" style="background: #f472b6;"></div>
+    </div>
+    <div class="phase-card">
+      <span class="phase-icon">&#x1F4DD;</span>
+      <div class="phase-num" style="color: #a78bfa;">02</div>
+      <div class="phase-name">Specify</div>
+      <div class="phase-sub">What and Why</div>
+      <div class="accent-bar" style="background: #a78bfa;"></div>
+    </div>
+    <div class="phase-card">
+      <span class="phase-icon">&#x2753;</span>
+      <div class="phase-num" style="color: #818cf8;">03</div>
+      <div class="phase-name">Clarify</div>
+      <div class="phase-sub">Eliminate Ambiguity</div>
+      <div class="accent-bar" style="background: #818cf8;"></div>
+    </div>
+    <div class="phase-card">
+      <span class="phase-icon">&#x1F4D0;</span>
+      <div class="phase-num" style="color: #60a5fa;">04</div>
+      <div class="phase-name">Plan</div>
+      <div class="phase-sub">Architecture &amp; Design</div>
+      <div class="accent-bar" style="background: #60a5fa;"></div>
+    </div>
+    <div class="phase-card">
+      <span class="phase-icon">&#x2705;</span>
+      <div class="phase-num" style="color: #5eead4;">05</div>
+      <div class="phase-name">Checklist</div>
+      <div class="phase-sub">Validate Completeness</div>
+      <div class="accent-bar" style="background: #5eead4;"></div>
+    </div>
+    <div class="phase-card">
+      <span class="phase-icon">&#x1F4CB;</span>
+      <div class="phase-num" style="color: #fbbf24;">06</div>
+      <div class="phase-name">Tasks</div>
+      <div class="phase-sub">Atomic Work Items</div>
+      <div class="accent-bar" style="background: #fbbf24;"></div>
+    </div>
+    <div class="phase-card">
+      <span class="phase-icon">&#x1F52C;</span>
+      <div class="phase-num" style="color: #fb923c;">07</div>
+      <div class="phase-name">Analyze</div>
+      <div class="phase-sub">Verify &amp; Learn</div>
+      <div class="accent-bar" style="background: #fb923c;"></div>
+    </div>
+  </div>
+
+  <!-- Description Row -->
+  <div class="desc-bar">
+    <div class="desc-cell">Define project principles and rules that AI must follow. The foundational guardrail -- like a constitution for your codebase that every AI action must respect.</div>
+    <div class="desc-cell">Generate user stories and acceptance criteria. Define what needs to be built and why. This becomes the source of truth guiding all subsequent AI work.</div>
+    <div class="desc-cell">AI generates questions to eliminate ambiguity. Interactive back-and-forth ensures the spec is complete and unambiguous before planning begins.</div>
+    <div class="desc-cell">Define tech stack, architecture, data models, and API contracts. Translates "what" into "how" with concrete technical decisions.</div>
+    <div class="desc-cell">Systematic validation that the plan is complete. Checks UX, security, performance, accessibility, and quality dimensions before code is written.</div>
+    <div class="desc-cell">Break the plan into atomic, testable work items with explicit dependencies. Each task is small enough for an agent to complete and verify independently.</div>
+    <div class="desc-cell">Analyze output of completed tasks. Verify against specifications, run tests, measure quality, and feed learnings back into the process.</div>
+  </div>
+
+  <!-- Summary Label -->
+  <div class="summary-section-title">Key Artifacts by Phase</div>
+
+  <!-- Summary Grid: 7 columns -->
+  <div class="summary-grid">
+    <!-- Constitution -->
+    <div class="summary-card">
+      <div class="top-accent" style="background: #f472b6;"></div>
+      <div class="card-phase" style="color: #f472b6;">Phase 1</div>
+      <div class="card-title">Constitution</div>
+      <div class="card-tags">
+        <span class="tag">Coding standards</span>
+        <span class="tag">Security requirements</span>
+        <span class="tag">Naming conventions</span>
+        <span class="tag">Forbidden patterns</span>
+      </div>
+    </div>
+    <!-- Specify -->
+    <div class="summary-card">
+      <div class="top-accent" style="background: #a78bfa;"></div>
+      <div class="card-phase" style="color: #a78bfa;">Phase 2</div>
+      <div class="card-title">Specify</div>
+      <div class="card-tags">
+        <span class="tag">User stories</span>
+        <span class="tag">Acceptance criteria</span>
+        <span class="tag">Feature requirements</span>
+        <span class="tag">Success metrics</span>
+      </div>
+    </div>
+    <!-- Clarify -->
+    <div class="summary-card">
+      <div class="top-accent" style="background: #818cf8;"></div>
+      <div class="card-phase" style="color: #818cf8;">Phase 3</div>
+      <div class="card-title">Clarify</div>
+      <div class="card-tags">
+        <span class="tag">Edge cases</span>
+        <span class="tag">Boundary conditions</span>
+        <span class="tag">Integration points</span>
+        <span class="tag">Error scenarios</span>
+      </div>
+    </div>
+    <!-- Plan -->
+    <div class="summary-card">
+      <div class="top-accent" style="background: #60a5fa;"></div>
+      <div class="card-phase" style="color: #60a5fa;">Phase 4</div>
+      <div class="card-title">Plan</div>
+      <div class="card-tags">
+        <span class="tag">Tech stack</span>
+        <span class="tag">Architecture diagrams</span>
+        <span class="tag">Data models</span>
+        <span class="tag">API contracts</span>
+      </div>
+    </div>
+    <!-- Checklist -->
+    <div class="summary-card">
+      <div class="top-accent" style="background: #5eead4;"></div>
+      <div class="card-phase" style="color: #5eead4;">Phase 5</div>
+      <div class="card-title">Checklist</div>
+      <div class="card-tags">
+        <span class="tag">UX review</span>
+        <span class="tag">Security checklist</span>
+        <span class="tag">Performance targets</span>
+        <span class="tag">Accessibility audit</span>
+      </div>
+    </div>
+    <!-- Tasks -->
+    <div class="summary-card">
+      <div class="top-accent" style="background: #fbbf24;"></div>
+      <div class="card-phase" style="color: #fbbf24;">Phase 6</div>
+      <div class="card-title">Tasks</div>
+      <div class="card-tags">
+        <span class="tag">Task dependencies</span>
+        <span class="tag">Test criteria</span>
+        <span class="tag">Acceptance tests</span>
+        <span class="tag">Implementation order</span>
+      </div>
+    </div>
+    <!-- Analyze -->
+    <div class="summary-card">
+      <div class="top-accent" style="background: #fb923c;"></div>
+      <div class="card-phase" style="color: #fb923c;">Phase 7</div>
+      <div class="card-title">Analyze</div>
+      <div class="card-tags">
+        <span class="tag">Test results</span>
+        <span class="tag">Quality metrics</span>
+        <span class="tag">Spec compliance</span>
+        <span class="tag">Improvement areas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Summary -->
+  <div class="footer-bar">
+    <span class="footer-label">Summary</span>
+    <span class="footer-text"><strong>SpecKit</strong> is GitHub's open-source toolkit for spec-driven development. Specs guide AI agents to generate, test, and validate code through <strong>7 structured phases</strong> -- from project constitution to task execution. Each phase produces artifacts that feed into the next, creating a reliable chain from requirements to verified implementation.</span>
+  </div>
+
+</div>
+
+</body>
+</html>

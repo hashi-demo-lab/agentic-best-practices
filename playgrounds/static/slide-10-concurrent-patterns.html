@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Concurrent Execution Patterns</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a12;
+    color: #e0e0e8;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ===== Static Background ===== */
+  body::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    left: -100px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(123,97,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: absolute;
+    bottom: -150px;
+    right: -50px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(96,165,250,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Dot grid overlay */
+  .dot-grid {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: radial-gradient(rgba(123,97,255,0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Third orb via an extra element */
+  .orb-teal {
+    position: absolute;
+    top: 300px;
+    right: 400px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(94,234,212,0.05) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== Header ===== */
+  header {
+    text-align: center;
+    padding: 28px 20px 18px;
+    border-bottom: 1px solid rgba(123,97,255,0.15);
+    position: relative;
+    z-index: 1;
+    background: rgba(10,10,18,0.6);
+    backdrop-filter: blur(12px);
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #7b61ff, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+  }
+
+  header p {
+    color: #8888a0;
+    font-size: 0.92rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ===== Main Layout ===== */
+  .main {
+    position: relative;
+    z-index: 1;
+    padding: 28px 48px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    width: 100%;
+  }
+
+  /* ===== Glass Cards ===== */
+  .pattern-card {
+    background: rgba(22,22,34,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.15);
+    border-radius: 16px;
+    padding: 22px 20px 18px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Top accent bar */
+  .pattern-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    opacity: 0.7;
+  }
+  .pattern-card.c-blue::before   { background: linear-gradient(90deg, transparent, #60a5fa, transparent); }
+  .pattern-card.c-purple::before { background: linear-gradient(90deg, transparent, #a78bfa, transparent); }
+  .pattern-card.c-teal::before   { background: linear-gradient(90deg, transparent, #5eead4, transparent); }
+  .pattern-card.c-pink::before   { background: linear-gradient(90deg, transparent, #f472b6, transparent); }
+  .pattern-card.c-amber::before  { background: linear-gradient(90deg, transparent, #fbbf24, transparent); }
+
+  /* ===== Icon Badge ===== */
+  .p-icon {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .p-icon-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .c-blue .p-icon-badge   { background: rgba(96,165,250,0.15);  border: 1px solid rgba(96,165,250,0.25); }
+  .c-purple .p-icon-badge { background: rgba(167,139,250,0.15); border: 1px solid rgba(167,139,250,0.25); }
+  .c-teal .p-icon-badge   { background: rgba(94,234,212,0.15);  border: 1px solid rgba(94,234,212,0.25); }
+  .c-pink .p-icon-badge   { background: rgba(244,114,182,0.15); border: 1px solid rgba(244,114,182,0.25); }
+  .c-amber .p-icon-badge  { background: rgba(251,191,36,0.15);  border: 1px solid rgba(251,191,36,0.25); }
+
+  .p-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #d8d8ec;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .p-short {
+    font-size: 13px;
+    color: #8888a0;
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+
+  /* ===== SVG Diagram Container ===== */
+  .p-svg-diagram {
+    width: 100%;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    background: rgba(10,10,18,0.7);
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 4px;
+    overflow: hidden;
+  }
+  .p-svg-diagram svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* SVG styling */
+  .svg-node-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: central;
+  }
+
+  /* ===== Flow Steps ===== */
+  .p-flow-steps {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .p-flow-step {
+    padding: 4px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(255,255,255,0.03);
+    color: #9898b0;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .p-flow-arrow {
+    color: #44445a;
+    font-size: 11px;
+    padding: 0 3px;
+  }
+
+  /* Highlight variants */
+  .c-blue .p-flow-step.hl   { background: rgba(96,165,250,0.15);  color: #60a5fa; border-color: rgba(96,165,250,0.25); }
+  .c-purple .p-flow-step.hl { background: rgba(167,139,250,0.15); color: #a78bfa; border-color: rgba(167,139,250,0.25); }
+  .c-teal .p-flow-step.hl   { background: rgba(94,234,212,0.15);  color: #5eead4; border-color: rgba(94,234,212,0.25); }
+  .c-pink .p-flow-step.hl   { background: rgba(244,114,182,0.15); color: #f472b6; border-color: rgba(244,114,182,0.25); }
+  .c-amber .p-flow-step.hl  { background: rgba(251,191,36,0.15);  color: #fbbf24; border-color: rgba(251,191,36,0.25); }
+
+  /* ===== Description ===== */
+  .p-desc {
+    font-size: 13px;
+    color: #a0a0b8;
+    line-height: 1.6;
+    padding-left: 12px;
+    margin-bottom: 8px;
+  }
+  .c-blue .p-desc   { border-left: 2px solid rgba(96,165,250,0.25); }
+  .c-purple .p-desc { border-left: 2px solid rgba(167,139,250,0.25); }
+  .c-teal .p-desc   { border-left: 2px solid rgba(94,234,212,0.25); }
+  .c-pink .p-desc   { border-left: 2px solid rgba(244,114,182,0.25); }
+  .c-amber .p-desc  { border-left: 2px solid rgba(251,191,36,0.25); }
+
+  /* ===== Use Case Tag ===== */
+  .p-use {
+    font-size: 12px;
+    color: #7b7b98;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+  }
+
+  .p-use-tag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    flex-shrink: 0;
+  }
+  .c-blue .p-use-tag   { background: rgba(96,165,250,0.15);  color: #60a5fa; }
+  .c-purple .p-use-tag { background: rgba(167,139,250,0.15); color: #a78bfa; }
+  .c-teal .p-use-tag   { background: rgba(94,234,212,0.15);  color: #5eead4; }
+  .c-pink .p-use-tag   { background: rgba(244,114,182,0.15); color: #f472b6; }
+  .c-amber .p-use-tag  { background: rgba(251,191,36,0.15);  color: #fbbf24; }
+</style>
+</head>
+<body>
+
+<div class="dot-grid"></div>
+<div class="orb-teal"></div>
+
+<header>
+  <h1>Concurrent Execution Patterns</h1>
+  <p>Parallel Agent Strategies for IaC Workflows</p>
+</header>
+
+<div class="main">
+  <div class="pattern-grid">
+
+    <!-- 1. Fan-Out Research -->
+    <div class="pattern-card c-blue">
+      <div class="p-icon"><div class="p-icon-badge">&#x1F52C;</div></div>
+      <div class="p-name">Fan-Out Research</div>
+      <div class="p-short">Spawn multiple subagents to investigate independent areas simultaneously, then synthesize findings</div>
+
+      <div class="p-svg-diagram">
+        <svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arrow-fanout" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,3 L0,6" fill="#60a5fa" opacity="0.6"/>
+            </marker>
+          </defs>
+          <!-- Parent node -->
+          <rect x="12" y="37" width="76" height="26" rx="6" fill="rgba(96,165,250,0.2)" stroke="#60a5fa" stroke-width="1.5"/>
+          <text x="50" y="51" class="svg-node-label" fill="#60a5fa">Parent</text>
+          <!-- Agent A -->
+          <rect x="128" y="7" width="74" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
+          <text x="165" y="21" class="svg-node-label" fill="#9898b0">Agent A</text>
+          <!-- Agent B -->
+          <rect x="128" y="37" width="74" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
+          <text x="165" y="51" class="svg-node-label" fill="#9898b0">Agent B</text>
+          <!-- Agent C -->
+          <rect x="128" y="67" width="74" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
+          <text x="165" y="81" class="svg-node-label" fill="#9898b0">Agent C</text>
+          <!-- Synthesize node -->
+          <rect x="230" y="37" width="80" height="26" rx="6" fill="rgba(96,165,250,0.2)" stroke="#60a5fa" stroke-width="1.5"/>
+          <text x="270" y="51" class="svg-node-label" fill="#60a5fa">Synthesize</text>
+          <!-- Arrows out -->
+          <line x1="88" y1="45" x2="128" y2="22" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
+          <line x1="88" y1="50" x2="128" y2="50" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
+          <line x1="88" y1="55" x2="128" y2="78" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
+          <!-- Arrows in -->
+          <line x1="202" y1="22" x2="230" y2="45" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
+          <line x1="202" y1="50" x2="230" y2="50" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
+          <line x1="202" y1="78" x2="230" y2="55" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
+          <!-- Static dots on paths -->
+          <circle cx="108" cy="34" r="2.5" fill="#60a5fa" opacity="0.7"/>
+          <circle cx="108" cy="50" r="2.5" fill="#60a5fa" opacity="0.7"/>
+          <circle cx="108" cy="66" r="2.5" fill="#60a5fa" opacity="0.7"/>
+          <circle cx="216" cy="34" r="2.5" fill="#60a5fa" opacity="0.7"/>
+          <circle cx="216" cy="50" r="2.5" fill="#60a5fa" opacity="0.7"/>
+          <circle cx="216" cy="66" r="2.5" fill="#60a5fa" opacity="0.7"/>
+        </svg>
+      </div>
+
+      <div class="p-flow-steps">
+        <span class="p-flow-step hl">Dispatch</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step">Parallel Explore</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step">Collect</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step hl">Synthesize</span>
+      </div>
+
+      <div class="p-desc">Each agent explores a different area of the codebase or documentation. Parent collects summaries and synthesizes a unified view. Ideal for initial investigation of unfamiliar repos.</div>
+      <div class="p-use"><span class="p-use-tag">IaC</span> Investigate modules, providers, and policies in parallel</div>
+    </div>
+
+    <!-- 2. Writer / Reviewer -->
+    <div class="pattern-card c-purple">
+      <div class="p-icon"><div class="p-icon-badge">&#x1F50D;</div></div>
+      <div class="p-name">Writer / Reviewer</div>
+      <div class="p-short">Two parallel sessions with distinct roles &mdash; fresh context in reviewer prevents bias toward own code</div>
+
+      <div class="p-svg-diagram">
+        <svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arrow-writer" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,3 L0,6" fill="#a78bfa" opacity="0.6"/>
+            </marker>
+          </defs>
+          <!-- Writer node -->
+          <rect x="42" y="37" width="100" height="26" rx="6" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="92" y="51" class="svg-node-label" fill="#a78bfa">Writer Agent</text>
+          <!-- Reviewer node -->
+          <rect x="178" y="37" width="106" height="26" rx="6" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="1.5"/>
+          <text x="231" y="51" class="svg-node-label" fill="#a78bfa">Reviewer Agent</text>
+          <!-- Top curve: code -->
+          <path d="M142,42 C167,15 197,15 218,42" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-writer)"/>
+          <!-- Bottom curve: feedback -->
+          <path d="M218,58 C197,85 167,85 142,58" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-writer)"/>
+          <!-- Labels -->
+          <text x="170" y="24" text-anchor="middle" fill="#a78bfa" opacity="0.5" font-size="7" font-family="system-ui">code</text>
+          <text x="170" y="84" text-anchor="middle" fill="#a78bfa" opacity="0.5" font-size="7" font-family="system-ui">feedback</text>
+          <!-- Static dots on curves -->
+          <circle cx="160" cy="18" r="2.5" fill="#a78bfa" opacity="0.7"/>
+          <circle cx="160" cy="82" r="2.5" fill="#a78bfa" opacity="0.7"/>
+        </svg>
+      </div>
+
+      <div class="p-flow-steps">
+        <span class="p-flow-step hl">Write</span>
+        <span class="p-flow-arrow">&#x21C4;</span>
+        <span class="p-flow-step hl">Review</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step">Revise</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step">Approve</span>
+      </div>
+
+      <div class="p-desc">Writer generates code, reviewer evaluates with fresh eyes. Separate contexts ensure the reviewer doesn't inherit the writer's assumptions. Catches issues a self-review would miss.</div>
+      <div class="p-use"><span class="p-use-tag">IaC</span> One agent writes module, another reviews for compliance</div>
+    </div>
+
+    <!-- 3. Subagent Chaining -->
+    <div class="pattern-card c-teal">
+      <div class="p-icon"><div class="p-icon-badge">&#x26D3;&#xFE0F;</div></div>
+      <div class="p-name">Subagent Chaining</div>
+      <div class="p-short">Sequential delegation where each subagent output feeds the next &mdash; parent orchestrates context passing</div>
+
+      <div class="p-svg-diagram">
+        <svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arrow-chain" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,3 L0,6" fill="#5eead4" opacity="0.6"/>
+            </marker>
+          </defs>
+          <!-- Parent -->
+          <rect x="6" y="37" width="62" height="26" rx="6" fill="rgba(94,234,212,0.2)" stroke="#5eead4" stroke-width="1.5"/>
+          <text x="37" y="51" class="svg-node-label" fill="#5eead4">Parent</text>
+          <!-- Stage 1 -->
+          <rect x="86" y="37" width="62" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
+          <text x="117" y="51" class="svg-node-label" fill="#9898b0">Stage 1</text>
+          <!-- Stage 2 -->
+          <rect x="168" y="37" width="62" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
+          <text x="199" y="51" class="svg-node-label" fill="#9898b0">Stage 2</text>
+          <!-- Stage 3 -->
+          <rect x="250" y="37" width="62" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
+          <text x="281" y="51" class="svg-node-label" fill="#9898b0">Stage 3</text>
+          <!-- Arrows -->
+          <line x1="68" y1="50" x2="86" y2="50" stroke="#5eead4" stroke-width="1" opacity="0.35" marker-end="url(#arrow-chain)"/>
+          <line x1="148" y1="50" x2="168" y2="50" stroke="#5eead4" stroke-width="1" opacity="0.35" marker-end="url(#arrow-chain)"/>
+          <line x1="230" y1="50" x2="250" y2="50" stroke="#5eead4" stroke-width="1" opacity="0.35" marker-end="url(#arrow-chain)"/>
+          <!-- Static dots -->
+          <circle cx="77" cy="50" r="2.5" fill="#5eead4" opacity="0.7"/>
+          <circle cx="158" cy="50" r="2.5" fill="#5eead4" opacity="0.7"/>
+          <circle cx="240" cy="50" r="2.5" fill="#5eead4" opacity="0.7"/>
+        </svg>
+      </div>
+
+      <div class="p-flow-steps">
+        <span class="p-flow-step hl">Spec</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step">Generate</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step">Test</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step hl">Document</span>
+      </div>
+
+      <div class="p-desc">Pipeline pattern where each stage transforms input for the next. Parent passes relevant output from one agent to the next. Each agent has clean context focused on its stage.</div>
+      <div class="p-use"><span class="p-use-tag">IaC</span> Spec &#x2192; Generate &#x2192; Test &#x2192; Document pipeline</div>
+    </div>
+
+    <!-- 4. Isolate High-Volume Ops -->
+    <div class="pattern-card c-pink">
+      <div class="p-icon"><div class="p-icon-badge">&#x1F4E6;</div></div>
+      <div class="p-name">Isolate High-Volume Ops</div>
+      <div class="p-short">Delegate test suites, log analysis, doc fetching &mdash; verbose output stays in subagent context</div>
+
+      <div class="p-svg-diagram">
+        <svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arrow-isolate" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,3 L0,6" fill="#f472b6" opacity="0.6"/>
+            </marker>
+          </defs>
+          <!-- Parent -->
+          <rect x="12" y="37" width="76" height="26" rx="6" fill="rgba(244,114,182,0.2)" stroke="#f472b6" stroke-width="1.5"/>
+          <text x="50" y="51" class="svg-node-label" fill="#f472b6">Parent</text>
+          <!-- Test Runner -->
+          <rect x="126" y="37" width="88" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
+          <text x="170" y="51" class="svg-node-label" fill="#9898b0">Test Runner</text>
+          <!-- Summary -->
+          <rect x="238" y="37" width="72" height="26" rx="6" fill="rgba(244,114,182,0.2)" stroke="#f472b6" stroke-width="1.5"/>
+          <text x="274" y="51" class="svg-node-label" fill="#f472b6">Summary</text>
+          <!-- Verbose indicator dots around test runner -->
+          <circle cx="142" cy="28" r="1.5" fill="#f472b6" opacity="0.35"/>
+          <circle cx="198" cy="28" r="1.5" fill="#f472b6" opacity="0.35"/>
+          <circle cx="205" cy="50" r="1.5" fill="#f472b6" opacity="0.25"/>
+          <circle cx="142" cy="72" r="1.5" fill="#f472b6" opacity="0.35"/>
+          <circle cx="198" cy="72" r="1.5" fill="#f472b6" opacity="0.35"/>
+          <circle cx="135" cy="50" r="1.5" fill="#f472b6" opacity="0.25"/>
+          <!-- Arrows -->
+          <line x1="88" y1="50" x2="126" y2="50" stroke="#f472b6" stroke-width="1" opacity="0.35" marker-end="url(#arrow-isolate)"/>
+          <line x1="214" y1="50" x2="238" y2="50" stroke="#f472b6" stroke-width="1" opacity="0.35" marker-end="url(#arrow-isolate)"/>
+          <!-- Static dots -->
+          <circle cx="107" cy="50" r="2.5" fill="#f472b6" opacity="0.7"/>
+          <circle cx="226" cy="50" r="2.5" fill="#f472b6" opacity="0.7"/>
+          <!-- Verbose label -->
+          <text x="170" y="82" text-anchor="middle" fill="#f472b6" opacity="0.4" font-size="7" font-family="system-ui">(verbose output)</text>
+        </svg>
+      </div>
+
+      <div class="p-flow-steps">
+        <span class="p-flow-step hl">Delegate</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step">Process (verbose)</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step">Filter</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step hl">Summary</span>
+      </div>
+
+      <div class="p-desc">Protect the parent context from token-heavy operations. Subagent processes verbose test output, log files, or API responses and returns only a concise summary.</div>
+      <div class="p-use"><span class="p-use-tag">IaC</span> Run terraform plan in subagent, return only changes summary</div>
+    </div>
+
+    <!-- 5. Headless Mode -->
+    <div class="pattern-card c-amber">
+      <div class="p-icon"><div class="p-icon-badge">&#x1F916;</div></div>
+      <div class="p-name">Headless Mode</div>
+      <div class="p-short">True process-level parallelism for batch processing, CI/CD pipelines, and file migrations</div>
+
+      <div class="p-svg-diagram">
+        <svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arrow-headless" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,3 L0,6" fill="#fbbf24" opacity="0.6"/>
+            </marker>
+          </defs>
+          <!-- CI/CD -->
+          <rect x="12" y="37" width="72" height="26" rx="6" fill="rgba(251,191,36,0.2)" stroke="#fbbf24" stroke-width="1.5"/>
+          <text x="48" y="51" class="svg-node-label" fill="#fbbf24">CI/CD</text>
+          <!-- Process A -->
+          <rect x="128" y="7" width="82" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
+          <text x="169" y="21" class="svg-node-label" fill="#9898b0">Process A</text>
+          <!-- Process B -->
+          <rect x="128" y="37" width="82" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
+          <text x="169" y="51" class="svg-node-label" fill="#9898b0">Process B</text>
+          <!-- Process C -->
+          <rect x="128" y="67" width="82" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
+          <text x="169" y="81" class="svg-node-label" fill="#9898b0">Process C</text>
+          <!-- Arrows -->
+          <line x1="84" y1="44" x2="128" y2="22" stroke="#fbbf24" stroke-width="1" opacity="0.35" marker-end="url(#arrow-headless)"/>
+          <line x1="84" y1="50" x2="128" y2="50" stroke="#fbbf24" stroke-width="1" opacity="0.35" marker-end="url(#arrow-headless)"/>
+          <line x1="84" y1="56" x2="128" y2="78" stroke="#fbbf24" stroke-width="1" opacity="0.35" marker-end="url(#arrow-headless)"/>
+          <!-- Static dots on arrows -->
+          <circle cx="106" cy="34" r="2.5" fill="#fbbf24" opacity="0.7"/>
+          <circle cx="106" cy="50" r="2.5" fill="#fbbf24" opacity="0.7"/>
+          <circle cx="106" cy="66" r="2.5" fill="#fbbf24" opacity="0.7"/>
+          <!-- Independence pulse indicators -->
+          <circle cx="222" cy="20" r="4" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.3"/>
+          <circle cx="222" cy="50" r="4" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.3"/>
+          <circle cx="222" cy="80" r="4" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.3"/>
+          <circle cx="222" cy="20" r="2" fill="#fbbf24" opacity="0.5"/>
+          <circle cx="222" cy="50" r="2" fill="#fbbf24" opacity="0.5"/>
+          <circle cx="222" cy="80" r="2" fill="#fbbf24" opacity="0.5"/>
+          <!-- No shared context label -->
+          <text x="268" y="52" text-anchor="middle" fill="#fbbf24" opacity="0.35" font-size="7" font-family="system-ui">no shared context</text>
+        </svg>
+      </div>
+
+      <div class="p-flow-steps">
+        <span class="p-flow-step hl">Trigger</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step">Parallel Exec</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step">Independent</span>
+        <span class="p-flow-arrow">&#x2192;</span>
+        <span class="p-flow-step hl">Complete</span>
+      </div>
+
+      <div class="p-desc">Run multiple Claude instances as independent processes. No shared context &mdash; each operates on its own task. Best for batch operations that don't need coordination.</div>
+      <div class="p-use"><span class="p-use-tag">IaC</span> Migrate multiple modules in parallel, each in its own process</div>
+    </div>
+
+  </div>
+
+  <!-- Summary bar at bottom -->
+  <div style="
+    margin-top: 8px;
+    padding: 16px 24px;
+    border-radius: 12px;
+    background: rgba(14,14,22,0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.04);
+  ">
+    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #5a5a70; font-weight: 600; margin-bottom: 8px;">Summary</div>
+    <div style="font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; color: #9898b0; line-height: 1.7;">Concurrent Execution Patterns for Agentic IaC: <span style="color:#60a5fa;">Fan-Out Research</span> (parallel investigation) &#x2022; <span style="color:#a78bfa;">Writer/Reviewer</span> (dual-role code quality) &#x2022; <span style="color:#5eead4;">Subagent Chaining</span> (sequential pipeline) &#x2022; <span style="color:#f472b6;">Isolate High-Volume Ops</span> (context protection) &#x2022; <span style="color:#fbbf24;">Headless Mode</span> (process-level parallelism for CI/CD)</div>
+  </div>
+</div>
+
+</body>
+</html>

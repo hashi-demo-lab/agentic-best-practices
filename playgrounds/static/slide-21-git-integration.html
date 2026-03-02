@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Git Integration — Validated Pattern</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a12;
+    color: #e0e0e8;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* --- Static gradient orbs via pseudo-elements --- */
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background:
+      radial-gradient(ellipse 700px 500px at 15% 20%, rgba(123,97,255,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 600px 450px at 85% 75%, rgba(96,165,250,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 400px at 50% 50%, rgba(94,234,212,0.05) 0%, transparent 70%),
+      radial-gradient(ellipse 400px 300px at 75% 15%, rgba(244,114,182,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* --- Dot grid overlay --- */
+  body::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* --- Header --- */
+  header {
+    text-align: center;
+    padding: 32px 20px 18px;
+    border-bottom: 1px solid rgba(35,35,47,0.6);
+    position: relative;
+    z-index: 1;
+  }
+
+  header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7b61ff, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+
+  header p {
+    color: #8888a0;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+  }
+
+  /* --- Main layout --- */
+  .main {
+    display: flex;
+    gap: 48px;
+    padding: 36px 80px 36px 80px;
+    position: relative;
+    z-index: 1;
+    height: calc(1080px - 100px);
+    align-items: flex-start;
+  }
+
+  /* --- Left: Pipeline column --- */
+  .pipeline-col {
+    flex: 0 0 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    padding-top: 8px;
+  }
+
+  /* --- SVG connector column --- */
+  .pipeline-flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+  }
+
+  /* --- Stage summary cards (left side) --- */
+  .stage-card {
+    width: 100%;
+    background: rgba(22,22,34,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.15);
+    border-radius: 16px;
+    padding: 22px 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    position: relative;
+    border-left: 4px solid var(--accent);
+  }
+
+  .stage-card .stage-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    background: rgba(26,26,40,0.7);
+    border: 1px solid var(--accent-dim);
+    flex-shrink: 0;
+    box-shadow: 0 0 14px var(--accent-glow);
+  }
+
+  .stage-card .stage-content {
+    flex: 1;
+  }
+
+  .stage-card .stage-title {
+    font-size: 1.05rem;
+    font-weight: 650;
+    color: #e0e0f0;
+    margin-bottom: 4px;
+  }
+
+  .stage-card .stage-desc {
+    font-size: 0.85rem;
+    color: #8888a0;
+    line-height: 1.45;
+  }
+
+  .stage-card .stage-num {
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: rgba(123,97,255,0.07);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  /* Accent color variants */
+  .stage-card.pink    { --accent: #f472b6; --accent-dim: rgba(244,114,182,0.3); --accent-glow: rgba(244,114,182,0.1); }
+  .stage-card.amber   { --accent: #fbbf24; --accent-dim: rgba(251,191,36,0.3); --accent-glow: rgba(251,191,36,0.1); }
+  .stage-card.teal    { --accent: #5eead4; --accent-dim: rgba(94,234,212,0.3); --accent-glow: rgba(94,234,212,0.1); }
+  .stage-card.blue    { --accent: #60a5fa; --accent-dim: rgba(96,165,250,0.3); --accent-glow: rgba(96,165,250,0.1); }
+
+  /* --- SVG connector between stages --- */
+  .connector-svg {
+    display: block;
+    width: 40px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  /* --- Right: Expanded details --- */
+  .details-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 8px;
+  }
+
+  .detail-panel {
+    background: rgba(22,22,34,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.15);
+    border-radius: 16px;
+    padding: 24px 28px;
+    position: relative;
+    border-top: 3px solid var(--accent);
+  }
+
+  .detail-panel.pink  { --accent: #f472b6; }
+  .detail-panel.amber { --accent: #fbbf24; }
+  .detail-panel.teal  { --accent: #5eead4; }
+  .detail-panel.blue  { --accent: #60a5fa; }
+
+  .detail-panel .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .detail-panel .panel-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(26,26,40,0.7);
+    border: 1px solid var(--accent);
+  }
+
+  .detail-panel .panel-title {
+    font-size: 1rem;
+    font-weight: 650;
+    color: var(--accent);
+  }
+
+  .detail-point {
+    padding: 10px 14px;
+    background: rgba(14,14,22,0.7);
+    border-radius: 8px;
+    font-size: 0.88rem;
+    color: #b8b8d0;
+    line-height: 1.55;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--accent);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .detail-point:last-child {
+    margin-bottom: 0;
+  }
+
+  .detail-point .bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+
+  /* --- Overall flow label --- */
+  .flow-label {
+    text-align: center;
+    margin-top: 16px;
+    padding: 12px 20px;
+    background: rgba(22,22,34,0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.12);
+    border-radius: 10px;
+    width: 100%;
+  }
+
+  .flow-label span {
+    font-size: 0.8rem;
+    color: #8888a0;
+    letter-spacing: 0.5px;
+  }
+
+  .flow-label .flow-steps {
+    margin-top: 6px;
+    font-size: 0.82rem;
+    color: #a0a0bc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .flow-label .flow-step {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .flow-label .flow-arrow {
+    color: #555570;
+    font-size: 0.75rem;
+  }
+
+  .flow-label .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Git Integration</h1>
+  <p>Validated pattern for secure agent-driven Git workflows</p>
+</header>
+
+<div class="main">
+
+  <!-- LEFT: Pipeline stages with connectors -->
+  <div class="pipeline-col">
+    <div class="pipeline-flow">
+
+      <!-- Stage 1: Role-Based Access -->
+      <div class="stage-card pink">
+        <div class="stage-icon">&#128273;</div>
+        <div class="stage-content">
+          <div class="stage-title">Role-Based Access</div>
+          <div class="stage-desc">Agent interacts via GitHub CLI with fine-grained access tokens</div>
+        </div>
+        <span class="stage-num">01</span>
+      </div>
+
+      <!-- Connector 1-2 -->
+      <svg class="connector-svg" viewBox="0 0 40 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad1" x1="20" y1="0" x2="20" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#f472b6"/>
+            <stop offset="100%" stop-color="#fbbf24"/>
+          </linearGradient>
+        </defs>
+        <line x1="20" y1="0" x2="20" y2="28" stroke="url(#grad1)" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="14,26 20,34 26,26" fill="#fbbf24"/>
+      </svg>
+
+      <!-- Stage 2: Pre-commit Hooks -->
+      <div class="stage-card amber">
+        <div class="stage-icon">&#128737;&#65039;</div>
+        <div class="stage-content">
+          <div class="stage-title">Pre-commit Hooks</div>
+          <div class="stage-desc">Block secrets, lint, validate before code enters version control</div>
+        </div>
+        <span class="stage-num">02</span>
+      </div>
+
+      <!-- Connector 2-3 -->
+      <svg class="connector-svg" viewBox="0 0 40 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad2" x1="20" y1="0" x2="20" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#fbbf24"/>
+            <stop offset="100%" stop-color="#5eead4"/>
+          </linearGradient>
+        </defs>
+        <line x1="20" y1="0" x2="20" y2="28" stroke="url(#grad2)" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="14,26 20,34 26,26" fill="#5eead4"/>
+      </svg>
+
+      <!-- Stage 3: PR Review Process -->
+      <div class="stage-card teal">
+        <div class="stage-icon">&#128269;</div>
+        <div class="stage-content">
+          <div class="stage-title">PR Review Process</div>
+          <div class="stage-desc">Multi-layer review: AI-generated PR, LLM reviewer, human approval</div>
+        </div>
+        <span class="stage-num">03</span>
+      </div>
+
+      <!-- Connector 3-4 -->
+      <svg class="connector-svg" viewBox="0 0 40 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="grad3" x1="20" y1="0" x2="20" y2="36" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#5eead4"/>
+            <stop offset="100%" stop-color="#60a5fa"/>
+          </linearGradient>
+        </defs>
+        <line x1="20" y1="0" x2="20" y2="28" stroke="url(#grad3)" stroke-width="2.5" stroke-linecap="round"/>
+        <polygon points="14,26 20,34 26,26" fill="#60a5fa"/>
+      </svg>
+
+      <!-- Stage 4: Release Pipeline -->
+      <div class="stage-card blue">
+        <div class="stage-icon">&#128640;</div>
+        <div class="stage-content">
+          <div class="stage-title">Release Pipeline</div>
+          <div class="stage-desc">AI-driven PRs with platform team governance and automated deployment</div>
+        </div>
+        <span class="stage-num">04</span>
+      </div>
+
+    </div>
+
+    <!-- Flow summary label -->
+    <div class="flow-label">
+      <span>END-TO-END FLOW</span>
+      <div class="flow-steps">
+        <span class="flow-step"><span class="dot" style="background:#f472b6;"></span> AI PRs</span>
+        <span class="flow-arrow">&#8594;</span>
+        <span class="flow-step"><span class="dot" style="background:#fbbf24;"></span> Pre-commit</span>
+        <span class="flow-arrow">&#8594;</span>
+        <span class="flow-step"><span class="dot" style="background:#5eead4;"></span> Review</span>
+        <span class="flow-arrow">&#8594;</span>
+        <span class="flow-step"><span class="dot" style="background:#60a5fa;"></span> Deploy</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Expanded detail panels -->
+  <div class="details-col">
+
+    <!-- Detail Panel 1: Role-Based Access -->
+    <div class="detail-panel pink">
+      <div class="panel-header">
+        <div class="panel-badge">01</div>
+        <div class="panel-title">Role-Based Access</div>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Agent Git access locked down with fine-grained personal access tokens</span>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Branch protection rules critical to protect and gate release process</span>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Release pipeline: AI-driven PRs &rarr; Platform team review &rarr; Governance &rarr; Automated deployment</span>
+      </div>
+    </div>
+
+    <!-- Detail Panel 2: Pre-commit Hooks -->
+    <div class="detail-panel amber">
+      <div class="panel-header">
+        <div class="panel-badge">02</div>
+        <div class="panel-title">Pre-commit Hooks</div>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Block secret commits via Vault Radar pre-commit hooks</span>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Additional hooks for linting, validation, security checks</span>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Enforced consistently via devcontainer &mdash; agent cannot bypass</span>
+      </div>
+    </div>
+
+    <!-- Detail Panel 3: PR Review Process -->
+    <div class="detail-panel teal">
+      <div class="panel-header">
+        <div class="panel-badge">03</div>
+        <div class="panel-title">PR Review Process</div>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Agent generates PR when tests pass</span>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Separate LLM-as-a-judge performs initial code review and comments on PR</span>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Human developer validates tests and performs final code review</span>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Developer approves or advises changes for agent to update PR</span>
+      </div>
+    </div>
+
+    <!-- Detail Panel 4: Release Pipeline -->
+    <div class="detail-panel blue">
+      <div class="panel-header">
+        <div class="panel-badge">04</div>
+        <div class="panel-title">Release Pipeline</div>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Merge triggers automated CI/CD pipeline</span>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Platform team governance gates: compliance, security, cost review</span>
+      </div>
+      <div class="detail-point">
+        <span class="bullet"></span>
+        <span>Automated deployment to target environment on approval</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

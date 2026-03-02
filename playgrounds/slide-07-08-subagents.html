@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subagent Architecture Explorer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a10; color: #e0e0e8; min-height: 100vh; display: flex; flex-direction: column;
+    overflow-x: hidden; position: relative;
+  }
+
+  /* ========== Animated Background ========== */
+  #bgCanvas {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  }
+
+  /* Subtle dot grid overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: radial-gradient(circle, rgba(123,97,255,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: dotGridDrift 30s linear infinite;
+  }
+  @keyframes dotGridDrift {
+    0%   { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+  }
+
+  /* Floating gradient orbs */
+  .bg-orb {
+    position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+    filter: blur(90px); opacity: 0.12;
+  }
+  .bg-orb-1 { width: 420px; height: 420px; background: #7b61ff; top: -120px; right: -100px; animation: orbFloat1 20s ease-in-out infinite; }
+  .bg-orb-2 { width: 320px; height: 320px; background: #60a5fa; bottom: -80px; left: -80px; animation: orbFloat2 24s ease-in-out infinite; }
+  .bg-orb-3 { width: 220px; height: 220px; background: #5eead4; top: 45%; left: 55%; animation: orbFloat3 16s ease-in-out infinite; }
+  .bg-orb-4 { width: 180px; height: 180px; background: #f59e0b; top: 70%; right: 15%; animation: orbFloat4 19s ease-in-out infinite; }
+  @keyframes orbFloat1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-50px, 35px); } }
+  @keyframes orbFloat2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(35px, -45px); } }
+  @keyframes orbFloat3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-25px, 25px) scale(1.12); } }
+  @keyframes orbFloat4 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(20px, -30px) scale(0.9); } }
+
+  /* ========== Header ========== */
+  header {
+    text-align: center; padding: 28px 20px 14px;
+    border-bottom: 1px solid rgba(123,97,255,0.12);
+    position: relative; z-index: 1;
+    animation: fadeSlideDown 0.6s ease-out both;
+  }
+  header::after {
+    content: ''; position: absolute; bottom: -1px; left: 10%; right: 10%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(123,97,255,0.35), transparent);
+  }
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  header h1 {
+    font-size: 1.65rem; font-weight: 800; letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #7b61ff, #a78bfa, #60a5fa);
+    background-size: 200% 200%;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+    animation: gradientShift 5s ease-in-out infinite;
+  }
+  @keyframes gradientShift {
+    0%,100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  header p { color: #7a7a96; font-size: 0.85rem; letter-spacing: 0.02em; }
+
+  .main {
+    flex: 1; display: flex; flex-direction: column; padding: 24px 32px; gap: 20px;
+    position: relative; z-index: 1;
+  }
+
+  /* ========== Tabs ========== */
+  .tabs {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    animation: fadeSlideUp 0.6s 0.15s ease-out both;
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .tab {
+    padding: 9px 20px; border-radius: 10px;
+    border: 1px solid rgba(123,97,255,0.12);
+    background: rgba(26,26,38,0.55);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    color: #b0b0c8; cursor: pointer; font-size: 0.8rem;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tab .tab-icon { display: flex; align-items: center; transition: transform 0.3s; }
+  .tab .tab-icon svg { width: 16px; height: 16px; }
+
+  /* shimmer sweep */
+  .tab::before {
+    content: ''; position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(123,97,255,0.06), transparent);
+    transition: left 0.5s ease;
+  }
+  .tab:hover::before { left: 150%; }
+
+  .tab:hover {
+    border-color: rgba(123,97,255,0.35); color: #d4c8ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(123,97,255,0.1);
+  }
+  .tab:hover .tab-icon { transform: scale(1.15); }
+
+  /* Tab accent colors */
+  .tab[data-tab="architecture"].active {
+    border-color: rgba(123,97,255,0.55); color: #d4c8ff;
+    background: rgba(42,37,72,0.7);
+    box-shadow: 0 4px 20px rgba(123,97,255,0.18), 0 0 0 1px rgba(123,97,255,0.08);
+  }
+  .tab[data-tab="architecture"].active .tab-icon svg { stroke: #a78bfa; }
+
+  .tab[data-tab="config"].active {
+    border-color: rgba(96,165,250,0.55); color: #bfdbfe;
+    background: rgba(30,50,80,0.65);
+    box-shadow: 0 4px 20px rgba(96,165,250,0.18), 0 0 0 1px rgba(96,165,250,0.08);
+  }
+  .tab[data-tab="config"].active .tab-icon svg { stroke: #60a5fa; }
+
+  .tab[data-tab="types"].active {
+    border-color: rgba(94,234,212,0.55); color: #a7f3d0;
+    background: rgba(30,60,60,0.65);
+    box-shadow: 0 4px 20px rgba(94,234,212,0.15), 0 0 0 1px rgba(94,234,212,0.08);
+  }
+  .tab[data-tab="types"].active .tab-icon svg { stroke: #5eead4; }
+
+  .tab[data-tab="constraints"].active {
+    border-color: rgba(251,191,36,0.5); color: #fde68a;
+    background: rgba(60,50,25,0.65);
+    box-shadow: 0 4px 20px rgba(251,191,36,0.12), 0 0 0 1px rgba(251,191,36,0.08);
+  }
+  .tab[data-tab="constraints"].active .tab-icon svg { stroke: #fbbf24; }
+
+  /* ========== Canvas area ========== */
+  .canvas {
+    flex: 1; position: relative; min-height: 380px;
+    animation: fadeSlideUp 0.6s 0.3s ease-out both;
+  }
+
+  /* ========== Architecture SVG Diagram ========== */
+  .arch-svg-wrapper {
+    width: 100%; display: flex; justify-content: center; margin-bottom: 8px;
+  }
+  .arch-svg-wrapper svg { max-width: 700px; width: 100%; height: auto; }
+
+  /* SVG animations */
+  @keyframes dashFlow {
+    to { stroke-dashoffset: -24; }
+  }
+  @keyframes nodePulse {
+    0%, 100% { r: 6; opacity: 0.9; }
+    50% { r: 8; opacity: 1; }
+  }
+  @keyframes nodeGlow {
+    0%, 100% { filter: drop-shadow(0 0 3px rgba(123,97,255,0.3)); }
+    50% { filter: drop-shadow(0 0 8px rgba(123,97,255,0.6)); }
+  }
+
+  /* ========== Architecture Diagram ========== */
+  .arch-diagram {
+    display: flex; flex-direction: column; align-items: center; gap: 0; padding: 10px 20px;
+  }
+
+  .parent-node {
+    padding: 18px 36px; border-radius: 14px;
+    border: 1px solid rgba(123,97,255,0.3);
+    background: rgba(26,22,48,0.6);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    text-align: center; cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    position: relative; z-index: 2; overflow: hidden;
+  }
+  /* highlight sheen */
+  .parent-node::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(123,97,255,0.4), transparent);
+  }
+  .parent-node::after {
+    content: ''; position: absolute; inset: -1px; border-radius: 14px;
+    background: linear-gradient(135deg, rgba(123,97,255,0.15), transparent 40%);
+    z-index: -1; opacity: 0; transition: opacity 0.4s;
+  }
+  .parent-node {
+    animation: fadeSlideDown 0.5s 0.2s ease-out both, parentGlow 4s 1s ease-in-out infinite;
+  }
+  @keyframes parentGlow {
+    0%, 100% { box-shadow: 0 0 15px rgba(123,97,255,0.1), 0 0 40px rgba(123,97,255,0.04); }
+    50%      { box-shadow: 0 0 25px rgba(123,97,255,0.25), 0 0 60px rgba(123,97,255,0.08); }
+  }
+  .parent-node:hover {
+    box-shadow: 0 8px 32px rgba(123,97,255,0.2), 0 0 50px rgba(123,97,255,0.1);
+    transform: translateY(-2px);
+  }
+  .parent-node:hover::after { opacity: 1; }
+  .parent-node h3 { font-size: 0.92rem; color: #d4c8ff; margin-bottom: 4px; font-weight: 700; }
+  .parent-node p { font-size: 0.72rem; color: #8888a0; }
+  .parent-node .node-icon { margin-bottom: 6px; }
+  .parent-node .node-icon svg { width: 28px; height: 28px; stroke: #a78bfa; }
+
+  .subagent-row {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  }
+
+  .subagent-node {
+    padding: 16px 20px; border-radius: 14px;
+    border: 1px solid rgba(42,42,60,0.6);
+    background: rgba(22,22,31,0.55);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    min-width: 155px; text-align: center;
+    position: relative; overflow: hidden;
+    opacity: 0; transform: translateY(20px);
+    animation: subagentEnter 0.5s ease-out forwards;
+  }
+  .subagent-node:nth-child(1) { animation-delay: 0.3s; }
+  .subagent-node:nth-child(2) { animation-delay: 0.4s; }
+  .subagent-node:nth-child(3) { animation-delay: 0.5s; }
+  .subagent-node:nth-child(4) { animation-delay: 0.6s; }
+  @keyframes subagentEnter {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* card sheen */
+  .subagent-node::before {
+    content: ''; position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+    transition: left 0.6s ease;
+  }
+  .subagent-node:hover::before { left: 150%; }
+
+  /* glow ring */
+  .subagent-node::after {
+    content: ''; position: absolute; inset: -1px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--color, rgba(123,97,255,0.2)), transparent 50%);
+    z-index: -1; opacity: 0; transition: opacity 0.4s;
+  }
+
+  .subagent-node:hover {
+    border-color: rgba(123,97,255,0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.3), 0 4px 16px var(--glow, rgba(123,97,255,0.08));
+  }
+  .subagent-node:hover::after { opacity: 1; }
+
+  .subagent-node.selected {
+    border-color: var(--color, #7b61ff);
+    background: rgba(26,22,40,0.7);
+    animation: subagentEnter 0.5s ease-out forwards, selectedNodeGlow 3s 0.5s ease-in-out infinite;
+  }
+  @keyframes selectedNodeGlow {
+    0%, 100% { box-shadow: 0 4px 24px var(--glow, rgba(123,97,255,0.15)), 0 0 0 1px var(--color-faint, rgba(123,97,255,0.08)); }
+    50%      { box-shadow: 0 4px 32px var(--glow, rgba(123,97,255,0.25)), 0 0 40px var(--color-faint, rgba(123,97,255,0.12)), 0 0 0 1px var(--color-faint, rgba(123,97,255,0.12)); }
+  }
+  .subagent-node.selected::after { opacity: 1; }
+
+  .subagent-node .icon-wrap {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+  }
+  .subagent-node .icon-wrap::after {
+    content: ''; position: absolute; inset: -4px; border-radius: 12px;
+    background: inherit; opacity: 0; filter: blur(10px);
+    transition: opacity 0.4s; z-index: -1;
+  }
+  .subagent-node:hover .icon-wrap { transform: scale(1.12); }
+  .subagent-node:hover .icon-wrap::after { opacity: 0.5; }
+  .subagent-node.selected .icon-wrap { animation: iconPulse 2s ease-in-out infinite; }
+  @keyframes iconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  .subagent-node .icon-wrap svg { width: 22px; height: 22px; }
+
+  .icon-explore { background: linear-gradient(135deg, rgba(96,165,250,0.2), rgba(96,165,250,0.05)); }
+  .icon-explore svg { stroke: #60a5fa; }
+  .icon-plan { background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(167,139,250,0.05)); }
+  .icon-plan svg { stroke: #a78bfa; }
+  .icon-general { background: linear-gradient(135deg, rgba(129,140,248,0.2), rgba(129,140,248,0.05)); }
+  .icon-general svg { stroke: #818cf8; }
+  .icon-custom { background: linear-gradient(135deg, rgba(192,132,252,0.2), rgba(192,132,252,0.05)); }
+  .icon-custom svg { stroke: #c084fc; }
+
+  .subagent-node h4 { font-size: 0.84rem; color: #c8c8e0; margin-bottom: 6px; font-weight: 600; }
+  .subagent-node .model-tag {
+    font-size: 0.62rem; padding: 3px 10px; border-radius: 6px;
+    background: rgba(26,32,64,0.6); color: #818cf8; display: inline-block;
+    border: 1px solid rgba(129,140,248,0.12);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  }
+
+  /* ========== Detail Card ========== */
+  .detail-card {
+    max-width: 620px; margin: 16px auto 0;
+    border: 1px solid rgba(123,97,255,0.1);
+    border-radius: 14px;
+    background: rgba(22,22,31,0.55);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    padding: 22px;
+    opacity: 0; transform: translateY(12px);
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    position: relative; overflow: hidden;
+  }
+  .detail-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(123,97,255,0.3), transparent);
+  }
+  .detail-card.visible { opacity: 1; transform: translateY(0); }
+  .detail-card h4 {
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.5px;
+    color: #7b61ff; margin-bottom: 14px; font-weight: 700;
+    position: relative; padding-bottom: 10px;
+  }
+  .detail-card h4::after {
+    content: ''; position: absolute; bottom: 0; left: 0; width: 32px; height: 2px;
+    background: linear-gradient(90deg, #7b61ff, transparent); border-radius: 1px;
+  }
+  .detail-row {
+    display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start;
+    padding: 10px 14px; border-radius: 10px;
+    background: rgba(18,18,28,0.5); border: 1px solid rgba(123,97,255,0.05);
+    transition: all 0.3s;
+  }
+  .detail-row:hover {
+    background: rgba(24,24,40,0.6);
+    border-color: rgba(123,97,255,0.1);
+    transform: translateX(3px);
+  }
+  .detail-row .label {
+    font-size: 0.7rem; color: #7b61ff; min-width: 100px; text-transform: uppercase;
+    letter-spacing: 0.5px; padding-top: 2px; font-weight: 600;
+  }
+  .detail-row .value { font-size: 0.82rem; color: #b8b8d0; line-height: 1.55; }
+
+  /* ========== Config tab ========== */
+  .config-section {
+    max-width: 700px; margin: 0 auto; width: 100%;
+  }
+  .config-block {
+    border: 1px solid rgba(96,165,250,0.1);
+    border-radius: 14px;
+    background: rgba(22,22,31,0.55);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    padding: 18px 20px; margin-bottom: 12px; cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    position: relative; overflow: hidden;
+    opacity: 0; transform: translateX(-20px);
+    animation: configEnter 0.5s ease-out forwards;
+  }
+  .config-block:nth-child(1) { animation-delay: 0.2s; }
+  .config-block:nth-child(2) { animation-delay: 0.3s; }
+  .config-block:nth-child(3) { animation-delay: 0.4s; }
+  .config-block:nth-child(4) { animation-delay: 0.5s; }
+  @keyframes configEnter {
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .config-block::before {
+    content: ''; position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(96,165,250,0.04), transparent);
+    transition: left 0.5s ease;
+  }
+  .config-block:hover::before { left: 150%; }
+  .config-block:hover {
+    border-color: rgba(96,165,250,0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(96,165,250,0.08);
+  }
+  .config-block.active {
+    border-color: rgba(96,165,250,0.45);
+    box-shadow: 0 4px 28px rgba(96,165,250,0.12), 0 0 0 1px rgba(96,165,250,0.06);
+    background: rgba(30,40,60,0.6);
+  }
+  .config-block .config-header { display: flex; align-items: center; gap: 10px; }
+  .config-block .config-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, rgba(96,165,250,0.15), rgba(96,165,250,0.05));
+    flex-shrink: 0; transition: transform 0.3s;
+  }
+  .config-block .config-icon svg { width: 18px; height: 18px; stroke: #60a5fa; }
+  .config-block:hover .config-icon { transform: scale(1.1) rotate(-3deg); }
+  .config-block h4 { font-size: 0.88rem; color: #c8d8f0; margin-bottom: 4px; font-weight: 600; }
+  .config-block p { font-size: 0.78rem; color: #8898b0; }
+  .config-block code {
+    display: block; margin-top: 10px; padding: 12px 14px 12px 18px; border-radius: 10px;
+    background: rgba(10,10,18,0.7);
+    border: 1px solid rgba(96,165,250,0.06);
+    border-left: 3px solid rgba(96,165,250,0.25);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.72rem; color: #a0b0d0; line-height: 1.65; white-space: pre;
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.3s, margin 0.3s, border-color 0.3s;
+    padding: 0 14px 0 18px; margin-top: 0;
+    position: relative;
+  }
+  .config-block.active code {
+    max-height: 320px; padding: 12px 14px 12px 18px; margin-top: 10px;
+    border-left-color: rgba(96,165,250,0.5);
+  }
+
+  /* Syntax highlighting for code blocks */
+  .syn-key { color: #c084fc; font-weight: 600; }
+  .syn-str { color: #86efac; }
+  .syn-val { color: #818cf8; }
+  .syn-sep { color: #7b61ff; font-weight: 700; }
+  .syn-heading { color: #60a5fa; font-weight: 700; }
+  .syn-bullet { color: #fbbf24; }
+  .syn-cmd { color: #f472b6; font-weight: 600; }
+  .syn-path { color: #67e8f9; }
+  .syn-comment { color: #5a5a76; font-style: italic; }
+  .syn-text { color: #b0b8d0; }
+
+  /* ========== Types tab — reuse subagent nodes ========== */
+
+  /* ========== Constraints tab ========== */
+  .constraints {
+    display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; justify-content: center;
+  }
+  .constraint {
+    padding: 8px 16px; border-radius: 10px; font-size: 0.74rem;
+    background: rgba(60,50,25,0.4);
+    border: 1px solid rgba(251,191,36,0.15);
+    color: #fbbf24;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    cursor: default; position: relative; overflow: hidden;
+    opacity: 0; transform: scale(0.9);
+    animation: constraintEnter 0.4s ease-out forwards;
+  }
+  .constraint:nth-child(1) { animation-delay: 0.15s; }
+  .constraint:nth-child(2) { animation-delay: 0.22s; }
+  .constraint:nth-child(3) { animation-delay: 0.29s; }
+  .constraint:nth-child(4) { animation-delay: 0.36s; }
+  .constraint:nth-child(5) { animation-delay: 0.43s; }
+  .constraint:nth-child(6) { animation-delay: 0.50s; }
+  @keyframes constraintEnter {
+    to { opacity: 1; transform: scale(1); }
+  }
+  .constraint:hover {
+    background: rgba(60,50,25,0.6);
+    border-color: rgba(251,191,36,0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(251,191,36,0.08);
+  }
+  .constraint .constraint-icon { margin-right: 6px; display: inline-flex; vertical-align: middle; }
+  .constraint .constraint-icon svg { width: 14px; height: 14px; stroke: #fbbf24; }
+
+  /* ========== Prompt Section ========== */
+  .prompt-section {
+    border-top: 1px solid rgba(123,97,255,0.1); padding: 16px 0 0;
+    animation: fadeSlideUp 0.6s 0.7s ease-out both;
+    position: relative; z-index: 1;
+  }
+  .prompt-section::before {
+    content: ''; position: absolute; top: -1px; left: 10%; right: 10%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(123,97,255,0.3), transparent);
+  }
+  .prompt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .prompt-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #6a6a80; }
+  .copy-btn {
+    padding: 6px 16px; border-radius: 8px;
+    border: 1px solid rgba(123,97,255,0.15);
+    background: rgba(26,26,38,0.6);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    color: #b0b0c8; cursor: pointer; font-size: 0.75rem;
+    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+    position: relative; overflow: hidden;
+  }
+  .copy-btn:hover {
+    border-color: #7b61ff; color: #d4c8ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(123,97,255,0.15);
+  }
+  .copy-btn.copied { border-color: #5eead4; color: #5eead4; background: rgba(26,48,48,0.5); }
+  .prompt-text {
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem;
+    color: #a0a0b8; line-height: 1.6;
+    background: rgba(18,18,26,0.5);
+    border: 1px solid rgba(123,97,255,0.06);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-radius: 12px; padding: 16px; min-height: 48px; white-space: pre-wrap;
+    transition: border-color 0.3s;
+  }
+  .prompt-text:hover { border-color: rgba(123,97,255,0.15); }
+
+  /* ========== Scrollbar ========== */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(123,97,255,0.2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(123,97,255,0.35); }
+</style>
+</head>
+<body>
+
+<!-- Animated network background canvas -->
+<canvas id="bgCanvas"></canvas>
+
+<!-- Floating gradient orbs -->
+<div class="bg-orb bg-orb-1"></div>
+<div class="bg-orb bg-orb-2"></div>
+<div class="bg-orb bg-orb-3"></div>
+<div class="bg-orb bg-orb-4"></div>
+
+<header>
+  <h1>Subagent Architecture</h1>
+  <p>Custom Subagents for Task-Specific Workflows</p>
+</header>
+
+<div class="main">
+  <div class="tabs">
+    <button class="tab active" data-tab="architecture" onclick="setTab('architecture')">
+      <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#a0a0b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="5" y2="16"/><line x1="12" y1="8" x2="19" y2="16"/></svg></span>
+      Architecture
+    </button>
+    <button class="tab" data-tab="config" onclick="setTab('config')">
+      <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#a0a0b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></span>
+      Configuration
+    </button>
+    <button class="tab" data-tab="types" onclick="setTab('types')">
+      <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#a0a0b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span>
+      Built-in Types
+    </button>
+    <button class="tab" data-tab="constraints" onclick="setTab('constraints')">
+      <span class="tab-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#a0a0b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+      Constraints
+    </button>
+  </div>
+
+  <div class="canvas" id="canvas"></div>
+
+  <div class="prompt-section">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt Output</span>
+      <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+    </div>
+    <div class="prompt-text" id="promptText"></div>
+  </div>
+</div>
+
+<script>
+// ========== Animated Network Background ==========
+(function() {
+  const canvas = document.getElementById('bgCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  const PARTICLE_COUNT = 50;
+  const MAX_DIST = 140;
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  for (let i = 0; i < PARTICLE_COUNT; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+      r: Math.random() * 1.5 + 0.5,
+      color: ['rgba(123,97,255,', 'rgba(96,165,250,', 'rgba(94,234,212,', 'rgba(167,139,250,'][Math.floor(Math.random() * 4)]
+    });
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.x += p.vx; p.y += p.vy;
+      if (p.x < 0) p.x = canvas.width;
+      if (p.x > canvas.width) p.x = 0;
+      if (p.y < 0) p.y = canvas.height;
+      if (p.y > canvas.height) p.y = 0;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + '0.35)';
+      ctx.fill();
+
+      for (let j = i + 1; j < particles.length; j++) {
+        const q = particles[j];
+        const dx = p.x - q.x, dy = p.y - q.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MAX_DIST) {
+          const alpha = (1 - dist / MAX_DIST) * 0.12;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = 'rgba(123,97,255,' + alpha + ')';
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+// ========== State & Data ==========
+const state = { tab: 'architecture', selectedAgent: null, selectedConfig: null };
+
+const AGENTS = [
+  { id: 'explore', name: 'Explore', model: 'Haiku', tools: 'Read-only', desc: 'Fast codebase exploration. Read-only tools \u2014 Glob, Grep, Read. Uses Haiku for speed and cost efficiency.', color: '#60a5fa', glow: 'rgba(96,165,250,0.15)', faint: 'rgba(96,165,250,0.08)', iconClass: 'icon-explore' },
+  { id: 'plan', name: 'Plan', model: 'Inherited', tools: 'Read-only', desc: 'Software architect agent for designing implementation plans. Read-only tools. Inherits parent model.', color: '#a78bfa', glow: 'rgba(167,139,250,0.15)', faint: 'rgba(167,139,250,0.08)', iconClass: 'icon-plan' },
+  { id: 'general', name: 'General Purpose', model: 'All', tools: 'All tools', desc: 'Full-capability agent with access to all tools. For complex multi-step tasks requiring code changes.', color: '#818cf8', glow: 'rgba(129,140,248,0.15)', faint: 'rgba(129,140,248,0.08)', iconClass: 'icon-general' },
+  { id: 'custom', name: 'Custom', model: 'Configurable', tools: 'Scoped', desc: 'Define your own subagents with custom skills, specific tools, and task-focused prompts.', color: '#c084fc', glow: 'rgba(192,132,252,0.15)', faint: 'rgba(192,132,252,0.08)', iconClass: 'icon-custom' },
+];
+
+const AGENT_ICONS = {
+  explore: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+  plan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
+  general: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>',
+  custom: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>',
+};
+
+const CONFIGS = [
+  { id: 'yaml', title: 'YAML Frontmatter', desc: 'Define name, description, tools, model, permissions, skills, and hooks',
+    code: '<span class="syn-sep">---</span>\n<span class="syn-key">name:</span> <span class="syn-str">terraform-module-gen</span>\n<span class="syn-key">description:</span> <span class="syn-str">Generate Terraform modules</span>\n<span class="syn-key">tools:</span>\n  <span class="syn-bullet">-</span> <span class="syn-str">Read</span>\n  <span class="syn-bullet">-</span> <span class="syn-str">Write</span>\n  <span class="syn-bullet">-</span> <span class="syn-str">Bash</span>\n  <span class="syn-bullet">-</span> <span class="syn-str">Glob</span>\n  <span class="syn-bullet">-</span> <span class="syn-str">Grep</span>\n<span class="syn-key">model:</span> <span class="syn-val">sonnet</span>\n<span class="syn-key">permissionMode:</span> <span class="syn-val">plan</span>\n<span class="syn-key">skills:</span>\n  <span class="syn-bullet">-</span> <span class="syn-str">terraform-conventions</span>\n<span class="syn-sep">---</span>',
+    iconIdx: 0 },
+  { id: 'prompt', title: 'System Prompt (Markdown body)', desc: 'Markdown content below frontmatter becomes the agent\'s system prompt',
+    code: '<span class="syn-heading"># Terraform Module Generator</span>\n\n<span class="syn-text">You are a specialist agent that</span>\n<span class="syn-text">generates compliant Terraform modules.</span>\n\n<span class="syn-heading">## Rules</span>\n<span class="syn-bullet">-</span> <span class="syn-text">Follow naming conventions</span>\n<span class="syn-bullet">-</span> <span class="syn-text">Include tests</span>\n<span class="syn-bullet">-</span> <span class="syn-text">Add documentation</span>',
+    iconIdx: 1 },
+  { id: 'storage', title: 'Storage Locations', desc: 'Project (.claude/agents/), User (~/.claude/agents/), CLI (--agents JSON), or Plugin (agents/ directory)',
+    code: '<span class="syn-path">.claude/agents/</span>\n  <span class="syn-str">terraform-gen.md</span>\n  <span class="syn-str">test-runner.md</span>\n<span class="syn-path">~/.claude/agents/</span>\n  <span class="syn-str">personal-helper.md</span>',
+    iconIdx: 2 },
+  { id: 'manage', title: 'Management', desc: 'Use /agents command for interactive management \u2014 view, create, edit, configure tool access',
+    code: '<span class="syn-cmd">/agents</span>\n  <span class="syn-bullet">&gt;</span> <span class="syn-text">View all agents</span>\n  <span class="syn-bullet">&gt;</span> <span class="syn-text">Create new agent</span>\n  <span class="syn-bullet">&gt;</span> <span class="syn-text">Edit agent config</span>\n  <span class="syn-bullet">&gt;</span> <span class="syn-text">Configure tool access</span>',
+    iconIdx: 3 },
+];
+
+const CONFIG_ICONS = [
+  // YAML
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>',
+  // Markdown
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  // Folder
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>',
+  // Terminal
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>',
+];
+
+// ========== SVG Diagram Builder ==========
+function buildArchSVG(selectedId) {
+  const w = 680, h = 230;
+  const parentX = w/2, parentY = 40;
+  const positions = [
+    { x: 85, y: 190 },
+    { x: 255, y: 190 },
+    { x: 425, y: 190 },
+    { x: 595, y: 190 },
+  ];
+  const colors = ['#60a5fa', '#a78bfa', '#818cf8', '#c084fc'];
+  const parentColor = '#7b61ff';
+
+  let defs = `<defs>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowStrong"><feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>`;
+
+  colors.forEach((c, i) => {
+    defs += `<linearGradient id="lineGrad${i}" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="${parentColor}" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="${c}" stop-opacity="0.6"/>
+    </linearGradient>`;
+  });
+  defs += '</defs>';
+
+  let lines = '';
+  let particles = '';
+  positions.forEach((pos, i) => {
+    const isSelected = AGENTS[i].id === selectedId;
+    const opacity = isSelected ? 0.8 : 0.3;
+    const sw = isSelected ? 2.5 : 1.5;
+    const pathId = `path${i}`;
+    const pathD = `M ${parentX} ${parentY + 16} C ${parentX} ${parentY + 80}, ${pos.x} ${pos.y - 80}, ${pos.x} ${pos.y - 16}`;
+
+    // Base dashed line
+    lines += `<path id="${pathId}" d="${pathD}"
+      fill="none" stroke="url(#lineGrad${i})" stroke-width="${sw}" stroke-dasharray="6 4"
+      opacity="${opacity}" style="animation: dashFlow 2s linear infinite;"/>`;
+
+    // Glow trail for selected
+    if (isSelected) {
+      lines += `<path d="${pathD}" fill="none" stroke="${colors[i]}" stroke-width="4" opacity="0.08" filter="url(#glow)"/>`;
+    }
+
+    // Flowing data particle along the path
+    const particleR = isSelected ? 3.5 : 2.5;
+    const particleOp = isSelected ? 0.9 : 0.5;
+    const dur = isSelected ? '2s' : '3s';
+    particles += `<circle r="${particleR}" fill="${colors[i]}" opacity="${particleOp}" filter="url(#glow)">
+      <animateMotion dur="${dur}" repeatCount="indefinite" begin="${i * 0.5}s">
+        <mpath href="#${pathId}"/>
+      </animateMotion>
+    </circle>`;
+    // Second staggered particle for selected paths
+    if (isSelected) {
+      particles += `<circle r="2" fill="#fff" opacity="0.6" filter="url(#glow)">
+        <animateMotion dur="${dur}" repeatCount="indefinite" begin="${i * 0.5 + 1}s">
+          <mpath href="#${pathId}"/>
+        </animateMotion>
+      </circle>`;
+    }
+  });
+
+  // Parent pulsing node
+  let nodes = `<circle cx="${parentX}" cy="${parentY}" r="10" fill="${parentColor}" opacity="0.15" filter="url(#glowStrong)">
+      <animate attributeName="r" values="10;14;10" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.15;0.08;0.15" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="${parentX}" cy="${parentY}" r="7" fill="${parentColor}" opacity="0.85" filter="url(#glow)">
+      <animate attributeName="r" values="7;8;7" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="${parentX}" cy="${parentY}" r="3" fill="#fff" opacity="0.6"/>`;
+
+  // Child nodes
+  positions.forEach((pos, i) => {
+    const isSelected = AGENTS[i].id === selectedId;
+    const r = isSelected ? 8 : 6;
+    const op = isSelected ? 1 : 0.7;
+    const glowFilter = isSelected ? ' filter="url(#glowStrong)"' : '';
+
+    // Outer glow ring for selected
+    if (isSelected) {
+      nodes += `<circle cx="${pos.x}" cy="${pos.y}" r="12" fill="${colors[i]}" opacity="0.1" filter="url(#glowStrong)">
+        <animate attributeName="r" values="12;16;12" dur="2.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.1;0.05;0.1" dur="2.5s" repeatCount="indefinite"/>
+      </circle>`;
+    }
+
+    nodes += `<circle cx="${pos.x}" cy="${pos.y}" r="${r}" fill="${colors[i]}" opacity="${op}"${glowFilter}>
+      ${isSelected ? '<animate attributeName="r" values="8;9;8" dur="2s" repeatCount="indefinite"/>' : ''}
+    </circle>
+    <circle cx="${pos.x}" cy="${pos.y}" r="${Math.max(2, r - 3)}" fill="#fff" opacity="${isSelected ? 0.5 : 0.3}"/>`;
+  });
+
+  return `<div class="arch-svg-wrapper">
+    <svg viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">
+      ${defs}${lines}${particles}${nodes}
+    </svg>
+  </div>`;
+}
+
+// ========== Tab Logic ==========
+function setTab(tab) {
+  state.tab = tab;
+  state.selectedAgent = null;
+  state.selectedConfig = null;
+  render();
+}
+
+function selectAgent(id) {
+  state.selectedAgent = state.selectedAgent === id ? null : id;
+  render();
+}
+
+function selectConfig(id) {
+  state.selectedConfig = state.selectedConfig === id ? null : id;
+  render();
+}
+
+function render() {
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === state.tab));
+
+  const canvas = document.getElementById('canvas');
+
+  if (state.tab === 'architecture') {
+    const agent = AGENTS.find(a => a.id === state.selectedAgent);
+    canvas.innerHTML = `
+      <div class="arch-diagram">
+        ${buildArchSVG(state.selectedAgent)}
+        <div class="parent-node" onclick="selectAgent(null)">
+          <div class="node-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><line x1="12" y1="8" x2="5" y2="16"/><line x1="12" y1="8" x2="19" y2="16"/></svg></div>
+          <h3>Parent Agent (Orchestrator)</h3>
+          <p>Manages task tracking, dispatches to subagents, synthesizes results</p>
+        </div>
+        <div style="height: 12px;"></div>
+        <div class="subagent-row">
+          ${AGENTS.map(a => `
+            <div class="subagent-node ${state.selectedAgent === a.id ? 'selected' : ''}"
+                 style="--color:${a.color}; --glow:${a.glow}; --color-faint:${a.faint}" onclick="selectAgent('${a.id}')">
+              <div class="icon-wrap ${a.iconClass}">${AGENT_ICONS[a.id]}</div>
+              <h4>${a.name}</h4>
+              <span class="model-tag">${a.model}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="detail-card ${agent ? 'visible' : ''}" id="agentDetail">
+          ${agent ? `
+            <h4>${agent.name} Agent</h4>
+            <div class="detail-row"><span class="label">Model</span><span class="value">${agent.model}</span></div>
+            <div class="detail-row"><span class="label">Tools</span><span class="value">${agent.tools}</span></div>
+            <div class="detail-row"><span class="label">Description</span><span class="value">${agent.desc}</span></div>
+          ` : ''}
+        </div>
+      </div>`;
+  } else if (state.tab === 'config') {
+    canvas.innerHTML = `
+      <div class="config-section">
+        ${CONFIGS.map(c => `
+          <div class="config-block ${state.selectedConfig === c.id ? 'active' : ''}" onclick="selectConfig('${c.id}')">
+            <div class="config-header">
+              <div class="config-icon">${CONFIG_ICONS[c.iconIdx]}</div>
+              <div>
+                <h4>${c.title}</h4>
+                <p>${c.desc}</p>
+              </div>
+            </div>
+            <code>${c.code}</code>
+          </div>
+        `).join('')}
+      </div>`;
+  } else if (state.tab === 'types') {
+    canvas.innerHTML = `
+      <div class="arch-diagram">
+        <div class="subagent-row">
+          ${AGENTS.map(a => `
+            <div class="subagent-node ${state.selectedAgent === a.id ? 'selected' : ''}"
+                 style="--color:${a.color}; --glow:${a.glow}; --color-faint:${a.faint}" onclick="selectAgent('${a.id}')">
+              <div class="icon-wrap ${a.iconClass}">${AGENT_ICONS[a.id]}</div>
+              <h4>${a.name}</h4>
+              <span class="model-tag">${a.model} / ${a.tools}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="detail-card ${state.selectedAgent ? 'visible' : ''}">
+          ${state.selectedAgent ? (() => {
+            const a = AGENTS.find(x => x.id === state.selectedAgent);
+            return `<h4>${a.name}</h4>
+              <div class="detail-row"><span class="label">Model</span><span class="value">${a.model}</span></div>
+              <div class="detail-row"><span class="label">Tools</span><span class="value">${a.tools}</span></div>
+              <div class="detail-row"><span class="label">Use Case</span><span class="value">${a.desc}</span></div>`;
+          })() : ''}
+        </div>
+      </div>`;
+  } else if (state.tab === 'constraints') {
+    const constraintData = [
+      { text: 'Isolated context windows', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>' },
+      { text: 'No nesting (can\'t spawn sub-subagents)', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>' },
+      { text: 'Parent orchestrates all sequencing', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>' },
+      { text: 'Custom system prompt per agent', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>' },
+      { text: 'Independent permissions', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>' },
+      { text: 'Receives CLAUDE.md files', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>' },
+    ];
+    canvas.innerHTML = `
+      <div class="arch-diagram">
+        <div class="parent-node">
+          <div class="node-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>Key Architecture Constraints</h3>
+          <p>Design decisions that shape subagent behavior</p>
+        </div>
+        <div class="constraints">
+          ${constraintData.map(c => `
+            <div class="constraint">
+              <span class="constraint-icon">${c.icon}</span>
+              ${c.text}
+            </div>
+          `).join('')}
+        </div>
+        <div class="detail-card visible" style="margin-top:20px">
+          <h4>Context Isolation Model</h4>
+          <div class="detail-row"><span class="label">Context</span><span class="value">Each subagent runs in its own context window with a custom system prompt and specific tool access</span></div>
+          <div class="detail-row"><span class="label">No Nesting</span><span class="value">Subagents cannot spawn other subagents \u2014 the parent must orchestrate all sequential or parallel calls</span></div>
+          <div class="detail-row"><span class="label">Receives</span><span class="value">System prompt + CLAUDE.md files + task description from parent. Does NOT see parent conversation history.</span></div>
+          <div class="detail-row"><span class="label">Returns</span><span class="value">A single message back to the parent with results. Verbose output stays contained in the subagent context.</span></div>
+        </div>
+      </div>`;
+  }
+  updatePrompt();
+}
+
+function updatePrompt() {
+  const el = document.getElementById('promptText');
+  const parts = [];
+
+  if (state.tab === 'architecture') {
+    parts.push('Subagent Architecture: Parent agent orchestrates task-specific subagents, each running in isolated context windows with custom system prompts and scoped tool access.');
+    if (state.selectedAgent) {
+      const a = AGENTS.find(x => x.id === state.selectedAgent);
+      parts.push('\nSelected: ' + a.name + ' agent \u2014 ' + a.desc);
+    }
+  } else if (state.tab === 'config') {
+    parts.push('Subagent Configuration: Defined as markdown files with YAML frontmatter (name, description, tools, model, permissionMode, skills, hooks) plus a markdown system prompt body.');
+    if (state.selectedConfig) {
+      const c = CONFIGS.find(x => x.id === state.selectedConfig);
+      parts.push('\n' + c.title + ': ' + c.desc);
+    }
+  } else if (state.tab === 'types') {
+    parts.push('Built-in Subagent Types: Explore (Haiku, read-only), Plan (inherited model, read-only), General-purpose (all tools), Custom (configurable tools and model).');
+    if (state.selectedAgent) {
+      const a = AGENTS.find(x => x.id === state.selectedAgent);
+      parts.push('\n' + a.name + ': ' + a.desc);
+    }
+  } else {
+    parts.push('Subagent Constraints: Isolated context windows (no shared state), no nesting (parent orchestrates), each receives custom system prompt + CLAUDE.md files, returns single message to parent.');
+  }
+
+  el.textContent = parts.join('');
+}
+
+function copyPrompt() {
+  navigator.clipboard.writeText(document.getElementById('promptText').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+  });
+}
+
+render();
+</script>
+</body>
+</html>

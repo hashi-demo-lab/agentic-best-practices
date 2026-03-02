@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Agentic Loop — Validation Patterns</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a12;
+    color: #e0e0e8;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Static gradient orbs via pseudo-elements */
+  body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background:
+      radial-gradient(ellipse 700px 700px at 15% 25%, rgba(123, 97, 255, 0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 600px 600px at 85% 65%, rgba(94, 234, 212, 0.05) 0%, transparent 70%),
+      radial-gradient(ellipse 500px 500px at 50% 50%, rgba(96, 165, 250, 0.04) 0%, transparent 70%),
+      radial-gradient(ellipse 400px 400px at 75% 20%, rgba(251, 191, 36, 0.03) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Dot grid overlay */
+  body::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: radial-gradient(circle, rgba(123, 97, 255, 0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Title bar */
+  .title-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    text-align: center;
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid rgba(123, 97, 255, 0.15);
+    z-index: 2;
+    background: rgba(10, 10, 18, 0.5);
+  }
+
+  .title-bar h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7b61ff, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .title-bar p {
+    color: #8888a0;
+    font-size: 0.95rem;
+  }
+
+  /* Main layout container */
+  .main-layout {
+    position: absolute;
+    top: 100px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    z-index: 2;
+    padding: 20px 40px 24px;
+    gap: 32px;
+  }
+
+  /* Left section: loop diagram */
+  .loop-section {
+    flex: 0 0 620px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .loop-circle-wrap {
+    position: relative;
+    width: 560px;
+    height: 560px;
+  }
+
+  /* SVG circle arrows */
+  .loop-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+  }
+
+  /* Center indicator */
+  .center-indicator {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 110px; height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    background: rgba(22, 22, 34, 0.8);
+    border-radius: 50%;
+    border: 2px solid rgba(123, 97, 255, 0.25);
+    box-shadow: 0 0 30px rgba(123, 97, 255, 0.12);
+  }
+
+  .center-icon {
+    font-size: 1.8rem;
+    margin-bottom: 2px;
+    filter: drop-shadow(0 0 8px rgba(123, 97, 255, 0.4));
+    color: #a78bfa;
+  }
+
+  .center-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: #a78bfa;
+    text-align: center;
+  }
+
+  /* Step cards positioned around the circle */
+  .loop-step {
+    position: absolute;
+    width: 200px;
+    padding: 16px 14px;
+    z-index: 3;
+    background: rgba(22, 22, 34, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123, 97, 255, 0.15);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .loop-step.step-gather {
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-color: rgba(123, 97, 255, 0.3);
+  }
+
+  .loop-step.step-act {
+    top: 50%;
+    right: -30px;
+    transform: translateY(-50%);
+    border-color: rgba(59, 130, 246, 0.3);
+  }
+
+  .loop-step.step-verify {
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-color: rgba(94, 234, 212, 0.3);
+  }
+
+  .loop-step.step-repeat {
+    top: 50%;
+    left: -30px;
+    transform: translateY(-50%);
+    border-color: rgba(251, 191, 36, 0.3);
+  }
+
+  .step-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-gather .step-num {
+    background: rgba(123, 97, 255, 0.2);
+    color: #a78bfa;
+    border: 2px solid rgba(123, 97, 255, 0.4);
+    box-shadow: 0 0 12px rgba(123, 97, 255, 0.2);
+  }
+
+  .step-act .step-num {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border: 2px solid rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.2);
+  }
+
+  .step-verify .step-num {
+    background: rgba(94, 234, 212, 0.2);
+    color: #5eead4;
+    border: 2px solid rgba(94, 234, 212, 0.4);
+    box-shadow: 0 0 12px rgba(94, 234, 212, 0.2);
+  }
+
+  .step-repeat .step-num {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    border: 2px solid rgba(251, 191, 36, 0.4);
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.2);
+  }
+
+  .step-icon { font-size: 1rem; }
+
+  .step-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #d0d0e0;
+  }
+
+  .step-short {
+    font-size: 0.73rem;
+    color: #8888a0;
+    line-height: 1.45;
+  }
+
+  /* Right section: expanded details + toolchain */
+  .details-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow: hidden;
+  }
+
+  /* Detail cards for each step */
+  .detail-card {
+    background: rgba(22, 22, 34, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123, 97, 255, 0.15);
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .detail-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .detail-card-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .detail-card.card-gather {
+    border-color: rgba(123, 97, 255, 0.25);
+  }
+  .detail-card.card-gather .detail-card-num {
+    background: #7b61ff;
+    color: #fff;
+    box-shadow: 0 0 14px rgba(123, 97, 255, 0.35);
+  }
+  .detail-card.card-gather .detail-card-title {
+    color: #a78bfa;
+  }
+
+  .detail-card.card-act {
+    border-color: rgba(59, 130, 246, 0.25);
+  }
+  .detail-card.card-act .detail-card-num {
+    background: #3b82f6;
+    color: #fff;
+    box-shadow: 0 0 14px rgba(59, 130, 246, 0.35);
+  }
+  .detail-card.card-act .detail-card-title {
+    color: #60a5fa;
+  }
+
+  .detail-card.card-verify {
+    border-color: rgba(94, 234, 212, 0.25);
+  }
+  .detail-card.card-verify .detail-card-num {
+    background: #14b8a6;
+    color: #fff;
+    box-shadow: 0 0 14px rgba(94, 234, 212, 0.35);
+  }
+  .detail-card.card-verify .detail-card-title {
+    color: #5eead4;
+  }
+
+  .detail-card.card-repeat {
+    border-color: rgba(251, 191, 36, 0.25);
+  }
+  .detail-card.card-repeat .detail-card-num {
+    background: #f59e0b;
+    color: #fff;
+    box-shadow: 0 0 14px rgba(251, 191, 36, 0.35);
+  }
+  .detail-card.card-repeat .detail-card-title {
+    color: #fbbf24;
+  }
+
+  .detail-card-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+  }
+
+  .detail-card-icon {
+    font-size: 1rem;
+  }
+
+  .detail-items {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .detail-item {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #b0b0c8;
+    line-height: 1.5;
+    background: rgba(18, 18, 26, 0.6);
+  }
+
+  .card-gather .detail-item {
+    border-left: 3px solid rgba(123, 97, 255, 0.5);
+  }
+  .card-act .detail-item {
+    border-left: 3px solid rgba(59, 130, 246, 0.5);
+  }
+  .card-verify .detail-item {
+    border-left: 3px solid rgba(94, 234, 212, 0.5);
+  }
+  .card-repeat .detail-item {
+    border-left: 3px solid rgba(251, 191, 36, 0.5);
+  }
+
+  .detail-item strong {
+    color: #d0d0e0;
+  }
+
+  /* IaC Toolchain panel */
+  .iac-panel {
+    background: rgba(22, 22, 34, 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(94, 234, 212, 0.15);
+    border-radius: 16px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    margin-top: auto;
+  }
+
+  .iac-panel h3 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #5eead4;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .iac-panel h3::before {
+    content: '';
+    display: inline-block;
+    width: 18px; height: 2px;
+    background: linear-gradient(90deg, #5eead4, transparent);
+  }
+
+  .iac-tools {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .iac-tool {
+    padding: 9px 14px;
+    border-radius: 12px;
+    background: rgba(15, 32, 26, 0.5);
+    border: 1px solid rgba(94, 234, 212, 0.15);
+    color: #5eead4;
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .tool-icon {
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 4px rgba(94, 234, 212, 0.3));
+  }
+</style>
+</head>
+<body>
+
+<!-- Title bar -->
+<div class="title-bar">
+  <h1>Agentic Loop</h1>
+  <p>Validation Patterns &mdash; Gather, Act, Verify, Repeat</p>
+</div>
+
+<div class="main-layout">
+  <!-- Left: Circular loop diagram -->
+  <div class="loop-section">
+    <div class="loop-circle-wrap">
+
+      <!-- SVG circular arrows -->
+      <svg class="loop-svg" viewBox="0 0 560 560">
+        <defs>
+          <linearGradient id="gradPurpleBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#7b61ff" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.7"/>
+          </linearGradient>
+          <linearGradient id="gradBlueTeal" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#5eead4" stop-opacity="0.7"/>
+          </linearGradient>
+          <linearGradient id="gradTealAmber" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#5eead4" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#fbbf24" stop-opacity="0.7"/>
+          </linearGradient>
+          <linearGradient id="gradAmberPurple" x1="100%" y1="100%" x2="0%" y2="0%">
+            <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.7"/>
+            <stop offset="100%" stop-color="#7b61ff" stop-opacity="0.7"/>
+          </linearGradient>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="2.5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <!-- Arrowhead markers -->
+          <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <path d="M0,0 L10,3.5 L0,7 Z" fill="#3b82f6" opacity="0.8"/>
+          </marker>
+          <marker id="arrowTeal" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <path d="M0,0 L10,3.5 L0,7 Z" fill="#5eead4" opacity="0.8"/>
+          </marker>
+          <marker id="arrowAmber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <path d="M0,0 L10,3.5 L0,7 Z" fill="#fbbf24" opacity="0.8"/>
+          </marker>
+          <marker id="arrowPurple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <path d="M0,0 L10,3.5 L0,7 Z" fill="#7b61ff" opacity="0.8"/>
+          </marker>
+        </defs>
+
+        <!-- Faint circular track -->
+        <circle cx="280" cy="280" r="165" fill="none" stroke="rgba(123,97,255,0.05)" stroke-width="44"/>
+        <circle cx="280" cy="280" r="165" fill="none" stroke="rgba(123,97,255,0.04)" stroke-width="1" stroke-dasharray="4 8"/>
+
+        <!-- Arc 1: Gather (top) -> Act (right) -->
+        <path d="M 355 125 A 165 165 0 0 1 435 248" fill="none" stroke="url(#gradPurpleBlue)" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrowBlue)" filter="url(#glow)"/>
+
+        <!-- Arc 2: Act (right) -> Verify (bottom) -->
+        <path d="M 435 312 A 165 165 0 0 1 355 435" fill="none" stroke="url(#gradBlueTeal)" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrowTeal)" filter="url(#glow)"/>
+
+        <!-- Arc 3: Verify (bottom) -> Repeat (left) -->
+        <path d="M 205 435 A 165 165 0 0 1 125 312" fill="none" stroke="url(#gradTealAmber)" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrowAmber)" filter="url(#glow)"/>
+
+        <!-- Arc 4: Repeat (left) -> Gather (top) -->
+        <path d="M 125 248 A 165 165 0 0 1 205 125" fill="none" stroke="url(#gradAmberPurple)" stroke-width="2.5" stroke-linecap="round" opacity="0.6" marker-end="url(#arrowPurple)" filter="url(#glow)"/>
+
+        <!-- Small dots at arc midpoints for visual interest -->
+        <circle cx="410" cy="175" r="3" fill="#7b61ff" opacity="0.5" filter="url(#glow)"/>
+        <circle cx="410" cy="385" r="3" fill="#5eead4" opacity="0.5" filter="url(#glow)"/>
+        <circle cx="150" cy="385" r="3" fill="#fbbf24" opacity="0.5" filter="url(#glow)"/>
+        <circle cx="150" cy="175" r="3" fill="#a78bfa" opacity="0.5" filter="url(#glow)"/>
+      </svg>
+
+      <!-- Center indicator (static, no spinning) -->
+      <div class="center-indicator">
+        <div class="center-icon">&#x21BB;</div>
+        <div class="center-label">LOOP</div>
+      </div>
+
+      <!-- Step 1: Gather Context (top) -->
+      <div class="loop-step step-gather">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <span class="step-icon">&#128270;</span>
+          <div class="step-title">Gather Context</div>
+        </div>
+        <div class="step-short">Read specs, understand requirements, load relevant files</div>
+      </div>
+
+      <!-- Step 2: Take Action (right) -->
+      <div class="loop-step step-act">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <span class="step-icon">&#9997;&#65039;</span>
+          <div class="step-title">Take Action</div>
+        </div>
+        <div class="step-short">Write code, generate configuration, make changes</div>
+      </div>
+
+      <!-- Step 3: Verify Work (bottom) -->
+      <div class="loop-step step-verify">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <span class="step-icon">&#9989;</span>
+          <div class="step-title">Verify Work</div>
+        </div>
+        <div class="step-short">Run validation, check rules, get feedback</div>
+      </div>
+
+      <!-- Step 4: Self-Correct & Repeat (left) -->
+      <div class="loop-step step-repeat">
+        <div class="step-header">
+          <div class="step-num">&#x21BB;</div>
+          <span class="step-icon">&#128260;</span>
+          <div class="step-title">Self-Correct &amp; Repeat</div>
+        </div>
+        <div class="step-short">Fix issues based on feedback, iterate until passing</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Right: Detail panels + toolchain -->
+  <div class="details-section">
+
+    <!-- Step 1 details -->
+    <div class="detail-card card-gather">
+      <div class="detail-card-header">
+        <div class="detail-card-num">1</div>
+        <span class="detail-card-icon">&#128270;</span>
+        <div class="detail-card-title">Gather Context</div>
+      </div>
+      <div class="detail-items">
+        <div class="detail-item">Read the specification or task description to understand what needs to be done</div>
+        <div class="detail-item">Load relevant files and understand existing patterns before making changes</div>
+        <div class="detail-item">For IaC: read existing module structure, provider docs, policy constraints</div>
+      </div>
+    </div>
+
+    <!-- Step 2 details -->
+    <div class="detail-card card-act">
+      <div class="detail-card-header">
+        <div class="detail-card-num">2</div>
+        <span class="detail-card-icon">&#9997;&#65039;</span>
+        <div class="detail-card-title">Take Action</div>
+      </div>
+      <div class="detail-items">
+        <div class="detail-item">Generate Terraform resources, variables, outputs following conventions</div>
+        <div class="detail-item">Write test files alongside implementation (TDD for IaC)</div>
+        <div class="detail-item">Keep changes atomic and focused -- one logical change per iteration</div>
+      </div>
+    </div>
+
+    <!-- Step 3 details -->
+    <div class="detail-card card-verify">
+      <div class="detail-card-header">
+        <div class="detail-card-num">3</div>
+        <span class="detail-card-icon">&#9989;</span>
+        <div class="detail-card-title">Verify Work</div>
+      </div>
+      <div class="detail-items">
+        <div class="detail-item"><strong>Rules-Based Feedback:</strong> Define clear output rules, then explain which rules failed and why</div>
+        <div class="detail-item"><strong>Terraform Validate:</strong> Syntax and configuration correctness</div>
+        <div class="detail-item"><strong>Terraform Plan:</strong> Preview infrastructure changes</div>
+        <div class="detail-item"><strong>TFLint:</strong> Best practice enforcement</div>
+        <div class="detail-item"><strong>Policy Checks:</strong> Security and compliance validation</div>
+      </div>
+    </div>
+
+    <!-- Step 4 details -->
+    <div class="detail-card card-repeat">
+      <div class="detail-card-header">
+        <div class="detail-card-num">&#x21BB;</div>
+        <span class="detail-card-icon">&#128260;</span>
+        <div class="detail-card-title">Self-Correct &amp; Repeat</div>
+      </div>
+      <div class="detail-items">
+        <div class="detail-item">Agent reads error messages and rule violations to understand what went wrong</div>
+        <div class="detail-item">Makes targeted fixes based on specific feedback -- not random changes</div>
+        <div class="detail-item">Re-runs validation to confirm fix. Loop continues until all checks pass.</div>
+      </div>
+    </div>
+
+    <!-- IaC Toolchain -->
+    <div class="iac-panel">
+      <h3>TDD for IaC &mdash; Validation Toolchain</h3>
+      <div class="iac-tools">
+        <div class="iac-tool">
+          <span class="tool-icon">&#9881;&#65039;</span> terraform validate
+        </div>
+        <div class="iac-tool">
+          <span class="tool-icon">&#128203;</span> terraform plan
+        </div>
+        <div class="iac-tool">
+          <span class="tool-icon">&#128269;</span> TFLint
+        </div>
+        <div class="iac-tool">
+          <span class="tool-icon">&#128274;</span> Policy checks
+        </div>
+        <div class="iac-tool">
+          <span class="tool-icon">&#128279;</span> Pre-commit hooks
+        </div>
+        <div class="iac-tool">
+          <span class="tool-icon">&#129514;</span> Test suites
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

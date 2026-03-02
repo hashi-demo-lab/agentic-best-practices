@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide 04 - Agentic IaC Workflows</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a12;
+    color: #e0e0e8;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* -- Dot grid overlay -- */
+  body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+      radial-gradient(rgba(123, 97, 255, 0.07) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 100%);
+  }
+
+  /* -- Static gradient orbs -- */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb-1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(123, 97, 255, 0.13) 0%, transparent 70%);
+    top: -150px; left: -120px;
+  }
+  .orb-2 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.11) 0%, transparent 70%);
+    bottom: -120px; right: 6%;
+  }
+  .orb-3 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.09) 0%, transparent 70%);
+    top: 30%; right: -80px;
+  }
+  .orb-4 {
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(96, 165, 250, 0.07) 0%, transparent 70%);
+    bottom: 15%; left: 20%;
+  }
+
+  /* -- Header -- */
+  .header {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 38px 40px 22px;
+    border-bottom: 1px solid rgba(123, 97, 255, 0.1);
+    background: linear-gradient(180deg, rgba(123, 97, 255, 0.04) 0%, transparent 100%);
+  }
+  .header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7b61ff, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .header p {
+    color: #8888a0;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* -- Main layout -- */
+  .main {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 64px 28px;
+    height: calc(1080px - 112px);
+  }
+
+  /* -- Flow diagram area -- */
+  .flow-area {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+  }
+
+  /* -- Cards container -- */
+  .cards {
+    display: flex;
+    gap: 64px;
+    z-index: 1;
+    width: 100%;
+    max-width: 1792px;
+    position: relative;
+  }
+
+  /* -- SVG arrows between cards -- */
+  .arrow-connector {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .arrow-connector-1 {
+    left: calc(33.333% - 10px);
+    width: 86px;
+  }
+  .arrow-connector-2 {
+    left: calc(66.666% - 10px);
+    width: 86px;
+  }
+  .arrow-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* -- Glass card -- */
+  .card {
+    flex: 1;
+    background: rgba(22, 22, 34, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123, 97, 255, 0.15);
+    border-radius: 16px;
+    padding: 28px 26px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* -- Top accent bar -- */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .card-producer::before {
+    background: linear-gradient(90deg, #7b61ff, #a78bfa, #7b61ff);
+  }
+  .card-consumer::before {
+    background: linear-gradient(90deg, #6366f1, #818cf8, #6366f1);
+  }
+  .card-provider::before {
+    background: linear-gradient(90deg, #8b5cf6, #c4b5fd, #8b5cf6);
+  }
+
+  /* -- Inner glow -- */
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    pointer-events: none;
+  }
+  .card-producer::after {
+    background: radial-gradient(ellipse at 50% 0%, rgba(123, 97, 255, 0.06), transparent 60%);
+  }
+  .card-consumer::after {
+    background: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.06), transparent 60%);
+  }
+  .card-provider::after {
+    background: radial-gradient(ellipse at 50% 0%, rgba(139, 92, 246, 0.06), transparent 60%);
+  }
+
+  .card-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* -- Card icon -- */
+  .card-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    margin-bottom: 16px;
+    border-radius: 14px;
+  }
+  .card-producer .card-icon-wrap {
+    background: linear-gradient(135deg, rgba(123, 97, 255, 0.22), rgba(123, 97, 255, 0.08));
+    border: 1px solid rgba(123, 97, 255, 0.20);
+    box-shadow: 0 4px 20px rgba(123, 97, 255, 0.12);
+  }
+  .card-consumer .card-icon-wrap {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(99, 102, 241, 0.08));
+    border: 1px solid rgba(99, 102, 241, 0.20);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.12);
+  }
+  .card-provider .card-icon-wrap {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.22), rgba(139, 92, 246, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.20);
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.12);
+  }
+
+  .card-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .card-team {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    opacity: 0.85;
+    margin-bottom: 6px;
+  }
+  .card-producer .card-team { color: #a78bfa; }
+  .card-consumer .card-team { color: #818cf8; }
+  .card-provider .card-team { color: #c4b5fd; }
+
+  .card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ebebf5;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .card-desc {
+    font-size: 0.88rem;
+    color: #8888a0;
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+
+  /* -- Divider -- */
+  .detail-divider {
+    height: 1px;
+    border: none;
+    margin: 0 0 18px;
+  }
+  .card-producer .detail-divider {
+    background: linear-gradient(90deg, transparent, rgba(123, 97, 255, 0.25), transparent);
+  }
+  .card-consumer .detail-divider {
+    background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.25), transparent);
+  }
+  .card-provider .detail-divider {
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.25), transparent);
+  }
+
+  /* -- Benefits label -- */
+  .benefits-label {
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0.75;
+  }
+  .card-producer .benefits-label { color: #a78bfa; }
+  .card-consumer .benefits-label { color: #818cf8; }
+  .card-provider .benefits-label { color: #c4b5fd; }
+
+  .benefits-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+  }
+  .card-producer .benefits-label::after {
+    background: linear-gradient(90deg, rgba(123, 97, 255, 0.20), transparent);
+  }
+  .card-consumer .benefits-label::after {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.20), transparent);
+  }
+  .card-provider .benefits-label::after {
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.20), transparent);
+  }
+
+  /* -- Benefit items -- */
+  .benefit {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 0.86rem;
+    color: #b0b0cc;
+    line-height: 1.5;
+  }
+
+  .benefit-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    margin-top: 1px;
+    color: #e0e0e8;
+  }
+  .card-producer .benefit-icon {
+    background: linear-gradient(135deg, rgba(123, 97, 255, 0.22), rgba(123, 97, 255, 0.08));
+    border: 1px solid rgba(123, 97, 255, 0.15);
+  }
+  .card-consumer .benefit-icon {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.22), rgba(99, 102, 241, 0.08));
+    border: 1px solid rgba(99, 102, 241, 0.15);
+  }
+  .card-provider .benefit-icon {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.22), rgba(139, 92, 246, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.15);
+  }
+
+  /* -- Metric badge -- */
+  .metric-badge {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    border-radius: 12px;
+    position: relative;
+  }
+  .card-producer .metric-badge {
+    background: linear-gradient(135deg, rgba(123, 97, 255, 0.12), rgba(123, 97, 255, 0.04));
+    border: 1px solid rgba(123, 97, 255, 0.20);
+  }
+  .card-consumer .metric-badge {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.04));
+    border: 1px solid rgba(99, 102, 241, 0.20);
+  }
+  .card-provider .metric-badge {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0.04));
+    border: 1px solid rgba(139, 92, 246, 0.20);
+  }
+
+  .metric-icon {
+    font-size: 1.4rem;
+  }
+
+  .metric-content {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .metric-label {
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+  }
+  .card-producer .metric-label { color: rgba(167, 139, 250, 0.7); }
+  .card-consumer .metric-label { color: rgba(129, 140, 248, 0.7); }
+  .card-provider .metric-label { color: rgba(196, 181, 253, 0.7); }
+
+  .metric-value {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .metric-from {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #9090a8;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+  .card-producer .metric-from { text-decoration-color: rgba(123, 97, 255, 0.4); }
+  .card-consumer .metric-from { text-decoration-color: rgba(99, 102, 241, 0.4); }
+  .card-provider .metric-from { text-decoration-color: rgba(139, 92, 246, 0.4); }
+
+  .metric-arrow {
+    font-size: 1rem;
+  }
+  .card-producer .metric-arrow { color: #a78bfa; }
+  .card-consumer .metric-arrow { color: #818cf8; }
+  .card-provider .metric-arrow { color: #c4b5fd; }
+
+  .metric-to {
+    font-size: 1.05rem;
+    font-weight: 800;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .card-producer .metric-to { color: #a78bfa; }
+  .card-consumer .metric-to { color: #818cf8; }
+  .card-provider .metric-to { color: #c4b5fd; }
+
+  /* -- Bottom summary bar -- */
+  .summary-bar {
+    position: relative;
+    z-index: 1;
+    padding: 20px 0 0;
+    flex-shrink: 0;
+  }
+
+  .summary-text {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 0.82rem;
+    color: #8888a0;
+    line-height: 1.65;
+    background: linear-gradient(165deg, rgba(16, 16, 24, 0.8), rgba(12, 12, 20, 0.9));
+    border: 1px solid rgba(123, 97, 255, 0.08);
+    border-radius: 12px;
+    padding: 16px 24px;
+  }
+
+  .summary-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #5a5a78;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Static gradient orbs -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="orb orb-4"></div>
+
+<!-- Header -->
+<div class="header">
+  <h1>Agentic IaC Workflows</h1>
+  <p>Three interconnected workflows that use AI-driven agents to accelerate Terraform infrastructure delivery, reduce risk, and compress development timelines</p>
+</div>
+
+<!-- Main content -->
+<div class="main">
+  <div class="flow-area">
+    <!-- Cards with inline arrow connectors -->
+    <div class="cards">
+
+      <!-- Producer Card -->
+      <div class="card card-producer">
+        <div class="card-inner">
+          <div class="card-icon-wrap"><span class="card-icon">&#x1F3D7;&#xFE0F;</span></div>
+          <div class="card-team">Platform Team</div>
+          <div class="card-title">Producer Workflow</div>
+          <div class="card-desc">Generate compliant, tested modules for Private Module Registry</div>
+          <hr class="detail-divider">
+          <div class="benefits-label">Benefits</div>
+          <div class="benefit">
+            <span class="benefit-icon">&#x2713;</span>
+            <span>Reduce module delivery from weeks to hours</span>
+          </div>
+          <div class="benefit">
+            <span class="benefit-icon">&#x2713;</span>
+            <span>Eliminate misconfigurations that cause downtime</span>
+          </div>
+          <div class="metric-badge">
+            <span class="metric-icon">&#x26A1;</span>
+            <div class="metric-content">
+              <span class="metric-label">Acceleration</span>
+              <div class="metric-value">
+                <span class="metric-from">336 hrs</span>
+                <span class="metric-arrow">&#x2192;</span>
+                <span class="metric-to">4 hrs</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow connector 1 -->
+      <div class="arrow-connector-1" style="flex-shrink: 0; width: 64px; display: flex; align-items: center; justify-content: center; z-index: 0; margin: 0 -32px;">
+        <svg width="64" height="200" viewBox="0 0 64 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+          <defs>
+            <linearGradient id="arrowGrad1" x1="0" y1="100" x2="64" y2="100" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#7b61ff" stop-opacity="0.8"/>
+              <stop offset="50%" stop-color="#a78bfa" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#6366f1" stop-opacity="0.8"/>
+            </linearGradient>
+            <filter id="arrowGlow1">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <!-- Glow line -->
+          <line x1="4" y1="100" x2="48" y2="100" stroke="rgba(123,97,255,0.15)" stroke-width="8" filter="url(#arrowGlow1)"/>
+          <!-- Main line -->
+          <line x1="4" y1="100" x2="48" y2="100" stroke="url(#arrowGrad1)" stroke-width="2.5" stroke-dasharray="8 4" stroke-linecap="round"/>
+          <!-- Arrowhead -->
+          <polygon points="48,94 60,100 48,106" fill="#a78bfa" opacity="0.85"/>
+          <!-- Label background -->
+          <rect x="2" y="68" width="60" height="22" rx="5" fill="rgba(10,10,18,0.92)" stroke="rgba(123,97,255,0.18)" stroke-width="0.8"/>
+          <!-- Label text -->
+          <text x="32" y="83" text-anchor="middle" fill="#a78bfa" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif" font-size="9" font-weight="600" letter-spacing="1.2">PUBLISH</text>
+          <!-- Decorative dots -->
+          <circle cx="16" cy="100" r="2" fill="#7b61ff" opacity="0.4"/>
+          <circle cx="32" cy="100" r="2.5" fill="#a78bfa" opacity="0.6"/>
+          <circle cx="48" cy="100" r="2" fill="#6366f1" opacity="0.4"/>
+        </svg>
+      </div>
+
+      <!-- Consumer Card -->
+      <div class="card card-consumer">
+        <div class="card-inner">
+          <div class="card-icon-wrap"><span class="card-icon">&#x1F680;</span></div>
+          <div class="card-team">Application Team</div>
+          <div class="card-title">Consumer Workflow</div>
+          <div class="card-desc">Deploy and manage complex architectures using natural language</div>
+          <hr class="detail-divider">
+          <div class="benefits-label">Benefits</div>
+          <div class="benefit">
+            <span class="benefit-icon">&#x2713;</span>
+            <span>Minimize service risk through validated modules</span>
+          </div>
+          <div class="benefit">
+            <span class="benefit-icon">&#x2713;</span>
+            <span>Auto-align infrastructure to security policies</span>
+          </div>
+          <div class="metric-badge">
+            <span class="metric-icon">&#x1F6E1;&#xFE0F;</span>
+            <div class="metric-content">
+              <span class="metric-label">Compliance</span>
+              <div class="metric-value">
+                <span class="metric-from">Risk</span>
+                <span class="metric-arrow">&#x2192;</span>
+                <span class="metric-to">100%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow connector 2 -->
+      <div class="arrow-connector-2" style="flex-shrink: 0; width: 64px; display: flex; align-items: center; justify-content: center; z-index: 0; margin: 0 -32px;">
+        <svg width="64" height="200" viewBox="0 0 64 200" fill="none" xmlns="http://www.w3.org/2000/svg" style="overflow: visible;">
+          <defs>
+            <linearGradient id="arrowGrad2" x1="0" y1="100" x2="64" y2="100" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#6366f1" stop-opacity="0.8"/>
+              <stop offset="50%" stop-color="#a78bfa" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.8"/>
+            </linearGradient>
+            <filter id="arrowGlow2">
+              <feGaussianBlur stdDeviation="3" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <!-- Glow line -->
+          <line x1="4" y1="100" x2="48" y2="100" stroke="rgba(99,102,241,0.15)" stroke-width="8" filter="url(#arrowGlow2)"/>
+          <!-- Main line -->
+          <line x1="4" y1="100" x2="48" y2="100" stroke="url(#arrowGrad2)" stroke-width="2.5" stroke-dasharray="8 4" stroke-linecap="round"/>
+          <!-- Arrowhead -->
+          <polygon points="48,94 60,100 48,106" fill="#c4b5fd" opacity="0.85"/>
+          <!-- Label background -->
+          <rect x="0" y="68" width="64" height="22" rx="5" fill="rgba(10,10,18,0.92)" stroke="rgba(139,92,246,0.18)" stroke-width="0.8"/>
+          <!-- Label text -->
+          <text x="32" y="83" text-anchor="middle" fill="#c4b5fd" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif" font-size="9" font-weight="600" letter-spacing="1.2">CONSUME</text>
+          <!-- Decorative dots -->
+          <circle cx="16" cy="100" r="2" fill="#6366f1" opacity="0.4"/>
+          <circle cx="32" cy="100" r="2.5" fill="#a78bfa" opacity="0.6"/>
+          <circle cx="48" cy="100" r="2" fill="#8b5cf6" opacity="0.4"/>
+        </svg>
+      </div>
+
+      <!-- Provider Card -->
+      <div class="card card-provider">
+        <div class="card-inner">
+          <div class="card-icon-wrap"><span class="card-icon">&#x1F310;</span></div>
+          <div class="card-team">Ecosystem</div>
+          <div class="card-title">Provider Lifecycle</div>
+          <div class="card-desc">Accelerate Terraform Provider development and release cycles</div>
+          <hr class="detail-divider">
+          <div class="benefits-label">Benefits</div>
+          <div class="benefit">
+            <span class="benefit-icon">&#x2713;</span>
+            <span>Deliver quality providers in days, not months</span>
+          </div>
+          <div class="benefit">
+            <span class="benefit-icon">&#x2713;</span>
+            <span>Comprehensive test coverage minimizes UX issues</span>
+          </div>
+          <div class="metric-badge">
+            <span class="metric-icon">&#x1F4A8;</span>
+            <div class="metric-content">
+              <span class="metric-label">Acceleration</span>
+              <div class="metric-value">
+                <span class="metric-from">120 days</span>
+                <span class="metric-arrow">&#x2192;</span>
+                <span class="metric-to">5 days</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Bottom summary -->
+  <div class="summary-bar">
+    <div class="summary-label">Overview</div>
+    <div class="summary-text">All three Agentic IaC Workflows: Producer Workflow (Platform Team) generates compliant, tested modules for Private Module Registry. Consumer Workflow (Application Team) deploys and manages complex architectures using natural language. Provider Lifecycle (Ecosystem) accelerates Terraform Provider development and release cycles.</div>
+  </div>
+</div>
+
+</body>
+</html>

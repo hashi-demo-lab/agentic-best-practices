@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Agent Identity &amp; Isolation</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #0a0a12;
+    color: #e0e0e8;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ---- Static gradient orbs via pseudo-elements ---- */
+  body::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    left: -80px;
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(circle, rgba(123,97,255,0.12) 0%, rgba(123,97,255,0.03) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: absolute;
+    bottom: -160px;
+    right: -100px;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(94,234,212,0.09) 0%, rgba(94,234,212,0.02) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ---- Dot grid overlay ---- */
+  .dot-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ---- Third orb (pink, top-right) ---- */
+  .orb-pink {
+    position: absolute;
+    top: 60px;
+    right: 200px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(244,114,182,0.08) 0%, rgba(244,114,182,0.02) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ---- Layout ---- */
+  .slide-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 44px 80px 40px;
+  }
+
+  /* ---- Title bar ---- */
+  .title-bar {
+    text-align: center;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .title-bar h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7b61ff, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .title-bar p {
+    color: #8888a0;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+  }
+
+  /* ---- Main content area ---- */
+  .content-area {
+    display: flex;
+    gap: 48px;
+    flex: 1;
+    align-items: flex-start;
+  }
+
+  /* ---- Concentric rings diagram ---- */
+  .rings-section {
+    flex: 0 0 820px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .rings-wrapper {
+    position: relative;
+    width: 720px;
+    height: 460px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* SVG rings */
+  .rings-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Ring labels positioned absolutely */
+  .ring-label {
+    position: absolute;
+    font-size: 0.82rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 2;
+    letter-spacing: 0.01em;
+  }
+  .ring-label-outer {
+    top: 12px;
+    left: 38px;
+    color: #f472b6;
+  }
+  .ring-label-middle {
+    top: 72px;
+    left: 98px;
+    color: #7b61ff;
+  }
+  .ring-label-inner {
+    top: 132px;
+    left: 158px;
+    color: #5eead4;
+  }
+
+  .ring-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .ring-dot-pink { background: #f472b6; box-shadow: 0 0 8px rgba(244,114,182,0.5); }
+  .ring-dot-purple { background: #7b61ff; box-shadow: 0 0 8px rgba(123,97,255,0.5); }
+  .ring-dot-teal { background: #5eead4; box-shadow: 0 0 8px rgba(94,234,212,0.5); }
+
+  /* Center content of the rings */
+  .ring-center-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 340px;
+    padding: 0 20px;
+  }
+  .ring-center-content p {
+    font-size: 0.95rem;
+    color: #b0b0c8;
+    line-height: 1.7;
+  }
+  .ring-center-content p span {
+    color: #e0e0e8;
+    font-weight: 500;
+  }
+
+  /* ---- Goal banner ---- */
+  .goal-banner {
+    margin-top: 28px;
+    width: 720px;
+    padding: 18px 28px;
+    background: rgba(22,22,34,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.15);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #a0a0b8;
+    line-height: 1.6;
+  }
+  .goal-banner strong {
+    color: #d4c8ff;
+  }
+
+  /* ---- Benefits column ---- */
+  .benefits-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 4px;
+  }
+
+  .benefit-card {
+    background: rgba(22,22,34,0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(123,97,255,0.15);
+    border-radius: 16px;
+    padding: 26px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Glass highlight */
+  .benefit-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+  }
+
+  /* Color accent bar on left */
+  .benefit-card::after {
+    content: '';
+    position: absolute;
+    top: 16px;
+    bottom: 16px;
+    left: 0;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+  }
+  .benefit-card.pink::after { background: #f472b6; box-shadow: 0 0 12px rgba(244,114,182,0.3); }
+  .benefit-card.purple::after { background: #7b61ff; box-shadow: 0 0 12px rgba(123,97,255,0.3); }
+  .benefit-card.teal::after { background: #5eead4; box-shadow: 0 0 12px rgba(94,234,212,0.3); }
+
+  .benefit-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .benefit-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.04);
+    flex-shrink: 0;
+  }
+  .benefit-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .benefit-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #e0e0e8;
+  }
+  .benefit-subtitle {
+    font-size: 0.85rem;
+    color: #8888a0;
+    margin-top: 2px;
+  }
+
+  .benefit-details {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-left: 58px;
+  }
+
+  .benefit-detail {
+    padding: 8px 14px;
+    background: rgba(14,14,22,0.6);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: #a0a0c0;
+    line-height: 1.45;
+    position: relative;
+    padding-left: 24px;
+  }
+  .benefit-detail::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+  .benefit-card.pink .benefit-detail::before { background: #f472b6; }
+  .benefit-card.purple .benefit-detail::before { background: #7b61ff; }
+  .benefit-card.teal .benefit-detail::before { background: #5eead4; }
+</style>
+</head>
+<body>
+
+<div class="dot-grid"></div>
+<div class="orb-pink"></div>
+
+<div class="slide-container">
+  <!-- Title bar -->
+  <div class="title-bar">
+    <h1>Agent Identity &amp; Isolation</h1>
+    <p>Dedicated team + token per agent, scoped to project and cloud account</p>
+  </div>
+
+  <!-- Main content: rings + benefits side by side -->
+  <div class="content-area">
+
+    <!-- Left: Concentric rings diagram + goal banner -->
+    <div class="rings-section">
+      <div class="rings-wrapper">
+        <!-- Ring labels -->
+        <div class="ring-label ring-label-outer">
+          <span class="ring-dot ring-dot-pink"></span> Isolated Cloud Account
+        </div>
+        <div class="ring-label ring-label-middle">
+          <span class="ring-dot ring-dot-purple"></span> HCP Terraform Project
+        </div>
+        <div class="ring-label ring-label-inner">
+          <span class="ring-dot ring-dot-teal"></span> Agent Sandbox
+        </div>
+
+        <!-- SVG concentric rings -->
+        <svg class="rings-svg" viewBox="0 0 720 460" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer ring - pink -->
+          <rect x="8" y="8" width="704" height="444" rx="22" ry="22"
+                stroke="#f472b6" stroke-width="2" stroke-dasharray="10 6"
+                stroke-opacity="0.35" fill="rgba(244,114,182,0.02)" />
+
+          <!-- Middle ring - purple -->
+          <rect x="68" y="68" width="584" height="324" rx="18" ry="18"
+                stroke="#7b61ff" stroke-width="2" stroke-dasharray="8 5"
+                stroke-opacity="0.35" fill="rgba(123,97,255,0.02)" />
+
+          <!-- Inner ring - teal -->
+          <rect x="128" y="128" width="464" height="204" rx="14" ry="14"
+                stroke="#5eead4" stroke-width="2" stroke-dasharray="6 4"
+                stroke-opacity="0.4" fill="rgba(94,234,212,0.03)" />
+
+          <!-- Subtle glow effects -->
+          <rect x="8" y="8" width="704" height="444" rx="22" ry="22"
+                stroke="#f472b6" stroke-width="1" stroke-opacity="0.1"
+                fill="none" filter="url(#glow)" />
+          <rect x="68" y="68" width="584" height="324" rx="18" ry="18"
+                stroke="#7b61ff" stroke-width="1" stroke-opacity="0.1"
+                fill="none" filter="url(#glow)" />
+          <rect x="128" y="128" width="464" height="204" rx="14" ry="14"
+                stroke="#5eead4" stroke-width="1" stroke-opacity="0.15"
+                fill="none" filter="url(#glow)" />
+
+          <defs>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+        </svg>
+
+        <!-- Center text -->
+        <div class="ring-center-content">
+          <p>
+            <span>Dedicated team + token per agent</span><br>
+            Dynamic credentials &mdash; no static secrets<br>
+            <span>Scoped to single project and cloud account</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Goal banner -->
+      <div class="goal-banner">
+        <strong>Goal:</strong> Enable more agent autonomy by leveraging enterprise controls. Workflow shifts to
+        <strong>developer plan review</strong> &rarr; <strong>agent executes</strong> &rarr; <strong>developer code review</strong>.
+      </div>
+    </div>
+
+    <!-- Right: Benefit cards -->
+    <div class="benefits-section">
+
+      <!-- Card 1: No Static Secrets -->
+      <div class="benefit-card pink">
+        <div class="benefit-header">
+          <div class="benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              <circle cx="12" cy="16.5" r="1.5"/>
+            </svg>
+          </div>
+          <div>
+            <div class="benefit-title">No Static Secrets</div>
+            <div class="benefit-subtitle">Dynamic credentials eliminate secret sprawl</div>
+          </div>
+        </div>
+        <div class="benefit-details">
+          <div class="benefit-detail">Project dynamic credentials mapped to isolated cloud account</div>
+          <div class="benefit-detail">No long-lived tokens or API keys stored anywhere</div>
+          <div class="benefit-detail">Credentials rotate automatically per run</div>
+        </div>
+      </div>
+
+      <!-- Card 2: Least Privilege -->
+      <div class="benefit-card purple">
+        <div class="benefit-header">
+          <div class="benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#7b61ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <circle cx="12" cy="12" r="6"/>
+              <circle cx="12" cy="12" r="2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="benefit-title">Least Privilege</div>
+            <div class="benefit-subtitle">Agent team scoped to single project</div>
+          </div>
+        </div>
+        <div class="benefit-details">
+          <div class="benefit-detail">Dedicated HCP Terraform team per agent</div>
+          <div class="benefit-detail">Team scoped to single project -- no cross-project access</div>
+          <div class="benefit-detail">Cloud permissions match exactly what agent needs</div>
+        </div>
+      </div>
+
+      <!-- Card 3: Blast Radius -->
+      <div class="benefit-card teal">
+        <div class="benefit-header">
+          <div class="benefit-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#5eead4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          <div>
+            <div class="benefit-title">Blast Radius</div>
+            <div class="benefit-subtitle">Contained to project and cloud account</div>
+          </div>
+        </div>
+        <div class="benefit-details">
+          <div class="benefit-detail">Blast radius contained to project and isolated cloud account</div>
+          <div class="benefit-detail">Separate from production and sandboxed development workloads</div>
+          <div class="benefit-detail">Enables more agent autonomy by leveraging enterprise controls</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
