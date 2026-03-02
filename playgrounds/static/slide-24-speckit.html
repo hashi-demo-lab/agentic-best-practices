@@ -14,7 +14,7 @@
     position: relative;
   }
 
-  /* --- Static gradient orbs via pseudo-elements --- */
+  /* --- Static gradient orbs --- */
   body::before {
     content: '';
     position: absolute;
@@ -57,13 +57,13 @@
     width: 1920px; height: 1080px;
     display: flex;
     flex-direction: column;
-    padding: 38px 64px 36px;
+    padding: 32px 52px 28px;
   }
 
   /* --- Title bar --- */
   .title-bar {
     text-align: center;
-    margin-bottom: 28px;
+    margin-bottom: 22px;
     flex-shrink: 0;
   }
   .title-bar h1 {
@@ -76,119 +76,67 @@
     letter-spacing: -0.5px;
   }
   .title-bar .subtitle {
-    font-size: 1rem;
+    font-size: 1.05rem;
     color: #8888a0;
     font-weight: 400;
   }
 
-  /* --- 7-Phase horizontal bar --- */
-  .phase-bar {
+  /* --- 7-Phase Horizontal Navigation Bar --- */
+  .phase-nav {
     display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 0;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
     flex-shrink: 0;
   }
 
-  .phase-card {
-    flex: 1;
+  .phase-pip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
     background: rgba(22,22,34,0.65);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(123,97,255,0.15);
-    padding: 18px 14px 16px;
-    text-align: center;
-    position: relative;
-  }
-  .phase-card:first-child {
-    border-radius: 16px 0 0 16px;
-  }
-  .phase-card:last-child {
-    border-radius: 0 16px 16px 0;
-  }
-  .phase-card:not(:last-child) {
-    border-right: none;
+    border-radius: 24px;
+    white-space: nowrap;
   }
 
-  /* Bottom accent bar */
-  .phase-card .accent-bar {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-    border-radius: 0 0 0 0;
-  }
-  .phase-card:first-child .accent-bar { border-radius: 0 0 0 16px; }
-  .phase-card:last-child .accent-bar { border-radius: 0 0 16px 0; }
-
-  .phase-icon {
-    font-size: 1.5rem;
-    margin-bottom: 6px;
-    display: block;
-  }
-  .phase-num {
-    font-size: 0.82rem;
+  .phase-pip .pip-num {
+    font-size: 12px;
     font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 3px;
-    opacity: 0.7;
-  }
-  .phase-name {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #eeeef6;
-    margin-bottom: 5px;
-  }
-  .phase-sub {
-    font-size: 0.82rem;
-    color: #8888a0;
-    line-height: 1.35;
-  }
-
-  /* Arrow connectors between phases */
-  .phase-card:not(:last-child)::after {
-    content: '\203A';
-    position: absolute;
-    right: -7px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.1rem;
-    color: rgba(123,97,255,0.35);
-    z-index: 2;
-    font-weight: 300;
-  }
-
-  /* --- Description row --- */
-  .desc-bar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
     display: flex;
-    gap: 0;
-    margin-bottom: 28px;
-    flex-shrink: 0;
-  }
-  .desc-cell {
-    flex: 1;
-    background: rgba(22,22,34,0.40);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(123,97,255,0.08);
-    padding: 14px 12px;
-    font-size: 0.78rem;
-    color: #a0a0b8;
-    line-height: 1.55;
-  }
-  .desc-cell:first-child { border-radius: 12px 0 0 12px; }
-  .desc-cell:last-child { border-radius: 0 12px 12px 0; }
-  .desc-cell:not(:last-child) { border-right: none; }
-
-  /* --- Summary grid --- */
-  .summary-section-title {
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #6a6a80;
-    margin-bottom: 14px;
+    align-items: center;
+    justify-content: center;
+    color: #0a0a12;
     flex-shrink: 0;
   }
 
-  .summary-grid {
+  .phase-pip .pip-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .phase-pip .pip-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #e0e0e8;
+  }
+
+  .phase-arrow {
+    font-size: 18px;
+    color: rgba(123,97,255,0.35);
+    margin: 0 4px;
+    flex-shrink: 0;
+  }
+
+  /* --- 7 Column Cards --- */
+  .columns {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 14px;
@@ -196,80 +144,118 @@
     min-height: 0;
   }
 
-  .summary-card {
+  .col-card {
     background: rgba(22,22,34,0.65);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(123,97,255,0.15);
     border-radius: 16px;
-    padding: 18px 16px 16px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     position: relative;
     overflow: hidden;
   }
 
-  /* Top accent line on summary cards */
-  .summary-card .top-accent {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
+  .col-card .accent-top {
+    height: 4px;
+    flex-shrink: 0;
   }
 
-  .summary-card .card-phase {
-    font-size: 0.82rem;
+  .col-card .card-header {
+    padding: 18px 16px 0;
+    flex-shrink: 0;
+  }
+
+  .col-card .card-num {
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 1.2px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
-  .summary-card .card-title {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: #e0e0e8;
+
+  .col-card .card-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f0f0f8;
+    margin-bottom: 2px;
+    line-height: 1.2;
+  }
+
+  .col-card .card-tagline {
+    font-size: 12px;
+    color: #7a7a94;
+    font-weight: 500;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+
+  .col-card .card-desc {
+    padding: 0 16px;
+    font-size: 13px;
+    color: #a8a8c0;
+    line-height: 1.55;
+    flex-shrink: 0;
+    margin-bottom: 14px;
+  }
+
+  .col-card .card-artifacts-label {
+    padding: 0 16px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #5a5a74;
     margin-bottom: 8px;
-    line-height: 1.3;
+    flex-shrink: 0;
   }
-  .summary-card .card-tags {
+
+  .col-card .card-artifacts {
+    padding: 0 16px 18px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
+    flex-direction: column;
+    gap: 6px;
     margin-top: auto;
   }
-  .tag {
-    padding: 3px 10px;
-    border-radius: 6px;
-    font-size: 0.82rem;
-    background: rgba(18,18,26,0.7);
-    border: 1px solid rgba(255,255,255,0.06);
-    color: #9898b0;
+
+  .artifact-tag {
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+    background: rgba(18,18,28,0.75);
+    border: 1px solid rgba(255,255,255,0.07);
+    color: #c0c0d4;
   }
 
-  /* --- Footer summary text --- */
+  /* --- Footer summary --- */
   .footer-bar {
     flex-shrink: 0;
-    margin-top: 20px;
+    margin-top: 18px;
     background: rgba(22,22,34,0.50);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(123,97,255,0.10);
     border-radius: 12px;
-    padding: 16px 24px;
+    padding: 14px 24px;
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 24px;
   }
   .footer-bar .footer-label {
-    font-size: 0.82rem;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     color: #6a6a80;
     flex-shrink: 0;
+    font-weight: 600;
   }
   .footer-bar .footer-text {
-    font-size: 0.82rem;
+    font-size: 13px;
     color: #a0a0b8;
-    line-height: 1.55;
+    line-height: 1.5;
   }
   .footer-text strong {
     color: #c8c8e0;
@@ -287,168 +273,189 @@
   <!-- Title Bar -->
   <div class="title-bar">
     <h1>GitHub SpecKit</h1>
-    <div class="subtitle">Spec-driven development -- specs become the source of truth for AI agents</div>
+    <div class="subtitle">Specs become the source of truth for AI agents &mdash; 7 structured phases from constitution to execution</div>
   </div>
 
-  <!-- 7-Phase Horizontal Bar -->
-  <div class="phase-bar">
-    <div class="phase-card">
-      <span class="phase-icon">&#x1F4DC;</span>
-      <div class="phase-num" style="color: #f472b6;">01</div>
-      <div class="phase-name">Constitution</div>
-      <div class="phase-sub">Project Principles</div>
-      <div class="accent-bar" style="background: #f472b6;"></div>
+  <!-- 7-Phase Horizontal Nav -->
+  <div class="phase-nav">
+    <div class="phase-pip">
+      <span class="pip-num" style="background: #f472b6;">1</span>
+      <span class="pip-icon">&#x1F4DC;</span>
+      <span class="pip-name">Constitution</span>
     </div>
-    <div class="phase-card">
-      <span class="phase-icon">&#x1F4DD;</span>
-      <div class="phase-num" style="color: #a78bfa;">02</div>
-      <div class="phase-name">Specify</div>
-      <div class="phase-sub">What and Why</div>
-      <div class="accent-bar" style="background: #a78bfa;"></div>
+    <span class="phase-arrow">&#x203A;</span>
+    <div class="phase-pip">
+      <span class="pip-num" style="background: #a78bfa;">2</span>
+      <span class="pip-icon">&#x1F4DD;</span>
+      <span class="pip-name">Specify</span>
     </div>
-    <div class="phase-card">
-      <span class="phase-icon">&#x2753;</span>
-      <div class="phase-num" style="color: #818cf8;">03</div>
-      <div class="phase-name">Clarify</div>
-      <div class="phase-sub">Eliminate Ambiguity</div>
-      <div class="accent-bar" style="background: #818cf8;"></div>
+    <span class="phase-arrow">&#x203A;</span>
+    <div class="phase-pip">
+      <span class="pip-num" style="background: #818cf8;">3</span>
+      <span class="pip-icon">&#x2753;</span>
+      <span class="pip-name">Clarify</span>
     </div>
-    <div class="phase-card">
-      <span class="phase-icon">&#x1F4D0;</span>
-      <div class="phase-num" style="color: #60a5fa;">04</div>
-      <div class="phase-name">Plan</div>
-      <div class="phase-sub">Architecture &amp; Design</div>
-      <div class="accent-bar" style="background: #60a5fa;"></div>
+    <span class="phase-arrow">&#x203A;</span>
+    <div class="phase-pip">
+      <span class="pip-num" style="background: #60a5fa;">4</span>
+      <span class="pip-icon">&#x1F4D0;</span>
+      <span class="pip-name">Plan</span>
     </div>
-    <div class="phase-card">
-      <span class="phase-icon">&#x2705;</span>
-      <div class="phase-num" style="color: #5eead4;">05</div>
-      <div class="phase-name">Checklist</div>
-      <div class="phase-sub">Validate Completeness</div>
-      <div class="accent-bar" style="background: #5eead4;"></div>
+    <span class="phase-arrow">&#x203A;</span>
+    <div class="phase-pip">
+      <span class="pip-num" style="background: #5eead4;">5</span>
+      <span class="pip-icon">&#x2705;</span>
+      <span class="pip-name">Checklist</span>
     </div>
-    <div class="phase-card">
-      <span class="phase-icon">&#x1F4CB;</span>
-      <div class="phase-num" style="color: #fbbf24;">06</div>
-      <div class="phase-name">Tasks</div>
-      <div class="phase-sub">Atomic Work Items</div>
-      <div class="accent-bar" style="background: #fbbf24;"></div>
+    <span class="phase-arrow">&#x203A;</span>
+    <div class="phase-pip">
+      <span class="pip-num" style="background: #fbbf24;">6</span>
+      <span class="pip-icon">&#x1F4CB;</span>
+      <span class="pip-name">Tasks</span>
     </div>
-    <div class="phase-card">
-      <span class="phase-icon">&#x1F52C;</span>
-      <div class="phase-num" style="color: #fb923c;">07</div>
-      <div class="phase-name">Analyze</div>
-      <div class="phase-sub">Verify &amp; Learn</div>
-      <div class="accent-bar" style="background: #fb923c;"></div>
+    <span class="phase-arrow">&#x203A;</span>
+    <div class="phase-pip">
+      <span class="pip-num" style="background: #fb923c;">7</span>
+      <span class="pip-icon">&#x1F52C;</span>
+      <span class="pip-name">Analyze</span>
     </div>
   </div>
 
-  <!-- Description Row -->
-  <div class="desc-bar">
-    <div class="desc-cell">Define project principles and rules that AI must follow. The foundational guardrail -- like a constitution for your codebase that every AI action must respect.</div>
-    <div class="desc-cell">Generate user stories and acceptance criteria. Define what needs to be built and why. This becomes the source of truth guiding all subsequent AI work.</div>
-    <div class="desc-cell">AI generates questions to eliminate ambiguity. Interactive back-and-forth ensures the spec is complete and unambiguous before planning begins.</div>
-    <div class="desc-cell">Define tech stack, architecture, data models, and API contracts. Translates "what" into "how" with concrete technical decisions.</div>
-    <div class="desc-cell">Systematic validation that the plan is complete. Checks UX, security, performance, accessibility, and quality dimensions before code is written.</div>
-    <div class="desc-cell">Break the plan into atomic, testable work items with explicit dependencies. Each task is small enough for an agent to complete and verify independently.</div>
-    <div class="desc-cell">Analyze output of completed tasks. Verify against specifications, run tests, measure quality, and feed learnings back into the process.</div>
-  </div>
+  <!-- 7 Column Cards -->
+  <div class="columns">
 
-  <!-- Summary Label -->
-  <div class="summary-section-title">Key Artifacts by Phase</div>
+    <!-- 1. Constitution -->
+    <div class="col-card">
+      <div class="accent-top" style="background: #f472b6;"></div>
+      <div class="card-header">
+        <div class="card-num" style="color: #f472b6;">PHASE 01</div>
+        <div class="card-name">Constitution</div>
+        <div class="card-tagline">"Project Principles"</div>
+      </div>
+      <div class="card-desc">Define project principles and rules that AI must follow. The foundational document that gates all subsequent work.</div>
+      <div class="card-artifacts-label">Artifacts</div>
+      <div class="card-artifacts">
+        <span class="artifact-tag" style="border-color: rgba(244,114,182,0.25);">Coding standards</span>
+        <span class="artifact-tag" style="border-color: rgba(244,114,182,0.25);">Security requirements</span>
+        <span class="artifact-tag" style="border-color: rgba(244,114,182,0.25);">Naming conventions</span>
+        <span class="artifact-tag" style="border-color: rgba(244,114,182,0.25);">Forbidden patterns</span>
+      </div>
+    </div>
 
-  <!-- Summary Grid: 7 columns -->
-  <div class="summary-grid">
-    <!-- Constitution -->
-    <div class="summary-card">
-      <div class="top-accent" style="background: #f472b6;"></div>
-      <div class="card-phase" style="color: #f472b6;">Phase 1</div>
-      <div class="card-title">Constitution</div>
-      <div class="card-tags">
-        <span class="tag">Coding standards</span>
-        <span class="tag">Security requirements</span>
-        <span class="tag">Naming conventions</span>
-        <span class="tag">Forbidden patterns</span>
+    <!-- 2. Specify -->
+    <div class="col-card">
+      <div class="accent-top" style="background: #a78bfa;"></div>
+      <div class="card-header">
+        <div class="card-num" style="color: #a78bfa;">PHASE 02</div>
+        <div class="card-name">Specify</div>
+        <div class="card-tagline">"What and Why"</div>
+      </div>
+      <div class="card-desc">Generate user stories and acceptance criteria. Define what needs to be built and the success metrics.</div>
+      <div class="card-artifacts-label">Artifacts</div>
+      <div class="card-artifacts">
+        <span class="artifact-tag" style="border-color: rgba(167,139,250,0.25);">User stories</span>
+        <span class="artifact-tag" style="border-color: rgba(167,139,250,0.25);">Acceptance criteria</span>
+        <span class="artifact-tag" style="border-color: rgba(167,139,250,0.25);">Feature requirements</span>
+        <span class="artifact-tag" style="border-color: rgba(167,139,250,0.25);">Success metrics</span>
       </div>
     </div>
-    <!-- Specify -->
-    <div class="summary-card">
-      <div class="top-accent" style="background: #a78bfa;"></div>
-      <div class="card-phase" style="color: #a78bfa;">Phase 2</div>
-      <div class="card-title">Specify</div>
-      <div class="card-tags">
-        <span class="tag">User stories</span>
-        <span class="tag">Acceptance criteria</span>
-        <span class="tag">Feature requirements</span>
-        <span class="tag">Success metrics</span>
+
+    <!-- 3. Clarify -->
+    <div class="col-card">
+      <div class="accent-top" style="background: #818cf8;"></div>
+      <div class="card-header">
+        <div class="card-num" style="color: #818cf8;">PHASE 03</div>
+        <div class="card-name">Clarify</div>
+        <div class="card-tagline">"Eliminate Ambiguity"</div>
+      </div>
+      <div class="card-desc">AI generates questions to eliminate ambiguity. Resolve edge cases and conflicts before designing.</div>
+      <div class="card-artifacts-label">Artifacts</div>
+      <div class="card-artifacts">
+        <span class="artifact-tag" style="border-color: rgba(129,140,248,0.25);">Edge cases</span>
+        <span class="artifact-tag" style="border-color: rgba(129,140,248,0.25);">Boundary conditions</span>
+        <span class="artifact-tag" style="border-color: rgba(129,140,248,0.25);">Integration points</span>
+        <span class="artifact-tag" style="border-color: rgba(129,140,248,0.25);">Error scenarios</span>
       </div>
     </div>
-    <!-- Clarify -->
-    <div class="summary-card">
-      <div class="top-accent" style="background: #818cf8;"></div>
-      <div class="card-phase" style="color: #818cf8;">Phase 3</div>
-      <div class="card-title">Clarify</div>
-      <div class="card-tags">
-        <span class="tag">Edge cases</span>
-        <span class="tag">Boundary conditions</span>
-        <span class="tag">Integration points</span>
-        <span class="tag">Error scenarios</span>
+
+    <!-- 4. Plan -->
+    <div class="col-card">
+      <div class="accent-top" style="background: #60a5fa;"></div>
+      <div class="card-header">
+        <div class="card-num" style="color: #60a5fa;">PHASE 04</div>
+        <div class="card-name">Plan</div>
+        <div class="card-tagline">"Architecture &amp; Design"</div>
+      </div>
+      <div class="card-desc">Define tech stack, architecture, data contracts and API contracts. Translate requirements into decisions.</div>
+      <div class="card-artifacts-label">Artifacts</div>
+      <div class="card-artifacts">
+        <span class="artifact-tag" style="border-color: rgba(96,165,250,0.25);">Tech stack</span>
+        <span class="artifact-tag" style="border-color: rgba(96,165,250,0.25);">Architecture diagrams</span>
+        <span class="artifact-tag" style="border-color: rgba(96,165,250,0.25);">API contracts</span>
+        <span class="artifact-tag" style="border-color: rgba(96,165,250,0.25);">Data models</span>
       </div>
     </div>
-    <!-- Plan -->
-    <div class="summary-card">
-      <div class="top-accent" style="background: #60a5fa;"></div>
-      <div class="card-phase" style="color: #60a5fa;">Phase 4</div>
-      <div class="card-title">Plan</div>
-      <div class="card-tags">
-        <span class="tag">Tech stack</span>
-        <span class="tag">Architecture diagrams</span>
-        <span class="tag">Data models</span>
-        <span class="tag">API contracts</span>
+
+    <!-- 5. Checklist -->
+    <div class="col-card">
+      <div class="accent-top" style="background: #5eead4;"></div>
+      <div class="card-header">
+        <div class="card-num" style="color: #5eead4;">PHASE 05</div>
+        <div class="card-name">Checklist</div>
+        <div class="card-tagline">"Validate Completeness"</div>
+      </div>
+      <div class="card-desc">Systematically validate that the plan is complete -- CI, security, accessibility review.</div>
+      <div class="card-artifacts-label">Artifacts</div>
+      <div class="card-artifacts">
+        <span class="artifact-tag" style="border-color: rgba(94,234,212,0.25);">CI review</span>
+        <span class="artifact-tag" style="border-color: rgba(94,234,212,0.25);">Security checklist</span>
+        <span class="artifact-tag" style="border-color: rgba(94,234,212,0.25);">Accessibility audit</span>
+        <span class="artifact-tag" style="border-color: rgba(94,234,212,0.25);">Completeness score</span>
       </div>
     </div>
-    <!-- Checklist -->
-    <div class="summary-card">
-      <div class="top-accent" style="background: #5eead4;"></div>
-      <div class="card-phase" style="color: #5eead4;">Phase 5</div>
-      <div class="card-title">Checklist</div>
-      <div class="card-tags">
-        <span class="tag">UX review</span>
-        <span class="tag">Security checklist</span>
-        <span class="tag">Performance targets</span>
-        <span class="tag">Accessibility audit</span>
+
+    <!-- 6. Tasks -->
+    <div class="col-card">
+      <div class="accent-top" style="background: #fbbf24;"></div>
+      <div class="card-header">
+        <div class="card-num" style="color: #fbbf24;">PHASE 06</div>
+        <div class="card-name">Tasks</div>
+        <div class="card-tagline">"Atomic Work Items"</div>
+      </div>
+      <div class="card-desc">Break the plan into atomic items with explicit dependencies. Each item small enough to verify independently.</div>
+      <div class="card-artifacts-label">Artifacts</div>
+      <div class="card-artifacts">
+        <span class="artifact-tag" style="border-color: rgba(251,191,36,0.25);">Task dependencies</span>
+        <span class="artifact-tag" style="border-color: rgba(251,191,36,0.25);">Size criteria</span>
+        <span class="artifact-tag" style="border-color: rgba(251,191,36,0.25);">Acceptance tests</span>
+        <span class="artifact-tag" style="border-color: rgba(251,191,36,0.25);">Implementation order</span>
       </div>
     </div>
-    <!-- Tasks -->
-    <div class="summary-card">
-      <div class="top-accent" style="background: #fbbf24;"></div>
-      <div class="card-phase" style="color: #fbbf24;">Phase 6</div>
-      <div class="card-title">Tasks</div>
-      <div class="card-tags">
-        <span class="tag">Task dependencies</span>
-        <span class="tag">Test criteria</span>
-        <span class="tag">Acceptance tests</span>
-        <span class="tag">Implementation order</span>
+
+    <!-- 7. Analyze -->
+    <div class="col-card">
+      <div class="accent-top" style="background: #fb923c;"></div>
+      <div class="card-header">
+        <div class="card-num" style="color: #fb923c;">PHASE 07</div>
+        <div class="card-name">Analyze</div>
+        <div class="card-tagline">"Verify &amp; Learn"</div>
+      </div>
+      <div class="card-desc">Analyze completed task output, verify against specs, run tests, and feed learnings back into the process.</div>
+      <div class="card-artifacts-label">Artifacts</div>
+      <div class="card-artifacts">
+        <span class="artifact-tag" style="border-color: rgba(251,146,60,0.25);">Test results</span>
+        <span class="artifact-tag" style="border-color: rgba(251,146,60,0.25);">Quality metrics</span>
+        <span class="artifact-tag" style="border-color: rgba(251,146,60,0.25);">Spec compliance</span>
+        <span class="artifact-tag" style="border-color: rgba(251,146,60,0.25);">Improvement areas</span>
       </div>
     </div>
-    <!-- Analyze -->
-    <div class="summary-card">
-      <div class="top-accent" style="background: #fb923c;"></div>
-      <div class="card-phase" style="color: #fb923c;">Phase 7</div>
-      <div class="card-title">Analyze</div>
-      <div class="card-tags">
-        <span class="tag">Test results</span>
-        <span class="tag">Quality metrics</span>
-        <span class="tag">Spec compliance</span>
-        <span class="tag">Improvement areas</span>
-      </div>
-    </div>
+
   </div>
 
   <!-- Footer Summary -->
   <div class="footer-bar">
     <span class="footer-label">Summary</span>
-    <span class="footer-text"><strong>SpecKit</strong> is GitHub's open-source toolkit for spec-driven development. Specs guide AI agents to generate, test, and validate code through <strong>7 structured phases</strong> -- from project constitution to task execution. Each phase produces artifacts that feed into the next, creating a reliable chain from requirements to verified implementation.</span>
+    <span class="footer-text"><strong>SpecKit</strong> is the open-source model for spec-driven development. Specs guide AI agents to generate, test, and validate code through <strong>7 structured phases</strong> &mdash; from project constitution to task execution. Each phase produces artifacts that feed into the next, creating a reliable chain from requirements to verified implementation.</span>
   </div>
 
 </div>

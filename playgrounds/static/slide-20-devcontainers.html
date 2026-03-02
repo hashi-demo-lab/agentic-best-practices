@@ -16,7 +16,7 @@
   box-sizing: border-box;
 ">
 
-<!-- Background gradient orbs via a positioned div with pseudo-element workaround -->
+<!-- Background gradient orbs -->
 <div style="
   position: absolute; top: 0; left: 0; width: 100%; height: 100%;
   background:
@@ -41,26 +41,26 @@
   <!-- Title bar -->
   <div style="
     text-align: center;
-    padding: 32px 40px 18px;
+    padding: 24px 40px 14px;
     border-bottom: 1px solid rgba(35,35,47,0.6);
     flex-shrink: 0;
   ">
     <h1 style="
-      font-size: 2.2rem; font-weight: 700; margin: 0 0 8px 0;
+      font-size: 2.2rem; font-weight: 700; margin: 0 0 6px 0;
       background: linear-gradient(135deg, #7b61ff, #a78bfa);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       line-height: 1.2;
     ">Development Containers</h1>
-    <p style="color: #8888a0; font-size: 1rem; margin: 0; letter-spacing: 0.3px;">
-      Secure, consistent, reproducible environments for agentic IaC
+    <p style="color: #8888a0; font-size: 0.95rem; margin: 0; letter-spacing: 0.3px;">
+      Secure, consistent, reproducible environments for agentic IaC &mdash; based on <span style="color: #a78bfa; font-weight: 600;">srlynch1/terraform-ai-tools:latest</span>
     </p>
   </div>
 
   <!-- Content area: two columns -->
   <div style="
     flex: 1; display: flex; flex-direction: row;
-    padding: 32px 48px 36px;
-    gap: 44px;
+    padding: 18px 44px 14px;
+    gap: 40px;
     min-height: 0;
   ">
 
@@ -69,12 +69,11 @@
       flex: 0 0 560px;
       display: flex; align-items: center; justify-content: center;
     ">
-      <svg width="540" height="540" viewBox="0 0 540 540" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
-        <!-- Outer ring: Host System -->
+      <svg width="540" height="560" viewBox="0 0 540 560" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
         <defs>
           <linearGradient id="hostGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="rgba(68,68,90,0.6)" />
-            <stop offset="100%" stop-color="rgba(42,42,58,0.3)" />
+            <stop offset="0%" stop-color="rgba(100,100,130,0.7)" />
+            <stop offset="100%" stop-color="rgba(70,70,95,0.5)" />
           </linearGradient>
           <linearGradient id="devGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stop-color="#7b61ff" />
@@ -93,190 +92,234 @@
             <stop offset="0%" stop-color="#5eead4" />
             <stop offset="100%" stop-color="#2dd4bf" />
           </linearGradient>
-          <filter id="glow1" x="-20%" y="-20%" width="140%" height="140%">
+          <filter id="glow1" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
+          </filter>
+          <filter id="glow2" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
           </filter>
         </defs>
 
-        <!-- Host System ring (outermost) -->
-        <rect x="10" y="10" width="520" height="520" rx="24" ry="24"
-              fill="none" stroke="url(#hostGrad)" stroke-width="2"
+        <!-- Host System ring (outermost) - dashed, brighter -->
+        <rect x="8" y="8" width="524" height="544" rx="24" ry="24"
+              fill="none" stroke="url(#hostGrad)" stroke-width="2.5"
               stroke-dasharray="12 6" />
-        <rect x="16" y="2" width="160" height="20" rx="4" fill="#0a0a12" />
-        <text x="24" y="15" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="11" fill="#6a6a80" letter-spacing="1" text-transform="uppercase"
+        <!-- Glow on host ring -->
+        <rect x="8" y="8" width="524" height="544" rx="24" ry="24"
+              fill="none" stroke="rgba(100,100,140,0.25)" stroke-width="1.5"
+              stroke-dasharray="12 6" filter="url(#glow2)" />
+        <rect x="14" y="0" width="200" height="20" rx="4" fill="#0a0a12" />
+        <text x="22" y="14" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="11" fill="#7a7a96" letter-spacing="1.2"
               style="text-transform: uppercase;">HOST SYSTEM (INACCESSIBLE)</text>
 
-        <!-- DevContainer ring (second) -->
-        <rect x="36" y="40" width="468" height="464" rx="18" ry="18"
-              fill="rgba(19,19,29,0.5)" stroke="url(#devGrad)" stroke-width="2" />
-        <rect x="48" y="32" width="110" height="18" rx="4" fill="#0a0a12" />
-        <text x="54" y="44" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="12" fill="#7b61ff" font-weight="600">devcontainer</text>
+        <!-- Cross-hatch pattern in host zone to show it's blocked -->
+        <line x1="14" y1="528" x2="40" y2="540" stroke="rgba(100,100,130,0.15)" stroke-width="1" />
+        <line x1="40" y1="528" x2="66" y2="540" stroke="rgba(100,100,130,0.15)" stroke-width="1" />
+        <line x1="66" y1="528" x2="92" y2="540" stroke="rgba(100,100,130,0.15)" stroke-width="1" />
+        <line x1="460" y1="528" x2="486" y2="540" stroke="rgba(100,100,130,0.15)" stroke-width="1" />
+        <line x1="486" y1="528" x2="512" y2="540" stroke="rgba(100,100,130,0.15)" stroke-width="1" />
 
-        <!-- Shield badges row inside devcontainer -->
-        <!-- Badge: Isolated -->
-        <rect x="56" y="62" width="110" height="28" rx="6"
-              fill="rgba(26,16,32,0.6)" stroke="rgba(58,32,72,0.6)" stroke-width="1" />
-        <text x="68" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="12" fill="#c084fc">&#128274; Isolated</text>
+        <!-- DevContainer ring (second) - brighter stroke -->
+        <rect x="32" y="36" width="476" height="488" rx="18" ry="18"
+              fill="rgba(19,19,29,0.5)" stroke="url(#devGrad)" stroke-width="2.5" />
+        <!-- Glow on devcontainer ring -->
+        <rect x="32" y="36" width="476" height="488" rx="18" ry="18"
+              fill="none" stroke="rgba(123,97,255,0.2)" stroke-width="2" filter="url(#glow2)" />
+        <rect x="44" y="28" width="160" height="18" rx="4" fill="#0a0a12" />
+        <text x="50" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="12.5" fill="#9b87ff" font-weight="700" letter-spacing="0.5">DEVCONTAINER</text>
 
-        <!-- Badge: Firewall controlled -->
-        <rect x="178" y="62" width="170" height="28" rx="6"
-              fill="rgba(26,16,32,0.6)" stroke="rgba(58,32,72,0.6)" stroke-width="1" />
-        <text x="190" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="12" fill="#c084fc">&#127760; Firewall controlled</text>
+        <!-- Badge row inside devcontainer -->
+        <rect x="52" y="58" width="122" height="26" rx="6"
+              fill="rgba(26,16,32,0.7)" stroke="rgba(123,97,255,0.35)" stroke-width="1" />
+        <text x="64" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="11" fill="#c084fc">&#128274; Isolated</text>
 
-        <!-- Badge: Minutes to configure -->
-        <rect x="360" y="62" width="130" height="28" rx="6"
-              fill="rgba(26,16,32,0.6)" stroke="rgba(58,32,72,0.6)" stroke-width="1" />
-        <text x="372" y="80" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="12" fill="#c084fc">&#9201; Minutes to configure</text>
+        <rect x="184" y="58" width="152" height="26" rx="6"
+              fill="rgba(26,16,32,0.7)" stroke="rgba(123,97,255,0.35)" stroke-width="1" />
+        <text x="196" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="11" fill="#c084fc">&#127760; Firewall Controlled</text>
 
-        <!-- Three inner rings for the pillars -->
+        <rect x="346" y="58" width="150" height="26" rx="6"
+              fill="rgba(26,16,32,0.7)" stroke="rgba(123,97,255,0.35)" stroke-width="1" />
+        <text x="358" y="75" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="11" fill="#c084fc">&#128034; Docker-in-Docker</text>
+
+        <!-- ===== Three inner pillar rings ===== -->
+
         <!-- Security Ring -->
-        <rect x="56" y="108" width="140" height="380" rx="14" ry="14"
-              fill="rgba(22,22,34,0.45)" stroke="url(#secGrad)" stroke-width="1.5" />
-        <!-- Security icon circle -->
-        <circle cx="126" cy="142" r="20" fill="rgba(244,114,182,0.1)" stroke="rgba(244,114,182,0.3)" stroke-width="1" />
-        <text x="126" y="148" text-anchor="middle" font-size="18">&#128272;</text>
-        <text x="126" y="178" text-anchor="middle"
+        <rect x="52" y="100" width="146" height="408" rx="14" ry="14"
+              fill="rgba(22,22,34,0.45)" stroke="url(#secGrad)" stroke-width="2" />
+        <!-- Security glow -->
+        <rect x="52" y="100" width="146" height="408" rx="14" ry="14"
+              fill="none" stroke="#f472b6" stroke-width="1" opacity="0.45" filter="url(#glow1)" />
+        <circle cx="125" cy="134" r="20" fill="rgba(244,114,182,0.12)" stroke="rgba(244,114,182,0.45)" stroke-width="1.5" />
+        <text x="125" y="140" text-anchor="middle" font-size="17">&#128272;</text>
+        <text x="125" y="170" text-anchor="middle"
               font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="12" fill="#e0e0e8" font-weight="600">Security</text>
-        <text x="126" y="194" text-anchor="middle"
+              font-size="12.5" fill="#f472b6" font-weight="700">Security</text>
+        <text x="125" y="186" text-anchor="middle"
               font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="12" fill="#e0e0e8" font-weight="600">&amp; Isolation</text>
+              font-size="12.5" fill="#f472b6" font-weight="700">&amp; Isolation</text>
+
         <!-- Security items -->
-        <rect x="66" y="212" width="120" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="68" y1="214" x2="68" y2="244" stroke="#f472b6" stroke-width="2" />
-        <text x="76" y="226" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">Host system</text>
-        <text x="76" y="240" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">inaccessible</text>
+        <rect x="62" y="202" width="126" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="64" y1="204" x2="64" y2="236" stroke="#f472b6" stroke-width="2" />
+        <text x="72" y="216" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Host system fully</text>
+        <text x="72" y="230" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">inaccessible</text>
 
-        <rect x="66" y="254" width="120" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="68" y1="256" x2="68" y2="286" stroke="#f472b6" stroke-width="2" />
-        <text x="76" y="268" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">Firewall controls</text>
-        <text x="76" y="282" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">allowed domains</text>
+        <rect x="62" y="246" width="126" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="64" y1="248" x2="64" y2="280" stroke="#f472b6" stroke-width="2" />
+        <text x="72" y="260" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Firewall controls</text>
+        <text x="72" y="274" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">allowed domains</text>
 
-        <rect x="66" y="296" width="120" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="68" y1="298" x2="68" y2="328" stroke="#f472b6" stroke-width="2" />
-        <text x="76" y="310" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">Agent permissions</text>
-        <text x="76" y="324" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">enforced</text>
+        <rect x="62" y="290" width="126" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="64" y1="292" x2="64" y2="324" stroke="#f472b6" stroke-width="2" />
+        <text x="72" y="304" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Agent permissions</text>
+        <text x="72" y="318" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">via settings.json</text>
 
-        <rect x="66" y="338" width="120" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="68" y1="340" x2="68" y2="370" stroke="#f472b6" stroke-width="2" />
-        <text x="76" y="352" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">Blast radius</text>
-        <text x="76" y="366" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">contained</text>
+        <rect x="62" y="334" width="126" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="64" y1="336" x2="64" y2="368" stroke="#f472b6" stroke-width="2" />
+        <text x="72" y="348" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Blast radius</text>
+        <text x="72" y="362" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">contained</text>
+
+        <rect x="62" y="378" width="126" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="64" y1="380" x2="64" y2="412" stroke="#f472b6" stroke-width="2" />
+        <text x="72" y="392" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">NET_ADMIN /</text>
+        <text x="72" y="406" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">NET_RAW caps</text>
 
         <!-- Consistency Ring -->
-        <rect x="208" y="108" width="140" height="380" rx="14" ry="14"
-              fill="rgba(22,22,34,0.45)" stroke="url(#conGrad)" stroke-width="1.5" />
-        <circle cx="278" cy="142" r="20" fill="rgba(96,165,250,0.1)" stroke="rgba(96,165,250,0.3)" stroke-width="1" />
-        <text x="278" y="148" text-anchor="middle" font-size="18">&#128101;</text>
-        <text x="278" y="178" text-anchor="middle"
+        <rect x="208" y="100" width="146" height="408" rx="14" ry="14"
+              fill="rgba(22,22,34,0.45)" stroke="url(#conGrad)" stroke-width="2" />
+        <!-- Consistency glow -->
+        <rect x="208" y="100" width="146" height="408" rx="14" ry="14"
+              fill="none" stroke="#60a5fa" stroke-width="1" opacity="0.45" filter="url(#glow1)" />
+        <circle cx="281" cy="134" r="20" fill="rgba(96,165,250,0.12)" stroke="rgba(96,165,250,0.45)" stroke-width="1.5" />
+        <text x="281" y="140" text-anchor="middle" font-size="17">&#128101;</text>
+        <text x="281" y="170" text-anchor="middle"
               font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="12" fill="#e0e0e8" font-weight="600">Team</text>
-        <text x="278" y="194" text-anchor="middle"
+              font-size="12.5" fill="#60a5fa" font-weight="700">Team</text>
+        <text x="281" y="186" text-anchor="middle"
               font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="12" fill="#e0e0e8" font-weight="600">Consistency</text>
+              font-size="12.5" fill="#60a5fa" font-weight="700">Consistency</text>
+
         <!-- Consistency items -->
-        <rect x="218" y="212" width="120" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="220" y1="214" x2="220" y2="244" stroke="#60a5fa" stroke-width="2" />
-        <text x="228" y="226" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">Consistent env</text>
-        <text x="228" y="240" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">across all members</text>
+        <rect x="218" y="202" width="126" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="220" y1="204" x2="220" y2="236" stroke="#60a5fa" stroke-width="2" />
+        <text x="228" y="216" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Same env across</text>
+        <text x="228" y="230" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">all team members</text>
 
-        <rect x="218" y="254" width="120" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="220" y1="256" x2="220" y2="286" stroke="#60a5fa" stroke-width="2" />
-        <text x="228" y="268" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">Onboarding in</text>
-        <text x="228" y="282" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">minutes, not days</text>
+        <rect x="218" y="246" width="126" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="220" y1="248" x2="220" y2="280" stroke="#60a5fa" stroke-width="2" />
+        <text x="228" y="260" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Onboarding in</text>
+        <text x="228" y="274" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">minutes, not days</text>
 
-        <rect x="218" y="296" width="120" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="220" y1="298" x2="220" y2="328" stroke="#60a5fa" stroke-width="2" />
-        <text x="228" y="310" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">Version-controlled</text>
-        <text x="228" y="324" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">devcontainer.json</text>
+        <rect x="218" y="290" width="126" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="220" y1="292" x2="220" y2="324" stroke="#60a5fa" stroke-width="2" />
+        <text x="228" y="304" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Version-controlled</text>
+        <text x="228" y="318" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">devcontainer.json</text>
 
-        <rect x="218" y="338" width="120" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="220" y1="340" x2="220" y2="370" stroke="#60a5fa" stroke-width="2" />
-        <text x="228" y="352" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">Reproducible builds</text>
-        <text x="228" y="366" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="10" fill="#a0a0c0">&amp; test environments</text>
+        <rect x="218" y="334" width="126" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="220" y1="336" x2="220" y2="368" stroke="#60a5fa" stroke-width="2" />
+        <text x="228" y="348" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Reproducible builds</text>
+        <text x="228" y="362" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">&amp; test environments</text>
+
+        <rect x="218" y="378" width="126" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="220" y1="380" x2="220" y2="412" stroke="#60a5fa" stroke-width="2" />
+        <text x="228" y="392" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Docker-in-Docker</text>
+        <text x="228" y="406" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">support</text>
 
         <!-- Tooling Ring -->
-        <rect x="360" y="108" width="132" height="380" rx="14" ry="14"
-              fill="rgba(22,22,34,0.45)" stroke="url(#toolGrad)" stroke-width="1.5" />
-        <circle cx="426" cy="142" r="20" fill="rgba(94,234,212,0.1)" stroke="rgba(94,234,212,0.3)" stroke-width="1" />
-        <text x="426" y="148" text-anchor="middle" font-size="18">&#128736;&#65039;</text>
-        <text x="426" y="178" text-anchor="middle"
+        <rect x="364" y="100" width="134" height="408" rx="14" ry="14"
+              fill="rgba(22,22,34,0.45)" stroke="url(#toolGrad)" stroke-width="2" />
+        <!-- Tooling glow -->
+        <rect x="364" y="100" width="134" height="408" rx="14" ry="14"
+              fill="none" stroke="#5eead4" stroke-width="1" opacity="0.45" filter="url(#glow1)" />
+        <circle cx="431" cy="134" r="20" fill="rgba(94,234,212,0.12)" stroke="rgba(94,234,212,0.45)" stroke-width="1.5" />
+        <text x="431" y="140" text-anchor="middle" font-size="17">&#128736;&#65039;</text>
+        <text x="431" y="170" text-anchor="middle"
               font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="12" fill="#e0e0e8" font-weight="600">Consistent</text>
-        <text x="426" y="194" text-anchor="middle"
+              font-size="12.5" fill="#5eead4" font-weight="700">Agent Tooling</text>
+        <text x="431" y="186" text-anchor="middle"
               font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="12" fill="#e0e0e8" font-weight="600">Tooling</text>
+              font-size="12.5" fill="#5eead4" font-weight="700">Pre-Loaded</text>
+
         <!-- Tooling items -->
-        <rect x="370" y="212" width="112" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="372" y1="214" x2="372" y2="244" stroke="#5eead4" stroke-width="2" />
-        <text x="380" y="226" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="9.5" fill="#a0a0c0">Terraform, TFLint</text>
-        <text x="380" y="240" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="9.5" fill="#a0a0c0">Pre-commit, Docs</text>
+        <rect x="374" y="202" width="114" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="376" y1="204" x2="376" y2="236" stroke="#5eead4" stroke-width="2" />
+        <text x="384" y="216" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Terraform, TFLint</text>
+        <text x="384" y="230" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Pre-commit, Docs</text>
 
-        <rect x="370" y="254" width="112" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="372" y1="256" x2="372" y2="286" stroke="#5eead4" stroke-width="2" />
-        <text x="380" y="268" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="9.5" fill="#a0a0c0">Agent config &amp;</text>
-        <text x="380" y="282" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="9.5" fill="#a0a0c0">permissions</text>
+        <rect x="374" y="246" width="114" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="376" y1="248" x2="376" y2="280" stroke="#5eead4" stroke-width="2" />
+        <text x="384" y="260" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">27 skills +</text>
+        <text x="384" y="274" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">14 sub-agents</text>
 
-        <rect x="370" y="296" width="112" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="372" y1="298" x2="372" y2="328" stroke="#5eead4" stroke-width="2" />
-        <text x="380" y="310" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="9.5" fill="#a0a0c0">Prompt workflow,</text>
-        <text x="380" y="324" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="9.5" fill="#a0a0c0">skills, plugins</text>
+        <rect x="374" y="290" width="114" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="376" y1="292" x2="376" y2="324" stroke="#5eead4" stroke-width="2" />
+        <text x="384" y="304" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">Agent config &amp;</text>
+        <text x="384" y="318" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">allow/deny rules</text>
 
-        <rect x="370" y="338" width="112" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="372" y1="340" x2="372" y2="370" stroke="#5eead4" stroke-width="2" />
-        <text x="380" y="352" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="9.5" fill="#a0a0c0">GH CLI, VS Code</text>
-        <text x="380" y="366" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="9.5" fill="#a0a0c0">extensions</text>
+        <rect x="374" y="334" width="114" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="376" y1="336" x2="376" y2="368" stroke="#5eead4" stroke-width="2" />
+        <text x="384" y="348" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">GH CLI, VS Code</text>
+        <text x="384" y="362" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">extensions</text>
 
-        <rect x="370" y="380" width="112" height="34" rx="4" fill="rgba(14,14,22,0.8)" />
-        <line x1="372" y1="382" x2="372" y2="412" stroke="#5eead4" stroke-width="2" />
-        <text x="380" y="394" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="9.5" fill="#a0a0c0">MCP config</text>
-        <text x="380" y="408" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
-              font-size="9.5" fill="#a0a0c0">pre-loaded</text>
+        <rect x="374" y="378" width="114" height="36" rx="4" fill="rgba(14,14,22,0.85)" />
+        <line x1="376" y1="380" x2="376" y2="412" stroke="#5eead4" stroke-width="2" />
+        <text x="384" y="392" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">MCP pre-loaded</text>
+        <text x="384" y="406" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#b0b0c8">TF MCP, AWS MCP</text>
 
-        <!-- Connecting glow effects on the rings -->
-        <rect x="56" y="108" width="140" height="380" rx="14" ry="14"
-              fill="none" stroke="#f472b6" stroke-width="0.5" opacity="0.3" filter="url(#glow1)" />
-        <rect x="208" y="108" width="140" height="380" rx="14" ry="14"
-              fill="none" stroke="#60a5fa" stroke-width="0.5" opacity="0.3" filter="url(#glow1)" />
-        <rect x="360" y="108" width="132" height="380" rx="14" ry="14"
-              fill="none" stroke="#5eead4" stroke-width="0.5" opacity="0.3" filter="url(#glow1)" />
+        <!-- Env vars label at bottom of devcontainer -->
+        <rect x="52" y="424" width="444" height="86" rx="10"
+              fill="rgba(14,14,22,0.7)" stroke="rgba(251,191,36,0.3)" stroke-width="1" />
+        <text x="70" y="444" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="11" fill="#fbbf24" font-weight="700" letter-spacing="0.5">ENV VARS PRE-CONFIGURED</text>
+        <text x="70" y="462" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#a0a0b8">GITHUB_TOKEN &middot; GH_ENTERPRISE_TOKEN</text>
+        <text x="70" y="476" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#a0a0b8">TFE_TOKEN &middot; AWS_ACCESS_KEY_ID &middot; AWS_SECRET_ACCESS_KEY</text>
+        <text x="70" y="490" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif"
+              font-size="10" fill="#a0a0b8">AWS_SESSION_TOKEN &middot; CLAUDE_CODE_AGENT_SWARMS=true</text>
       </svg>
     </div>
 
-    <!-- RIGHT COLUMN: 3 expanded layer detail cards -->
+    <!-- RIGHT COLUMN: 3 expanded detail cards -->
     <div style="
       flex: 1;
       display: flex; flex-direction: column;
-      gap: 20px;
+      gap: 16px;
       justify-content: center;
       min-width: 0;
     ">
@@ -287,43 +330,43 @@
         backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(244,114,182,0.25);
         border-radius: 16px;
-        padding: 28px 32px;
+        padding: 22px 28px;
         box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 24px rgba(244,114,182,0.06);
       ">
-        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
           <div style="
-            width: 44px; height: 44px; border-radius: 12px;
+            width: 42px; height: 42px; border-radius: 12px;
             background: rgba(244,114,182,0.1);
-            border: 1px solid rgba(244,114,182,0.25);
+            border: 1px solid rgba(244,114,182,0.3);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; flex-shrink: 0;
+            font-size: 1.3rem; flex-shrink: 0;
           ">&#128272;</div>
           <div>
-            <div style="font-size: 1.15rem; font-weight: 700; color: #f472b6; margin-bottom: 2px;">Security &amp; Isolation</div>
-            <div style="font-size: 0.85rem; color: #8888a0;">Host inaccessible, controlled network</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #f472b6; margin-bottom: 2px;">Security &amp; Isolation</div>
+            <div style="font-size: 0.82rem; color: #8888a0;">Host inaccessible &middot; controlled network &middot; blast radius contained</div>
           </div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #f472b6;
           ">Host system completely inaccessible from container</div>
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #f472b6;
           ">Local firewall controls allowed domains</div>
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #f472b6;
-          ">Agent permissions (allow/deny) enforced</div>
+          ">Agent permissions (allow/deny) enforced via <span style="color:#c084fc;">.claude/settings.json</span></div>
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #f472b6;
-          ">Blast radius contained to container</div>
+          ">Docker-in-Docker with NET_ADMIN / NET_RAW capabilities</div>
         </div>
       </div>
 
@@ -333,98 +376,188 @@
         backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(96,165,250,0.25);
         border-radius: 16px;
-        padding: 28px 32px;
+        padding: 22px 28px;
         box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 24px rgba(96,165,250,0.06);
       ">
-        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
           <div style="
-            width: 44px; height: 44px; border-radius: 12px;
+            width: 42px; height: 42px; border-radius: 12px;
             background: rgba(96,165,250,0.1);
-            border: 1px solid rgba(96,165,250,0.25);
+            border: 1px solid rgba(96,165,250,0.3);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; flex-shrink: 0;
+            font-size: 1.3rem; flex-shrink: 0;
           ">&#128101;</div>
           <div>
-            <div style="font-size: 1.15rem; font-weight: 700; color: #60a5fa; margin-bottom: 2px;">Team Consistency</div>
-            <div style="font-size: 0.85rem; color: #8888a0;">Same environment, configured in minutes</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #60a5fa; margin-bottom: 2px;">Team Consistency</div>
+            <div style="font-size: 0.82rem; color: #8888a0;">Same environment everywhere &middot; onboarding in minutes</div>
           </div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #60a5fa;
-          ">Consistent environment across all team members</div>
+          ">Same environment across all team members</div>
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #60a5fa;
           ">New developer onboarding in minutes, not days</div>
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #60a5fa;
-          ">Version-controlled configuration via devcontainer.json</div>
+          ">Version-controlled configuration via <span style="color:#93c5fd;">devcontainer.json</span></div>
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #60a5fa;
           ">Reproducible builds and test environments</div>
         </div>
       </div>
 
-      <!-- Card 3: Consistent Tooling -->
+      <!-- Card 3: Agent Tooling Pre-Loaded -->
       <div style="
         background: rgba(22,22,34,0.65);
         backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(94,234,212,0.25);
         border-radius: 16px;
-        padding: 28px 32px;
+        padding: 22px 28px;
         box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 24px rgba(94,234,212,0.06);
       ">
-        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
           <div style="
-            width: 44px; height: 44px; border-radius: 12px;
+            width: 42px; height: 42px; border-radius: 12px;
             background: rgba(94,234,212,0.1);
-            border: 1px solid rgba(94,234,212,0.25);
+            border: 1px solid rgba(94,234,212,0.3);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; flex-shrink: 0;
+            font-size: 1.3rem; flex-shrink: 0;
           ">&#128736;&#65039;</div>
           <div>
-            <div style="font-size: 1.15rem; font-weight: 700; color: #5eead4; margin-bottom: 2px;">Consistent Tooling</div>
-            <div style="font-size: 0.85rem; color: #8888a0;">Pre-configured IaC and agent toolchain</div>
+            <div style="font-size: 1.1rem; font-weight: 700; color: #5eead4; margin-bottom: 2px;">Agent Tooling Pre-Loaded</div>
+            <div style="font-size: 0.82rem; color: #8888a0;">IaC toolchain &middot; 27 skills + 14 agents &middot; MCP servers</div>
           </div>
         </div>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #5eead4;
           ">Terraform CLI, Pre-commit, TFLint, TerraformDocs, tf-policy</div>
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #5eead4;
-          ">Agent configuration and permissions (allow/denies)</div>
+          ">Prompt workflow: sub-agents, skills, plugins (<span style="color:#5eead4;">27 skills + 14 agents</span>)</div>
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #5eead4;
-          ">Prompt workflow, sub-agents, skills, plugins, tooling</div>
+          ">Agent configuration and permissions (allow/deny rules)</div>
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #5eead4;
           ">Development tooling (GH CLI) and VS Code extensions</div>
           <div style="
-            padding: 10px 14px; background: rgba(14,14,22,0.8); border-radius: 8px;
-            font-size: 13.5px; color: #b8b8d0; line-height: 1.5;
+            padding: 9px 13px; background: rgba(14,14,22,0.8); border-radius: 8px;
+            font-size: 13px; color: #b8b8d0; line-height: 1.45;
             border-left: 3px solid #5eead4;
             grid-column: span 2;
-          ">MCP configuration pre-loaded</div>
+          ">MCP configuration pre-loaded &mdash; <span style="color:#5eead4;">Terraform MCP</span>, <span style="color:#5eead4;">AWS MCP</span></div>
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- BOTTOM: Toolchain versions bar -->
+  <div style="
+    flex-shrink: 0;
+    padding: 12px 48px 16px;
+    border-top: 1px solid rgba(35,35,47,0.6);
+  ">
+    <div style="
+      background: rgba(22,22,34,0.55);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(123,97,255,0.15);
+      border-radius: 12px;
+      padding: 12px 24px;
+      display: flex; align-items: center; gap: 8px;
+      flex-wrap: nowrap;
+      justify-content: center;
+    ">
+      <span style="font-size: 11px; font-weight: 700; color: #8888a0; letter-spacing: 1px; margin-right: 8px;">PRE-BUILT TOOLCHAIN</span>
+      <!-- Terraform -->
+      <span style="
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 6px;
+        background: rgba(123,97,255,0.08); border: 1px solid rgba(123,97,255,0.2);
+        font-size: 12px; color: #c8c0ff; font-weight: 600; white-space: nowrap;
+      ">Terraform 1.14.6</span>
+      <!-- Node -->
+      <span style="
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 6px;
+        background: rgba(94,234,212,0.08); border: 1px solid rgba(94,234,212,0.2);
+        font-size: 12px; color: #a5f0e4; font-weight: 600; white-space: nowrap;
+      ">Node 25.7.0</span>
+      <!-- Go -->
+      <span style="
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 6px;
+        background: rgba(96,165,250,0.08); border: 1px solid rgba(96,165,250,0.2);
+        font-size: 12px; color: #93c5fd; font-weight: 600; white-space: nowrap;
+      ">Go 1.24</span>
+      <!-- TFLint -->
+      <span style="
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 6px;
+        background: rgba(244,114,182,0.08); border: 1px solid rgba(244,114,182,0.2);
+        font-size: 12px; color: #f9a8d4; font-weight: 600; white-space: nowrap;
+      ">TFLint 0.60.0</span>
+      <!-- terraform-docs -->
+      <span style="
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 6px;
+        background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2);
+        font-size: 12px; color: #fde68a; font-weight: 600; white-space: nowrap;
+      ">tf-docs 0.21.0</span>
+      <!-- trivy -->
+      <span style="
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 6px;
+        background: rgba(94,234,212,0.08); border: 1px solid rgba(94,234,212,0.2);
+        font-size: 12px; color: #a5f0e4; font-weight: 600; white-space: nowrap;
+      ">trivy</span>
+      <!-- infracost -->
+      <span style="
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 6px;
+        background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.2);
+        font-size: 12px; color: #fde68a; font-weight: 600; white-space: nowrap;
+      ">infracost 0.10.43</span>
+      <!-- checkov -->
+      <span style="
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 6px;
+        background: rgba(244,114,182,0.08); border: 1px solid rgba(244,114,182,0.2);
+        font-size: 12px; color: #f9a8d4; font-weight: 600; white-space: nowrap;
+      ">checkov 3.2.504</span>
+      <!-- vault-radar -->
+      <span style="
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 6px;
+        background: rgba(123,97,255,0.08); border: 1px solid rgba(123,97,255,0.2);
+        font-size: 12px; color: #c8c0ff; font-weight: 600; white-space: nowrap;
+      ">vault-radar 0.43.0</span>
+      <!-- golangci-lint -->
+      <span style="
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 4px 10px; border-radius: 6px;
+        background: rgba(96,165,250,0.08); border: 1px solid rgba(96,165,250,0.2);
+        font-size: 12px; color: #93c5fd; font-weight: 600; white-space: nowrap;
+      ">golangci-lint 2.10.1</span>
     </div>
   </div>
 
