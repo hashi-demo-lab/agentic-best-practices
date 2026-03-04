@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;800&display=swap" rel="stylesheet">
+<title>Modernizing Terraform — AI-Driven Infrastructure</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    color: #FFFFFF;
+    background: #000000;
+  }
+
+  .lines-svg {
+    position: absolute; top: 0; left: 0;
+    width: 1920px; height: 1080px;
+    z-index: 2;
+  }
+
+  .title-content {
+    position: absolute;
+    bottom: 195px; left: 120px;
+    z-index: 3;
+  }
+  .title-content h1 {
+    font-size: 92px; font-weight: 800; line-height: 1.06;
+    color: #FFFFFF; letter-spacing: -0.035em;
+    text-shadow: 0 4px 60px rgba(139, 92, 246, 0.12);
+  }
+  .title-content p {
+    font-size: 28px; font-weight: 300; color: rgba(255,255,255,0.4);
+    margin-top: 32px; letter-spacing: 0.01em;
+  }
+</style>
+</head>
+<body>
+
+<svg class="lines-svg" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="deepglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="45"/>
+    </filter>
+    <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Gradient strokes — wider color range, stronger opacity -->
+    <linearGradient id="s1" gradientUnits="userSpaceOnUse" x1="700" y1="0" x2="1920" y2="1080">
+      <stop offset="0%" stop-color="#e0dce8" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#c4b5fd" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#c4b5fd" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s2" gradientUnits="userSpaceOnUse" x1="800" y1="0" x2="1920" y2="1000">
+      <stop offset="0%" stop-color="#c4b5fd" stop-opacity="0.5"/>
+      <stop offset="55%" stop-color="#a78bfa" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s3" gradientUnits="userSpaceOnUse" x1="900" y1="0" x2="1920" y2="900">
+      <stop offset="0%" stop-color="#a78bfa" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s4" gradientUnits="userSpaceOnUse" x1="1000" y1="0" x2="1920" y2="800">
+      <stop offset="0%" stop-color="#818cf8" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#6366f1" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s5" gradientUnits="userSpaceOnUse" x1="1100" y1="0" x2="1920" y2="700">
+      <stop offset="0%" stop-color="#67e8f9" stop-opacity="0.55"/>
+      <stop offset="50%" stop-color="#22d3ee" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s6" gradientUnits="userSpaceOnUse" x1="1200" y1="0" x2="1920" y2="600">
+      <stop offset="0%" stop-color="#5eead4" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#34d399" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#34d399" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s7" gradientUnits="userSpaceOnUse" x1="1300" y1="0" x2="1920" y2="500">
+      <stop offset="0%" stop-color="#60DEA9" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#60DEA9" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#60DEA9" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s8" gradientUnits="userSpaceOnUse" x1="1380" y1="0" x2="1920" y2="420">
+      <stop offset="0%" stop-color="#fda4af" stop-opacity="0.5"/>
+      <stop offset="50%" stop-color="#fb7185" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#fb7185" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s9" gradientUnits="userSpaceOnUse" x1="1460" y1="0" x2="1920" y2="340">
+      <stop offset="0%" stop-color="#DC477D" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#DC477D" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#DC477D" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s10" gradientUnits="userSpaceOnUse" x1="1540" y1="0" x2="1920" y2="260">
+      <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.45"/>
+      <stop offset="50%" stop-color="#fbbf24" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s11" gradientUnits="userSpaceOnUse" x1="1620" y1="0" x2="1920" y2="180">
+      <stop offset="0%" stop-color="#FFCF25" stop-opacity="0.4"/>
+      <stop offset="50%" stop-color="#FFCF25" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#FFCF25" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Layer 1: Deep atmospheric glow — creates the luminous wash -->
+  <g filter="url(#deepglow)" opacity="0.4">
+    <path d="M 800,0 A 1120,1080 0 0,1 1920,1080" stroke="#7c3aed" stroke-width="14" fill="none"/>
+    <path d="M 1050,0 A 870,900 0 0,1 1920,900" stroke="#6366f1" stroke-width="10" fill="none"/>
+    <path d="M 1250,0 A 670,700 0 0,1 1920,700" stroke="#0891b2" stroke-width="8" fill="none"/>
+    <path d="M 1420,0 A 500,500 0 0,1 1920,500" stroke="#059669" stroke-width="6" fill="none"/>
+  </g>
+
+  <!-- Layer 2: Softer mid-glow for depth -->
+  <g filter="url(#softglow)" opacity="0.5">
+    <path d="M 700,0 A 1220,1080 0 0,1 1920,1080" stroke="#c4b5fd" stroke-width="5" fill="none" opacity="0.2"/>
+    <path d="M 900,0 A 1020,900 0 0,1 1920,900" stroke="#a78bfa" stroke-width="4" fill="none" opacity="0.25"/>
+    <path d="M 1100,0 A 820,700 0 0,1 1920,700" stroke="#67e8f9" stroke-width="3.5" fill="none" opacity="0.25"/>
+    <path d="M 1300,0 A 620,500 0 0,1 1920,500" stroke="#60DEA9" stroke-width="3" fill="none" opacity="0.2"/>
+    <path d="M 1460,0 A 460,340 0 0,1 1920,340" stroke="#fda4af" stroke-width="2.5" fill="none" opacity="0.18"/>
+  </g>
+
+  <!-- Layer 3: Sharp inner glow on select arcs -->
+  <g filter="url(#glow)" opacity="0.6">
+    <path d="M 900,0 A 1020,900 0 0,1 1920,900" stroke="#a78bfa" stroke-width="2.5" fill="none" opacity="0.3"/>
+    <path d="M 1100,0 A 820,700 0 0,1 1920,700" stroke="#818cf8" stroke-width="2" fill="none" opacity="0.3"/>
+    <path d="M 1300,0 A 620,500 0 0,1 1920,500" stroke="#5eead4" stroke-width="2" fill="none" opacity="0.25"/>
+    <path d="M 1460,0 A 460,340 0 0,1 1920,340" stroke="#DC477D" stroke-width="1.8" fill="none" opacity="0.2"/>
+  </g>
+
+  <!-- Layer 4: Crisp gradient-stroked arcs — the visible lines -->
+  <path d="M 700,0 A 1220,1080 0 0,1 1920,1080" stroke="url(#s1)" stroke-width="1.8" fill="none"/>
+  <path d="M 800,0 A 1120,1000 0 0,1 1920,1000" stroke="url(#s2)" stroke-width="2" fill="none"/>
+  <path d="M 900,0 A 1020,900 0 0,1 1920,900" stroke="url(#s3)" stroke-width="2.2" fill="none"/>
+  <path d="M 1000,0 A 920,800 0 0,1 1920,800" stroke="url(#s4)" stroke-width="2" fill="none"/>
+  <path d="M 1100,0 A 820,700 0 0,1 1920,700" stroke="url(#s5)" stroke-width="1.8" fill="none"/>
+  <path d="M 1200,0 A 720,600 0 0,1 1920,600" stroke="url(#s6)" stroke-width="1.6" fill="none"/>
+  <path d="M 1300,0 A 620,500 0 0,1 1920,500" stroke="url(#s7)" stroke-width="1.6" fill="none"/>
+  <path d="M 1380,0 A 540,420 0 0,1 1920,420" stroke="url(#s8)" stroke-width="1.4" fill="none"/>
+  <path d="M 1460,0 A 460,340 0 0,1 1920,340" stroke="url(#s9)" stroke-width="1.4" fill="none"/>
+  <path d="M 1540,0 A 380,260 0 0,1 1920,260" stroke="url(#s10)" stroke-width="1.2" fill="none"/>
+  <path d="M 1620,0 A 300,180 0 0,1 1920,180" stroke="url(#s11)" stroke-width="1.0" fill="none"/>
+</svg>
+
+<div class="title-content">
+  <h1>Modernizing Terraform<br>AI-Driven Infrastructure</h1>
+  <p>Spec-Driven Development with Agentic AI</p>
+</div>
+
+</body>
+</html>

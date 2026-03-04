@@ -43,7 +43,7 @@
 
   /* Flow diagram */
   .flow-area {
-    padding: 10px 80px 0;
+    padding: 70px 80px 0;
     position: relative; z-index: 1;
   }
   .flow-svg { width: 100%; }
@@ -60,7 +60,7 @@
   }
   .bullet-item {
     display: flex; align-items: flex-start; gap: 12px;
-    font-size: 20px; color: #CCCCCC; line-height: 1.45; font-weight: 400;
+    font-size: 22px; color: #CCCCCC; line-height: 1.5; font-weight: 400;
   }
   .bullet-dot {
     width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 8px;
@@ -69,7 +69,7 @@
   .bullet-item strong { color: #FFFFFF; font-weight: 600; }
   .bullet-item code {
     font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 16px; color: #60DEA9;
+    font-size: 18px; color: #60DEA9;
     background: rgba(96,222,169,0.08); padding: 2px 6px; border-radius: 4px;
   }
 </style>
@@ -87,7 +87,7 @@
   <svg class="flow-svg" viewBox="0 0 1760 430" xmlns="http://www.w3.org/2000/svg">
     <!-- Setup box -->
     <rect x="0" y="0" width="300" height="360" rx="16" fill="rgba(14,14,22,0.5)" stroke="rgba(98,126,239,0.15)" stroke-width="1"/>
-    <text x="24" y="32" fill="#627EEF" font-size="12" font-weight="700" letter-spacing="2">SETUP</text>
+    <text x="24" y="32" fill="#627EEF" font-size="14" font-weight="700" letter-spacing="2">SETUP</text>
 
     <rect x="20" y="50" width="260" height="160" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
     <rect x="36" y="68" width="110" height="26" rx="5" fill="rgba(96,222,169,0.06)" stroke="rgba(96,222,169,0.2)" stroke-width="1"/>
@@ -109,11 +109,11 @@
 
     <!-- Phase 3 box -->
     <rect x="370" y="0" width="700" height="360" rx="16" fill="rgba(14,14,22,0.5)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
-    <text x="394" y="32" fill="#60DEA9" font-size="12" font-weight="700" letter-spacing="2">PHASE 3: BUILD (MODULE COMPOSITION)</text>
+    <text x="394" y="32" fill="#60DEA9" font-size="14" font-weight="700" letter-spacing="2">PHASE 3: BUILD (MODULE COMPOSITION)</text>
 
     <!-- Implementation Loop -->
     <rect x="390" y="50" width="660" height="170" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-    <text x="406" y="72" fill="#82748C" font-size="11" font-weight="700" letter-spacing="1">IMPLEMENTATION LOOP</text>
+    <text x="406" y="72" fill="#82748C" font-size="13" font-weight="700" letter-spacing="1">IMPLEMENTATION LOOP</text>
 
     <rect x="406" y="84" width="200" height="26" rx="5" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.25)" stroke-width="1"/>
     <text x="506" y="101" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="10" font-weight="600">tf-consumer-developer xN</text>
@@ -144,8 +144,8 @@
 
     <!-- Phase 3 output -->
     <rect x="390" y="240" width="660" height="36" rx="8" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
-    <text x="406" y="263" fill="#FFCF25" font-size="11" font-weight="700" letter-spacing="1.5">OUTPUT</text>
-    <text x="490" y="263" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="12">*.tf consumer files</text>
+    <text x="406" y="263" fill="#FFCF25" font-size="13" font-weight="700" letter-spacing="1.5">OUTPUT</text>
+    <text x="490" y="263" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="14">*.tf consumer files</text>
 
     <!-- Arrow Phase 3 -> Phase 4 -->
     <line x1="1070" y1="180" x2="1130" y2="180" stroke="rgba(96,222,169,0.25)" stroke-width="2" stroke-dasharray="6 4"/>
@@ -153,11 +153,11 @@
 
     <!-- Phase 4 box -->
     <rect x="1140" y="0" width="620" height="360" rx="16" fill="rgba(14,14,22,0.5)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
-    <text x="1164" y="32" fill="#FFCF25" font-size="12" font-weight="700" letter-spacing="2">PHASE 4: VALIDATE + DEPLOY</text>
+    <text x="1164" y="32" fill="#FFCF25" font-size="14" font-weight="700" letter-spacing="2">PHASE 4: VALIDATE + DEPLOY</text>
 
     <!-- Quality Assessment -->
     <rect x="1160" y="50" width="300" height="130" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-    <text x="1176" y="72" fill="#82748C" font-size="11" font-weight="700" letter-spacing="1">QUALITY ASSESSMENT</text>
+    <text x="1176" y="72" fill="#82748C" font-size="13" font-weight="700" letter-spacing="1">QUALITY ASSESSMENT</text>
     <rect x="1176" y="84" width="160" height="26" rx="5" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.25)" stroke-width="1"/>
     <text x="1256" y="101" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="10" font-weight="600">tf-consumer-validator</text>
     <rect x="1176" y="118" width="110" height="26" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
@@ -167,7 +167,7 @@
 
     <!-- Ship -->
     <rect x="1480" y="50" width="260" height="130" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-    <text x="1496" y="72" fill="#82748C" font-size="11" font-weight="700" letter-spacing="1">REPORT &amp; SHIP</text>
+    <text x="1496" y="72" fill="#82748C" font-size="13" font-weight="700" letter-spacing="1">REPORT &amp; SHIP</text>
     <rect x="1496" y="84" width="130" height="26" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
     <text x="1561" y="101" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="10">tf-report-template</text>
     <rect x="1496" y="118" width="100" height="26" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
@@ -176,22 +176,22 @@
 
     <!-- Phase 4 output -->
     <rect x="1160" y="240" width="580" height="36" rx="8" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
-    <text x="1176" y="263" fill="#FFCF25" font-size="11" font-weight="700" letter-spacing="1.5">OUTPUT</text>
-    <text x="1260" y="263" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="12">validation report + quality score + PR + GH Issue</text>
+    <text x="1176" y="263" fill="#FFCF25" font-size="13" font-weight="700" letter-spacing="1.5">OUTPUT</text>
+    <text x="1260" y="263" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="14">validation report + quality score + PR + GH Issue</text>
 
     <!-- Legend -->
     <circle cx="30" cy="396" r="4" fill="#DC477D"/>
-    <text x="40" y="400" fill="#82748C" font-size="10">Agent</text>
+    <text x="40" y="400" fill="#82748C" font-size="14">Agent</text>
     <circle cx="100" cy="396" r="4" fill="#62D4DC"/>
-    <text x="110" y="400" fill="#82748C" font-size="10">Skill</text>
+    <text x="110" y="400" fill="#82748C" font-size="14">Skill</text>
     <circle cx="165" cy="396" r="4" fill="#60DEA9"/>
-    <text x="175" y="400" fill="#82748C" font-size="10">Script</text>
+    <text x="175" y="400" fill="#82748C" font-size="14">Script</text>
     <circle cx="235" cy="396" r="4" fill="#FFD06C"/>
-    <text x="245" y="400" fill="#82748C" font-size="10">MCP</text>
+    <text x="245" y="400" fill="#82748C" font-size="14">MCP</text>
     <circle cx="285" cy="396" r="4" fill="#EC585D"/>
-    <text x="295" y="400" fill="#82748C" font-size="10">Command</text>
+    <text x="295" y="400" fill="#82748C" font-size="14">Command</text>
     <circle cx="370" cy="396" r="4" fill="#FFCF25"/>
-    <text x="380" y="400" fill="#82748C" font-size="10">Artifact</text>
+    <text x="380" y="400" fill="#82748C" font-size="14">Artifact</text>
   </svg>
 </div>
 

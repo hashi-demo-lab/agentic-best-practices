@@ -54,7 +54,7 @@
   }
   .bullet-item {
     display: flex; align-items: flex-start; gap: 14px;
-    font-size: 20px; color: #CCCCCC; line-height: 1.5; font-weight: 400;
+    font-size: 22px; color: #CCCCCC; line-height: 1.5; font-weight: 400;
   }
   .bullet-dot {
     width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 9px;
@@ -63,7 +63,7 @@
   .bullet-item strong { color: #FFFFFF; font-weight: 600; }
   .bullet-item code {
     font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 17px; color: #A78BFA;
+    font-size: 18px; color: #A78BFA;
     background: rgba(167,139,250,0.08); padding: 2px 6px; border-radius: 4px;
   }
 
@@ -82,7 +82,7 @@
   }
   .pipe-label {
     font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 13px; color: #82748C; font-weight: 400;
+    font-size: 16px; color: #82748C; font-weight: 400;
     padding: 4px 14px; border-radius: 6px;
     border: 1px solid rgba(255,255,255,0.06);
     background: linear-gradient(180deg, #121212 0%, #000000 100%);
@@ -125,7 +125,7 @@
 
   <!-- Visual: 5-Agent Flow SVG -->
   <div class="visual">
-    <svg class="flow-svg" viewBox="0 0 960 340" xmlns="http://www.w3.org/2000/svg">
+    <svg class="flow-svg" viewBox="0 0 1000 340" xmlns="http://www.w3.org/2000/svg">
       <!-- Connection lines -->
       <line x1="170" y1="100" x2="210" y2="100" stroke="rgba(167,139,250,0.3)" stroke-width="2" stroke-dasharray="6 4"/>
       <polygon points="206,96 214,100 206,104" fill="rgba(167,139,250,0.4)"/>
@@ -142,66 +142,67 @@
       <!-- Node 1: Research -->
       <rect x="10" y="60" width="160" height="80" rx="12" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
       <text x="90" y="92" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="12" font-weight="600">tf-module-research</text>
-      <text x="90" y="118" text-anchor="middle" fill="#82748C" font-size="11">x3-4 concurrent</text>
+      <text x="90" y="118" text-anchor="middle" fill="#82748C" font-size="13">x3-4 concurrent</text>
 
       <!-- Node 2: Design -->
       <rect x="210" y="60" width="160" height="80" rx="12" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
       <text x="290" y="92" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="12" font-weight="600">tf-module-design</text>
-      <text x="290" y="118" text-anchor="middle" fill="#82748C" font-size="11">design author</text>
+      <text x="290" y="118" text-anchor="middle" fill="#82748C" font-size="13">design author</text>
 
       <!-- Node 3: Test Writer -->
       <rect x="410" y="60" width="170" height="80" rx="12" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
       <text x="495" y="92" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="12" font-weight="600">tf-module-test-writer</text>
-      <text x="495" y="118" text-anchor="middle" fill="#82748C" font-size="11">tests first (TDD)</text>
+      <text x="495" y="118" text-anchor="middle" fill="#82748C" font-size="13">tests first (TDD)</text>
 
       <!-- Node 4: Developer -->
       <rect x="620" y="60" width="160" height="80" rx="12" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
       <text x="700" y="92" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="12" font-weight="600">tf-module-developer</text>
-      <text x="700" y="118" text-anchor="middle" fill="#82748C" font-size="11">xN per checklist</text>
+      <text x="700" y="118" text-anchor="middle" fill="#82748C" font-size="13">xN per checklist</text>
 
       <!-- Node 5: Validator -->
       <rect x="820" y="60" width="130" height="80" rx="12" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
       <text x="885" y="86" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="12" font-weight="600">tf-module-</text>
       <text x="885" y="102" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="12" font-weight="600">validator</text>
-      <text x="885" y="126" text-anchor="middle" fill="#82748C" font-size="11">quality scoring</text>
+      <text x="885" y="126" text-anchor="middle" fill="#82748C" font-size="13">quality scoring</text>
 
       <!-- Phase labels -->
-      <text x="90" y="176" text-anchor="middle" fill="#60DEA9" font-size="11" font-weight="600" letter-spacing="1">PHASE 1</text>
-      <text x="90" y="193" text-anchor="middle" fill="#82748C" font-size="11">Requirements</text>
+      <text x="90" y="176" text-anchor="middle" fill="#60DEA9" font-size="13" font-weight="600" letter-spacing="1">PHASE 1</text>
+      <text x="90" y="193" text-anchor="middle" fill="#82748C" font-size="13">Requirements</text>
 
-      <text x="290" y="176" text-anchor="middle" fill="#A78BFA" font-size="11" font-weight="600" letter-spacing="1">PHASE 2</text>
-      <text x="290" y="193" text-anchor="middle" fill="#82748C" font-size="11">Design</text>
+      <text x="290" y="176" text-anchor="middle" fill="#A78BFA" font-size="13" font-weight="600" letter-spacing="1">PHASE 2</text>
+      <text x="290" y="193" text-anchor="middle" fill="#82748C" font-size="13">Design</text>
 
-      <!-- Human gate -->
-      <rect x="385" y="28" width="60" height="22" rx="11" fill="rgba(255,207,37,0.1)" stroke="rgba(255,207,37,0.3)" stroke-width="1"/>
-      <text x="415" y="43" text-anchor="middle" fill="#FFCF25" font-size="9" font-weight="600">GATE</text>
-      <line x1="415" y1="50" x2="415" y2="60" stroke="rgba(255,207,37,0.3)" stroke-width="1" stroke-dasharray="3 2"/>
+      <!-- Human Approval Gate -->
+      <rect x="375" y="4" width="80" height="50" rx="8" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.4)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="415" y="24" text-anchor="middle" fill="#EC585D" font-size="11" font-weight="700" letter-spacing="0.5">HUMAN</text>
+      <text x="415" y="40" text-anchor="middle" fill="#EC585D" font-size="11" font-weight="700" letter-spacing="0.5">APPROVAL</text>
+      <line x1="415" y1="54" x2="415" y2="60" stroke="rgba(236,88,93,0.4)" stroke-width="1.5" stroke-dasharray="3 2"/>
 
-      <text x="560" y="176" text-anchor="middle" fill="#60DEA9" font-size="11" font-weight="600" letter-spacing="1">PHASE 3</text>
-      <text x="560" y="193" text-anchor="middle" fill="#82748C" font-size="11">Build + Test</text>
+      <text x="560" y="176" text-anchor="middle" fill="#60DEA9" font-size="13" font-weight="600" letter-spacing="1">PHASE 3</text>
+      <text x="560" y="193" text-anchor="middle" fill="#82748C" font-size="13">Build + Test</text>
 
       <!-- bracket for phase 3 covering test-writer and developer -->
       <line x1="410" y1="165" x2="780" y2="165" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
 
-      <text x="885" y="176" text-anchor="middle" fill="#FFCF25" font-size="11" font-weight="600" letter-spacing="1">PHASE 4</text>
-      <text x="885" y="193" text-anchor="middle" fill="#82748C" font-size="11">Validate</text>
+      <text x="885" y="176" text-anchor="middle" fill="#FFCF25" font-size="13" font-weight="600" letter-spacing="1">PHASE 4</text>
+      <text x="885" y="193" text-anchor="middle" fill="#82748C" font-size="13">Validate</text>
 
       <!-- TDD callout -->
       <rect x="410" y="222" width="540" height="50" rx="10" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.12)" stroke-width="1"/>
-      <text x="430" y="244" fill="#A78BFA" font-size="11" font-weight="700" letter-spacing="1">TDD CYCLE</text>
-      <text x="540" y="244" fill="#82748C" font-size="12">Write Tests</text>
-      <text x="620" y="244" fill="#82748C" font-size="12">&rarr;</text>
-      <text x="640" y="244" fill="#EC585D" font-size="12">RED Baseline</text>
-      <text x="740" y="244" fill="#82748C" font-size="12">&rarr;</text>
-      <text x="760" y="244" fill="#60DEA9" font-size="12">Implement</text>
-      <text x="840" y="244" fill="#82748C" font-size="12">&rarr;</text>
-      <text x="860" y="244" fill="#60DEA9" font-size="12">GREEN</text>
+      <text x="430" y="244" fill="#A78BFA" font-size="13" font-weight="700" letter-spacing="1">TDD CYCLE</text>
+      <text x="540" y="244" fill="#82748C" font-size="14">Write Tests</text>
+      <text x="620" y="244" fill="#82748C" font-size="14">&rarr;</text>
+      <text x="640" y="244" fill="#EC585D" font-size="14">RED Baseline</text>
+      <text x="740" y="244" fill="#82748C" font-size="14">&rarr;</text>
+      <text x="760" y="244" fill="#60DEA9" font-size="14">Implement</text>
+      <text x="840" y="244" fill="#82748C" font-size="14">&rarr;</text>
+      <text x="860" y="244" fill="#60DEA9" font-size="14">GREEN</text>
       <text x="430" y="262" fill="#82748C" font-size="10" font-style="italic">4 test files (basic, complete, edge_cases, validation) map 1:1 from design assertions</text>
 
       <!-- Output bar -->
       <rect x="10" y="290" width="940" height="36" rx="8" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
-      <text x="26" y="313" fill="#FFCF25" font-size="11" font-weight="700" letter-spacing="1.5">OUTPUT</text>
-      <text x="110" y="313" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="12">design.md  &rarr;  tests/*.tftest.hcl  &rarr;  *.tf module files  &rarr;  README.md + validation report + PR</text>
+      <text x="26" y="313" fill="#FFCF25" font-size="13" font-weight="700" letter-spacing="1.5">OUTPUT</text>
+      <text x="110" y="313" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="14">design.md  &rarr;  tests/*.tftest.hcl  &rarr;  *.tf module files  &rarr;  README.md + validation report + PR</text>
     </svg>
 
     <div class="pipe-labels">

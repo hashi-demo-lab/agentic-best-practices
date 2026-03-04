@@ -89,10 +89,7 @@ function addDividerSlide(sectionTitle, sectionSubtitle) {
 // ── Act 1: Why (Slides 1-5) ──
 
 // Slide 1: Title
-addTitleSlide(
-  "Modernizing Terraform\nAI-Driven Infrastructure",
-  "Spec-Driven Development with Agentic AI"
-);
+addImageSlide("slide-01-title.png");
 
 // Slide 2: The Problem
 addImageSlide("slide-02-problem.png");
@@ -104,7 +101,7 @@ addImageSlide("slide-03-vision.png");
 addImageSlide("slide-04-agentic-iac-workflows.png");
 
 // Slide 5: Section divider — Foundations
-addDividerSlide("Foundations", "Core concepts that power agentic workflows");
+addImageSlide("slide-divider-foundations.png");
 
 // ── Act 2: Foundations (Slides 6-13) ──
 
@@ -136,10 +133,7 @@ addImageSlide("slide-13-agentic-loop.png");
 addImageSlide("slide-14-observability.png");
 
 // Slide 14: Section divider — Platform Guardrails
-addDividerSlide(
-  "Platform Guardrails",
-  "Enterprise controls that let agents operate safely"
-);
+addImageSlide("slide-divider-guardrails.png");
 
 // ── Act 3: Platform Guardrails (Slides 15-18) ──
 
@@ -159,10 +153,7 @@ addImageSlide("slide-18-mcp-tools.png");
 addImageSlide("slide-19-deny-permissions.png");
 
 // Slide 20: Section divider — Spec-Driven Development
-addDividerSlide(
-  "Spec-Driven Development",
-  "Design precedes code"
-);
+addImageSlide("slide-divider-sdd.png");
 
 // ── Act 4: SDD Methodology (Slides 20-24) ──
 
@@ -182,10 +173,7 @@ addImageSlide("slide-23-quality.png");
 addImageSlide("slide-24-orchestrator.png");
 
 // Slide 25: Section divider — Workflows
-addDividerSlide(
-  "Workflows — Progressive Complexity",
-  "Three workflows, increasing complexity, shared methodology"
-);
+addImageSlide("slide-divider-workflows.png");
 
 // ── Act 5: Workflows (Slides 26-37) ──
 
@@ -223,10 +211,7 @@ addImageSlide("slide-35-provider-impl.png");
 addImageSlide("slide-37-repo-structure.png");
 
 // Slide 38: Section divider — Getting Started
-addDividerSlide(
-  "Getting Started",
-  "From first workflow to full adoption"
-);
+addImageSlide("slide-divider-getting-started.png");
 
 // ── Act 6: Getting Started (Slides 39-40) ──
 

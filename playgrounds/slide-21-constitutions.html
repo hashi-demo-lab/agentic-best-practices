@@ -69,6 +69,11 @@
     position: relative;
   }
 
+  /* Fixed-height MUST section so SHOULD aligns across cards */
+  .rule-group-must {
+    min-height: 340px;
+  }
+
   /* Top accent border */
   .card::before {
     content: ''; position: absolute; top: 0; left: 20px; right: 20px; height: 2px;
@@ -179,7 +184,7 @@
         </div>
       </div>
 
-      <div class="rule-group">
+      <div class="rule-group rule-group-must">
         <span class="level-badge level-must">MUST</span>
         <div class="rule-items">
           <div class="rule-item">encryption_enabled = true, public_access = false as defaults</div>
@@ -211,7 +216,7 @@
         </div>
       </div>
 
-      <div class="rule-group">
+      <div class="rule-group rule-group-must">
         <span class="level-badge level-must">MUST</span>
         <div class="rule-items">
           <div class="rule-item">Private registry only -- raw resource blocks PROHIBITED</div>
@@ -243,7 +248,7 @@
         </div>
       </div>
 
-      <div class="rule-group">
+      <div class="rule-group rule-group-must">
         <span class="level-badge level-must">MUST</span>
         <div class="rule-items">
           <div class="rule-item">Plugin Framework -- not SDKv2</div>

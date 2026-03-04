@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;800&display=swap" rel="stylesheet">
+<title>Section: Platform Guardrails</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    color: #FFFFFF;
+    display: flex; align-items: center; justify-content: center;
+    background: #000000;
+  }
+
+  .lines-svg {
+    position: absolute; top: 0; left: 0;
+    width: 1920px; height: 1080px;
+    z-index: 2;
+  }
+
+  .divider {
+    text-align: center;
+    position: relative; z-index: 3;
+  }
+  .divider h1 {
+    font-size: 72px; font-weight: 800; color: #FFFFFF;
+    letter-spacing: -0.03em; line-height: 1.1;
+    text-shadow: 0 4px 50px rgba(220, 71, 125, 0.15);
+  }
+  .divider p {
+    font-size: 26px; font-weight: 300; color: rgba(255,255,255,0.35);
+    margin-top: 24px; letter-spacing: 0.01em;
+  }
+</style>
+</head>
+<body>
+
+<svg class="lines-svg" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="deepglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="45"/>
+    </filter>
+    <filter id="softglow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="s1" gradientUnits="userSpaceOnUse" x1="850" y1="0" x2="1920" y2="980">
+      <stop offset="0%" stop-color="#e8d0dc" stop-opacity="0.3"/>
+      <stop offset="55%" stop-color="#fda4af" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#fda4af" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s2" gradientUnits="userSpaceOnUse" x1="950" y1="0" x2="1920" y2="880">
+      <stop offset="0%" stop-color="#fda4af" stop-opacity="0.5"/>
+      <stop offset="55%" stop-color="#fb7185" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#fb7185" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s3" gradientUnits="userSpaceOnUse" x1="1050" y1="0" x2="1920" y2="780">
+      <stop offset="0%" stop-color="#DC477D" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#be185d" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#be185d" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s4" gradientUnits="userSpaceOnUse" x1="1150" y1="0" x2="1920" y2="680">
+      <stop offset="0%" stop-color="#f472b6" stop-opacity="0.5"/>
+      <stop offset="55%" stop-color="#ec4899" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#ec4899" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s5" gradientUnits="userSpaceOnUse" x1="1250" y1="0" x2="1920" y2="580">
+      <stop offset="0%" stop-color="#c4b5fd" stop-opacity="0.4"/>
+      <stop offset="55%" stop-color="#a78bfa" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#a78bfa" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s6" gradientUnits="userSpaceOnUse" x1="1350" y1="0" x2="1920" y2="480">
+      <stop offset="0%" stop-color="#fb7185" stop-opacity="0.4"/>
+      <stop offset="55%" stop-color="#fb7185" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#fb7185" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="s7" gradientUnits="userSpaceOnUse" x1="1450" y1="0" x2="1920" y2="380">
+      <stop offset="0%" stop-color="#fda4af" stop-opacity="0.3"/>
+      <stop offset="55%" stop-color="#fda4af" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#fda4af" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <g filter="url(#deepglow)" opacity="0.4">
+    <path d="M 950,0 A 970,880 0 0,1 1920,880" stroke="#be185d" stroke-width="12" fill="none"/>
+    <path d="M 1200,0 A 720,680 0 0,1 1920,680" stroke="#9d174d" stroke-width="8" fill="none"/>
+  </g>
+  <g filter="url(#softglow)" opacity="0.5">
+    <path d="M 850,0 A 1070,980 0 0,1 1920,980" stroke="#fda4af" stroke-width="4" fill="none" opacity="0.2"/>
+    <path d="M 1050,0 A 870,780 0 0,1 1920,780" stroke="#DC477D" stroke-width="3.5" fill="none" opacity="0.25"/>
+    <path d="M 1250,0 A 670,580 0 0,1 1920,580" stroke="#f472b6" stroke-width="3" fill="none" opacity="0.2"/>
+  </g>
+  <g filter="url(#glow)" opacity="0.55">
+    <path d="M 1050,0 A 870,780 0 0,1 1920,780" stroke="#DC477D" stroke-width="2" fill="none" opacity="0.3"/>
+    <path d="M 1250,0 A 670,580 0 0,1 1920,580" stroke="#fb7185" stroke-width="1.8" fill="none" opacity="0.25"/>
+  </g>
+
+  <path d="M 850,0 A 1070,980 0 0,1 1920,980" stroke="url(#s1)" stroke-width="1.8" fill="none"/>
+  <path d="M 950,0 A 970,880 0 0,1 1920,880" stroke="url(#s2)" stroke-width="2" fill="none"/>
+  <path d="M 1050,0 A 870,780 0 0,1 1920,780" stroke="url(#s3)" stroke-width="2" fill="none"/>
+  <path d="M 1150,0 A 770,680 0 0,1 1920,680" stroke="url(#s4)" stroke-width="1.8" fill="none"/>
+  <path d="M 1250,0 A 670,580 0 0,1 1920,580" stroke="url(#s5)" stroke-width="1.6" fill="none"/>
+  <path d="M 1350,0 A 570,480 0 0,1 1920,480" stroke="url(#s6)" stroke-width="1.4" fill="none"/>
+  <path d="M 1450,0 A 470,380 0 0,1 1920,380" stroke="url(#s7)" stroke-width="1.2" fill="none"/>
+</svg>
+
+<div class="divider">
+  <h1>Platform Guardrails</h1>
+  <p>Enterprise controls that let agents operate safely</p>
+</div>
+
+</body>
+</html>

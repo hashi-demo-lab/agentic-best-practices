@@ -42,7 +42,7 @@
   /* Main layout */
   .content {
     display: flex; gap: 28px;
-    padding: 10px 80px 0;
+    padding: 56px 80px 0;
     position: relative; z-index: 1;
   }
 
@@ -66,7 +66,7 @@
   }
   .badge {
     display: inline-block; padding: 5px 18px; border-radius: 20px;
-    font-size: 13px; font-weight: 500; letter-spacing: 0.5px;
+    font-size: 14px; font-weight: 500; letter-spacing: 0.5px;
   }
   .col:nth-child(1) .badge {
     background: rgba(96,222,169,0.1); color: #60DEA9;
@@ -98,11 +98,11 @@
     letter-spacing: 1.5px; color: #82748C;
   }
   .row-value {
-    font-size: 15px; color: #CCCCCC; line-height: 1.5; font-weight: 400;
+    font-size: 20px; color: #CCCCCC; line-height: 1.5; font-weight: 400;
   }
   .row-value code {
     font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 13px; padding: 2px 6px; border-radius: 4px;
+    font-size: 16px; padding: 2px 6px; border-radius: 4px;
     background: rgba(255,255,255,0.04);
   }
   .col:nth-child(1) .row-value code { color: #60DEA9; }
@@ -113,7 +113,7 @@
   .agent-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
   .agent-tag {
     display: inline-block; padding: 3px 10px; border-radius: 6px;
-    font-size: 12px; font-weight: 500;
+    font-size: 14px; font-weight: 500;
     background: rgba(220,71,125,0.08); color: #DC477D;
     border: 1px solid rgba(220,71,125,0.15);
     font-family: 'SF Mono', 'Fira Code', monospace;
@@ -126,7 +126,7 @@
     position: relative; z-index: 1;
   }
   .footer p {
-    font-size: 17px; color: #82748C; line-height: 1.6; font-weight: 400;
+    font-size: 20px; color: #82748C; line-height: 1.6; font-weight: 400;
   }
   .footer strong { color: #CCCCCC; }
   .accent-green { color: #60DEA9; }
@@ -139,7 +139,7 @@
 <div class="title-bar">
   <div class="section-label">WORKFLOWS</div>
   <h1>Workflow Comparison Matrix</h1>
-  <p>Three workflows, increasing complexity, shared methodology</p>
+  <p>Three workflows, shared methodology, different outputs</p>
 </div>
 
 <div class="content">
@@ -147,7 +147,7 @@
   <div class="col">
     <div class="col-header">
       <h2>Consumer</h2>
-      <span class="badge">Easy</span>
+      <span class="badge">Deploy Infrastructure</span>
     </div>
     <div class="row">
       <span class="row-label">Agents</span>
@@ -182,7 +182,7 @@
   <div class="col">
     <div class="col-header">
       <h2>Module</h2>
-      <span class="badge">Medium</span>
+      <span class="badge">Publish Module</span>
     </div>
     <div class="row">
       <span class="row-label">Agents</span>
@@ -218,7 +218,7 @@
   <div class="col">
     <div class="col-header">
       <h2>Provider</h2>
-      <span class="badge">Advanced</span>
+      <span class="badge">Build Provider</span>
     </div>
     <div class="row">
       <span class="row-label">Agents</span>
