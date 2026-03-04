@@ -107,122 +107,101 @@ body {
     </div>
 
     <div class="visual">
-        <svg width="940" height="760" viewBox="0 0 940 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="880" height="720" viewBox="0 0 880 720" fill="none" xmlns="http://www.w3.org/2000/svg">
             <!-- Title -->
-            <text x="470" y="28" text-anchor="middle" fill="#CCCCCC" font-size="14" font-weight="600" letter-spacing="2" font-family="Inter, Arial, sans-serif">PRE-COMMIT PIPELINE</text>
-
-            <!-- Pipeline flow: git commit -> Pre-commit Hooks -> Tools -> Pass/Fail -->
+            <text x="440" y="28" text-anchor="middle" fill="#CCCCCC" font-size="14" font-weight="600" letter-spacing="2" font-family="Inter, Arial, sans-serif">PRE-COMMIT PIPELINE</text>
 
             <!-- Step 1: git commit -->
-            <rect x="40" y="60" width="160" height="80" rx="12" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.25)" stroke-width="1.5"/>
-            <text x="120" y="95" text-anchor="middle" fill="#A78BFA" font-size="18" font-weight="700" font-family="Inter, Arial, sans-serif">git commit</text>
-            <text x="120" y="118" text-anchor="middle" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">triggers hooks</text>
+            <rect x="30" y="55" width="150" height="65" rx="12" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.25)" stroke-width="1.5"/>
+            <text x="105" y="85" text-anchor="middle" fill="#A78BFA" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">git commit</text>
+            <text x="105" y="106" text-anchor="middle" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">triggers hooks</text>
 
             <!-- Arrow -->
-            <line x1="200" y1="100" x2="260" y2="100" stroke="rgba(255,207,37,0.3)" stroke-width="2"/>
-            <polygon points="260,100 250,94 250,106" fill="rgba(255,207,37,0.4)"/>
+            <line x1="180" y1="88" x2="228" y2="88" stroke="rgba(255,207,37,0.3)" stroke-width="2"/>
+            <polygon points="228,88 218,82 218,94" fill="rgba(255,207,37,0.4)"/>
 
-            <!-- Step 2: Pre-commit Hooks -->
-            <rect x="260" y="50" width="200" height="100" rx="12" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.2)" stroke-width="1.5"/>
-            <text x="360" y="85" text-anchor="middle" fill="#FFCF25" font-size="18" font-weight="700" font-family="Inter, Arial, sans-serif">Pre-commit</text>
-            <text x="360" y="108" text-anchor="middle" fill="#FFCF25" font-size="14" font-family="Inter, Arial, sans-serif">Hooks</text>
-            <text x="360" y="132" text-anchor="middle" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">11 total hooks</text>
+            <!-- Step 2: Pre-commit -->
+            <rect x="228" y="50" width="160" height="76" rx="12" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.2)" stroke-width="1.5"/>
+            <text x="308" y="80" text-anchor="middle" fill="#FFCF25" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">Pre-commit</text>
+            <text x="308" y="100" text-anchor="middle" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">11 hooks</text>
 
-            <!-- Arrow to hooks column -->
-            <line x1="460" y1="100" x2="530" y2="100" stroke="rgba(255,207,37,0.3)" stroke-width="2"/>
-            <polygon points="530,100 520,94 520,106" fill="rgba(255,207,37,0.4)"/>
+            <!-- Arrow to hooks -->
+            <line x1="388" y1="88" x2="436" y2="88" stroke="rgba(255,207,37,0.3)" stroke-width="2"/>
+            <polygon points="436,88 426,82 426,94" fill="rgba(255,207,37,0.4)"/>
 
-            <!-- Hooks column (right side) -->
-            <!-- Terraform Hooks Section -->
-            <rect x="530" y="50" width="380" height="310" rx="12" fill="rgba(98,212,220,0.02)" stroke="rgba(98,212,220,0.12)" stroke-width="1"/>
-            <text x="560" y="78" fill="#62D4DC" font-size="15" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">TERRAFORM HOOKS</text>
-            <text x="800" y="78" fill="#82748C" font-size="13" font-family="SF Mono, Fira Code, monospace">pre-commit-terraform v1.103.0</text>
+            <!-- Terraform Hooks -->
+            <rect x="436" y="50" width="420" height="260" rx="12" fill="rgba(98,212,220,0.02)" stroke="rgba(98,212,220,0.12)" stroke-width="1"/>
+            <text x="460" y="74" fill="#62D4DC" font-size="13" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">TERRAFORM HOOKS</text>
 
-            <!-- Individual hooks -->
-            <rect x="550" y="92" width="340" height="34" rx="8" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
-            <circle cx="572" cy="109" r="6" fill="rgba(98,212,220,0.2)" stroke="rgba(98,212,220,0.4)" stroke-width="1"/>
-            <text x="590" y="114" fill="#62D4DC" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_fmt</text>
-            <text x="740" y="114" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">Canonical format</text>
+            <rect x="452" y="86" width="390" height="30" rx="6" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.08)" stroke-width="1"/>
+            <text x="466" y="106" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_fmt</text>
+            <text x="620" y="106" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">Canonical format</text>
 
-            <rect x="550" y="132" width="340" height="34" rx="8" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
-            <circle cx="572" cy="149" r="6" fill="rgba(98,212,220,0.2)" stroke="rgba(98,212,220,0.4)" stroke-width="1"/>
-            <text x="590" y="154" fill="#62D4DC" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_validate</text>
-            <text x="770" y="154" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">Config check</text>
+            <rect x="452" y="122" width="390" height="30" rx="6" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.08)" stroke-width="1"/>
+            <text x="466" y="142" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_validate</text>
+            <text x="640" y="142" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">Config check</text>
 
-            <rect x="550" y="172" width="340" height="34" rx="8" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
-            <circle cx="572" cy="189" r="6" fill="rgba(98,212,220,0.2)" stroke="rgba(98,212,220,0.4)" stroke-width="1"/>
-            <text x="590" y="194" fill="#62D4DC" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_docs</text>
-            <text x="740" y="194" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">Update README</text>
+            <rect x="452" y="158" width="390" height="30" rx="6" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.08)" stroke-width="1"/>
+            <text x="466" y="178" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_docs</text>
+            <text x="620" y="178" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">Update README</text>
 
-            <rect x="550" y="212" width="340" height="34" rx="8" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
-            <circle cx="572" cy="229" r="6" fill="rgba(98,212,220,0.2)" stroke="rgba(98,212,220,0.4)" stroke-width="1"/>
-            <text x="590" y="234" fill="#62D4DC" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_tflint</text>
-            <text x="760" y="234" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">Best practices</text>
+            <rect x="452" y="194" width="390" height="30" rx="6" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.08)" stroke-width="1"/>
+            <text x="466" y="214" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_tflint</text>
+            <text x="630" y="214" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">Best practices</text>
 
-            <rect x="550" y="252" width="340" height="34" rx="8" fill="rgba(220,71,125,0.03)" stroke="rgba(220,71,125,0.12)" stroke-width="1"/>
-            <circle cx="572" cy="269" r="6" fill="rgba(220,71,125,0.15)" stroke="rgba(220,71,125,0.35)" stroke-width="1"/>
-            <text x="590" y="274" fill="#DC477D" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_trivy</text>
-            <text x="740" y="274" fill="#DC477D" font-size="14" font-family="Inter, Arial, sans-serif">CRIT/HIGH/MED</text>
+            <rect x="452" y="230" width="390" height="30" rx="6" fill="rgba(220,71,125,0.03)" stroke="rgba(220,71,125,0.1)" stroke-width="1"/>
+            <text x="466" y="250" fill="#DC477D" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_trivy</text>
+            <text x="620" y="250" fill="#DC477D" font-size="13" font-family="Inter, Arial, sans-serif">Security scan (CRIT/HIGH/MED)</text>
 
-            <rect x="550" y="292" width="340" height="50" rx="8" fill="rgba(236,88,93,0.03)" stroke="rgba(236,88,93,0.12)" stroke-width="1"/>
-            <circle cx="572" cy="309" r="6" fill="rgba(236,88,93,0.15)" stroke="rgba(236,88,93,0.35)" stroke-width="1"/>
-            <text x="590" y="314" fill="#EC585D" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">vault-radar-scan</text>
-            <text x="745" y="314" fill="#EC585D" font-size="14" font-family="Inter, Arial, sans-serif">Secret scanning</text>
-            <text x="590" y="332" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">HashiCorp Vault Radar  |  requires VAULT_RADAR_LICENSE</text>
+            <rect x="452" y="266" width="390" height="30" rx="6" fill="rgba(236,88,93,0.03)" stroke="rgba(236,88,93,0.1)" stroke-width="1"/>
+            <text x="466" y="286" fill="#EC585D" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">vault-radar-scan</text>
+            <text x="620" y="286" fill="#EC585D" font-size="13" font-family="Inter, Arial, sans-serif">Secret scanning (Vault Radar)</text>
 
-            <!-- General Hooks Section -->
-            <rect x="530" y="378" width="380" height="230" rx="12" fill="rgba(98,126,239,0.02)" stroke="rgba(98,126,239,0.1)" stroke-width="1"/>
-            <text x="560" y="406" fill="#627EEF" font-size="15" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">GENERAL HOOKS</text>
-            <text x="800" y="406" fill="#82748C" font-size="13" font-family="SF Mono, Fira Code, monospace">pre-commit-hooks v6.0.0</text>
+            <!-- General Hooks -->
+            <rect x="436" y="328" width="420" height="210" rx="12" fill="rgba(98,126,239,0.02)" stroke="rgba(98,126,239,0.1)" stroke-width="1"/>
+            <text x="460" y="352" fill="#627EEF" font-size="13" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">GENERAL HOOKS</text>
 
-            <rect x="550" y="420" width="340" height="34" rx="8" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.08)" stroke-width="1"/>
-            <circle cx="572" cy="437" r="6" fill="rgba(98,126,239,0.15)" stroke="rgba(98,126,239,0.3)" stroke-width="1"/>
-            <text x="590" y="442" fill="#627EEF" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">end-of-file-fixer</text>
-            <text x="770" y="442" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">Trailing newline</text>
+            <rect x="452" y="364" width="390" height="30" rx="6" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.06)" stroke-width="1"/>
+            <text x="466" y="384" fill="#627EEF" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">end-of-file-fixer</text>
+            <text x="640" y="384" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">Trailing newline</text>
 
-            <rect x="550" y="460" width="340" height="34" rx="8" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.08)" stroke-width="1"/>
-            <circle cx="572" cy="477" r="6" fill="rgba(98,126,239,0.15)" stroke="rgba(98,126,239,0.3)" stroke-width="1"/>
-            <text x="590" y="482" fill="#627EEF" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">check-yaml</text>
-            <text x="730" y="482" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">YAML syntax</text>
+            <rect x="452" y="400" width="390" height="30" rx="6" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.06)" stroke-width="1"/>
+            <text x="466" y="420" fill="#627EEF" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">check-yaml</text>
+            <text x="600" y="420" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">YAML syntax</text>
 
-            <rect x="550" y="500" width="340" height="34" rx="8" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.08)" stroke-width="1"/>
-            <circle cx="572" cy="517" r="6" fill="rgba(98,126,239,0.15)" stroke="rgba(98,126,239,0.3)" stroke-width="1"/>
-            <text x="590" y="522" fill="#627EEF" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">check-added-large-files</text>
-            <text x="810" y="522" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">500KB</text>
+            <rect x="452" y="436" width="390" height="30" rx="6" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.06)" stroke-width="1"/>
+            <text x="466" y="456" fill="#627EEF" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">check-added-large-files</text>
+            <text x="680" y="456" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">500KB limit</text>
 
-            <rect x="550" y="540" width="340" height="34" rx="8" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.08)" stroke-width="1"/>
-            <circle cx="572" cy="557" r="6" fill="rgba(98,126,239,0.15)" stroke="rgba(98,126,239,0.3)" stroke-width="1"/>
-            <text x="590" y="562" fill="#627EEF" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">detect-private-key</text>
-            <text x="775" y="562" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">Key detection</text>
+            <rect x="452" y="472" width="390" height="30" rx="6" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.06)" stroke-width="1"/>
+            <text x="466" y="492" fill="#627EEF" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">detect-private-key</text>
+            <text x="640" y="492" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">Key detection</text>
 
-            <rect x="550" y="580" width="340" height="18" rx="4"/>
-            <text x="590" y="594" fill="#82748C" font-size="13" font-family="SF Mono, Fira Code, monospace">+ check-merge-conflict</text>
+            <text x="466" y="524" fill="#82748C" font-size="12" font-family="SF Mono, Fira Code, monospace">+ check-merge-conflict</text>
 
-            <!-- Pass/Fail outcome -->
-            <rect x="40" y="170" width="160" height="60" rx="10" fill="rgba(96,222,169,0.04)" stroke="rgba(96,222,169,0.2)" stroke-width="1.5"/>
-            <text x="120" y="205" text-anchor="middle" fill="#60DEA9" font-size="16" font-weight="700" font-family="Inter, Arial, sans-serif">PASS</text>
-            <text x="120" y="222" text-anchor="middle" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">commit succeeds</text>
+            <!-- Pass/Fail -->
+            <rect x="30" y="155" width="150" height="50" rx="10" fill="rgba(96,222,169,0.04)" stroke="rgba(96,222,169,0.2)" stroke-width="1.5"/>
+            <text x="105" y="180" text-anchor="middle" fill="#60DEA9" font-size="15" font-weight="700" font-family="Inter, Arial, sans-serif">PASS</text>
+            <text x="105" y="197" text-anchor="middle" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">commit succeeds</text>
 
-            <rect x="40" y="250" width="160" height="60" rx="10" fill="rgba(236,88,93,0.04)" stroke="rgba(236,88,93,0.18)" stroke-width="1.5"/>
-            <text x="120" y="285" text-anchor="middle" fill="#EC585D" font-size="16" font-weight="700" font-family="Inter, Arial, sans-serif">FAIL</text>
-            <text x="120" y="302" text-anchor="middle" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">commit blocked</text>
+            <rect x="30" y="220" width="150" height="50" rx="10" fill="rgba(236,88,93,0.04)" stroke="rgba(236,88,93,0.18)" stroke-width="1.5"/>
+            <text x="105" y="245" text-anchor="middle" fill="#EC585D" font-size="15" font-weight="700" font-family="Inter, Arial, sans-serif">FAIL</text>
+            <text x="105" y="262" text-anchor="middle" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">commit blocked</text>
 
-            <!-- Arrow from hooks back to pass/fail -->
-            <path d="M 530 200 L 500 200 L 500 400 L 280 400 L 280 200 L 200 200" fill="none" stroke="rgba(255,207,37,0.15)" stroke-width="1.5" stroke-dasharray="6 4"/>
+            <!-- Dashed return arrow -->
+            <path d="M 436 310 L 410 310 L 410 420 L 250 420 L 250 195 L 180 195" fill="none" stroke="rgba(255,207,37,0.12)" stroke-width="1.5" stroke-dasharray="6 4"/>
 
             <!-- Scripts Section -->
-            <rect x="40" y="640" width="870" height="100" rx="12" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-            <text x="70" y="670" fill="#CCCCCC" font-size="15" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">GIT AUTOMATION SCRIPTS</text>
+            <rect x="30" y="570" width="826" height="130" rx="12" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+            <text x="55" y="596" fill="#CCCCCC" font-size="13" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">GIT AUTOMATION SCRIPTS</text>
 
-            <!-- checkpoint-commit.sh -->
-            <rect x="70" y="685" width="250" height="36" rx="8" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.12)" stroke-width="1"/>
-            <text x="195" y="708" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">checkpoint-commit.sh</text>
-            <text x="340" y="708" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">Automated git add + commit per checklist item</text>
+            <rect x="55" y="612" width="220" height="30" rx="6" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.12)" stroke-width="1"/>
+            <text x="165" y="632" text-anchor="middle" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">checkpoint-commit.sh</text>
+            <text x="290" y="632" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">Automated git add + commit per checklist item</text>
 
-            <!-- post-issue-progress.sh -->
-            <rect x="70" y="725" width="280" height="0" rx="8"/>
-            <text x="70" y="730" fill="#FFCF25" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">post-issue-progress.sh</text>
-            <text x="340" y="730" fill="#82748C" font-size="14" font-family="Inter, Arial, sans-serif">Posts completion status updates to GitHub issue</text>
+            <rect x="55" y="650" width="240" height="30" rx="6" fill="rgba(255,207,37,0.03)" stroke="rgba(255,207,37,0.1)" stroke-width="1"/>
+            <text x="175" y="670" text-anchor="middle" fill="#FFCF25" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">post-issue-progress.sh</text>
+            <text x="310" y="670" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">Posts completion status updates to GitHub issue</text>
         </svg>
     </div>
 </div>
