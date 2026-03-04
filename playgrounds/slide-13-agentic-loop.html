@@ -38,7 +38,7 @@ body {
 
 .bullets {
     width: 42%; display: flex; flex-direction: column; gap: 24px;
-    padding-top: 24px;
+    padding-top: 64px;
 }
 .bullet {
     display: flex; align-items: flex-start; gap: 14px;
@@ -113,19 +113,31 @@ body {
             <circle cx="460" cy="380" r="220" fill="none" stroke="rgba(139,92,246,0.1)" stroke-width="1.5"/>
             <circle cx="460" cy="380" r="205" fill="none" stroke="rgba(139,92,246,0.04)" stroke-width="0.5" stroke-dasharray="6 10"/>
 
-            <!-- Arrow arcs connecting steps — stronger, more visible -->
+            <!-- Arrow markers -->
+            <defs>
+                <marker id="arr1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="14" markerHeight="14" orient="auto">
+                    <path d="M 0 1 L 8 5 L 0 9 z" fill="rgba(167,139,250,0.7)"/>
+                </marker>
+                <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="14" markerHeight="14" orient="auto">
+                    <path d="M 0 1 L 8 5 L 0 9 z" fill="rgba(98,212,220,0.7)"/>
+                </marker>
+                <marker id="arr3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="14" markerHeight="14" orient="auto">
+                    <path d="M 0 1 L 8 5 L 0 9 z" fill="rgba(255,207,37,0.7)"/>
+                </marker>
+                <marker id="arr4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="14" markerHeight="14" orient="auto">
+                    <path d="M 0 1 L 8 5 L 0 9 z" fill="rgba(96,222,169,0.7)"/>
+                </marker>
+            </defs>
+
+            <!-- Arrow arcs connecting steps -->
             <!-- Top to Right -->
-            <path d="M 580 185 A 220 220 0 0 1 665 290" fill="none" stroke="rgba(167,139,250,0.5)" stroke-width="3" stroke-linecap="round"/>
-            <polygon points="668,290 656,278 660,298" fill="rgba(167,139,250,0.6)"/>
+            <path d="M 580 185 A 220 220 0 0 1 665 290" fill="none" stroke="rgba(167,139,250,0.5)" stroke-width="3" stroke-linecap="round" marker-end="url(#arr1)"/>
             <!-- Right to Bottom -->
-            <path d="M 665 470 A 220 220 0 0 1 580 575" fill="none" stroke="rgba(98,212,220,0.5)" stroke-width="3" stroke-linecap="round"/>
-            <polygon points="580,578 590,562 572,566" fill="rgba(98,212,220,0.6)"/>
+            <path d="M 665 470 A 220 220 0 0 1 580 575" fill="none" stroke="rgba(98,212,220,0.5)" stroke-width="3" stroke-linecap="round" marker-end="url(#arr2)"/>
             <!-- Bottom to Left -->
-            <path d="M 340 575 A 220 220 0 0 1 255 470" fill="none" stroke="rgba(255,207,37,0.5)" stroke-width="3" stroke-linecap="round"/>
-            <polygon points="252,470 264,482 260,462" fill="rgba(255,207,37,0.6)"/>
+            <path d="M 340 575 A 220 220 0 0 1 255 470" fill="none" stroke="rgba(255,207,37,0.5)" stroke-width="3" stroke-linecap="round" marker-end="url(#arr3)"/>
             <!-- Left to Top -->
-            <path d="M 255 290 A 220 220 0 0 1 340 185" fill="none" stroke="rgba(96,222,169,0.5)" stroke-width="3" stroke-linecap="round"/>
-            <polygon points="340,182 330,198 348,194" fill="rgba(96,222,169,0.6)"/>
+            <path d="M 255 290 A 220 220 0 0 1 340 185" fill="none" stroke="rgba(96,222,169,0.5)" stroke-width="3" stroke-linecap="round" marker-end="url(#arr4)"/>
 
             <!-- Center label -->
             <circle cx="460" cy="380" r="55" fill="rgba(139,92,246,0.03)" stroke="rgba(139,92,246,0.2)" stroke-width="1.5"/>
