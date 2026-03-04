@@ -1,0 +1,3 @@
+[submodule "terraform-agentic-workflows"]
+	path = terraform-agentic-workflows
+	url = https://github.com/hashi-demo-lab/terraform-agentic-workflows
