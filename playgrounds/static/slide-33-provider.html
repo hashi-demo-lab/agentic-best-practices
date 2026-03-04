@@ -127,6 +127,25 @@
     border-top: 5px solid rgba(220,71,125,0.4);
   }
 
+  /* Human approval gate */
+  .approval-gate {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 14px; border-radius: 8px;
+    background: rgba(236,88,93,0.06);
+    border: 1.5px dashed rgba(236,88,93,0.4);
+  }
+  .gate-icon {
+    font-size: 16px; line-height: 1;
+  }
+  .gate-text {
+    font-size: 11px; font-weight: 700; color: #EC585D;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .gate-desc {
+    font-size: 10px; color: #82748C; font-weight: 400;
+    text-transform: none; letter-spacing: 0;
+  }
+
   /* Phase bar */
   .phase-bar {
     display: flex; gap: 2px; margin-top: 20px;
@@ -218,6 +237,14 @@
         <div class="agent-info">
           <div class="agent-name">tf-provider-design</div>
           <div class="agent-role">Schema, CRUD, state mapping, test strategy</div>
+        </div>
+      </div>
+      <div class="flow-connector"></div>
+      <div class="approval-gate">
+        <div class="gate-icon">&#x270B;</div>
+        <div>
+          <div class="gate-text">Human Approval</div>
+          <div class="gate-desc">review design before build</div>
         </div>
       </div>
       <div class="flow-connector"></div>

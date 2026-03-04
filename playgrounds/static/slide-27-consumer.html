@@ -152,16 +152,19 @@
 
   <!-- Visual: Agent Flow SVG -->
   <div class="visual">
-    <svg class="flow-svg" viewBox="0 0 900 260" xmlns="http://www.w3.org/2000/svg">
+    <svg class="flow-svg" viewBox="0 0 1000 260" xmlns="http://www.w3.org/2000/svg">
       <!-- Connection lines -->
       <line x1="195" y1="100" x2="265" y2="100" stroke="rgba(96,222,169,0.3)" stroke-width="2" stroke-dasharray="6 4"/>
       <polygon points="260,96 268,100 260,104" fill="rgba(96,222,169,0.4)"/>
 
-      <line x1="435" y1="100" x2="505" y2="100" stroke="rgba(96,222,169,0.3)" stroke-width="2" stroke-dasharray="6 4"/>
-      <polygon points="500,96 508,100 500,104" fill="rgba(96,222,169,0.4)"/>
+      <line x1="435" y1="100" x2="470" y2="100" stroke="rgba(96,222,169,0.3)" stroke-width="2" stroke-dasharray="6 4"/>
+      <polygon points="466,96 474,100 466,104" fill="rgba(96,222,169,0.4)"/>
 
-      <line x1="670" y1="100" x2="740" y2="100" stroke="rgba(96,222,169,0.3)" stroke-width="2" stroke-dasharray="6 4"/>
-      <polygon points="735,96 743,100 735,104" fill="rgba(96,222,169,0.4)"/>
+      <line x1="540" y1="100" x2="570" y2="100" stroke="rgba(96,222,169,0.3)" stroke-width="2" stroke-dasharray="6 4"/>
+      <polygon points="566,96 574,100 566,104" fill="rgba(96,222,169,0.4)"/>
+
+      <line x1="740" y1="100" x2="810" y2="100" stroke="rgba(96,222,169,0.3)" stroke-width="2" stroke-dasharray="6 4"/>
+      <polygon points="806,96 814,100 806,104" fill="rgba(96,222,169,0.4)"/>
 
       <!-- Node 1: Research -->
       <rect x="20" y="60" width="175" height="80" rx="12" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
@@ -173,16 +176,25 @@
       <text x="350" y="93" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="13" font-weight="600">tf-consumer-design</text>
       <text x="350" y="118" text-anchor="middle" fill="#82748C" font-size="14">design author</text>
 
+      <!-- Human Approval Gate -->
+      <rect x="475" y="54" width="60" height="92" rx="6" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.4)" stroke-width="2"/>
+      <text x="505" y="92" text-anchor="middle" fill="#EC585D" font-size="18" font-weight="700">&#x270B;</text>
+      <text x="505" y="112" text-anchor="middle" fill="#EC585D" font-size="9" font-weight="700" letter-spacing="0.5">GATE</text>
+      <rect x="445" y="0" width="120" height="40" rx="8" fill="rgba(236,88,93,0.05)" stroke="rgba(236,88,93,0.35)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="505" y="17" text-anchor="middle" fill="#EC585D" font-size="11" font-weight="700" letter-spacing="0.5">HUMAN APPROVAL</text>
+      <text x="505" y="33" text-anchor="middle" fill="#82748C" font-size="10">review design</text>
+      <line x1="505" y1="40" x2="505" y2="54" stroke="rgba(236,88,93,0.35)" stroke-width="1.5" stroke-dasharray="3 2"/>
+
       <!-- Node 3: Developer -->
-      <rect x="505" y="60" width="170" height="80" rx="12" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
-      <text x="590" y="93" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="13" font-weight="600">tf-consumer-developer</text>
-      <text x="590" y="118" text-anchor="middle" fill="#82748C" font-size="14">xN per checklist</text>
+      <rect x="570" y="60" width="170" height="80" rx="12" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
+      <text x="655" y="93" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="13" font-weight="600">tf-consumer-developer</text>
+      <text x="655" y="118" text-anchor="middle" fill="#82748C" font-size="14">xN per checklist</text>
 
       <!-- Node 4: Validator -->
-      <rect x="740" y="60" width="110" height="80" rx="12" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
-      <text x="795" y="93" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="13" font-weight="600">tf-consumer-</text>
-      <text x="795" y="108" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="13" font-weight="600">validator</text>
-      <text x="795" y="128" text-anchor="middle" fill="#82748C" font-size="14">quality scorer</text>
+      <rect x="810" y="60" width="140" height="80" rx="12" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
+      <text x="880" y="87" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="13" font-weight="600">tf-consumer-</text>
+      <text x="880" y="104" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="13" font-weight="600">validator</text>
+      <text x="880" y="128" text-anchor="middle" fill="#82748C" font-size="14">quality scorer</text>
 
       <!-- Phase labels below nodes -->
       <text x="107" y="175" text-anchor="middle" fill="#60DEA9" font-size="14" font-weight="600" letter-spacing="1">PHASE 1</text>
@@ -191,20 +203,14 @@
       <text x="350" y="175" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" letter-spacing="1">PHASE 2</text>
       <text x="350" y="192" text-anchor="middle" fill="#82748C" font-size="14">Design</text>
 
-      <text x="590" y="175" text-anchor="middle" fill="#60DEA9" font-size="14" font-weight="600" letter-spacing="1">PHASE 3</text>
-      <text x="590" y="192" text-anchor="middle" fill="#82748C" font-size="14">Build</text>
+      <text x="655" y="175" text-anchor="middle" fill="#60DEA9" font-size="14" font-weight="600" letter-spacing="1">PHASE 3</text>
+      <text x="655" y="192" text-anchor="middle" fill="#82748C" font-size="14">Build</text>
 
-      <text x="795" y="175" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" letter-spacing="1">PHASE 4</text>
-      <text x="795" y="192" text-anchor="middle" fill="#82748C" font-size="14">Validate + Deploy</text>
-
-      <!-- Human Approval Gate -->
-      <rect x="430" y="4" width="80" height="50" rx="8" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.4)" stroke-width="1.5" stroke-dasharray="4 3"/>
-      <text x="470" y="24" text-anchor="middle" fill="#EC585D" font-size="11" font-weight="700" letter-spacing="0.5">HUMAN</text>
-      <text x="470" y="40" text-anchor="middle" fill="#EC585D" font-size="11" font-weight="700" letter-spacing="0.5">APPROVAL</text>
-      <line x1="470" y1="54" x2="470" y2="60" stroke="rgba(236,88,93,0.4)" stroke-width="1.5" stroke-dasharray="3 2"/>
+      <text x="880" y="175" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" letter-spacing="1">PHASE 4</text>
+      <text x="880" y="192" text-anchor="middle" fill="#82748C" font-size="14">Validate + Deploy</text>
 
       <!-- Output label -->
-      <rect x="20" y="220" width="840" height="30" rx="8" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+      <rect x="20" y="220" width="930" height="30" rx="8" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
       <text x="36" y="240" fill="#FFCF25" font-size="13" font-weight="700" letter-spacing="1.5">OUTPUT</text>
       <text x="110" y="240" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="15">consumer-design.md  &rarr;  *.tf consumer files  &rarr;  validation report + PR + sandbox deploy</text>
     </svg>
