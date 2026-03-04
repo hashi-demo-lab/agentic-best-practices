@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub SpecKit — Spec-Driven Development</title>
+<style>
+  @font-face {
+    font-family: 'Outfit';
+    src: url('fonts/outfit.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: block;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: #000000; color: #e0e0e8; width: 1920px; height: 1080px; display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* --- Entrance animations --- */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.92); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(30px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+  @keyframes flowPulse {
+    0%   { opacity: 0.3; }
+    50%  { opacity: 0.9; }
+    100% { opacity: 0.3; }
+  }
+  @keyframes shimmer {
+    0%   { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  header {
+    text-align: center; padding: 28px 20px 12px;
+    border-bottom: 1px solid #23232f;
+    animation: fadeInUp 0.6s ease-out both;
+  }
+  header h1 {
+    font-size: 1.6rem; font-weight: 700;
+    background: linear-gradient(135deg, #7b61ff, #a78bfa, #60a5fa);
+    background-size: 200% 200%;
+    animation: gradientShift 4s ease infinite;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px;
+  }
+  header p { color: #8888a0; font-size: 0.85rem; }
+  .main { flex: 1; display: flex; flex-direction: column; padding: 24px 32px; gap: 20px; }
+
+  .phases {
+    max-width: 900px; margin: 0 auto; width: 100%;
+    animation: fadeInScale 0.7s ease-out 0.2s both;
+  }
+
+  /* ───── Progress bar ───── */
+  .progress-track {
+    max-width: 900px; margin: 0 auto 4px; width: 100%;
+    height: 3px; border-radius: 3px;
+    background: rgba(255,255,255,0.04);
+    overflow: hidden;
+    animation: fadeInUp 0.5s ease-out 0.15s both;
+  }
+  .progress-fill {
+    height: 100%; width: 0; border-radius: 3px;
+    background: linear-gradient(90deg, #f472b6, #a78bfa, #818cf8, #60a5fa, #5eead4, #fbbf24, #fb923c);
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
+    transition: width 0.6s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ───── Phase row with flow arrows ───── */
+  .phase-row { display: flex; gap: 0; position: relative; }
+
+  /* Flow arrows between phases */
+  .phase-connector {
+    position: absolute; top: 50%; z-index: 3; pointer-events: none;
+    transform: translateY(-50%);
+  }
+  .phase-connector svg { display: block; }
+
+  .phase {
+    flex: 1;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(22,22,31,0.55);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    padding: 14px 8px;
+    cursor: pointer;
+    transition: all 0.35s cubic-bezier(.4,0,.2,1);
+    text-align: center; position: relative; overflow: hidden;
+  }
+  .phase:first-child { border-radius: 12px 0 0 12px; }
+  .phase:last-child  { border-radius: 0 12px 12px 0; }
+  .phase:not(:last-child) { border-right: none; }
+
+  /* Glassmorphism highlight on hover */
+  .phase::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .phase:hover::before { opacity: 1; }
+  .phase:hover {
+    background: rgba(26,26,40,0.7);
+    z-index: 1;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .phase.active {
+    background: rgba(26,26,48,0.8);
+    border-color: var(--color); z-index: 2;
+    box-shadow: 0 4px 24px color-mix(in srgb, var(--color) 18%, transparent),
+                inset 0 1px 0 rgba(255,255,255,0.06);
+    transform: translateY(-3px);
+  }
+
+  .phase[data-ph="constitution"] { --color: #f472b6; }
+  .phase[data-ph="specify"]      { --color: #a78bfa; }
+  .phase[data-ph="clarify"]      { --color: #818cf8; }
+  .phase[data-ph="plan"]         { --color: #60a5fa; }
+  .phase[data-ph="checklist"]    { --color: #5eead4; }
+  .phase[data-ph="tasks"]        { --color: #fbbf24; }
+  .phase[data-ph="analyze"]      { --color: #fb923c; }
+
+  /* Active bottom glow */
+  .phase::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: var(--color);
+    box-shadow: 0 0 12px var(--color);
+    opacity: 0; transition: opacity 0.35s;
+  }
+  .phase.active::after { opacity: 1; }
+
+  /* Visited indicator dot */
+  .phase .visited-dot {
+    position: absolute; top: 6px; right: 6px; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--color); opacity: 0;
+    transition: opacity 0.3s;
+    box-shadow: 0 0 6px var(--color);
+  }
+  .phase.visited .visited-dot { opacity: 0.7; }
+
+  /* Staggered entrance for phases */
+  .phase { animation: fadeInUp 0.5s ease-out both; }
+  .phase:nth-child(1) { animation-delay: 0.2s; }
+  .phase:nth-child(2) { animation-delay: 0.28s; }
+  .phase:nth-child(3) { animation-delay: 0.36s; }
+  .phase:nth-child(4) { animation-delay: 0.44s; }
+  .phase:nth-child(5) { animation-delay: 0.52s; }
+  .phase:nth-child(6) { animation-delay: 0.60s; }
+  .phase:nth-child(7) { animation-delay: 0.68s; }
+
+  .ph-num {
+    font-size: 0.6rem; font-weight: 700; color: var(--color);
+    margin-bottom: 4px; opacity: 0.5;
+    transition: all 0.3s;
+  }
+  .phase.active .ph-num { opacity: 1; font-size: 0.65rem; }
+  .ph-name {
+    font-size: 0.72rem; font-weight: 600; color: #c0c0d0;
+    transition: color 0.3s;
+  }
+  .phase.active .ph-name { color: #eeeef6; }
+  .ph-icon {
+    font-size: 1.1rem; margin-bottom: 4px;
+    transition: transform 0.3s;
+  }
+  .phase.active .ph-icon { transform: scale(1.15); }
+
+  /* ───── Flowing highlight animation across phases ───── */
+  .flow-highlight {
+    position: absolute; bottom: 0; left: 0; height: 2px; pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(123,97,255,0.5), transparent);
+    width: 80px;
+    animation: flowAcross 4s ease-in-out infinite;
+    border-radius: 2px;
+    z-index: 5;
+  }
+  @keyframes flowAcross {
+    0%   { left: -80px;  opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { left: calc(100% + 80px); opacity: 0; }
+  }
+
+  /* ───── Detail panel with dramatic transitions ───── */
+  .detail-panel {
+    max-width: 900px; margin: 0 auto; width: 100%;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    background: rgba(22,22,31,0.55);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    padding: 26px; min-height: 160px;
+    transition: all 0.4s cubic-bezier(.4,0,.2,1);
+    position: relative; overflow: hidden;
+    animation: fadeInUp 0.7s ease-out 0.8s both;
+  }
+  /* Glassmorphism inner highlight */
+  .detail-panel::before {
+    content: ''; position: absolute; inset: 0; border-radius: 14px; pointer-events: none;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 40%);
+  }
+  .detail-panel.has-phase {
+    border-color: var(--detail-color);
+    box-shadow: 0 4px 32px color-mix(in srgb, var(--detail-color, #7b61ff) 12%, transparent);
+  }
+
+  /* Detail content animation wrapper */
+  .detail-content {
+    animation: detailEnter 0.4s ease-out both;
+    position: relative; z-index: 1;
+  }
+  @keyframes detailEnter {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .detail-panel h3 {
+    font-size: 0.9rem; color: var(--detail-color, #d4c8ff); margin-bottom: 4px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .detail-panel h3 .phase-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 6px; font-size: 0.6rem; font-weight: 700;
+    background: color-mix(in srgb, var(--detail-color, #7b61ff) 15%, transparent);
+    color: var(--detail-color, #d4c8ff);
+  }
+  .detail-panel .subtitle {
+    font-size: 0.72rem; color: #6a6a80; margin-bottom: 14px;
+  }
+  .detail-panel .desc {
+    font-size: 0.82rem; color: #a0a0b8; line-height: 1.6; margin-bottom: 14px;
+  }
+  .detail-panel .examples {
+    display: flex; gap: 8px; flex-wrap: wrap;
+  }
+  .example-tag {
+    padding: 5px 14px; border-radius: 8px; font-size: 0.72rem;
+    background: rgba(18,18,26,0.7);
+    border: 1px solid rgba(255,255,255,0.06);
+    color: #9898b0;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s;
+    animation: fadeInUp 0.35s ease-out both;
+  }
+  .example-tag:nth-child(1) { animation-delay: 0.1s; }
+  .example-tag:nth-child(2) { animation-delay: 0.15s; }
+  .example-tag:nth-child(3) { animation-delay: 0.2s; }
+  .example-tag:nth-child(4) { animation-delay: 0.25s; }
+  .example-tag:hover {
+    border-color: var(--detail-color, #7b61ff);
+    color: #c0c0d8;
+  }
+
+  .intro-text {
+    max-width: 900px; margin: 0 auto; width: 100%;
+    font-size: 0.82rem; color: #8888a0; text-align: center; line-height: 1.5;
+    animation: fadeInUp 0.6s ease-out 0.1s both;
+  }
+
+  /* ───── Prompt section ───── */
+  .prompt-section {
+    border-top: 1px solid #23232f; padding: 16px 0 0; margin-top: auto;
+    animation: fadeInUp 0.6s ease-out 1s both;
+  }
+  .prompt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .prompt-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #6a6a80; }
+  .copy-btn {
+    padding: 5px 14px; border-radius: 6px; border: 1px solid #33334a;
+    background: rgba(26,26,38,0.7); color: #b0b0c8; cursor: pointer;
+    font-size: 0.75rem; transition: all 0.25s;
+    backdrop-filter: blur(8px);
+  }
+  .copy-btn:hover { border-color: #7b61ff; color: #d4c8ff; box-shadow: 0 0 12px rgba(123,97,255,0.15); }
+  .prompt-text {
+    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem;
+    color: #a0a0b8; line-height: 1.6; background: #12121a;
+    border-radius: 8px; padding: 14px; min-height: 48px; white-space: pre-wrap;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>GitHub SpecKit</h1>
+  <p>Spec-driven development — specs become the source of truth for AI agents</p>
+</header>
+
+<div class="main">
+  <p class="intro-text">GitHub's open-source toolkit for spec-driven development. Specs guide AI agents to generate, test, and validate code through structured phases.</p>
+
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+
+  <div class="phases">
+    <div class="phase-row">
+      <div class="phase" data-ph="constitution" onclick="selectPhase('constitution')">
+        <span class="visited-dot"></span>
+        <div class="ph-icon">&#x1F4DC;</div>
+        <div class="ph-num">01</div>
+        <div class="ph-name">Constitution</div>
+      </div>
+      <div class="phase" data-ph="specify" onclick="selectPhase('specify')">
+        <span class="visited-dot"></span>
+        <div class="ph-icon">&#x1F4DD;</div>
+        <div class="ph-num">02</div>
+        <div class="ph-name">Specify</div>
+      </div>
+      <div class="phase" data-ph="clarify" onclick="selectPhase('clarify')">
+        <span class="visited-dot"></span>
+        <div class="ph-icon">&#x2753;</div>
+        <div class="ph-num">03</div>
+        <div class="ph-name">Clarify</div>
+      </div>
+      <div class="phase" data-ph="plan" onclick="selectPhase('plan')">
+        <span class="visited-dot"></span>
+        <div class="ph-icon">&#x1F4D0;</div>
+        <div class="ph-num">04</div>
+        <div class="ph-name">Plan</div>
+      </div>
+      <div class="phase" data-ph="checklist" onclick="selectPhase('checklist')">
+        <span class="visited-dot"></span>
+        <div class="ph-icon">&#x2705;</div>
+        <div class="ph-num">05</div>
+        <div class="ph-name">Checklist</div>
+      </div>
+      <div class="phase" data-ph="tasks" onclick="selectPhase('tasks')">
+        <span class="visited-dot"></span>
+        <div class="ph-icon">&#x1F4CB;</div>
+        <div class="ph-num">06</div>
+        <div class="ph-name">Tasks</div>
+      </div>
+      <div class="phase" data-ph="analyze" onclick="selectPhase('analyze')">
+        <span class="visited-dot"></span>
+        <div class="ph-icon">&#x1F52C;</div>
+        <div class="ph-num">07</div>
+        <div class="ph-name">Analyze</div>
+      </div>
+      <div class="flow-highlight"></div>
+    </div>
+  </div>
+
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-content" id="detailContent">
+      <h3>Select a phase to explore</h3>
+      <div class="subtitle">Click any phase above to see details</div>
+      <div class="desc">SpecKit guides AI through 7 structured phases, from project constitution to task execution. Each phase produces artifacts that feed into the next.</div>
+    </div>
+  </div>
+
+  <div class="prompt-section">
+    <div class="prompt-header">
+      <span class="prompt-label">Prompt Output</span>
+      <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+    </div>
+    <div class="prompt-text" id="promptText"></div>
+  </div>
+</div>
+
+<script>
+const state = { phase: null, visited: new Set() };
+
+const PHASE_ORDER = ['constitution','specify','clarify','plan','checklist','tasks','analyze'];
+
+const PHASES = {
+  constitution: {
+    title: 'Constitution', color: '#f472b6', num: '01',
+    subtitle: 'Phase 1 — Project Principles',
+    desc: 'Define the project principles and rules that AI must follow. This is the foundational guardrail — like a constitution for your codebase that every AI action must respect.',
+    examples: ['Coding standards', 'Security requirements', 'Naming conventions', 'Forbidden patterns'],
+  },
+  specify: {
+    title: 'Specify', color: '#a78bfa', num: '02',
+    subtitle: 'Phase 2 — What and Why',
+    desc: 'Generate user stories and acceptance criteria. Define what needs to be built and why. This becomes the source of truth that guides all subsequent AI work.',
+    examples: ['User stories', 'Acceptance criteria', 'Feature requirements', 'Success metrics'],
+  },
+  clarify: {
+    title: 'Clarify', color: '#818cf8', num: '03',
+    subtitle: 'Phase 3 — Eliminate Ambiguity',
+    desc: 'AI generates questions to eliminate ambiguity in the specifications. Interactive back-and-forth to ensure the spec is complete and unambiguous before planning begins.',
+    examples: ['Edge cases', 'Boundary conditions', 'Integration points', 'Error scenarios'],
+  },
+  plan: {
+    title: 'Plan', color: '#60a5fa', num: '04',
+    subtitle: 'Phase 4 — Architecture and Design',
+    desc: 'Define tech stack, architecture, data models, and API contracts. The plan translates "what" into "how" with concrete technical decisions.',
+    examples: ['Tech stack', 'Architecture diagrams', 'Data models', 'API contracts'],
+  },
+  checklist: {
+    title: 'Checklist', color: '#5eead4', num: '05',
+    subtitle: 'Phase 5 — Validate Completeness',
+    desc: 'Systematic validation that the plan is complete. Checks UX, security, performance, accessibility, and other quality dimensions before any code is written.',
+    examples: ['UX review', 'Security checklist', 'Performance targets', 'Accessibility audit'],
+  },
+  tasks: {
+    title: 'Tasks', color: '#fbbf24', num: '06',
+    subtitle: 'Phase 6 — Atomic Work Items',
+    desc: 'Break the plan into atomic, testable work items with explicit dependencies. Each task is small enough for an agent to complete and verify independently.',
+    examples: ['Task dependencies', 'Test criteria', 'Acceptance tests', 'Implementation order'],
+  },
+  analyze: {
+    title: 'Analyze', color: '#fb923c', num: '07',
+    subtitle: 'Phase 7 — Verify and Learn',
+    desc: 'Analyze the output of completed tasks. Verify against specifications, run tests, measure quality, and feed learnings back into the process.',
+    examples: ['Test results', 'Quality metrics', 'Spec compliance', 'Improvement areas'],
+  },
+};
+
+function updateProgressBar() {
+  const fill = document.getElementById('progressFill');
+  const pct = (state.visited.size / 7) * 100;
+  fill.style.width = pct + '%';
+}
+
+function selectPhase(ph) {
+  const wasActive = state.phase === ph;
+  state.phase = wasActive ? null : ph;
+
+  if (!wasActive && ph) state.visited.add(ph);
+
+  // Update phase buttons
+  document.querySelectorAll('.phase').forEach(el => {
+    el.classList.toggle('active', el.dataset.ph === state.phase);
+    el.classList.toggle('visited', state.visited.has(el.dataset.ph) && el.dataset.ph !== state.phase);
+  });
+
+  updateProgressBar();
+
+  // Animate detail panel content
+  const panel = document.getElementById('detailPanel');
+  const content = document.getElementById('detailContent');
+
+  // Fade out, update, fade in
+  content.style.animation = 'none';
+  content.offsetHeight; // reflow
+
+  if (!state.phase) {
+    panel.classList.remove('has-phase');
+    panel.style.setProperty('--detail-color', '#d4c8ff');
+    content.innerHTML = '<h3>Select a phase to explore</h3><div class="subtitle">Click any phase above to see details</div><div class="desc">SpecKit guides AI through 7 structured phases, from project constitution to task execution. Each phase produces artifacts that feed into the next.</div>';
+  } else {
+    const p = PHASES[state.phase];
+    panel.classList.add('has-phase');
+    panel.style.setProperty('--detail-color', p.color);
+    content.innerHTML = `
+      <h3><span class="phase-badge">${p.num}</span>${p.title}</h3>
+      <div class="subtitle">${p.subtitle}</div>
+      <div class="desc">${p.desc}</div>
+      <div class="examples">${p.examples.map((e, i) => `<span class="example-tag" style="animation-delay:${0.1 + i*0.05}s">${e}</span>`).join('')}</div>
+    `;
+  }
+
+  content.style.animation = 'detailEnter 0.4s ease-out both';
+  updatePrompt();
+}
+
+function updatePrompt() {
+  const el = document.getElementById('promptText');
+  if (!state.phase) {
+    el.textContent = 'GitHub SpecKit: Open-source toolkit for spec-driven development. 7 phases — Constitution (project rules), Specify (user stories), Clarify (eliminate ambiguity), Plan (architecture/contracts), Checklist (validate completeness), Tasks (atomic work items), Analyze (verify output). Specs become the source of truth guiding AI agents.';
+    return;
+  }
+  const p = PHASES[state.phase];
+  el.textContent = `SpecKit Phase — ${p.title}: ${p.desc}\n\nKey artifacts: ${p.examples.join(', ')}`;
+}
+
+function copyPrompt() {
+  navigator.clipboard.writeText(document.getElementById('promptText').textContent).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+updatePrompt();
+</script>
+</body>
+</html>

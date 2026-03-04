@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=1920">
 <title>Development Containers</title>
 <style>
+  @font-face {
+    font-family: 'Outfit';
+    src: url('fonts/outfit.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: block;
+  }
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
     width: 1920px; height: 1080px; overflow: hidden;
@@ -23,6 +29,7 @@ body {
 }
 .title-bar h1 {
     font-size: 36px; font-weight: 600;
+    font-family: 'Outfit', sans-serif;
     background: linear-gradient(135deg, #A78BFA, #C4B5FD);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     margin-bottom: 8px;
@@ -85,7 +92,7 @@ body {
         </div>
         <div class="bullet">
             <div class="bullet-dot"></div>
-            <div class="bullet-text"><span>Consistent toolchain</span> &mdash; Terraform, tflint, trivy, Claude Code pre-installed for every team member</div>
+            <div class="bullet-text"><span>Consistent toolchain</span> &mdash; Terraform, tflint, trivy, and the AI coding agent pre-installed for every team member</div>
         </div>
         <div class="bullet">
             <div class="bullet-dot"></div>
@@ -135,7 +142,7 @@ body {
             <text x="385" y="270" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">trivy</text>
 
             <rect x="440" y="240" width="130" height="50" rx="8" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.15)" stroke-width="1"/>
-            <text x="505" y="270" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Claude Code</text>
+            <text x="505" y="270" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">AI Agent</text>
 
             <rect x="580" y="240" width="130" height="50" rx="8" fill="rgba(255,207,37,0.03)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
             <text x="645" y="270" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">vault-radar</text>

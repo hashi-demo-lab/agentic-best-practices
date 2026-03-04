@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=1920">
 <title>Quality Scoring: 6 Dimensions</title>
 <style>
+  @font-face {
+    font-family: 'Outfit';
+    src: url('fonts/outfit.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: block;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     width: 1920px; height: 1080px; overflow: hidden;
@@ -26,6 +32,7 @@
   }
   .title-bar h1 {
     font-size: 34px; font-weight: 600; color: #FFFFFF;
+    font-family: 'Outfit', sans-serif;
     margin-bottom: 8px;
   }
   .title-bar .subtitle {
@@ -50,7 +57,7 @@
     box-shadow: 0 0 8px rgba(220,71,125,0.4);
   }
   .bullet-text {
-    font-size: 20px; font-weight: 400; line-height: 1.5; color: #CCCCCC;
+    font-size: 22px; font-weight: 400; line-height: 1.5; color: #CCCCCC;
   }
   .bullet-text strong {
     color: #FFFFFF; font-weight: 600;
@@ -71,13 +78,13 @@
   }
   .scale-range {
     font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 13px; font-weight: 600; width: 75px; flex-shrink: 0;
+    font-size: 16px; font-weight: 600; width: 85px; flex-shrink: 0;
   }
   .scale-label {
-    font-size: 13px; font-weight: 400; color: #CCCCCC;
+    font-size: 16px; font-weight: 400; color: #CCCCCC;
   }
   .scale-note {
-    font-size: 11px; font-weight: 400; color: #82748C; font-style: italic; margin-left: auto;
+    font-size: 14px; font-weight: 400; color: #82748C; font-style: italic; margin-left: auto;
   }
 
   /* Right: Visual -- bar chart */
@@ -148,52 +155,52 @@
 
       <!-- D1: Resource Design - 25% -->
       <text x="200" y="72" text-anchor="end" fill="#FFFFFF" font-size="17" font-weight="600" font-family="Inter, Arial, sans-serif">Resource Design</text>
-      <text x="200" y="92" text-anchor="end" fill="#82748C" font-size="11" font-family="'SF Mono', monospace">D1</text>
+      <text x="200" y="92" text-anchor="end" fill="#82748C" font-size="14" font-family="'SF Mono', monospace">D1</text>
       <rect x="220" y="58" width="720" height="44" rx="8" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
       <rect x="220" y="58" width="467" height="44" rx="8" fill="url(#gradPink)"/>
       <text x="670" y="86" text-anchor="end" fill="white" font-size="18" font-weight="600" font-family="Inter, Arial, sans-serif" opacity="0.95">25%</text>
 
       <!-- D2: Security & Compliance - 30% (highlighted) -->
       <text x="200" y="172" text-anchor="end" fill="#FFFFFF" font-size="17" font-weight="600" font-family="Inter, Arial, sans-serif">Security &amp; Compliance</text>
-      <text x="200" y="192" text-anchor="end" fill="#82748C" font-size="11" font-family="'SF Mono', monospace">D2</text>
+      <text x="200" y="192" text-anchor="end" fill="#82748C" font-size="14" font-family="'SF Mono', monospace">D2</text>
       <rect x="220" y="158" width="720" height="44" rx="8" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
       <rect x="220" y="158" width="560" height="44" rx="8" fill="url(#gradRed)"/>
       <text x="762" y="186" text-anchor="end" fill="white" font-size="18" font-weight="600" font-family="Inter, Arial, sans-serif" opacity="0.95">30%</text>
       <!-- Hard block badge -->
       <rect x="220" y="210" width="200" height="24" rx="6" fill="rgba(236,88,93,0.08)" stroke="rgba(236,88,93,0.25)" stroke-width="1"/>
-      <text x="320" y="226" text-anchor="middle" fill="#EC585D" font-size="11" font-weight="600" font-family="Inter, Arial, sans-serif">HARD BLOCK: &lt;5.0 = FAIL</text>
+      <text x="320" y="226" text-anchor="middle" fill="#EC585D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">HARD BLOCK: &lt;5.0 = FAIL</text>
 
       <!-- D3: Code Quality - 15% -->
       <text x="200" y="282" text-anchor="end" fill="#FFFFFF" font-size="17" font-weight="600" font-family="Inter, Arial, sans-serif">Code Quality</text>
-      <text x="200" y="302" text-anchor="end" fill="#82748C" font-size="11" font-family="'SF Mono', monospace">D3</text>
+      <text x="200" y="302" text-anchor="end" fill="#82748C" font-size="14" font-family="'SF Mono', monospace">D3</text>
       <rect x="220" y="268" width="720" height="44" rx="8" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
       <rect x="220" y="268" width="280" height="44" rx="8" fill="url(#gradCyan)"/>
       <text x="484" y="296" text-anchor="end" fill="white" font-size="18" font-weight="600" font-family="Inter, Arial, sans-serif" opacity="0.95">15%</text>
 
       <!-- D4: Variables & Outputs - 10% -->
       <text x="200" y="382" text-anchor="end" fill="#FFFFFF" font-size="17" font-weight="600" font-family="Inter, Arial, sans-serif">Variables &amp; Outputs</text>
-      <text x="200" y="402" text-anchor="end" fill="#82748C" font-size="11" font-family="'SF Mono', monospace">D4</text>
+      <text x="200" y="402" text-anchor="end" fill="#82748C" font-size="14" font-family="'SF Mono', monospace">D4</text>
       <rect x="220" y="368" width="720" height="44" rx="8" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
       <rect x="220" y="368" width="187" height="44" rx="8" fill="url(#gradPurple)"/>
       <text x="391" y="396" text-anchor="end" fill="white" font-size="18" font-weight="600" font-family="Inter, Arial, sans-serif" opacity="0.95">10%</text>
 
       <!-- D5: Testing - 10% -->
       <text x="200" y="482" text-anchor="end" fill="#FFFFFF" font-size="17" font-weight="600" font-family="Inter, Arial, sans-serif">Testing</text>
-      <text x="200" y="502" text-anchor="end" fill="#82748C" font-size="11" font-family="'SF Mono', monospace">D5</text>
+      <text x="200" y="502" text-anchor="end" fill="#82748C" font-size="14" font-family="'SF Mono', monospace">D5</text>
       <rect x="220" y="468" width="720" height="44" rx="8" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
       <rect x="220" y="468" width="187" height="44" rx="8" fill="url(#gradGreen)"/>
       <text x="391" y="496" text-anchor="end" fill="white" font-size="18" font-weight="600" font-family="Inter, Arial, sans-serif" opacity="0.95">10%</text>
 
       <!-- D6: Constitution Alignment - 10% -->
       <text x="200" y="582" text-anchor="end" fill="#FFFFFF" font-size="17" font-weight="600" font-family="Inter, Arial, sans-serif">Constitution Alignment</text>
-      <text x="200" y="602" text-anchor="end" fill="#82748C" font-size="11" font-family="'SF Mono', monospace">D6</text>
+      <text x="200" y="602" text-anchor="end" fill="#82748C" font-size="14" font-family="'SF Mono', monospace">D6</text>
       <rect x="220" y="568" width="720" height="44" rx="8" fill="rgba(255,255,255,0.025)" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
       <rect x="220" y="568" width="187" height="44" rx="8" fill="url(#gradOrange)"/>
       <text x="391" y="596" text-anchor="end" fill="white" font-size="18" font-weight="600" font-family="Inter, Arial, sans-serif" opacity="0.95">10%</text>
 
       <!-- Formula at bottom -->
       <rect x="180" y="646" width="660" height="40" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-      <text x="510" y="672" text-anchor="middle" fill="#82748C" font-size="13" font-family="'SF Mono', monospace">
+      <text x="510" y="672" text-anchor="middle" fill="#82748C" font-size="16" font-family="'SF Mono', monospace">
         <tspan fill="#DC477D">D1</tspan><tspan fill="#555570"> x 0.25 + </tspan>
         <tspan fill="#EC585D">D2</tspan><tspan fill="#555570"> x 0.30 + </tspan>
         <tspan fill="#02A8EF">D3</tspan><tspan fill="#555570"> x 0.15 + </tspan>

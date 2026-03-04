@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=1920">
 <title>End-to-End Workflow Chain</title>
 <style>
+  @font-face {
+    font-family: 'Outfit';
+    src: url('fonts/outfit.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: block;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     width: 1920px; height: 1080px; overflow: hidden;
@@ -28,10 +34,11 @@
   }
   .title-bar h1 {
     font-size: 36px; font-weight: 600; color: #FFFFFF;
+    font-family: 'Outfit', sans-serif;
     letter-spacing: -0.02em;
   }
   .title-bar p {
-    font-size: 19px; font-weight: 400; color: #82748C; margin-top: 6px;
+    font-size: 20px; font-weight: 400; color: #82748C; margin-top: 6px;
   }
 
   /* Content area */
@@ -53,7 +60,7 @@
     flex-shrink: 0; margin-top: 8px;
   }
   .bullet-text {
-    font-size: 19px; font-weight: 400; color: #CCCCCC; line-height: 1.55;
+    font-size: 22px; font-weight: 400; color: #CCCCCC; line-height: 1.5;
   }
   .bullet-text strong {
     color: #FFFFFF; font-weight: 600;
@@ -123,7 +130,7 @@
   }
   .stage-item {
     display: flex; align-items: flex-start; gap: 8px;
-    font-size: 14px; font-weight: 400; color: #CCCCCC; line-height: 1.4;
+    font-size: 18px; font-weight: 400; color: #CCCCCC; line-height: 1.4;
   }
   .stage-item-dot {
     width: 5px; height: 5px; border-radius: 50%;
@@ -139,11 +146,11 @@
     border: 1px solid rgba(255,255,255,0.04);
   }
   .stage-output-label {
-    font-size: 11px; font-weight: 500; text-transform: uppercase;
+    font-size: 14px; font-weight: 500; text-transform: uppercase;
     letter-spacing: 1.5px; color: #82748C; margin-bottom: 6px;
   }
   .stage-output-text {
-    font-size: 13px; font-weight: 400; color: #CCCCCC;
+    font-size: 16px; font-weight: 400; color: #CCCCCC;
   }
 
   /* Chain arrows */
@@ -156,7 +163,7 @@
     width: 60px; height: 40px;
   }
   .chain-arrow-label {
-    font-size: 12px; font-weight: 400; color: #82748C; text-align: center;
+    font-size: 14px; font-weight: 400; color: #82748C; text-align: center;
     line-height: 1.3; margin-top: 6px; max-width: 70px;
   }
 
@@ -168,7 +175,7 @@
     box-shadow: 0 2px 12px rgba(0,0,0,0.4);
   }
   .pipeline-label p {
-    font-size: 15px; font-weight: 400; color: #82748C;
+    font-size: 18px; font-weight: 400; color: #82748C;
   }
   .pipeline-label .pink { color: #DC477D; font-weight: 600; }
   .pipeline-label .purple { color: #A78BFA; font-weight: 600; }

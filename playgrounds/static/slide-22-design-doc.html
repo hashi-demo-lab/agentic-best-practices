@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=1920">
 <title>The Design Document: Single Source of Truth</title>
 <style>
+  @font-face {
+    font-family: 'Outfit';
+    src: url('fonts/outfit.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: block;
+  }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     width: 1920px; height: 1080px; overflow: hidden;
@@ -26,6 +32,7 @@
   }
   .title-bar h1 {
     font-size: 34px; font-weight: 600; color: #FFFFFF;
+    font-family: 'Outfit', sans-serif;
     margin-bottom: 8px;
   }
   .title-bar .subtitle {
@@ -50,7 +57,7 @@
     box-shadow: 0 0 8px rgba(98,126,239,0.4);
   }
   .bullet-text {
-    font-size: 20px; font-weight: 400; line-height: 1.5; color: #CCCCCC;
+    font-size: 22px; font-weight: 400; line-height: 1.5; color: #CCCCCC;
   }
   .bullet-text strong {
     color: #FFFFFF; font-weight: 600;
@@ -65,10 +72,10 @@
   }
   .file-path {
     font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 17px; color: #02A8EF; font-weight: 600;
+    font-size: 20px; color: #02A8EF; font-weight: 600;
   }
   .file-desc {
-    font-size: 13px; font-weight: 400; color: #82748C; margin-top: 6px;
+    font-size: 18px; font-weight: 400; color: #82748C; margin-top: 6px;
   }
   .file-desc .plan-cmd { color: #8B5CF6; font-weight: 600; }
   .file-desc .impl-cmd { color: #60DEA9; font-weight: 600; }
@@ -121,7 +128,7 @@
       <rect x="150" y="28" width="32" height="32" rx="8" fill="rgba(98,126,239,0.08)" stroke="rgba(98,126,239,0.2)" stroke-width="1"/>
       <text x="166" y="50" text-anchor="middle" fill="#627EEF" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">1</text>
       <text x="200" y="40" fill="#FFFFFF" font-size="16" font-weight="600" font-family="Inter, Arial, sans-serif">Purpose &amp; Requirements</text>
-      <text x="200" y="60" fill="#82748C" font-size="12" font-weight="400" font-family="Inter, Arial, sans-serif">What the module does, scope boundary, functional requirements</text>
+      <text x="200" y="60" fill="#82748C" font-size="14" font-weight="400" font-family="Inter, Arial, sans-serif">What the module does, scope boundary, functional requirements</text>
 
       <!-- Connector -->
       <line x1="430" y1="80" x2="430" y2="100" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
@@ -131,7 +138,7 @@
       <rect x="150" y="118" width="32" height="32" rx="8" fill="rgba(2,168,239,0.08)" stroke="rgba(2,168,239,0.2)" stroke-width="1"/>
       <text x="166" y="140" text-anchor="middle" fill="#02A8EF" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">2</text>
       <text x="200" y="130" fill="#FFFFFF" font-size="16" font-weight="600" font-family="Inter, Arial, sans-serif">Resources &amp; Architecture</text>
-      <text x="200" y="150" fill="#82748C" font-size="12" font-weight="400" font-family="Inter, Arial, sans-serif">Resource inventory, dependencies, architectural decisions</text>
+      <text x="200" y="150" fill="#82748C" font-size="14" font-weight="400" font-family="Inter, Arial, sans-serif">Resource inventory, dependencies, architectural decisions</text>
 
       <!-- Connector -->
       <line x1="430" y1="170" x2="430" y2="190" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
@@ -141,7 +148,7 @@
       <rect x="150" y="208" width="32" height="32" rx="8" fill="rgba(139,92,246,0.08)" stroke="rgba(139,92,246,0.2)" stroke-width="1"/>
       <text x="166" y="230" text-anchor="middle" fill="#8B5CF6" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">3</text>
       <text x="200" y="220" fill="#FFFFFF" font-size="16" font-weight="600" font-family="Inter, Arial, sans-serif">Interface Contract</text>
-      <text x="200" y="240" fill="#82748C" font-size="12" font-weight="400" font-family="Inter, Arial, sans-serif">Variables, outputs, types, defaults, validation rules</text>
+      <text x="200" y="240" fill="#82748C" font-size="14" font-weight="400" font-family="Inter, Arial, sans-serif">Variables, outputs, types, defaults, validation rules</text>
 
       <!-- Connector -->
       <line x1="430" y1="260" x2="430" y2="280" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
@@ -151,10 +158,10 @@
       <rect x="150" y="298" width="32" height="32" rx="8" fill="rgba(236,88,93,0.1)" stroke="rgba(236,88,93,0.3)" stroke-width="1"/>
       <text x="166" y="320" text-anchor="middle" fill="#EC585D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">4</text>
       <text x="200" y="310" fill="#FFFFFF" font-size="16" font-weight="600" font-family="Inter, Arial, sans-serif">Security Controls</text>
-      <text x="200" y="330" fill="#82748C" font-size="12" font-weight="400" font-family="Inter, Arial, sans-serif">Encryption, IAM, access controls, compliance mapping</text>
+      <text x="200" y="330" fill="#82748C" font-size="14" font-weight="400" font-family="Inter, Arial, sans-serif">Encryption, IAM, access controls, compliance mapping</text>
       <!-- Security badge -->
       <rect x="590" y="300" width="120" height="24" rx="6" fill="rgba(236,88,93,0.08)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
-      <text x="650" y="316" text-anchor="middle" fill="#EC585D" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">HARD BLOCK</text>
+      <text x="650" y="316" text-anchor="middle" fill="#EC585D" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">HARD BLOCK</text>
 
       <!-- Connector -->
       <line x1="430" y1="350" x2="430" y2="370" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
@@ -164,7 +171,7 @@
       <rect x="150" y="388" width="32" height="32" rx="8" fill="rgba(96,222,169,0.08)" stroke="rgba(96,222,169,0.2)" stroke-width="1"/>
       <text x="166" y="410" text-anchor="middle" fill="#60DEA9" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">5</text>
       <text x="200" y="400" fill="#FFFFFF" font-size="16" font-weight="600" font-family="Inter, Arial, sans-serif">Test Scenarios</text>
-      <text x="200" y="420" fill="#82748C" font-size="12" font-weight="400" font-family="Inter, Arial, sans-serif">Secure defaults, full features, edge cases, validation errors</text>
+      <text x="200" y="420" fill="#82748C" font-size="14" font-weight="400" font-family="Inter, Arial, sans-serif">Secure defaults, full features, edge cases, validation errors</text>
 
       <!-- Connector -->
       <line x1="430" y1="440" x2="430" y2="460" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
@@ -174,7 +181,7 @@
       <rect x="150" y="478" width="32" height="32" rx="8" fill="rgba(255,207,37,0.08)" stroke="rgba(255,207,37,0.2)" stroke-width="1"/>
       <text x="166" y="500" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">6</text>
       <text x="200" y="490" fill="#FFFFFF" font-size="16" font-weight="600" font-family="Inter, Arial, sans-serif">Implementation Checklist</text>
-      <text x="200" y="510" fill="#82748C" font-size="12" font-weight="400" font-family="Inter, Arial, sans-serif">Ordered tasks with checkboxes, one per agent dispatch</text>
+      <text x="200" y="510" fill="#82748C" font-size="14" font-weight="400" font-family="Inter, Arial, sans-serif">Ordered tasks with checkboxes, one per agent dispatch</text>
 
       <!-- Connector -->
       <line x1="430" y1="530" x2="430" y2="550" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
@@ -184,18 +191,18 @@
       <rect x="150" y="568" width="32" height="32" rx="8" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
       <text x="166" y="590" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">7</text>
       <text x="200" y="580" fill="#FFFFFF" font-size="16" font-weight="600" font-family="Inter, Arial, sans-serif">Open Questions</text>
-      <text x="200" y="600" fill="#82748C" font-size="12" font-weight="400" font-family="Inter, Arial, sans-serif">Unresolved items flagged for human clarification</text>
+      <text x="200" y="600" fill="#82748C" font-size="14" font-weight="400" font-family="Inter, Arial, sans-serif">Unresolved items flagged for human clarification</text>
 
       <!-- Dependency flow arrows on the right side -->
       <!-- Security -> Tests -->
       <path d="M740 315 Q780 315 780 370 Q780 405 740 405" stroke="#EC585D" stroke-width="1.5" fill="none" stroke-dasharray="4 3" opacity="0.4"/>
       <polygon points="742,400 734,405 742,410" fill="#EC585D" opacity="0.4"/>
-      <text x="798" y="362" fill="#82748C" font-size="10" font-weight="500" font-family="Inter, Arial, sans-serif">constrains</text>
+      <text x="798" y="362" fill="#82748C" font-size="13" font-weight="500" font-family="Inter, Arial, sans-serif">constrains</text>
 
       <!-- Tests -> Checklist -->
       <path d="M740 405 Q780 405 780 460 Q780 495 740 495" stroke="#60DEA9" stroke-width="1.5" fill="none" stroke-dasharray="4 3" opacity="0.4"/>
       <polygon points="742,490 734,495 742,500" fill="#60DEA9" opacity="0.4"/>
-      <text x="798" y="452" fill="#82748C" font-size="10" font-weight="500" font-family="Inter, Arial, sans-serif">validates</text>
+      <text x="798" y="452" fill="#82748C" font-size="13" font-weight="500" font-family="Inter, Arial, sans-serif">validates</text>
 
       <!-- Plan / Implement bracket labels -->
       <!-- Plan bracket (sections 1-3) -->
@@ -212,11 +219,11 @@
 
       <!-- Agent readers callout at bottom -->
       <rect x="180" y="660" width="500" height="46" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-      <text x="430" y="680" text-anchor="middle" fill="#82748C" font-size="12" font-weight="400" font-family="Inter, Arial, sans-serif">Read by:</text>
-      <text x="310" y="696" fill="#DC477D" font-size="11" font-weight="600" font-family="Inter, Arial, sans-serif">test-writer</text>
-      <text x="400" y="696" fill="#60DEA9" font-size="11" font-weight="600" font-family="Inter, Arial, sans-serif">developer</text>
-      <text x="490" y="696" fill="#FFCF25" font-size="11" font-weight="600" font-family="Inter, Arial, sans-serif">validator</text>
-      <text x="580" y="696" fill="#8B5CF6" font-size="11" font-weight="600" font-family="Inter, Arial, sans-serif">orchestrator</text>
+      <text x="430" y="680" text-anchor="middle" fill="#82748C" font-size="14" font-weight="400" font-family="Inter, Arial, sans-serif">Read by:</text>
+      <text x="310" y="696" fill="#DC477D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">test-writer</text>
+      <text x="400" y="696" fill="#60DEA9" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">developer</text>
+      <text x="490" y="696" fill="#FFCF25" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">validator</text>
+      <text x="580" y="696" fill="#8B5CF6" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">orchestrator</text>
     </svg>
   </div>
 </div>
