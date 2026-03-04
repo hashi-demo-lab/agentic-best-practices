@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agentic Best Practices — Learning Pathway</title>
+<title>HCP Terraform Agentic Workflows — Learning Pathway</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -18,7 +18,7 @@ body {
   --phase-bg: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.06);
   --mono: 'SF Mono','Fira Code','Cascadia Code',monospace;
   /* Section colors */
-  --sec-getting-started: #ffe14d;
+  --sec-prerequisites: #ffe14d;
   --sec-foundations: #b44dff;
   --sec-guardrails: #ff2d7b;
   --sec-sdd: #00f0ff;
@@ -76,11 +76,30 @@ body {
   background: var(--tab-color, var(--cyan)); border-radius: 2px 2px 0 0;
   box-shadow: 0 0 8px color-mix(in srgb, var(--tab-color, var(--cyan)) 40%, transparent);
 }
+.sub-tab-group { font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #444; padding: 0 8px 0 16px; display: flex; align-items: center; gap: 5px; }
+.sub-tab-group-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
 
 /* === VIEWS === */
 .view { display: none; animation: fadeIn 0.3s ease; }
 .view.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* === WORKFLOW HERO & PIPELINE === */
+.hero { text-align: center; padding: 20px 24px 8px; position: relative; z-index: 1; }
+.hero h1 { font-family: var(--mono); font-size: 28px; font-weight: 700; letter-spacing: 3px; }
+.hero p { font-size: 12px; color: #666; margin-top: 4px; letter-spacing: 1px; }
+.pipeline {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 24px 4px; position: relative; z-index: 1;
+}
+.pipe-phase {
+  border: 1px solid; border-radius: 14px; padding: 5px 16px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 1px;
+  text-transform: uppercase; white-space: nowrap;
+}
+.pipe-brace { font-size: 9px; margin-top: 2px; letter-spacing: 0.5px; opacity: 0.6; }
+.pipe-arrow { color: #555; font-size: 18px; padding: 0 4px; }
+.pipe-dim { opacity: 0.3; }
 @keyframes gradient-shift { 0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%} }
 @keyframes dash-flow { from{stroke-dashoffset:0}to{stroke-dashoffset:-20} }
 
@@ -88,26 +107,38 @@ body {
 .bg-canvas { position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 0; overflow: hidden; }
 .bg-canvas canvas { width: 100%; height: 100%; opacity: 0.35; }
 
-/* === HERO === */
-.hero { text-align: center; padding: 28px 24px 4px; position: relative; z-index: 1; }
-.hero h1 {
-  font-family: var(--mono); font-size: 1.6rem; font-weight: 700;
-  letter-spacing: 3px; text-transform: uppercase;
+/* === OVERVIEW HERO === */
+.overview-hero { text-align: center; padding: 20px 24px 32px; position: relative; z-index: 1; }
+.overview-svg-container { max-width: 900px; margin: 0 auto 16px; padding: 0 24px; position: relative; z-index: 1; }
+.overview-svg-container svg { width: 100%; height: auto; display: block; }
+.overview-nav-pills { display: flex; justify-content: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+.overview-pill {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 8px 20px; border-radius: 20px; cursor: pointer;
+    background: rgba(255,255,255,0.03); border: 1px solid color-mix(in srgb, var(--pill-color) 40%, transparent);
+    color: var(--pill-color); transition: all 0.3s ease;
 }
-.hero p { font-family: var(--mono); font-size: 0.85rem; color: #555; margin-top: 4px; letter-spacing: 0.04em; }
-
-/* Pipeline mini-diagram */
-.pipeline {
-  display: flex; align-items: center; justify-content: center; gap: 0;
-  padding: 14px 24px 2px; max-width: 660px; margin: 0 auto; position: relative; z-index: 1;
+.overview-pill:hover {
+    background: color-mix(in srgb, var(--pill-color) 12%, transparent);
+    border-color: var(--pill-color);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--pill-color) 25%, transparent);
 }
-.pipe-phase {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
-  padding: 4px 12px; border-radius: 4px; border: 1px solid; white-space: nowrap;
+.overview-title {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    text-align: center;
+    background: linear-gradient(90deg, #b44dff, #00f0ff, #39ff8e, #ff2d7b, #b44dff);
+    background-size: 300% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 6s ease infinite;
+    margin: 16px 0 8px;
 }
-.pipe-arrow { color: #333; font-size: 10px; padding: 0 4px; }
-.pipe-brace { font-family: var(--mono); font-size: 7px; letter-spacing: 0.5px; text-transform: uppercase; color: #444; text-align: center; margin-top: 2px; }
-.pipe-dim { opacity: 0.25; }
+.overview-subtitle { font-family: var(--mono); font-size: 12px; color: #555; letter-spacing: 1.5px; text-align: center; margin-bottom: 4px; }
 
 /* === DETAIL VIEWS === */
 .view-header { text-align: center; padding: 20px 0 4px; position: relative; z-index: 1; }
@@ -374,7 +405,6 @@ body.has-selection .svg-diagram [data-id].dimmed { opacity: 0.15; }
   .nav-title { margin-right: 12px; font-size: 9px; letter-spacing: 2px; }
   .nav-tab { padding: 0 10px; font-size: 10px; letter-spacing: 0.8px; }
   .sub-tab { padding: 0 12px; font-size: 10px; }
-  .pipeline { flex-wrap: wrap; }
   .card-grid.two-col { grid-template-columns: 1fr; }
 }
 </style>
@@ -383,13 +413,13 @@ body.has-selection .svg-diagram [data-id].dimmed { opacity: 0.15; }
 
 <!-- TOP NAV -->
 <div id="nav">
-  <span class="nav-title">Agentic Best Practices</span>
+  <span class="nav-title">HCP Terraform Agentic Workflows</span>
   <div class="nav-tabs">
-    <button class="nav-tab active" data-section="getting-started" style="--tab-color:var(--sec-getting-started)">Getting Started</button>
-    <button class="nav-tab" data-section="foundations" style="--tab-color:var(--sec-foundations)">Foundations</button>
+    <button class="nav-tab active" data-section="foundations" style="--tab-color:var(--sec-foundations)">Foundations</button>
     <button class="nav-tab" data-section="guardrails" style="--tab-color:var(--sec-guardrails)">Guardrails</button>
     <button class="nav-tab" data-section="sdd" style="--tab-color:var(--sec-sdd)">SDD</button>
     <button class="nav-tab" data-section="workflows" style="--tab-color:var(--sec-workflows)">Workflows</button>
+    <button class="nav-tab" data-section="prerequisites" style="--tab-color:var(--sec-prerequisites)">Prerequisites</button>
     <button class="nav-tab" data-section="reference" style="--tab-color:var(--sec-reference)">Reference</button>
   </div>
 </div>
@@ -410,107 +440,393 @@ body.has-selection .svg-diagram [data-id].dimmed { opacity: 0.15; }
 
 <!-- ===== VIEW CONTAINERS ===== -->
 
-<!-- GETTING STARTED -->
-<div id="view-getting-started--prerequisites" class="view active">
+<!-- FOUNDATIONS OVERVIEW -->
+<div id="view-foundations--overview" class="view active">
 <div class="view-header">
-  <h1 style="color:var(--yellow)">Prerequisites</h1>
-  <p>Required software and environment variables</p>
+  <h1 style="color:var(--purple)">HCP Terraform Agentic Workflows</h1>
+  <p>AI-powered Terraform development using Specification-Driven Development (SDD)</p>
 </div>
-<div class="flow-container">
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">Docker Desktop</h3>
-    <p>Required for running the devcontainer. Download Docker Desktop from <code>docker.com</code> and ensure it is running before proceeding.</p>
-  </div>
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">VS Code</h3>
-    <p>Recommended IDE with devcontainer support. Install the <code>Dev Containers</code> extension from the VS Code marketplace.</p>
-  </div>
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">Environment Variables</h3>
-    <p>Two tokens are required to authenticate with GitHub and HCP Terraform:</p>
-    <pre>GITHUB_TOKEN    # GitHub PAT with repo permissions
-TEAM_TFE_TOKEN  # HCP Terraform Team Token (must be a Team API Token, not user/org token)</pre>
-  </div>
-  <div class="gs-step">
-    <h3 style="color:var(--red)">Important: TEAM_TFE_TOKEN</h3>
-    <p>Must be a <strong style="color:var(--yellow)">Team API Token</strong> &mdash; not a user token or organization token. Create at:</p>
-    <pre>HCP Terraform &gt; Settings &gt; Teams &gt; [Your Team] &gt; Team API Token</pre>
-  </div>
-</div>
-</div>
-<div id="view-getting-started--setup" class="view">
-<div class="view-header">
-  <h1 style="color:var(--yellow)">HCP Terraform Setup</h1>
-  <p>Configure HCP Terraform with an isolated environment for testing</p>
-</div>
-<div class="flow-container">
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">1. Create a Dedicated Project</h3>
-    <p>Navigate to <strong>Projects</strong> in HCP Terraform and create a new project (e.g., <code>sandbox</code>). This isolates test workspaces from production.</p>
-  </div>
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">2. Create a Dedicated Team</h3>
-    <p>Go to <strong>Settings &gt; Teams</strong>. Create a team and assign it to your project with the following permissions:</p>
-    <pre>Read, Create Workspaces, Delete Workspaces,
-Read Variables, Read State, Write State,
-Lock/Unlock Workspaces</pre>
-  </div>
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">3. Generate Team API Token</h3>
-    <p>In <strong>Settings &gt; Teams &gt; [Your Team]</strong>, click <strong>"Create a team token"</strong>. Save this value as <code>TEAM_TFE_TOKEN</code>.</p>
-  </div>
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">4. Configure Credential Inheritance</h3>
-    <p>Create a <strong>Variable Set</strong> with AWS credentials and attach it to your dedicated project. Workspaces inherit credentials automatically.</p>
-  </div>
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">5. AWS Credentials</h3>
-    <p>Prefer <strong>Dynamic Provider Credentials</strong> (OIDC federation) or a Variable Set with:</p>
-    <pre>AWS_ACCESS_KEY_ID
-AWS_SECRET_ACCESS_KEY
-AWS_REGION</pre>
-  </div>
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">6. Shell Configuration</h3>
-    <p>Add your tokens to your shell profile so they are available in every session:</p>
-    <pre># Add to ~/.bashrc or ~/.zshrc
-export GITHUB_TOKEN="ghp_your_token_here"
-export TEAM_TFE_TOKEN="your_terraform_team_token_here"
+<div class="overview-svg-container">
+  <svg viewBox="0 0 900 440" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Glow filters -->
+      <filter id="fo-glow-sm" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="fo-glow-md" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="fo-glow-lg" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <!-- Arrow marker -->
+      <marker id="fo-arrow" markerWidth="6" markerHeight="5" refX="6" refY="2.5" orient="auto">
+        <polygon points="0 0,6 2.5,0 5" fill="rgba(255,255,255,0.3)"/>
+      </marker>
+      <!-- Flow paths for animated particles -->
+      <path id="fo-path-in" d="M 60 230 L 128 230" fill="none"/>
+      <path id="fo-path-1-2" d="M 310 230 L 370 230" fill="none"/>
+      <path id="fo-path-2-3" d="M 550 230 L 610 230" fill="none"/>
+      <path id="fo-path-3-4" d="M 720 230 L 760 230" fill="none"/>
+      <path id="fo-path-out" d="M 830 230 L 880 230" fill="none"/>
+      <!-- Orchestrator down paths -->
+      <path id="fo-orch-1" d="M 300 80 L 220 140" fill="none"/>
+      <path id="fo-orch-2" d="M 420 80 L 460 140" fill="none"/>
+      <path id="fo-orch-3" d="M 540 80 L 660 140" fill="none"/>
+      <path id="fo-orch-4" d="M 660 80 L 795 140" fill="none"/>
+    </defs>
 
-# Reload
-source ~/.bashrc  # or source ~/.zshrc</pre>
-  </div>
+    <!-- ============================================ -->
+    <!-- ORCHESTRATOR (top center)                    -->
+    <!-- ============================================ -->
+    <g>
+      <!-- Orchestrator box -->
+      <rect x="340" y="18" width="200" height="42" rx="8" fill="rgba(180,77,255,0.06)" stroke="rgba(180,77,255,0.45)" stroke-width="1.2">
+        <animate attributeName="stroke-opacity" values="0.4;0.8;0.4" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <text x="440" y="35" text-anchor="middle" font-family="monospace" font-size="7" fill="#b44dff" fill-opacity="0.6" letter-spacing="2" font-weight="600">ORCHESTRATOR</text>
+      <text x="440" y="50" text-anchor="middle" font-family="monospace" font-size="8" fill="#b44dff" fill-opacity="0.85" font-weight="700">Routes to workflow skills</text>
+
+      <!-- Orchestrator connection lines down to phases -->
+      <line x1="370" y1="60" x2="220" y2="148" stroke="rgba(180,77,255,0.15)" stroke-width="0.8" stroke-dasharray="3 3">
+        <animate attributeName="stroke-opacity" values="0.1;0.3;0.1" dur="2.5s" repeatCount="indefinite"/>
+      </line>
+      <line x1="420" y1="60" x2="400" y2="148" stroke="rgba(180,77,255,0.15)" stroke-width="0.8" stroke-dasharray="3 3">
+        <animate attributeName="stroke-opacity" values="0.1;0.3;0.1" dur="2.5s" repeatCount="indefinite" begin="0.6s"/>
+      </line>
+      <line x1="490" y1="60" x2="610" y2="148" stroke="rgba(180,77,255,0.15)" stroke-width="0.8" stroke-dasharray="3 3">
+        <animate attributeName="stroke-opacity" values="0.1;0.3;0.1" dur="2.5s" repeatCount="indefinite" begin="1.2s"/>
+      </line>
+      <line x1="510" y1="60" x2="795" y2="148" stroke="rgba(180,77,255,0.15)" stroke-width="0.8" stroke-dasharray="3 3">
+        <animate attributeName="stroke-opacity" values="0.1;0.3;0.1" dur="2.5s" repeatCount="indefinite" begin="1.8s"/>
+      </line>
+
+      <!-- Orchestrator pulse particles down lines -->
+      <circle r="1.5" fill="#b44dff" opacity="0">
+        <animateMotion dur="2s" repeatCount="indefinite" path="M 370 60 L 220 148"/>
+        <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle r="1.5" fill="#b44dff" opacity="0">
+        <animateMotion dur="2s" repeatCount="indefinite" begin="0.5s" path="M 420 60 L 400 148"/>
+        <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
+      <circle r="1.5" fill="#b44dff" opacity="0">
+        <animateMotion dur="2s" repeatCount="indefinite" begin="1s" path="M 490 60 L 610 148"/>
+        <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite" begin="1s"/>
+      </circle>
+      <circle r="1.5" fill="#b44dff" opacity="0">
+        <animateMotion dur="2s" repeatCount="indefinite" begin="1.5s" path="M 510 60 L 795 148"/>
+        <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite" begin="1.5s"/>
+      </circle>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- GUARDRAILS: CONSTITUTION (top dashed border) -->
+    <!-- ============================================ -->
+    <rect x="120" y="88" width="730" height="290" rx="10" fill="none" stroke="#ff2d7b" stroke-width="1.2" stroke-dasharray="6 4" stroke-opacity="0.3">
+      <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="3s" repeatCount="indefinite"/>
+    </rect>
+    <rect x="170" y="82" width="100" height="14" rx="3" fill="#0a0a12"/>
+    <text x="220" y="92" text-anchor="middle" font-family="monospace" font-size="7" fill="#ff2d7b" fill-opacity="0.7" letter-spacing="1.5" font-weight="600">CONSTITUTION</text>
+
+    <!-- ============================================ -->
+    <!-- GUARDRAILS: MCP TOOLS (bottom dashed border) -->
+    <!-- ============================================ -->
+    <rect x="620" y="372" width="80" height="14" rx="3" fill="#0a0a12"/>
+    <text x="660" y="382" text-anchor="middle" font-family="monospace" font-size="7" fill="#ffe14d" fill-opacity="0.7" letter-spacing="1.5" font-weight="600">MCP TOOLS</text>
+
+    <!-- ============================================ -->
+    <!-- INPUT: REQUIREMENTS (left)                   -->
+    <!-- ============================================ -->
+    <g>
+      <rect x="10" y="204" width="110" height="50" rx="8" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+      <text x="65" y="225" text-anchor="middle" font-family="monospace" font-size="8" fill="rgba(255,255,255,0.8)" font-weight="700">REQUIREMENTS</text>
+      <text x="65" y="240" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(255,255,255,0.4)">"build me a VPC"</text>
+      <!-- Arrow to Phase 1 -->
+      <line x1="120" y1="229" x2="148" y2="229" stroke="rgba(255,255,255,0.2)" stroke-width="1.2" marker-end="url(#fo-arrow)"/>
+      <!-- Travelling particle -->
+      <circle r="2.5" fill="#00f0ff" opacity="0">
+        <animateMotion dur="1.5s" repeatCount="indefinite" path="M 120 229 L 148 229"/>
+        <animate attributeName="opacity" values="0;0.8;0" dur="1.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- PHASE 1: CLARIFY (pink)                      -->
+    <!-- ============================================ -->
+    <g>
+      <!-- Phase column background -->
+      <rect x="150" y="148" width="140" height="200" rx="8" fill="rgba(255,45,123,0.03)" stroke="rgba(255,45,123,0.2)" stroke-width="1"/>
+      <rect x="150" y="148" width="140" height="3" rx="1.5" fill="rgba(255,45,123,0.5)"/>
+      <text x="220" y="166" text-anchor="middle" font-family="monospace" font-size="7" fill="#ff2d7b" fill-opacity="0.6" letter-spacing="2" font-weight="600">PHASE 1</text>
+      <text x="220" y="180" text-anchor="middle" font-family="monospace" font-size="10" fill="#ff2d7b" fill-opacity="0.9" font-weight="700">CLARIFY</text>
+
+      <!-- Subagent: Researcher -->
+      <rect x="170" y="196" width="100" height="36" rx="6" fill="rgba(255,45,123,0.06)" stroke="rgba(255,45,123,0.35)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.4;0.9;0.4" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <text x="220" y="212" text-anchor="middle" font-family="monospace" font-size="8" fill="#ff2d7b" fill-opacity="0.85" font-weight="700">Researcher</text>
+      <text x="220" y="224" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(255,45,123,0.5)">subagent x3-4</text>
+
+      <!-- Skill badge below -->
+      <rect x="178" y="240" width="84" height="18" rx="4" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.25)" stroke-width="0.8"/>
+      <text x="220" y="253" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f0ff" fill-opacity="0.75" font-weight="600">tf-research</text>
+
+      <!-- MCP badge -->
+      <rect x="168" y="266" width="104" height="18" rx="4" fill="rgba(255,225,77,0.06)" stroke="rgba(255,225,77,0.2)" stroke-width="0.8"/>
+      <text x="220" y="279" text-anchor="middle" font-family="monospace" font-size="6.5" fill="#ffe14d" fill-opacity="0.65" font-weight="600">aws-docs + registry</text>
+
+      <!-- Output label -->
+      <text x="220" y="305" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(255,157,46,0.5)" font-weight="600">findings (in-memory)</text>
+
+      <!-- Bottom glow -->
+      <rect x="150" y="345" width="140" height="2" rx="1" fill="#ff2d7b" opacity="0.25">
+        <animate attributeName="opacity" values="0.15;0.4;0.15" dur="3s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- FLOW ARROW: Phase 1 → Phase 2                -->
+    <!-- ============================================ -->
+    <line x1="290" y1="229" x2="320" y2="229" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" marker-end="url(#fo-arrow)"/>
+    <circle r="2.5" fill="#00f0ff" opacity="0">
+      <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.3s" path="M 290 229 L 320 229"/>
+      <animate attributeName="opacity" values="0;0.8;0" dur="1.8s" repeatCount="indefinite" begin="0.3s"/>
+    </circle>
+
+    <!-- ============================================ -->
+    <!-- PHASE 2: DESIGN (purple)                     -->
+    <!-- ============================================ -->
+    <g>
+      <rect x="322" y="148" width="140" height="200" rx="8" fill="rgba(180,77,255,0.03)" stroke="rgba(180,77,255,0.2)" stroke-width="1"/>
+      <rect x="322" y="148" width="140" height="3" rx="1.5" fill="rgba(180,77,255,0.5)"/>
+      <text x="392" y="166" text-anchor="middle" font-family="monospace" font-size="7" fill="#b44dff" fill-opacity="0.6" letter-spacing="2" font-weight="600">PHASE 2</text>
+      <text x="392" y="180" text-anchor="middle" font-family="monospace" font-size="10" fill="#b44dff" fill-opacity="0.9" font-weight="700">DESIGN</text>
+
+      <!-- Subagent: Designer -->
+      <rect x="342" y="196" width="100" height="36" rx="6" fill="rgba(180,77,255,0.06)" stroke="rgba(180,77,255,0.35)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.4;0.9;0.4" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+      </rect>
+      <text x="392" y="212" text-anchor="middle" font-family="monospace" font-size="8" fill="#b44dff" fill-opacity="0.85" font-weight="700">Designer</text>
+      <text x="392" y="224" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(180,77,255,0.5)">subagent</text>
+
+      <!-- Skill badge: design-templates -->
+      <rect x="344" y="240" width="96" height="18" rx="4" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.25)" stroke-width="0.8"/>
+      <text x="392" y="253" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f0ff" fill-opacity="0.75" font-weight="600">design-templates</text>
+
+      <!-- Constitution badge -->
+      <rect x="352" y="266" width="80" height="18" rx="4" fill="rgba(255,45,123,0.06)" stroke="rgba(255,45,123,0.2)" stroke-width="0.8"/>
+      <text x="392" y="279" text-anchor="middle" font-family="monospace" font-size="7" fill="#ff2d7b" fill-opacity="0.65" font-weight="600">constitution</text>
+
+      <!-- Output label -->
+      <text x="392" y="305" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(255,157,46,0.5)" font-weight="600">design.md</text>
+
+      <!-- Bottom glow -->
+      <rect x="322" y="345" width="140" height="2" rx="1" fill="#b44dff" opacity="0.25">
+        <animate attributeName="opacity" values="0.15;0.4;0.15" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+      </rect>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- HUMAN GATE (between Phase 2 and 3)           -->
+    <!-- ============================================ -->
+    <g>
+      <!-- Gate box -->
+      <rect x="472" y="180" width="68" height="70" rx="6" fill="rgba(255,68,68,0.03)" stroke="#ff4444" stroke-width="1.5" stroke-dasharray="4 3">
+        <animate attributeName="stroke-opacity" values="0.3;0.8;0.3" dur="2.4s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Shield icon -->
+      <path d="M506,194 L516,198 L516,205 C516,210 506,216 506,216 C506,216 496,210 496,205 L496,198 Z" fill="none" stroke="#ff4444" stroke-width="1.2" stroke-linejoin="round" stroke-opacity="0.7"/>
+      <circle cx="506" cy="203" r="2" fill="none" stroke="#ff4444" stroke-width="0.8" stroke-opacity="0.6"/>
+      <path d="M503,209 C503,207.5 504.5,206.5 506,206.5 C507.5,206.5 509,207.5 509,209" fill="none" stroke="#ff4444" stroke-width="0.8" stroke-opacity="0.6"/>
+      <!-- Labels -->
+      <text x="506" y="230" text-anchor="middle" font-family="monospace" font-size="6.5" fill="#ff4444" fill-opacity="0.8" font-weight="700" letter-spacing="0.8">HUMAN</text>
+      <text x="506" y="240" text-anchor="middle" font-family="monospace" font-size="6.5" fill="#ff4444" fill-opacity="0.8" font-weight="700" letter-spacing="0.8">GATE</text>
+      <!-- Pulse dots -->
+      <circle cx="506" cy="176" r="1.5" fill="#ff4444" opacity="0.5">
+        <animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="506" cy="254" r="1.5" fill="#ff4444" opacity="0.5">
+        <animate attributeName="opacity" values="0.3;0.9;0.3" dur="2.4s" repeatCount="indefinite" begin="1.2s"/>
+      </circle>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- FLOW ARROW: Phase 2 → Human Gate             -->
+    <!-- ============================================ -->
+    <line x1="462" y1="229" x2="472" y2="229" stroke="rgba(255,68,68,0.25)" stroke-width="1"/>
+
+    <!-- ============================================ -->
+    <!-- FLOW ARROW: Human Gate → Phase 3             -->
+    <!-- ============================================ -->
+    <line x1="540" y1="229" x2="560" y2="229" stroke="rgba(255,68,68,0.25)" stroke-width="1" marker-end="url(#fo-arrow)"/>
+    <circle r="2.5" fill="#ff4444" opacity="0">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="0.8s" path="M 540 229 L 560 229"/>
+      <animate attributeName="opacity" values="0;0.7;0" dur="2s" repeatCount="indefinite" begin="0.8s"/>
+    </circle>
+
+    <!-- ============================================ -->
+    <!-- PHASE 3: BUILD + TEST (cyan)                 -->
+    <!-- ============================================ -->
+    <g>
+      <rect x="562" y="148" width="140" height="200" rx="8" fill="rgba(0,240,255,0.03)" stroke="rgba(0,240,255,0.2)" stroke-width="1"/>
+      <rect x="562" y="148" width="140" height="3" rx="1.5" fill="rgba(0,240,255,0.5)"/>
+      <text x="632" y="166" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f0ff" fill-opacity="0.6" letter-spacing="2" font-weight="600">PHASE 3</text>
+      <text x="632" y="180" text-anchor="middle" font-family="monospace" font-size="10" fill="#00f0ff" fill-opacity="0.9" font-weight="700">BUILD+TEST</text>
+
+      <!-- Subagent: Developer -->
+      <rect x="582" y="196" width="100" height="36" rx="6" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.35)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.4;0.9;0.4" dur="3s" repeatCount="indefinite" begin="1s"/>
+      </rect>
+      <text x="632" y="212" text-anchor="middle" font-family="monospace" font-size="8" fill="#00f0ff" fill-opacity="0.85" font-weight="700">Developer</text>
+      <text x="632" y="224" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(0,240,255,0.5)">subagent (TDD)</text>
+
+      <!-- Skill badge: tf-module-plan -->
+      <rect x="580" y="240" width="104" height="18" rx="4" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.25)" stroke-width="0.8"/>
+      <text x="632" y="253" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f0ff" fill-opacity="0.75" font-weight="600">tf-module-plan</text>
+
+      <!-- Style guide badge -->
+      <rect x="582" y="266" width="100" height="18" rx="4" fill="rgba(0,240,255,0.04)" stroke="rgba(0,240,255,0.15)" stroke-width="0.8"/>
+      <text x="632" y="279" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(0,240,255,0.55)" font-weight="600">style-guide</text>
+
+      <!-- Output label -->
+      <text x="632" y="305" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(255,157,46,0.5)" font-weight="600">*.tf + tests</text>
+
+      <!-- Bottom glow -->
+      <rect x="562" y="345" width="140" height="2" rx="1" fill="#00f0ff" opacity="0.25">
+        <animate attributeName="opacity" values="0.15;0.4;0.15" dur="3s" repeatCount="indefinite" begin="1s"/>
+      </rect>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- FLOW ARROW: Phase 3 → Phase 4                -->
+    <!-- ============================================ -->
+    <line x1="702" y1="229" x2="732" y2="229" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" marker-end="url(#fo-arrow)"/>
+    <circle r="2.5" fill="#00f0ff" opacity="0">
+      <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.2s" path="M 702 229 L 732 229"/>
+      <animate attributeName="opacity" values="0;0.8;0" dur="1.8s" repeatCount="indefinite" begin="1.2s"/>
+    </circle>
+
+    <!-- ============================================ -->
+    <!-- PHASE 4: VALIDATE (green)                    -->
+    <!-- ============================================ -->
+    <g>
+      <rect x="734" y="148" width="120" height="200" rx="8" fill="rgba(57,255,142,0.03)" stroke="rgba(57,255,142,0.2)" stroke-width="1"/>
+      <rect x="734" y="148" width="120" height="3" rx="1.5" fill="rgba(57,255,142,0.5)"/>
+      <text x="794" y="166" text-anchor="middle" font-family="monospace" font-size="7" fill="#39ff8e" fill-opacity="0.6" letter-spacing="2" font-weight="600">PHASE 4</text>
+      <text x="794" y="180" text-anchor="middle" font-family="monospace" font-size="10" fill="#39ff8e" fill-opacity="0.9" font-weight="700">VALIDATE</text>
+
+      <!-- Subagent: Validator -->
+      <rect x="752" y="196" width="84" height="36" rx="6" fill="rgba(57,255,142,0.06)" stroke="rgba(57,255,142,0.35)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.4;0.9;0.4" dur="3s" repeatCount="indefinite" begin="1.5s"/>
+      </rect>
+      <text x="794" y="212" text-anchor="middle" font-family="monospace" font-size="8" fill="#39ff8e" fill-opacity="0.85" font-weight="700">Validator</text>
+      <text x="794" y="224" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(57,255,142,0.5)">subagent</text>
+
+      <!-- Skill badge: tf-security -->
+      <rect x="754" y="240" width="80" height="18" rx="4" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.25)" stroke-width="0.8"/>
+      <text x="794" y="253" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f0ff" fill-opacity="0.75" font-weight="600">tf-security</text>
+
+      <!-- Judge criteria badge -->
+      <rect x="750" y="266" width="88" height="18" rx="4" fill="rgba(255,157,46,0.06)" stroke="rgba(255,157,46,0.2)" stroke-width="0.8"/>
+      <text x="794" y="279" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(255,157,46,0.6)" font-weight="600">judge-criteria</text>
+
+      <!-- Output label -->
+      <text x="794" y="305" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(255,157,46,0.5)" font-weight="600">score &ge; 7.0</text>
+
+      <!-- Bottom glow -->
+      <rect x="734" y="345" width="120" height="2" rx="1" fill="#39ff8e" opacity="0.25">
+        <animate attributeName="opacity" values="0.15;0.4;0.15" dur="3s" repeatCount="indefinite" begin="1.5s"/>
+      </rect>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- FLOW ARROW: Phase 4 → Output                 -->
+    <!-- ============================================ -->
+    <line x1="854" y1="229" x2="870" y2="229" stroke="rgba(57,255,142,0.2)" stroke-width="1.2" marker-end="url(#fo-arrow)"/>
+    <circle r="2.5" fill="#39ff8e" opacity="0">
+      <animateMotion dur="1.5s" repeatCount="indefinite" begin="1.5s" path="M 854 229 L 870 229"/>
+      <animate attributeName="opacity" values="0;0.8;0" dur="1.5s" repeatCount="indefinite" begin="1.5s"/>
+    </circle>
+
+    <!-- ============================================ -->
+    <!-- OUTPUT: *.tf + PR (right)                    -->
+    <!-- ============================================ -->
+    <g>
+      <rect x="858" y="196" width="36" height="66" rx="8" fill="rgba(57,255,142,0.08)" stroke="rgba(57,255,142,0.45)" stroke-width="1.2"/>
+      <rect x="858" y="196" width="36" height="66" rx="8" fill="none" stroke="rgba(57,255,142,0.15)" stroke-width="4" filter="url(#fo-glow-sm)"/>
+      <text x="876" y="220" text-anchor="middle" font-family="monospace" font-size="8" fill="#39ff8e" fill-opacity="0.9" font-weight="700">*.tf</text>
+      <text x="876" y="234" text-anchor="middle" font-family="monospace" font-size="7" fill="#39ff8e" fill-opacity="0.6" font-weight="600">+ PR</text>
+      <text x="876" y="254" text-anchor="middle" font-family="monospace" font-size="6" fill="rgba(57,255,142,0.4)">output</text>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- GUARDRAILS LABEL BAR (bottom)                -->
+    <!-- ============================================ -->
+    <g>
+      <text x="450" y="400" text-anchor="middle" font-family="monospace" font-size="7" fill="rgba(255,255,255,0.25)" letter-spacing="2" font-weight="600">GUARDRAILS</text>
+
+      <!-- Skills row at bottom -->
+      <rect x="140" y="410" width="90" height="20" rx="4" fill="rgba(0,240,255,0.04)" stroke="rgba(0,240,255,0.12)" stroke-width="0.8"/>
+      <text x="185" y="424" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(0,240,255,0.55)" font-weight="600">Skills</text>
+
+      <rect x="244" y="410" width="90" height="20" rx="4" fill="rgba(255,45,123,0.04)" stroke="rgba(255,45,123,0.12)" stroke-width="0.8"/>
+      <text x="289" y="424" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(255,45,123,0.55)" font-weight="600">Constitution</text>
+
+      <rect x="348" y="410" width="90" height="20" rx="4" fill="rgba(255,225,77,0.04)" stroke="rgba(255,225,77,0.12)" stroke-width="0.8"/>
+      <text x="393" y="424" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(255,225,77,0.55)" font-weight="600">MCP Tools</text>
+
+      <rect x="452" y="410" width="100" height="20" rx="4" fill="rgba(180,77,255,0.04)" stroke="rgba(180,77,255,0.12)" stroke-width="0.8"/>
+      <text x="502" y="424" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(180,77,255,0.55)" font-weight="600">Design Templates</text>
+
+      <rect x="566" y="410" width="110" height="20" rx="4" fill="rgba(255,68,68,0.04)" stroke="rgba(255,68,68,0.12)" stroke-width="0.8"/>
+      <text x="621" y="424" text-anchor="middle" font-family="monospace" font-size="6.5" fill="rgba(255,68,68,0.55)" font-weight="600">Human Approval</text>
+    </g>
+
+    <!-- ============================================ -->
+    <!-- FLOW LABELS (below the SDD engine area)      -->
+    <!-- ============================================ -->
+    <g>
+      <!-- Plan skill bar -->
+      <rect x="150" y="356" width="312" height="22" rx="5" fill="rgba(180,77,255,0.03)" stroke="rgba(180,77,255,0.12)" stroke-width="0.8"/>
+      <text x="160" y="371" font-family="monospace" font-size="7" fill="#b44dff" fill-opacity="0.65" font-weight="600">/tf-{wf}-plan</text>
+      <text x="280" y="371" font-family="monospace" font-size="6.5" fill="rgba(255,255,255,0.25)">Phases 1 &amp; 2</text>
+
+      <!-- Implement skill bar -->
+      <rect x="562" y="356" width="292" height="22" rx="5" fill="rgba(57,255,142,0.03)" stroke="rgba(57,255,142,0.12)" stroke-width="0.8"/>
+      <text x="572" y="371" font-family="monospace" font-size="7" fill="#39ff8e" fill-opacity="0.65" font-weight="600">/tf-{wf}-implement</text>
+      <text x="720" y="371" font-family="monospace" font-size="6.5" fill="rgba(255,255,255,0.25)">Phases 3 &amp; 4</text>
+    </g>
+
+  </svg>
 </div>
-</div>
-<div id="view-getting-started--quickstart" class="view">
-<div class="view-header">
-  <h1 style="color:var(--yellow)">Quickstart</h1>
-  <p>Get up and running in 3 steps</p>
-</div>
-<div class="flow-container">
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">1. Create Repository from Template</h3>
-    <p>Navigate to the template repo on GitHub. Click <strong>"Use this template"</strong> &gt; <strong>"Create a new repository"</strong>. Name and configure your new repo.</p>
+<div class="card-grid">
+  <div class="concept-card">
+    <h3 style="color:var(--purple)">Specification-Driven Development</h3>
+    <p>Every task follows 4 sequential phases: Clarify requirements, Design the solution, Build with TDD, and Validate quality. The design document is the single source of truth that all downstream agents follow.</p>
+    <div class="card-detail">No implementation begins until a human approves the design at the gate between Phase 2 and Phase 3.</div>
   </div>
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">2. Clone and Open in VS Code</h3>
-    <p>Clone your new repository and open it in VS Code:</p>
-    <pre>git clone https://github.com/YOUR_ORG/your-new-repo.git
-code your-new-repo</pre>
+  <div class="concept-card">
+    <h3 style="color:var(--purple)">Orchestrator + Subagents</h3>
+    <p>The orchestrator routes tasks to workflow skills and spawns specialized subagents (Researcher, Designer, Developer, Validator) for each phase. Subagents run in isolated contexts with scoped tools.</p>
+    <div class="card-detail">Blast radius containment: a subagent failure never crashes the parent workflow.</div>
   </div>
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">3. Open in Devcontainer</h3>
-    <p>When VS Code opens, click <strong>"Reopen in Container"</strong> at the prompt. Or use Command Palette: <code>Dev Containers: Reopen in Container</code>. All tools are pre-configured.</p>
+  <div class="concept-card">
+    <h3 style="color:var(--purple)">Layered Guardrails</h3>
+    <p>Every agent operates within guardrails: Constitution files define rules, MCP Tools control data access, Design Templates enforce structure, and Human Approval Gates provide checkpoints.</p>
+    <div class="card-detail">Guardrails wrap the entire SDD engine &mdash; no agent operates outside their boundaries.</div>
   </div>
-  <div class="gs-step">
-    <h3 style="color:var(--yellow)">4. Run Your First Workflow</h3>
-    <p>Try your first agentic Terraform workflow:</p>
-    <pre>/tf-module-plan aws_s3_bucket aws - Create an S3 bucket module with encryption and versioning</pre>
+  <div class="concept-card">
+    <h3 style="color:var(--purple)">Concrete Outputs</h3>
+    <p>The system produces real Terraform artifacts: <code>*.tf</code> files, <code>design.md</code> documents, test files, validation reports, and pull requests &mdash; all from natural language requirements.</p>
+    <div class="card-detail">Quality-gated: outputs must score &ge; 7.0 on a 10-point rubric before the PR is created.</div>
   </div>
 </div>
 </div>
 
-<!-- FOUNDATIONS -->
 <div id="view-foundations--skills" class="view">
 <div class="view-header">
   <h1 style="color:var(--purple)">Skills: Domain Knowledge for Agents</h1>
@@ -527,8 +843,12 @@ code your-new-repo</pre>
     </defs>
     <!-- SKILL.MD file mockup (left) -->
     <g class="entrance" style="animation-delay:0.1s" data-id="concept-skills" data-type="concept">
-      <rect x="16" y="16" width="280" height="328" rx="8" fill="url(#sk-code-bg)" stroke="rgba(0,240,255,0.15)" stroke-width="1"/>
-      <rect x="16" y="16" width="280" height="328" rx="8" fill="none" stroke="rgba(0,240,255,0.06)" stroke-width="1" filter="url(#sk-glow)"/>
+      <rect x="16" y="16" width="280" height="328" rx="8" fill="url(#sk-code-bg)" stroke="rgba(0,240,255,0.15)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.15;0.4;0.15" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="16" y="16" width="280" height="328" rx="8" fill="none" stroke="rgba(0,240,255,0.06)" stroke-width="1" filter="url(#sk-glow)">
+        <animate attributeName="stroke-opacity" values="0.06;0.2;0.06" dur="3s" repeatCount="indefinite"/>
+      </rect>
       <text x="30" y="40" font-family="monospace" font-size="10" fill="rgba(0,240,255,0.5)" letter-spacing="2" font-weight="600">SKILL.MD</text>
       <!-- Code content -->
       <rect x="28" y="52" width="254" height="280" rx="5" fill="rgba(10,10,16,0.8)" stroke="rgba(0,240,255,0.06)" stroke-width="0.5"/>
@@ -561,32 +881,68 @@ code your-new-repo</pre>
     <line x1="296" y1="180" x2="380" y2="192" class="flow-line" stroke="rgba(255,45,123,0.25)" stroke-width="1.2"/>
     <line x1="296" y1="220" x2="380" y2="256" class="flow-line" stroke="rgba(255,225,77,0.25)" stroke-width="1.2"/>
     <line x1="296" y1="260" x2="380" y2="320" class="flow-line" stroke="rgba(57,255,142,0.25)" stroke-width="1.2"/>
-    <!-- Skill cards (right) -->
+    <!-- Travelling particles on connection lines -->
+    <circle r="2" fill="#00f0ff" opacity="0">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="0s" path="M 296,100 L 380,64"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0s"/>
+    </circle>
+    <circle r="2" fill="#b44dff" opacity="0">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="0.4s" path="M 296,140 L 380,128"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0.4s"/>
+    </circle>
+    <circle r="2" fill="#ff2d7b" opacity="0">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="0.8s" path="M 296,180 L 380,192"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0.8s"/>
+    </circle>
+    <circle r="2" fill="#ffe14d" opacity="0">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="1.2s" path="M 296,220 L 380,256"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="1.2s"/>
+    </circle>
+    <circle r="2" fill="#39ff8e" opacity="0">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="1.6s" path="M 296,260 L 380,320"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="1.6s"/>
+    </circle>
+    <!-- Skill cards (right) with breathing glow rects -->
     <g class="entrance" style="animation-delay:0.2s">
+      <rect x="380" y="40" width="300" height="48" rx="6" fill="none" stroke="#00f0ff" stroke-opacity="0.3">
+        <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" begin="0s"/>
+      </rect>
       <rect x="380" y="40" width="300" height="48" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(0,240,255,0.2)" stroke-width="1"/>
       <rect x="380" y="40" width="4" height="48" rx="2" fill="#00f0ff"/>
       <text x="400" y="60" font-family="monospace" font-size="12" fill="#00f0ff" font-weight="600">tf-module-plan</text>
       <text x="400" y="78" font-size="10" fill="#777">SDD Phases 1-2: clarify, research</text>
     </g>
     <g class="entrance" style="animation-delay:0.35s">
+      <rect x="380" y="104" width="300" height="48" rx="6" fill="none" stroke="#b44dff" stroke-opacity="0.3">
+        <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" begin="0.6s"/>
+      </rect>
       <rect x="380" y="104" width="300" height="48" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(180,77,255,0.2)" stroke-width="1"/>
       <rect x="380" y="104" width="4" height="48" rx="2" fill="#b44dff"/>
       <text x="400" y="124" font-family="monospace" font-size="12" fill="#b44dff" font-weight="600">tf-research</text>
       <text x="400" y="142" font-size="10" fill="#777">AWS docs, registry patterns</text>
     </g>
     <g class="entrance" style="animation-delay:0.5s">
+      <rect x="380" y="168" width="300" height="48" rx="6" fill="none" stroke="#ff2d7b" stroke-opacity="0.3">
+        <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" begin="1.2s"/>
+      </rect>
       <rect x="380" y="168" width="300" height="48" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(255,45,123,0.2)" stroke-width="1"/>
       <rect x="380" y="168" width="4" height="48" rx="2" fill="#ff2d7b"/>
       <text x="400" y="188" font-family="monospace" font-size="12" fill="#ff2d7b" font-weight="600">tf-judge-criteria</text>
       <text x="400" y="206" font-size="10" fill="#777">Scoring rubrics, evaluation</text>
     </g>
     <g class="entrance" style="animation-delay:0.65s">
+      <rect x="380" y="232" width="300" height="48" rx="6" fill="none" stroke="#ffe14d" stroke-opacity="0.3">
+        <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" begin="1.8s"/>
+      </rect>
       <rect x="380" y="232" width="300" height="48" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(255,225,77,0.2)" stroke-width="1"/>
       <rect x="380" y="232" width="4" height="48" rx="2" fill="#ffe14d"/>
       <text x="400" y="252" font-family="monospace" font-size="12" fill="#ffe14d" font-weight="600">terraform-test</text>
       <text x="400" y="270" font-size="10" fill="#777">.tftest.hcl: run, assert, mock</text>
     </g>
     <g class="entrance" style="animation-delay:0.8s">
+      <rect x="380" y="296" width="300" height="48" rx="6" fill="none" stroke="#39ff8e" stroke-opacity="0.3">
+        <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" begin="2.4s"/>
+      </rect>
       <rect x="380" y="296" width="300" height="48" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(57,255,142,0.2)" stroke-width="1"/>
       <rect x="380" y="296" width="4" height="48" rx="2" fill="#39ff8e"/>
       <text x="400" y="316" font-family="monospace" font-size="12" fill="#39ff8e" font-weight="600">tf-security-baselines</text>
@@ -640,8 +996,12 @@ code your-new-repo</pre>
     </defs>
     <!-- SUBAGENT.MD file mockup (left) -->
     <g class="entrance" style="animation-delay:0.1s" data-id="concept-subagents" data-type="concept">
-      <rect x="16" y="12" width="270" height="310" rx="8" fill="url(#sa-bg)" stroke="rgba(57,255,142,0.15)" stroke-width="1"/>
-      <rect x="16" y="12" width="270" height="310" rx="8" fill="none" stroke="rgba(57,255,142,0.06)" stroke-width="1" filter="url(#sa-glow)"/>
+      <rect x="16" y="12" width="270" height="310" rx="8" fill="url(#sa-bg)" stroke="rgba(57,255,142,0.15)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.15;0.4;0.15" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="16" y="12" width="270" height="310" rx="8" fill="none" stroke="rgba(57,255,142,0.06)" stroke-width="1" filter="url(#sa-glow)">
+        <animate attributeName="stroke-opacity" values="0.06;0.2;0.06" dur="3s" repeatCount="indefinite"/>
+      </rect>
       <text x="30" y="36" font-family="monospace" font-size="10" fill="rgba(57,255,142,0.5)" letter-spacing="2" font-weight="600">SUBAGENT.MD</text>
       <rect x="28" y="48" width="246" height="262" rx="5" fill="rgba(10,10,16,0.8)" stroke="rgba(57,255,142,0.06)" stroke-width="0.5"/>
       <text x="38" y="68" font-family="monospace" font-size="11" fill="#666">---</text>
@@ -660,33 +1020,70 @@ code your-new-repo</pre>
       <text x="38" y="284" font-family="monospace" font-size="10" fill="#777">Investigate provider docs,</text>
       <text x="38" y="300" font-family="monospace" font-size="10" fill="#777">registry patterns, best practices.</text>
     </g>
-    <!-- Connection line -->
+    <!-- Connection lines -->
     <line x1="286" y1="100" x2="330" y2="60" class="flow-line" stroke="rgba(57,255,142,0.25)" stroke-width="1.2"/>
     <line x1="286" y1="140" x2="330" y2="140" class="flow-line" stroke="rgba(180,77,255,0.25)" stroke-width="1.2"/>
     <line x1="286" y1="180" x2="330" y2="220" class="flow-line" stroke="rgba(0,240,255,0.25)" stroke-width="1.2"/>
     <line x1="286" y1="210" x2="330" y2="296" class="flow-line" stroke="rgba(255,45,123,0.25)" stroke-width="1.2"/>
-    <!-- Built-in type cards (right) -->
+    <!-- Travelling particles on connection lines -->
+    <circle r="2" fill="#39ff8e" opacity="0">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="0s" path="M 286,100 L 330,60"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0s"/>
+    </circle>
+    <circle r="2" fill="#b44dff" opacity="0">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="0.4s" path="M 286,140 L 330,140"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0.4s"/>
+    </circle>
+    <circle r="2" fill="#00f0ff" opacity="0">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="0.8s" path="M 286,180 L 330,220"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0.8s"/>
+    </circle>
+    <circle r="2" fill="#ff2d7b" opacity="0">
+      <animateMotion dur="2s" repeatCount="indefinite" begin="1.2s" path="M 286,210 L 330,296"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="1.2s"/>
+    </circle>
+    <!-- Built-in type cards (right) with breathing glows -->
     <g class="entrance" style="animation-delay:0.2s">
+      <rect x="330" y="34" width="240" height="52" rx="6" fill="none" stroke="#00f0ff" stroke-opacity="0.3">
+        <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" begin="0s"/>
+      </rect>
       <rect x="330" y="34" width="240" height="52" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(0,240,255,0.2)" stroke-width="1"/>
-      <circle cx="350" cy="60" r="6" fill="#00f0ff" opacity="0.5"/>
+      <circle cx="350" cy="60" r="6" fill="#00f0ff" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
       <text x="366" y="56" font-family="monospace" font-size="12" fill="#00f0ff" font-weight="600">Explore</text>
       <text x="366" y="72" font-size="10" fill="#777">Haiku, read-only tools</text>
     </g>
     <g class="entrance" style="animation-delay:0.35s">
+      <rect x="330" y="102" width="240" height="52" rx="6" fill="none" stroke="#b44dff" stroke-opacity="0.3">
+        <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" begin="0.6s"/>
+      </rect>
       <rect x="330" y="102" width="240" height="52" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(180,77,255,0.2)" stroke-width="1"/>
-      <circle cx="350" cy="128" r="6" fill="#b44dff" opacity="0.5"/>
+      <circle cx="350" cy="128" r="6" fill="#b44dff" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite" begin="0.3s"/>
+      </circle>
       <text x="366" y="124" font-family="monospace" font-size="12" fill="#b44dff" font-weight="600">Plan</text>
       <text x="366" y="140" font-size="10" fill="#777">Inherited model, read-only</text>
     </g>
     <g class="entrance" style="animation-delay:0.5s">
+      <rect x="330" y="170" width="240" height="52" rx="6" fill="none" stroke="#39ff8e" stroke-opacity="0.3">
+        <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" begin="1.2s"/>
+      </rect>
       <rect x="330" y="170" width="240" height="52" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(57,255,142,0.2)" stroke-width="1"/>
-      <circle cx="350" cy="196" r="6" fill="#39ff8e" opacity="0.5"/>
+      <circle cx="350" cy="196" r="6" fill="#39ff8e" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite" begin="0.6s"/>
+      </circle>
       <text x="366" y="192" font-family="monospace" font-size="12" fill="#39ff8e" font-weight="600">General-purpose</text>
       <text x="366" y="208" font-size="10" fill="#777">Full tool access</text>
     </g>
     <g class="entrance" style="animation-delay:0.65s">
+      <rect x="330" y="238" width="240" height="52" rx="6" fill="none" stroke="#ff2d7b" stroke-opacity="0.3">
+        <animate attributeName="stroke-opacity" values="0.2;0.6;0.2" dur="3s" repeatCount="indefinite" begin="1.8s"/>
+      </rect>
       <rect x="330" y="238" width="240" height="52" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(255,45,123,0.2)" stroke-width="1"/>
-      <circle cx="350" cy="264" r="6" fill="#ff2d7b" opacity="0.5"/>
+      <circle cx="350" cy="264" r="6" fill="#ff2d7b" opacity="0.5">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite" begin="0.9s"/>
+      </circle>
       <text x="366" y="260" font-family="monospace" font-size="12" fill="#ff2d7b" font-weight="600">Custom</text>
       <text x="366" y="276" font-size="10" fill="#777">tf-researcher, tf-developer...</text>
     </g>
@@ -774,18 +1171,29 @@ code your-new-repo</pre>
       <rect x="30" y="252" width="250" height="18" rx="4" fill="rgba(10,10,16,0.8)" stroke="rgba(255,68,68,0.15)" stroke-width="0.8"/>
       <rect x="31" y="253" width="228" height="16" rx="3" fill="rgba(255,68,68,0.15)">
         <animate attributeName="width" from="0" to="228" dur="1.5s" fill="freeze"/>
+        <animate attributeName="fill-opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite" begin="1.5s"/>
       </rect>
       <text x="266" y="265" text-anchor="end" font-family="monospace" font-size="9" fill="#ff4444" font-weight="600">92%</text>
-      <!-- Warning text -->
-      <text x="155" y="296" text-anchor="middle" font-size="10" fill="#ff4444" font-weight="600">Quality degrades.</text>
-      <text x="155" y="312" text-anchor="middle" font-size="10" fill="#ff4444" font-weight="600">Compaction loses instructions.</text>
+      <!-- Warning text with breathing -->
+      <g>
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite"/>
+        <text x="155" y="296" text-anchor="middle" font-size="10" fill="#ff4444" font-weight="600">Quality degrades.</text>
+        <text x="155" y="312" text-anchor="middle" font-size="10" fill="#ff4444" font-weight="600">Compaction loses instructions.</text>
+      </g>
     </g>
 
-    <!-- CENTER: Evolution arrow -->
+    <!-- CENTER: Evolution arrow with animated dashes + travelling particle -->
     <g class="entrance" style="animation-delay:0.4s">
-      <rect x="316" y="150" width="68" height="3" rx="1.5" fill="url(#ce-arrow)"/>
+      <line x1="316" y1="152" x2="384" y2="152" stroke="url(#ce-arrow)" stroke-width="2.5" stroke-dasharray="6 4">
+        <animate attributeName="stroke-dashoffset" values="0;-20" dur="1.5s" repeatCount="indefinite"/>
+      </line>
       <polygon points="380,142 396,152 380,162" fill="rgba(57,255,142,0.35)"/>
       <polygon points="380,142 396,152 380,162" fill="rgba(57,255,142,0.12)" filter="url(#ce-glow)"/>
+      <!-- Travelling particle along arrow -->
+      <circle r="2" fill="#b44dff" opacity="0">
+        <animateMotion dur="1.8s" repeatCount="indefinite" path="M 316,152 L 396,152"/>
+        <animate attributeName="opacity" values="0;1;1;0" dur="1.8s" repeatCount="indefinite"/>
+      </circle>
       <text x="350" y="138" text-anchor="middle" font-size="11" fill="#b44dff" font-weight="600">Evolution</text>
       <text x="350" y="178" text-anchor="middle" font-size="8" fill="#666">Task horizons</text>
       <text x="350" y="190" text-anchor="middle" font-size="8" fill="#666">expand</text>
@@ -795,8 +1203,13 @@ code your-new-repo</pre>
     <g class="entrance" style="animation-delay:0.2s">
       <rect x="400" y="10" width="290" height="320" rx="10" fill="url(#ce-multi)" stroke="rgba(57,255,142,0.15)" stroke-width="1"/>
       <text x="545" y="36" text-anchor="middle" font-size="13" fill="#39ff8e" font-weight="700">Multi-Agent</text>
-      <!-- Orchestrator -->
-      <rect x="475" y="48" width="140" height="36" rx="8" fill="rgba(57,255,142,0.08)" stroke="rgba(57,255,142,0.3)" stroke-width="1.2"/>
+      <!-- Orchestrator with pulsing glow -->
+      <rect x="475" y="48" width="140" height="36" rx="8" fill="rgba(57,255,142,0.08)" stroke="rgba(57,255,142,0.3)" stroke-width="1.2">
+        <animate attributeName="stroke-opacity" values="0.3;0.8;0.3" dur="3s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="475" y="48" width="140" height="36" rx="8" fill="none" stroke="rgba(57,255,142,0.1)" stroke-width="1.2" filter="url(#ce-glow)">
+        <animate attributeName="stroke-opacity" values="0.1;0.35;0.1" dur="3s" repeatCount="indefinite"/>
+      </rect>
       <text x="545" y="70" text-anchor="middle" font-size="10" fill="#39ff8e" font-weight="600">Orchestrator</text>
       <!-- Fan-out lines -->
       <line x1="505" y1="84" x2="455" y2="110" stroke="rgba(180,77,255,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
@@ -1007,8 +1420,12 @@ code your-new-repo</pre>
     <text x="350" y="24" text-anchor="middle" font-size="10" fill="#888" font-weight="600" letter-spacing="2">MODEL SELECTION TIERS</text>
     <!-- Tier 1: Opus -->
     <g class="entrance" style="animation-delay:0.1s" data-id="concept-throughput" data-type="concept">
-      <rect x="20" y="40" width="660" height="84" rx="8" fill="rgba(180,77,255,0.05)" stroke="rgba(180,77,255,0.2)" stroke-width="1"/>
-      <circle cx="56" cy="72" r="18" fill="rgba(180,77,255,0.1)" stroke="rgba(180,77,255,0.3)" stroke-width="1"/>
+      <rect x="20" y="40" width="660" height="84" rx="8" fill="rgba(180,77,255,0.05)" stroke="rgba(180,77,255,0.2)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.15;0.45;0.15" dur="3.5s" repeatCount="indefinite"/>
+      </rect>
+      <circle cx="56" cy="72" r="18" fill="rgba(180,77,255,0.1)" stroke="rgba(180,77,255,0.3)" stroke-width="1">
+        <animate attributeName="r" values="18;19.5;18" dur="3s" repeatCount="indefinite"/>
+      </circle>
       <text x="56" y="78" text-anchor="middle" font-size="16" fill="#b44dff" font-weight="700">O</text>
       <text x="86" y="68" font-size="16" fill="#b44dff" font-weight="700">Opus</text>
       <text x="86" y="86" font-size="11" fill="#999">Deep reasoning, complex decisions</text>
@@ -1028,12 +1445,23 @@ code your-new-repo</pre>
       <text x="556" y="76" font-size="9" fill="#ff2d7b">30%</text>
       <!-- Cost -->
       <text x="600" y="58" font-size="9" fill="#666">COST</text>
-      <text x="600" y="76" font-size="14" fill="#b44dff" font-weight="700">$$$</text>
+      <text x="600" y="76" font-size="14" fill="#b44dff" font-weight="700">$$$
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite"/>
+      </text>
     </g>
+    <!-- Travelling particle: Opus tier -->
+    <circle r="2" fill="#b44dff" opacity="0">
+      <animateMotion dur="2.5s" repeatCount="indefinite" begin="0s" path="M 86,72 L 360,72"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite" begin="0s"/>
+    </circle>
     <!-- Tier 2: Sonnet -->
     <g class="entrance" style="animation-delay:0.3s">
-      <rect x="20" y="140" width="660" height="84" rx="8" fill="rgba(0,240,255,0.03)" stroke="rgba(0,240,255,0.15)" stroke-width="1"/>
-      <circle cx="56" cy="172" r="18" fill="rgba(0,240,255,0.08)" stroke="rgba(0,240,255,0.25)" stroke-width="1"/>
+      <rect x="20" y="140" width="660" height="84" rx="8" fill="rgba(0,240,255,0.03)" stroke="rgba(0,240,255,0.15)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.15;0.45;0.15" dur="3.5s" repeatCount="indefinite" begin="0.5s"/>
+      </rect>
+      <circle cx="56" cy="172" r="18" fill="rgba(0,240,255,0.08)" stroke="rgba(0,240,255,0.25)" stroke-width="1">
+        <animate attributeName="r" values="18;19.5;18" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
       <text x="56" y="178" text-anchor="middle" font-size="16" fill="#00f0ff" font-weight="700">S</text>
       <text x="86" y="168" font-size="16" fill="#00f0ff" font-weight="700">Sonnet</text>
       <text x="86" y="186" font-size="11" fill="#999">Balanced, most agent workloads</text>
@@ -1053,12 +1481,23 @@ code your-new-repo</pre>
       <text x="556" y="176" font-size="9" fill="#39ff8e" font-weight="600">70%</text>
       <!-- Cost -->
       <text x="600" y="158" font-size="9" fill="#666">COST</text>
-      <text x="600" y="176" font-size="14" fill="#00f0ff" font-weight="700">$$</text>
+      <text x="600" y="176" font-size="14" fill="#00f0ff" font-weight="700">$$
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="0.7s"/>
+      </text>
     </g>
+    <!-- Travelling particle: Sonnet tier -->
+    <circle r="2" fill="#00f0ff" opacity="0">
+      <animateMotion dur="2.5s" repeatCount="indefinite" begin="0.5s" path="M 86,172 L 360,172"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite" begin="0.5s"/>
+    </circle>
     <!-- Tier 3: Haiku -->
     <g class="entrance" style="animation-delay:0.5s">
-      <rect x="20" y="240" width="660" height="84" rx="8" fill="rgba(255,225,77,0.02)" stroke="rgba(255,225,77,0.12)" stroke-width="1"/>
-      <circle cx="56" cy="272" r="18" fill="rgba(255,225,77,0.06)" stroke="rgba(255,225,77,0.2)" stroke-width="1"/>
+      <rect x="20" y="240" width="660" height="84" rx="8" fill="rgba(255,225,77,0.02)" stroke="rgba(255,225,77,0.12)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.15;0.45;0.15" dur="3.5s" repeatCount="indefinite" begin="1s"/>
+      </rect>
+      <circle cx="56" cy="272" r="18" fill="rgba(255,225,77,0.06)" stroke="rgba(255,225,77,0.2)" stroke-width="1">
+        <animate attributeName="r" values="18;19.5;18" dur="3s" repeatCount="indefinite" begin="1s"/>
+      </circle>
       <text x="56" y="278" text-anchor="middle" font-size="16" fill="#ffe14d" font-weight="700">H</text>
       <text x="86" y="268" font-size="16" fill="#ffe14d" font-weight="700">Haiku</text>
       <text x="86" y="286" font-size="11" fill="#999">Fastest, simple structured tasks</text>
@@ -1078,8 +1517,15 @@ code your-new-repo</pre>
       <text x="556" y="276" font-size="9" fill="#ffe14d" font-weight="600">95%</text>
       <!-- Cost -->
       <text x="600" y="258" font-size="9" fill="#666">COST</text>
-      <text x="600" y="276" font-size="14" fill="#ffe14d" font-weight="700">$</text>
+      <text x="600" y="276" font-size="14" fill="#ffe14d" font-weight="700">$
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2s" repeatCount="indefinite" begin="1.4s"/>
+      </text>
     </g>
+    <!-- Travelling particle: Haiku tier -->
+    <circle r="2" fill="#ffe14d" opacity="0">
+      <animateMotion dur="2.5s" repeatCount="indefinite" begin="1s" path="M 86,272 L 360,272"/>
+      <animate attributeName="opacity" values="0;1;1;0" dur="2.5s" repeatCount="indefinite" begin="1s"/>
+    </circle>
   </svg>
 </div>
 <div class="card-grid">
@@ -1127,12 +1573,14 @@ code your-new-repo</pre>
     <!-- Axis labels -->
     <text x="350" y="46" text-anchor="middle" font-size="10" fill="#666">TASK SCOPE &#x2192;</text>
     <g transform="translate(22,220)"><text transform="rotate(-90)" text-anchor="middle" font-size="10" fill="#666">INTERACTIVITY &#x2192;</text></g>
-    <!-- Axis lines with animate -->
+    <!-- Axis lines with animate + breathing -->
     <line x1="46" y1="56" x2="46" y2="390" stroke="rgba(255,255,255,0.06)" stroke-width="0.8">
       <animate attributeName="y2" from="56" to="390" dur="0.6s" fill="freeze"/>
+      <animate attributeName="stroke-opacity" values="0.2;0.5;0.2" dur="4s" repeatCount="indefinite" begin="0.6s"/>
     </line>
     <line x1="46" y1="220" x2="690" y2="220" stroke="rgba(255,255,255,0.06)" stroke-width="0.8">
       <animate attributeName="x2" from="46" to="690" dur="0.6s" fill="freeze"/>
+      <animate attributeName="stroke-opacity" values="0.2;0.5;0.2" dur="4s" repeatCount="indefinite" begin="0.6s"/>
     </line>
     <!-- Quadrant labels -->
     <text x="200" y="68" text-anchor="middle" font-size="8" fill="#555" font-weight="600" letter-spacing="1">FOCUSED</text>
@@ -1141,50 +1589,73 @@ code your-new-repo</pre>
     <g class="entrance" style="animation-delay:0.15s" data-id="concept-decision-framework" data-type="concept">
       <rect x="56" y="76" width="290" height="132" rx="8" fill="rgba(168,200,255,0.04)" stroke="rgba(168,200,255,0.15)" stroke-width="1">
         <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="0.15s" fill="freeze"/>
+        <animate attributeName="stroke-opacity" values="0.15;0.4;0.15" dur="4s" repeatCount="indefinite" begin="0s"/>
       </rect>
-      <circle cx="80" cy="102" r="12" fill="rgba(168,200,255,0.08)" stroke="rgba(168,200,255,0.25)" stroke-width="1"/>
+      <circle cx="80" cy="102" r="12" fill="rgba(168,200,255,0.08)" stroke="rgba(168,200,255,0.25)" stroke-width="1">
+        <animate attributeName="r" values="12;13;12" dur="3s" repeatCount="indefinite"/>
+      </circle>
       <text x="80" y="106" text-anchor="middle" font-size="10" fill="#a8c8ff">&#x25EF;</text>
       <text x="100" y="106" font-size="14" fill="#a8c8ff" font-weight="700">Main Conversation</text>
       <text x="72" y="126" font-size="10" fill="#999">Frequent back-and-forth</text>
       <text x="72" y="142" font-size="10" fill="#999">Quick focused edits</text>
       <text x="72" y="158" font-size="10" fill="#999">Shared context between phases</text>
-      <rect x="72" y="172" width="68" height="18" rx="4" fill="rgba(168,200,255,0.08)" stroke="rgba(168,200,255,0.18)" stroke-width="0.8"/>
+      <rect x="72" y="172" width="68" height="18" rx="4" fill="rgba(168,200,255,0.08)" stroke="rgba(168,200,255,0.18)" stroke-width="0.8">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite" begin="0s"/>
+      </rect>
       <text x="106" y="185" text-anchor="middle" font-size="8" fill="#a8c8ff" font-weight="600">INTERACTIVE</text>
     </g>
     <!-- Q2: Subagents (top-right) -->
     <g class="entrance" style="animation-delay:0.3s">
-      <rect x="356" y="76" width="328" height="132" rx="8" fill="rgba(180,77,255,0.04)" stroke="rgba(180,77,255,0.15)" stroke-width="1"/>
-      <circle cx="380" cy="102" r="12" fill="rgba(180,77,255,0.08)" stroke="rgba(180,77,255,0.25)" stroke-width="1"/>
+      <rect x="356" y="76" width="328" height="132" rx="8" fill="rgba(180,77,255,0.04)" stroke="rgba(180,77,255,0.15)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.15;0.4;0.15" dur="4s" repeatCount="indefinite" begin="0.8s"/>
+      </rect>
+      <circle cx="380" cy="102" r="12" fill="rgba(180,77,255,0.08)" stroke="rgba(180,77,255,0.25)" stroke-width="1">
+        <animate attributeName="r" values="12;13;12" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
       <text x="380" y="106" text-anchor="middle" font-size="10" fill="#b44dff">&#x2699;</text>
       <text x="400" y="106" font-size="14" fill="#b44dff" font-weight="700">Subagents</text>
       <text x="372" y="126" font-size="10" fill="#999">Verbose output, broad scope</text>
       <text x="372" y="142" font-size="10" fill="#999">Self-contained with clear I/O</text>
       <text x="372" y="158" font-size="10" fill="#999">Parallel investigation</text>
-      <rect x="372" y="172" width="62" height="18" rx="4" fill="rgba(180,77,255,0.08)" stroke="rgba(180,77,255,0.18)" stroke-width="0.8"/>
+      <rect x="372" y="172" width="62" height="18" rx="4" fill="rgba(180,77,255,0.08)" stroke="rgba(180,77,255,0.18)" stroke-width="0.8">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+      </rect>
       <text x="403" y="185" text-anchor="middle" font-size="8" fill="#b44dff" font-weight="600">ISOLATION</text>
     </g>
     <!-- Q3: Skills (bottom-left) -->
     <g class="entrance" style="animation-delay:0.45s">
-      <rect x="56" y="232" width="290" height="132" rx="8" fill="rgba(0,240,255,0.03)" stroke="rgba(0,240,255,0.12)" stroke-width="1"/>
-      <circle cx="80" cy="258" r="12" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.2)" stroke-width="1"/>
+      <rect x="56" y="232" width="290" height="132" rx="8" fill="rgba(0,240,255,0.03)" stroke="rgba(0,240,255,0.12)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.15;0.4;0.15" dur="4s" repeatCount="indefinite" begin="1.6s"/>
+      </rect>
+      <circle cx="80" cy="258" r="12" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.2)" stroke-width="1">
+        <animate attributeName="r" values="12;13;12" dur="3s" repeatCount="indefinite" begin="1s"/>
+      </circle>
       <text x="80" y="262" text-anchor="middle" font-size="10" fill="#00f0ff">&#x2605;</text>
       <text x="100" y="262" font-size="14" fill="#00f0ff" font-weight="700">Skills</text>
       <text x="72" y="282" font-size="10" fill="#999">Reusable prompts &amp; workflows</text>
       <text x="72" y="298" font-size="10" fill="#999">Reference knowledge</text>
       <text x="72" y="314" font-size="10" fill="#999">Pattern match triggered</text>
-      <rect x="72" y="328" width="60" height="18" rx="4" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.15)" stroke-width="0.8"/>
+      <rect x="72" y="328" width="60" height="18" rx="4" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.15)" stroke-width="0.8">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite" begin="1s"/>
+      </rect>
       <text x="102" y="341" text-anchor="middle" font-size="8" fill="#00f0ff" font-weight="600">REUSABLE</text>
     </g>
     <!-- Q4: Headless (bottom-right) -->
     <g class="entrance" style="animation-delay:0.6s">
-      <rect x="356" y="232" width="328" height="132" rx="8" fill="rgba(255,225,77,0.02)" stroke="rgba(255,225,77,0.1)" stroke-width="1"/>
-      <circle cx="380" cy="258" r="12" fill="rgba(255,225,77,0.05)" stroke="rgba(255,225,77,0.18)" stroke-width="1"/>
+      <rect x="356" y="232" width="328" height="132" rx="8" fill="rgba(255,225,77,0.02)" stroke="rgba(255,225,77,0.1)" stroke-width="1">
+        <animate attributeName="stroke-opacity" values="0.15;0.4;0.15" dur="4s" repeatCount="indefinite" begin="2.4s"/>
+      </rect>
+      <circle cx="380" cy="258" r="12" fill="rgba(255,225,77,0.05)" stroke="rgba(255,225,77,0.18)" stroke-width="1">
+        <animate attributeName="r" values="12;13;12" dur="3s" repeatCount="indefinite" begin="1.5s"/>
+      </circle>
       <text x="380" y="262" text-anchor="middle" font-size="10" fill="#ffe14d">&#x26A1;</text>
       <text x="400" y="262" font-size="14" fill="#ffe14d" font-weight="700">Headless Mode</text>
       <text x="372" y="282" font-size="10" fill="#999">Process-level parallelism</text>
       <text x="372" y="298" font-size="10" fill="#999">Batch processing</text>
       <text x="372" y="314" font-size="10" fill="#999">CI/CD integration</text>
-      <rect x="372" y="328" width="78" height="18" rx="4" fill="rgba(255,225,77,0.04)" stroke="rgba(255,225,77,0.12)" stroke-width="0.8"/>
+      <rect x="372" y="328" width="78" height="18" rx="4" fill="rgba(255,225,77,0.04)" stroke="rgba(255,225,77,0.12)" stroke-width="0.8">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite" begin="1.5s"/>
+      </rect>
       <text x="411" y="341" text-anchor="middle" font-size="8" fill="#ffe14d" font-weight="600">AUTOMATION</text>
     </g>
     <!-- Key principle -->
@@ -2652,7 +3123,9 @@ code your-new-repo</pre>
       <g class="entrance svg-box" style="animation-delay:0s">
         <rect x="12" y="30" width="210" height="320" rx="8" fill="url(#dt-mod-grad)" stroke="rgba(180,77,255,0.2)" stroke-width="1.2"/>
         <!-- Top accent bar -->
-        <rect x="12" y="30" width="210" height="3" rx="1.5" fill="rgba(180,77,255,0.5)"/>
+        <rect x="12" y="30" width="210" height="3" rx="1.5" fill="rgba(180,77,255,0.5)">
+          <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite"/>
+        </rect>
         <!-- Header -->
         <text x="24" y="54" fill="#b44dff" font-size="12" font-weight="700" letter-spacing="1" font-family="sans-serif">MODULE</text>
         <!-- Badge -->
@@ -2678,7 +3151,10 @@ code your-new-repo</pre>
         <rect x="22" y="166" width="190" height="24" rx="4" fill="rgba(255,68,68,0.04)" stroke="rgba(255,68,68,0.15)" stroke-width="0.8"/>
         <text x="32" y="182" fill="#ff4444" font-size="9" font-weight="600" font-family="monospace">4</text>
         <text x="46" y="182" fill="#bbb" font-size="10" font-family="sans-serif">Security Controls</text>
-        <rect x="162" y="170" width="42" height="14" rx="3" fill="rgba(255,68,68,0.08)" stroke="rgba(255,68,68,0.2)" stroke-width="0.6"/>
+        <rect x="162" y="170" width="42" height="14" rx="3" fill="rgba(255,68,68,0.08)" stroke="rgba(255,68,68,0.2)" stroke-width="0.6">
+          <animate attributeName="stroke-opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite"/>
+          <animate attributeName="fill-opacity" values="0.05;0.15;0.05" dur="3s" repeatCount="indefinite"/>
+        </rect>
         <text x="183" y="180" text-anchor="middle" fill="#ff4444" font-size="7" font-weight="600" font-family="monospace">SHARED</text>
 
         <rect x="22" y="194" width="190" height="24" rx="4" fill="rgba(57,255,142,0.04)" stroke="rgba(57,255,142,0.12)" stroke-width="0.8"/>
@@ -2690,7 +3166,10 @@ code your-new-repo</pre>
         <rect x="22" y="222" width="190" height="24" rx="4" fill="rgba(255,225,77,0.04)" stroke="rgba(255,225,77,0.12)" stroke-width="0.8"/>
         <text x="32" y="238" fill="#ffe14d" font-size="9" font-weight="600" font-family="monospace">6</text>
         <text x="46" y="238" fill="#bbb" font-size="10" font-family="sans-serif">Impl Checklist</text>
-        <rect x="145" y="226" width="42" height="14" rx="3" fill="rgba(255,225,77,0.08)" stroke="rgba(255,225,77,0.15)" stroke-width="0.6"/>
+        <rect x="145" y="226" width="42" height="14" rx="3" fill="rgba(255,225,77,0.08)" stroke="rgba(255,225,77,0.15)" stroke-width="0.6">
+          <animate attributeName="stroke-opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+          <animate attributeName="fill-opacity" values="0.05;0.15;0.05" dur="3s" repeatCount="indefinite" begin="0.5s"/>
+        </rect>
         <text x="166" y="236" text-anchor="middle" fill="#ffe14d" font-size="7" font-weight="600" font-family="monospace">SHARED</text>
 
         <rect x="22" y="250" width="190" height="24" rx="4" fill="rgba(180,77,255,0.03)" stroke="rgba(180,77,255,0.08)" stroke-width="0.8"/>
@@ -2706,7 +3185,9 @@ code your-new-repo</pre>
       <!-- ===== CONSUMER TEMPLATE (center) ===== -->
       <g class="entrance svg-box" style="animation-delay:0.15s">
         <rect x="245" y="30" width="210" height="320" rx="8" fill="url(#dt-con-grad)" stroke="rgba(57,255,142,0.2)" stroke-width="1.2"/>
-        <rect x="245" y="30" width="210" height="3" rx="1.5" fill="rgba(57,255,142,0.5)"/>
+        <rect x="245" y="30" width="210" height="3" rx="1.5" fill="rgba(57,255,142,0.5)">
+          <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite" begin="1s"/>
+        </rect>
         <text x="257" y="54" fill="#39ff8e" font-size="12" font-weight="700" letter-spacing="1" font-family="sans-serif">CONSUMER</text>
         <rect x="401" y="40" width="46" height="18" rx="4" fill="rgba(57,255,142,0.1)" stroke="rgba(57,255,142,0.25)" stroke-width="0.8"/>
         <text x="424" y="53" text-anchor="middle" fill="#39ff8e" font-size="9" font-weight="600" font-family="monospace">6 sec</text>
@@ -2728,14 +3209,20 @@ code your-new-repo</pre>
         <rect x="255" y="166" width="190" height="24" rx="4" fill="rgba(255,68,68,0.04)" stroke="rgba(255,68,68,0.15)" stroke-width="0.8"/>
         <text x="265" y="182" fill="#ff4444" font-size="9" font-weight="600" font-family="monospace">4</text>
         <text x="279" y="182" fill="#bbb" font-size="10" font-family="sans-serif">Security Controls</text>
-        <rect x="395" y="170" width="42" height="14" rx="3" fill="rgba(255,68,68,0.08)" stroke="rgba(255,68,68,0.2)" stroke-width="0.6"/>
+        <rect x="395" y="170" width="42" height="14" rx="3" fill="rgba(255,68,68,0.08)" stroke="rgba(255,68,68,0.2)" stroke-width="0.6">
+          <animate attributeName="stroke-opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite" begin="1s"/>
+          <animate attributeName="fill-opacity" values="0.05;0.15;0.05" dur="3s" repeatCount="indefinite" begin="1s"/>
+        </rect>
         <text x="416" y="180" text-anchor="middle" fill="#ff4444" font-size="7" font-weight="600" font-family="monospace">SHARED</text>
 
         <!-- Impl Checklist -- SHARED -->
         <rect x="255" y="194" width="190" height="24" rx="4" fill="rgba(255,225,77,0.04)" stroke="rgba(255,225,77,0.12)" stroke-width="0.8"/>
         <text x="265" y="210" fill="#ffe14d" font-size="9" font-weight="600" font-family="monospace">5</text>
         <text x="279" y="210" fill="#bbb" font-size="10" font-family="sans-serif">Impl Checklist</text>
-        <rect x="378" y="198" width="42" height="14" rx="3" fill="rgba(255,225,77,0.08)" stroke="rgba(255,225,77,0.15)" stroke-width="0.6"/>
+        <rect x="378" y="198" width="42" height="14" rx="3" fill="rgba(255,225,77,0.08)" stroke="rgba(255,225,77,0.15)" stroke-width="0.6">
+          <animate attributeName="stroke-opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite" begin="1.5s"/>
+          <animate attributeName="fill-opacity" values="0.05;0.15;0.05" dur="3s" repeatCount="indefinite" begin="1.5s"/>
+        </rect>
         <text x="399" y="208" text-anchor="middle" fill="#ffe14d" font-size="7" font-weight="600" font-family="monospace">SHARED</text>
 
         <rect x="255" y="222" width="190" height="24" rx="4" fill="rgba(180,77,255,0.03)" stroke="rgba(180,77,255,0.08)" stroke-width="0.8"/>
@@ -2751,7 +3238,9 @@ code your-new-repo</pre>
       <!-- ===== PROVIDER TEMPLATE (right) ===== -->
       <g class="entrance svg-box" style="animation-delay:0.3s">
         <rect x="478" y="30" width="210" height="320" rx="8" fill="url(#dt-pro-grad)" stroke="rgba(255,45,123,0.2)" stroke-width="1.2"/>
-        <rect x="478" y="30" width="210" height="3" rx="1.5" fill="rgba(255,45,123,0.5)"/>
+        <rect x="478" y="30" width="210" height="3" rx="1.5" fill="rgba(255,45,123,0.5)">
+          <animate attributeName="opacity" values="0.7;1;0.7" dur="2.5s" repeatCount="indefinite" begin="2s"/>
+        </rect>
         <text x="490" y="54" fill="#ff2d7b" font-size="12" font-weight="700" letter-spacing="1" font-family="sans-serif">PROVIDER</text>
         <rect x="634" y="40" width="46" height="18" rx="4" fill="rgba(255,45,123,0.1)" stroke="rgba(255,45,123,0.25)" stroke-width="0.8"/>
         <text x="657" y="53" text-anchor="middle" fill="#ff2d7b" font-size="9" font-weight="600" font-family="monospace">7 sec</text>
@@ -2783,7 +3272,10 @@ code your-new-repo</pre>
         <rect x="488" y="222" width="190" height="24" rx="4" fill="rgba(255,225,77,0.04)" stroke="rgba(255,225,77,0.12)" stroke-width="0.8"/>
         <text x="498" y="238" fill="#ffe14d" font-size="9" font-weight="600" font-family="monospace">6</text>
         <text x="512" y="238" fill="#bbb" font-size="10" font-family="sans-serif">Impl Checklist</text>
-        <rect x="628" y="226" width="42" height="14" rx="3" fill="rgba(255,225,77,0.08)" stroke="rgba(255,225,77,0.15)" stroke-width="0.6"/>
+        <rect x="628" y="226" width="42" height="14" rx="3" fill="rgba(255,225,77,0.08)" stroke="rgba(255,225,77,0.15)" stroke-width="0.6">
+          <animate attributeName="stroke-opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite" begin="2s"/>
+          <animate attributeName="fill-opacity" values="0.05;0.15;0.05" dur="3s" repeatCount="indefinite" begin="2s"/>
+        </rect>
         <text x="649" y="236" text-anchor="middle" fill="#ffe14d" font-size="7" font-weight="600" font-family="monospace">SHARED</text>
 
         <rect x="488" y="250" width="190" height="24" rx="4" fill="rgba(180,77,255,0.03)" stroke="rgba(180,77,255,0.08)" stroke-width="0.8"/>
@@ -2798,17 +3290,32 @@ code your-new-repo</pre>
 
       <!-- ===== SHARED SECTION CONNECTOR LINES ===== -->
       <!-- Security Controls connecting line between Module and Consumer -->
-      <line x1="212" y1="178" x2="255" y2="178" stroke="rgba(255,68,68,0.2)" stroke-width="1" stroke-dasharray="3 3" class="flow-line">
+      <line x1="212" y1="178" x2="255" y2="178" stroke="rgba(255,68,68,0.2)" stroke-width="1.5" stroke-dasharray="3 3" class="flow-line">
         <animate attributeName="stroke-opacity" values="0.15;0.35;0.15" dur="2s" repeatCount="indefinite"/>
       </line>
+      <!-- Travelling particle: Security Controls Module→Consumer -->
+      <circle r="2" fill="#ff4444" opacity="0">
+        <animateMotion dur="2s" repeatCount="indefinite" begin="0s" path="M 212,178 L 255,178"/>
+        <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0s"/>
+      </circle>
 
       <!-- Impl Checklist connecting line (Module sec 6 at y=234 to Consumer sec 5 at y=206) -->
-      <line x1="212" y1="234" x2="255" y2="206" stroke="rgba(255,225,77,0.2)" stroke-width="1" stroke-dasharray="3 3" class="flow-line">
+      <line x1="212" y1="234" x2="255" y2="206" stroke="rgba(255,225,77,0.2)" stroke-width="1.5" stroke-dasharray="3 3" class="flow-line">
         <animate attributeName="stroke-opacity" values="0.15;0.35;0.15" dur="2s" repeatCount="indefinite" begin="0.6s"/>
       </line>
-      <line x1="445" y1="206" x2="488" y2="234" stroke="rgba(255,225,77,0.2)" stroke-width="1" stroke-dasharray="3 3" class="flow-line">
+      <!-- Travelling particle: Impl Checklist Module→Consumer -->
+      <circle r="2" fill="#ffe14d" opacity="0">
+        <animateMotion dur="2s" repeatCount="indefinite" begin="0.6s" path="M 212,234 L 255,206"/>
+        <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0.6s"/>
+      </circle>
+      <line x1="445" y1="206" x2="488" y2="234" stroke="rgba(255,225,77,0.2)" stroke-width="1.5" stroke-dasharray="3 3" class="flow-line">
         <animate attributeName="stroke-opacity" values="0.15;0.35;0.15" dur="2s" repeatCount="indefinite" begin="0.9s"/>
       </line>
+      <!-- Travelling particle: Impl Checklist Consumer→Provider -->
+      <circle r="2" fill="#ffe14d" opacity="0">
+        <animateMotion dur="2s" repeatCount="indefinite" begin="0.9s" path="M 445,206 L 488,234"/>
+        <animate attributeName="opacity" values="0;1;1;0" dur="2s" repeatCount="indefinite" begin="0.9s"/>
+      </circle>
 
       <!-- Bottom: Issue Body Template bar -->
       <g class="entrance" style="animation-delay:0.5s">
@@ -3250,7 +3757,7 @@ code your-new-repo</pre>
             <div class="node node-template" data-id="issue-body-template" data-type="template">issue-body-template.md</div>
             <div class="node node-script" data-id="create-feature" data-type="script">create-new-feature.sh</div>
           </div>
-          <div class="step-note">Step 1: validate-env.sh (gate). Step 2: parse $ARGUMENTS. Step 3: create GH issue from template. Step 4: create feature branch.</div>
+          <div class="step-note">Step 1: <code>bash validate-env.sh --json</code> &mdash; stop if gate_passed=false. Step 2: Parse $ARGUMENTS for module name, provider, description. Step 3: Read issue-body-template.md &rarr; <code>gh issue create</code>. Step 4: <code>bash create-new-feature.sh --json --issue $ISSUE_NUMBER</code>. Issue body updated again after Step 6 with security decisions and scope boundaries.</div>
         </div>
 
         <div class="step-group">
@@ -3258,7 +3765,7 @@ code your-new-repo</pre>
           <div class="node-row">
             <div class="node node-skill" data-id="tf-domain-category" data-type="skill">tf-domain-category</div>
           </div>
-          <div class="step-note">Step 5: scan requirements against 8-category ambiguity taxonomy. Step 6: AskUserQuestion (up to 4 questions, MUST include security-defaults).</div>
+          <div class="step-note">Step 5: Scan requirements via tf-domain-category skill. Step 6: AskUserQuestion &mdash; up to 4 clarifications, MUST include security-defaults question.</div>
         </div>
 
         <div class="step-group">
@@ -3271,7 +3778,7 @@ code your-new-repo</pre>
             <div class="node node-mcp" data-id="mcp-aws-docs" data-type="mcp">aws-knowledge-mcp</div>
             <div class="node node-mcp" data-id="mcp-terraform" data-type="mcp">terraform-mcp</div>
           </div>
-          <div class="step-note">3-4 concurrent agents, each answers ONE research question. Findings returned in-memory (&lt;500 tokens).</div>
+          <div class="step-note">Launch 3-4 concurrent tf-module-research subagents: provider docs, AWS best practices, registry patterns, edge cases. Findings returned in-memory.</div>
           <div class="node-row" style="margin-top:4px">
             <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
           </div>
@@ -3303,12 +3810,12 @@ code your-new-repo</pre>
             <div class="node node-template" data-id="module-design-template" data-type="template">module-design-template.md</div>
             <div class="node node-ref" data-id="module-constitution" data-type="ref">module-constitution.md</div>
           </div>
-          <div class="step-note">Receives requirements + findings via $ARGUMENTS. Reads constitution and template itself (P9). Produces all 7 sections.</div>
+          <div class="step-note">Launch tf-module-design agent with FEATURE path + clarified requirements + research findings. Agent reads constitution + template. Produces design.md with 7 sections.</div>
         </div>
 
         <div class="step-group">
           <div class="step-group-title">Verify &amp; Approve &mdash; Steps 9-12</div>
-          <div class="step-note">Step 9: Glob &mdash; verify design.md exists. Step 10: Grep &mdash; confirm all 7 sections present. Step 11: AskUserQuestion for approval. Step 12: iterate if changes requested.</div>
+          <div class="step-note">Step 9: Glob &mdash; verify specs/{FEATURE}/design.md exists. Step 10: Grep &mdash; confirm ## 1 through ## 7 present. Step 11: AskUserQuestion &mdash; present summary (I/O counts, resources, security, tests, checklist). Step 12: Iterate if changes requested.</div>
         </div>
 
         <div class="artifacts-label">Output</div>
@@ -3376,7 +3883,7 @@ code your-new-repo</pre>
           <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
           <div class="node node-script" data-id="checkpoint-commit" data-type="script" style="border-style:dashed">checkpoint-commit.sh<span class="pref">each phase</span></div>
         </div>
-        <div class="step-note">Steps 1-4: Resolve $FEATURE. Run validate-env.sh (gate). Verify design.md exists. Find $ISSUE_NUMBER.</div>
+        <div class="step-note">Steps 1-4: Resolve $FEATURE from $ARGUMENTS or branch name. <code>bash validate-env.sh --json</code> (gate). Glob verify specs/{FEATURE}/design.md exists. Find $ISSUE_NUMBER via <code>gh issue list --search</code>.</div>
         <div class="artifacts-label">Reads (from /tf-module-plan)</div>
         <div class="node-row">
           <div class="node node-artifact" data-id="design-md" data-type="artifact">design.md<span class="pref">P1</span></div>
@@ -3396,7 +3903,7 @@ code your-new-repo</pre>
             <div class="node node-agent" data-id="tf-module-test-writer" data-type="agent">tf-module-test-writer</div>
             <div class="node node-skill" data-id="terraform-test" data-type="skill">terraform-test</div>
           </div>
-          <div class="step-note">Reads design.md Sections 2, 3, 5. Writes scaffolding (versions.tf, variables.tf) and 4 test files. 1:1 mapping from design assertions to HCL assert blocks.</div>
+          <div class="step-note">Launch tf-module-test-writer agent with FEATURE path. Reads design.md &sect;2, &sect;3, &sect;5. Writes scaffolding (versions.tf, variables.tf) and test files (tests/*.tftest.hcl). 1:1 mapping from design assertions to HCL assert blocks.</div>
         </div>
 
         <div class="step-group">
@@ -3405,7 +3912,7 @@ code your-new-repo</pre>
             <div class="node node-cmd" data-id="tf-init" data-type="cmd">terraform init -backend=false</div>
             <div class="node node-cmd" data-id="tf-validate-baseline" data-type="cmd">terraform validate</div>
           </div>
-          <div class="step-note">Confirms test files and scaffolding parse as valid HCL. Do NOT run terraform test here &mdash; RED baseline.</div>
+          <div class="step-note"><code>terraform init -backend=false</code> then <code>terraform validate</code> &mdash; confirms scaffolding parses as valid HCL. Do NOT run terraform test here (RED baseline). Checkpoint commit.</div>
         </div>
 
         <div class="step-group">
@@ -3423,7 +3930,7 @@ code your-new-repo</pre>
             <div class="node node-cmd" data-id="tf-validate-loop" data-type="cmd">terraform validate</div>
             <div class="node node-cmd" data-id="tf-test-loop" data-type="cmd">terraform test</div>
           </div>
-          <div class="step-note">For each checklist item: launch tf-module-developer. Orchestrator runs validate + test as trust-but-verify gate. Checkpoint commit per item.</div>
+          <div class="step-note">Extract checklist from design.md &sect;6. For each item: launch tf-module-developer subagent. Orchestrator runs <code>terraform validate</code> + <code>terraform test</code> as trust-but-verify gate. Checkpoint commit per item. Concurrent subagents for independent items only.</div>
         </div>
 
         <div class="step-group">
@@ -3431,7 +3938,7 @@ code your-new-repo</pre>
           <div class="node-row">
             <div class="node node-cmd" data-id="tf-test-final" data-type="cmd">terraform test (final)</div>
           </div>
-          <div class="step-note">Final terraform test. If failures: re-launch tf-module-test-writer with error output. Verify all checklist items marked [x].</div>
+          <div class="step-note">Final <code>terraform test</code>. If failures: re-launch tf-module-test-writer with error output and data source context. Grep verify all &sect;6 checklist items marked [x].</div>
         </div>
 
         <div class="artifacts-label">Outputs</div>
@@ -3462,7 +3969,7 @@ code your-new-repo</pre>
             <div class="node node-cmd" data-id="trivy" data-type="cmd">trivy config .</div>
             <div class="node node-cmd" data-id="tf-docs" data-type="cmd">terraform-docs</div>
           </div>
-          <div class="step-note">Validator agent runs full pipeline: fmt, validate, test, tflint, trivy, terraform-docs. Scores quality via tf-judge-criteria, auto-fixes unambiguous issues, writes report. Fix iteratively (max 3 rounds).</div>
+          <div class="step-note">Launch tf-module-validator agent. Runs full pipeline: <code>terraform fmt</code>, <code>validate</code>, <code>test</code>, <code>tflint</code>, <code>trivy</code>, <code>terraform-docs</code>. Scores quality via tf-judge-criteria. Auto-fixes unambiguous issues, writes report to specs/{FEATURE}/reports/. Fix iteratively (max 3 rounds).</div>
         </div>
 
         <div class="step-group">
@@ -3470,7 +3977,7 @@ code your-new-repo</pre>
           <div class="node-row">
             <div class="node node-cmd" data-id="gh-pr-create" data-type="cmd">gh pr create</div>
           </div>
-          <div class="step-note">Checkpoint commit, push branch, create PR linking to $ISSUE_NUMBER.</div>
+          <div class="step-note"><code>checkpoint-commit.sh</code>, push branch, <code>gh pr create</code> linking to $ISSUE_NUMBER.</div>
         </div>
 
         <div class="artifacts-label">Outputs</div>
@@ -3545,6 +4052,7 @@ code your-new-repo</pre>
             <div class="node node-template" data-id="issue-body-template" data-type="template">issue-body-template.md</div>
             <div class="node node-script" data-id="create-feature" data-type="script">create-new-feature.sh</div>
           </div>
+          <div class="step-note">Step 1: <code>bash validate-env.sh --json</code> + <code>go version</code> (Go &ge; 1.21 required). Step 2: Read issue-body-template.md &rarr; <code>gh issue create</code>. Step 3-4: <code>bash create-new-feature.sh --json --workflow provider --issue $ISSUE_NUMBER</code>. Issue body updated after Step 6 with API decisions and scope boundaries.</div>
         </div>
 
         <div class="step-group">
@@ -3552,7 +4060,7 @@ code your-new-repo</pre>
           <div class="node-row">
             <div class="node node-skill" data-id="tf-domain-category" data-type="skill">tf-domain-category</div>
           </div>
-          <div class="step-note">Scan requirements against ambiguity taxonomy. AskUserQuestion for provider-specific clarifications (CRUD semantics, API patterns, state mapping).</div>
+          <div class="step-note">Step 5: Scan requirements via tf-domain-category skill &mdash; focus on API behavior ambiguity, state management (ForceNew vs in-place), error handling. Step 6: AskUserQuestion &mdash; up to 5 clarifications, MUST include update-behavior, test environment, and security questions.</div>
         </div>
 
         <div class="step-group">
@@ -3560,7 +4068,7 @@ code your-new-repo</pre>
           <div class="node-row">
             <div class="node node-agent" data-id="tf-provider-research" data-type="agent">tf-provider-research<span class="pref">&times;3-4</span></div>
           </div>
-          <div class="step-note">3-4 concurrent agents. Researches cloud API docs, Plugin Framework patterns, and existing provider implementations.</div>
+          <div class="step-note">Launch 3-4 concurrent tf-provider-research subagents: API/SDK docs, Plugin Framework patterns, existing provider implementations, import/state patterns. Findings returned in-memory.</div>
           <div class="node-row" style="margin-top:4px">
             <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
           </div>
@@ -3591,12 +4099,12 @@ code your-new-repo</pre>
             <div class="node node-template" data-id="provider-design-template" data-type="template">provider-design-template.md</div>
             <div class="node node-ref" data-id="provider-constitution" data-type="ref">provider-constitution.md</div>
           </div>
-          <div class="step-note">Produces provider-design-{resource}.md covering schema, CRUD operations, state management, and acceptance tests.</div>
+          <div class="step-note">Launch tf-provider-design agent with FEATURE path, RESOURCE name, clarified requirements + research findings. Produces provider-design-{resource}.md with 7 sections (## 1 through ## 7).</div>
         </div>
 
         <div class="step-group">
           <div class="step-group-title">Verify &amp; Approve &mdash; Steps 9-12</div>
-          <div class="step-note">Verify design file exists and contains all required sections. Present summary for human approval.</div>
+          <div class="step-note">Step 9: Glob &mdash; verify specs/{FEATURE}/provider-design-{resource}.md exists. Step 10: Grep &mdash; confirm ## 1 through ## 7 present. Step 11: AskUserQuestion &mdash; present summary (attribute counts, CRUD ops, test scenarios, checklist). Step 12: Iterate if changes requested.</div>
         </div>
 
         <div class="artifacts-label">Output</div>
@@ -3663,7 +4171,7 @@ code your-new-repo</pre>
           <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
           <div class="node node-script" data-id="checkpoint-commit" data-type="script" style="border-style:dashed">checkpoint-commit.sh<span class="pref">each phase</span></div>
         </div>
-        <div class="step-note">Resolve $FEATURE. Run validate-env.sh (gate). Verify provider-design-{resource}.md exists.</div>
+        <div class="step-note">Steps 1-3: Resolve $FEATURE and $RESOURCE from $ARGUMENTS or branch name. <code>bash validate-env.sh --json</code> + <code>go version</code> (gate). Glob verify specs/{FEATURE}/provider-design-{resource}.md exists. Find $ISSUE_NUMBER.</div>
         <div class="artifacts-label">Reads (from /tf-provider-plan)</div>
         <div class="node-row">
           <div class="node node-artifact" data-id="provider-design-md" data-type="artifact">provider-design-{resource}.md<span class="pref">P1</span></div>
@@ -3683,7 +4191,7 @@ code your-new-repo</pre>
             <div class="node node-agent" data-id="tf-provider-test-writer" data-type="agent">tf-provider-test-writer</div>
             <div class="node node-skill" data-id="provider-test-patterns" data-type="skill">provider-test-patterns</div>
           </div>
-          <div class="step-note">Reads design &sect;2 + &sect;5. Writes test function stubs with t.Skip("not implemented") and config functions. Must compile via go test -c.</div>
+          <div class="step-note">Launch concurrent tf-provider-test-writer agents. Reads design &sect;2 + &sect;5. Writes _test.go stubs with t.Skip("not implemented") and config functions. Must compile via <code>go test -c</code>. Checkpoint commit.</div>
         </div>
 
         <div class="step-group">
@@ -3698,7 +4206,7 @@ code your-new-repo</pre>
             <div class="node node-cmd" data-id="go-build" data-type="cmd">go build</div>
             <div class="node node-cmd" data-id="go-test-c" data-type="cmd">go test -c</div>
           </div>
-          <div class="step-note">For each checklist item in &sect;6: launch tf-provider-developer. Runs go build + go test -c for verification. Checkpoint commit per item.</div>
+          <div class="step-note">Extract checklist from design &sect;6 via Grep. For each item: launch tf-provider-developer subagent. Runs <code>go build</code> + <code>go test -c</code> for verification. Checkpoint commit per item.</div>
         </div>
 
         <div class="step-group">
@@ -3706,7 +4214,7 @@ code your-new-repo</pre>
           <div class="node-row">
             <div class="node node-cmd" data-id="go-vet" data-type="cmd">go vet ./...</div>
           </div>
-          <div class="step-note">Final go vet across codebase. Fix until clean. Verify all &sect;6 checklist items marked [x].</div>
+          <div class="step-note">Final <code>go vet ./...</code> across codebase. Fix until clean. Grep verify all &sect;6 checklist items marked [x].</div>
         </div>
 
         <div class="artifacts-label">Outputs</div>
@@ -3733,7 +4241,7 @@ code your-new-repo</pre>
           <div class="node-row" style="margin-top:4px">
             <div class="node node-cmd" data-id="go-test-acc" data-type="cmd">go test -run TestAcc</div>
           </div>
-          <div class="step-note">Design conformance, build &amp; static analysis, test compilation, code review, auto-fix. Optionally runs acceptance tests against real cloud APIs.</div>
+          <div class="step-note">Launch concurrent tf-provider-validator agents. Design conformance, <code>go build</code>, static analysis, test compilation, code review, auto-fix. Optionally runs <code>go test -run TestAcc</code> against real cloud APIs. Writes report to specs/{FEATURE}/reports/ via tf-report-template.</div>
         </div>
 
         <div class="step-group">
@@ -3816,6 +4324,7 @@ code your-new-repo</pre>
             <div class="node node-template" data-id="issue-body-template" data-type="template">issue-body-template.md</div>
             <div class="node node-script" data-id="create-feature" data-type="script">create-new-feature.sh</div>
           </div>
+          <div class="step-note">Step 1: <code>bash validate-env.sh --json</code> + MCP list_terraform_orgs to verify TFE_TOKEN. Step 2: Parse $ARGUMENTS for project name, provider, description. Step 3: Read issue-body-template.md &rarr; <code>gh issue create</code> (consumer context). Step 4: <code>bash create-new-feature.sh --json --workflow consumer --issue $ISSUE_NUMBER</code>. Issue body updated after Step 6 with module selections and scope boundaries.</div>
         </div>
 
         <div class="step-group">
@@ -3823,7 +4332,7 @@ code your-new-repo</pre>
           <div class="node-row">
             <div class="node node-skill" data-id="tf-domain-category" data-type="skill">tf-domain-category</div>
           </div>
-          <div class="step-note">Scan requirements for module selection ambiguities, environment boundaries, and security decisions.</div>
+          <div class="step-note">Step 5: Scan requirements via tf-domain-category skill &mdash; focus on module composition ambiguity, networking integration, workspace config. Step 6: AskUserQuestion &mdash; up to 4 clarifications, MUST include module selection (private registry versions), environment/workspace, and security questions.</div>
         </div>
 
         <div class="step-group">
@@ -3837,7 +4346,7 @@ code your-new-repo</pre>
             <div class="node node-mcp" data-id="mcp-aws-docs" data-type="mcp">aws-knowledge-mcp</div>
             <div class="node node-mcp" data-id="mcp-terraform" data-type="mcp">terraform-mcp<span class="pref">private</span></div>
           </div>
-          <div class="step-note">3-4 concurrent agents. Searches private registry modules via terraform-mcp. Investigates module interfaces and composition patterns.</div>
+          <div class="step-note">Launch 3-4 concurrent tf-consumer-research subagents (foreground, uses MCP): private registry modules (versions, inputs, outputs), AWS architecture patterns, module wiring (output&rarr;input compatibility), workspace &amp; deployment config. Findings returned in-memory.</div>
           <div class="node-row" style="margin-top:4px">
             <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
           </div>
@@ -3869,12 +4378,12 @@ code your-new-repo</pre>
             <div class="node node-template" data-id="consumer-design-template" data-type="template">consumer-design-template.md</div>
             <div class="node node-ref" data-id="consumer-constitution" data-type="ref">consumer-constitution.md</div>
           </div>
-          <div class="step-note">Produces consumer-design.md covering module selection, wiring architecture, security controls, and implementation checklist.</div>
+          <div class="step-note">Launch tf-consumer-design agent with FEATURE path + clarified requirements + research findings. Agent reads constitution + template. Produces consumer-design.md with 6 sections (## 1 through ## 6).</div>
         </div>
 
         <div class="step-group">
           <div class="step-group-title">Verify &amp; Approve &mdash; Steps 9-12</div>
-          <div class="step-note">Verify design file exists and contains all required sections. Present summary for human approval.</div>
+          <div class="step-note">Step 9: Glob &mdash; verify specs/{FEATURE}/consumer-design.md exists. Step 10: Grep &mdash; confirm ## 1 through ## 6 present. Step 11: AskUserQuestion &mdash; present summary (module count, wiring connections, variables, security, checklist). Step 12: Iterate if changes requested.</div>
         </div>
 
         <div class="artifacts-label">Output</div>
@@ -3942,7 +4451,7 @@ code your-new-repo</pre>
           <div class="node node-script" data-id="post-issue" data-type="script" style="border-style:dashed">post-issue-progress.sh<span class="pref">all steps</span></div>
           <div class="node node-script" data-id="checkpoint-commit" data-type="script" style="border-style:dashed">checkpoint-commit.sh<span class="pref">each phase</span></div>
         </div>
-        <div class="step-note">Resolve $FEATURE. Run validate-env.sh (gate). Verify consumer-design.md exists.</div>
+        <div class="step-note">Steps 1-4: Resolve $FEATURE from $ARGUMENTS or branch name. <code>bash validate-env.sh --json</code> (gate). Glob verify specs/{FEATURE}/consumer-design.md exists. Find $ISSUE_NUMBER via <code>gh issue list --search</code>.</div>
         <div class="artifacts-label">Reads (from /tf-consumer-plan)</div>
         <div class="node-row">
           <div class="node node-artifact" data-id="consumer-design-md" data-type="artifact">consumer-design.md<span class="pref">P1</span></div>
@@ -3972,7 +4481,7 @@ code your-new-repo</pre>
             <div class="node node-cmd" data-id="tf-validate" data-type="cmd">terraform validate</div>
             <div class="node node-cmd" data-id="tf-plan" data-type="cmd">terraform plan</div>
           </div>
-          <div class="step-note">For each checklist item: launch tf-consumer-developer. Composes private registry modules. Runs terraform init + validate + plan for verification.</div>
+          <div class="step-note">Extract checklist from consumer-design.md &sect;5 via Grep. For each item: launch tf-consumer-developer subagent. Composes private registry modules. Runs <code>terraform init</code> + <code>validate</code> + <code>plan</code> for verification. Checkpoint commit per item. Concurrent subagents for independent items only.</div>
         </div>
 
         <div class="artifacts-label">Outputs</div>
@@ -3998,7 +4507,7 @@ code your-new-repo</pre>
             <div class="node node-cmd" data-id="tf-validate-final" data-type="cmd">terraform validate</div>
             <div class="node node-cmd" data-id="tf-plan-final" data-type="cmd">terraform plan</div>
           </div>
-          <div class="step-note">Dedicated validator: design conformance, static analysis, quality scoring (1-10 scale, threshold 7.0). Optional sandbox deploy via terraform apply (orchestrator-controlled destroy).</div>
+          <div class="step-note">Launch concurrent tf-consumer-validator subagents. Design conformance, <code>terraform fmt</code>, <code>validate</code>, <code>tflint</code>, <code>trivy</code>, quality scoring via tf-judge-criteria (1-10 scale, threshold 7.0). If score &lt; 7.0: re-launch tf-consumer-developer targeted at issues. Optional sandbox deploy via <code>terraform apply</code> (orchestrator-controlled destroy with AskUserQuestion).</div>
         </div>
 
         <div class="step-group">
@@ -4027,9 +4536,168 @@ code your-new-repo</pre>
   </div>
 </div>
 <div id="view-workflows--e2e-chain" class="view">
-  <div class="hero">
+  <div class="view-header">
     <h1 style="color:var(--green)">End-to-End Workflow Chain</h1>
     <p>Module &rarr; Provider &rarr; Consumer &mdash; Full Development Lifecycle</p>
+  </div>
+
+  <div class="svg-diagram" style="max-width:720px;margin:0 auto;padding:12px 24px 0">
+    <svg viewBox="0 0 720 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="e2e-glow"><feGaussianBlur in="SourceGraphic" stdDeviation="4"/></filter>
+        <filter id="e2e-glow-sm"><feGaussianBlur in="SourceGraphic" stdDeviation="2"/></filter>
+        <!-- Connector paths -->
+        <path id="e2e-conn1" d="M 218 72 L 282 72"/>
+        <path id="e2e-conn2" d="M 478 72 L 542 72"/>
+      </defs>
+
+      <!-- === WORKFLOW BOX 1: Module Authoring (pink) === -->
+      <g>
+        <!-- Glow layer -->
+        <rect x="20" y="30" width="198" height="84" rx="10" fill="none" stroke="rgba(255,45,123,0.15)" stroke-width="2" filter="url(#e2e-glow)"/>
+        <!-- Main box -->
+        <rect x="20" y="30" width="198" height="84" rx="10" fill="rgba(255,45,123,0.07)" stroke="rgba(255,45,123,0.4)" stroke-width="1.2">
+          <animate attributeName="stroke-opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite"/>
+        </rect>
+        <!-- Title -->
+        <text x="119" y="56" text-anchor="middle" font-family="monospace" font-size="10" fill="#ff2d7b" font-weight="700">Module Authoring</text>
+        <!-- Subtitle -->
+        <text x="119" y="72" text-anchor="middle" font-family="monospace" font-size="7" fill="#ff2d7b" fill-opacity="0.55">Plan &#x2192; Implement</text>
+        <!-- Skill icon: HCL file -->
+        <rect x="96" y="80" width="46" height="16" rx="3" fill="rgba(255,45,123,0.06)" stroke="rgba(255,45,123,0.2)" stroke-width="0.6"/>
+        <text x="119" y="92" text-anchor="middle" font-family="monospace" font-size="7" fill="#ff2d7b" fill-opacity="0.7">*.tf files</text>
+      </g>
+
+      <!-- === CONNECTOR 1: Module -> Provider === -->
+      <line x1="218" y1="72" x2="282" y2="72" stroke="rgba(255,157,46,0.35)" stroke-width="1.2" stroke-dasharray="5 3">
+        <animate attributeName="stroke-dashoffset" values="0;-20" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <!-- Connector glow -->
+      <line x1="218" y1="72" x2="282" y2="72" stroke="rgba(255,157,46,0.12)" stroke-width="3" filter="url(#e2e-glow-sm)">
+        <animate attributeName="stroke-dashoffset" values="0;-20" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <!-- Travelling particle 1 -->
+      <circle r="2.5" fill="#ff9d2e" opacity="0.9">
+        <animateMotion dur="1.6s" repeatCount="indefinite" path="M 218 72 L 282 72"/>
+      </circle>
+      <circle r="2.5" fill="#ff9d2e" opacity="0.5">
+        <animateMotion dur="1.6s" repeatCount="indefinite" begin="0.8s" path="M 218 72 L 282 72"/>
+      </circle>
+      <!-- Connector label -->
+      <text x="250" y="60" text-anchor="middle" font-family="monospace" font-size="6" fill="#ff9d2e" fill-opacity="0.7">published</text>
+      <text x="250" y="88" text-anchor="middle" font-family="monospace" font-size="6" fill="#ff9d2e" fill-opacity="0.7">to registry</text>
+
+      <!-- === WORKFLOW BOX 2: Provider Development (cyan) === -->
+      <g>
+        <!-- Glow layer -->
+        <rect x="282" y="30" width="196" height="84" rx="10" fill="none" stroke="rgba(0,240,255,0.15)" stroke-width="2" filter="url(#e2e-glow)"/>
+        <!-- Main box -->
+        <rect x="282" y="30" width="196" height="84" rx="10" fill="rgba(0,240,255,0.07)" stroke="rgba(0,240,255,0.4)" stroke-width="1.2">
+          <animate attributeName="stroke-opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite" begin="1s"/>
+        </rect>
+        <!-- Title -->
+        <text x="380" y="56" text-anchor="middle" font-family="monospace" font-size="10" fill="#00f0ff" font-weight="700">Provider Development</text>
+        <!-- Subtitle -->
+        <text x="380" y="72" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f0ff" fill-opacity="0.55">Plan &#x2192; Implement</text>
+        <!-- Skill icon: Go file -->
+        <rect x="357" y="80" width="46" height="16" rx="3" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.2)" stroke-width="0.6"/>
+        <text x="380" y="92" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f0ff" fill-opacity="0.7">*.go files</text>
+      </g>
+
+      <!-- === CONNECTOR 2: Provider -> Consumer === -->
+      <line x1="478" y1="72" x2="542" y2="72" stroke="rgba(255,157,46,0.35)" stroke-width="1.2" stroke-dasharray="5 3">
+        <animate attributeName="stroke-dashoffset" values="0;-20" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <!-- Connector glow -->
+      <line x1="478" y1="72" x2="542" y2="72" stroke="rgba(255,157,46,0.12)" stroke-width="3" filter="url(#e2e-glow-sm)">
+        <animate attributeName="stroke-dashoffset" values="0;-20" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <!-- Travelling particle 2 -->
+      <circle r="2.5" fill="#ff9d2e" opacity="0.9">
+        <animateMotion dur="1.6s" repeatCount="indefinite" begin="0.4s" path="M 478 72 L 542 72"/>
+      </circle>
+      <circle r="2.5" fill="#ff9d2e" opacity="0.5">
+        <animateMotion dur="1.6s" repeatCount="indefinite" begin="1.2s" path="M 478 72 L 542 72"/>
+      </circle>
+      <!-- Connector label -->
+      <text x="510" y="60" text-anchor="middle" font-family="monospace" font-size="6" fill="#ff9d2e" fill-opacity="0.7">modules</text>
+      <text x="510" y="88" text-anchor="middle" font-family="monospace" font-size="6" fill="#ff9d2e" fill-opacity="0.7">available</text>
+
+      <!-- === WORKFLOW BOX 3: Consumer Provisioning (purple) === -->
+      <g>
+        <!-- Glow layer -->
+        <rect x="542" y="30" width="158" height="84" rx="10" fill="none" stroke="rgba(180,77,255,0.15)" stroke-width="2" filter="url(#e2e-glow)"/>
+        <!-- Main box -->
+        <rect x="542" y="30" width="158" height="84" rx="10" fill="rgba(180,77,255,0.07)" stroke="rgba(180,77,255,0.4)" stroke-width="1.2">
+          <animate attributeName="stroke-opacity" values="0.3;0.7;0.3" dur="3s" repeatCount="indefinite" begin="2s"/>
+        </rect>
+        <!-- Title -->
+        <text x="621" y="56" text-anchor="middle" font-family="monospace" font-size="10" fill="#b44dff" font-weight="700">Consumer Provisioning</text>
+        <!-- Subtitle -->
+        <text x="621" y="72" text-anchor="middle" font-family="monospace" font-size="7" fill="#b44dff" fill-opacity="0.55">Plan &#x2192; Implement</text>
+        <!-- Skill icon: Composition -->
+        <rect x="596" y="80" width="50" height="16" rx="3" fill="rgba(180,77,255,0.06)" stroke="rgba(180,77,255,0.2)" stroke-width="0.6"/>
+        <text x="621" y="92" text-anchor="middle" font-family="monospace" font-size="7" fill="#b44dff" fill-opacity="0.7">compose</text>
+      </g>
+
+      <!-- === DIRECTION ARROWS on connectors === -->
+      <!-- Arrow 1 -->
+      <polygon points="278,68 278,76 284,72" fill="#ff9d2e" fill-opacity="0.6"/>
+      <!-- Arrow 2 -->
+      <polygon points="538,68 538,76 544,72" fill="#ff9d2e" fill-opacity="0.6"/>
+
+      <!-- === SHARED SDD BAR === -->
+      <!-- Bar background -->
+      <rect x="60" y="140" width="600" height="36" rx="6" fill="rgba(57,255,142,0.03)" stroke="rgba(57,255,142,0.12)" stroke-width="0.8">
+        <animate attributeName="stroke-opacity" values="0.08;0.2;0.08" dur="4s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Flowing dash line across the bar -->
+      <line x1="70" y1="158" x2="650" y2="158" stroke="rgba(57,255,142,0.1)" stroke-width="0.6" stroke-dasharray="4 3">
+        <animate attributeName="stroke-dashoffset" values="0;-20" dur="3s" repeatCount="indefinite"/>
+      </line>
+      <!-- SDD label -->
+      <text x="360" y="153" text-anchor="middle" font-family="monospace" font-size="8" fill="#39ff8e" fill-opacity="0.7" font-weight="600">4-PHASE SDD</text>
+      <text x="360" y="167" text-anchor="middle" font-family="monospace" font-size="7" fill="#39ff8e" fill-opacity="0.45">CLARIFY &#x2192; DESIGN &#x2192; BUILD &#x2192; VALIDATE</text>
+
+      <!-- Vertical connectors from boxes to shared bar -->
+      <line x1="119" y1="114" x2="119" y2="140" stroke="rgba(57,255,142,0.12)" stroke-width="0.6" stroke-dasharray="3 2">
+        <animate attributeName="stroke-dashoffset" values="0;-10" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="380" y1="114" x2="380" y2="140" stroke="rgba(57,255,142,0.12)" stroke-width="0.6" stroke-dasharray="3 2">
+        <animate attributeName="stroke-dashoffset" values="0;-10" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="621" y1="114" x2="621" y2="140" stroke="rgba(57,255,142,0.12)" stroke-width="0.6" stroke-dasharray="3 2">
+        <animate attributeName="stroke-dashoffset" values="0;-10" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <!-- Downward particles -->
+      <circle r="1.5" fill="#39ff8e" opacity="0.6">
+        <animateMotion dur="1.5s" repeatCount="indefinite" path="M 119 114 L 119 140"/>
+      </circle>
+      <circle r="1.5" fill="#39ff8e" opacity="0.6">
+        <animateMotion dur="1.5s" repeatCount="indefinite" begin="0.5s" path="M 380 114 L 380 140"/>
+      </circle>
+      <circle r="1.5" fill="#39ff8e" opacity="0.6">
+        <animateMotion dur="1.5s" repeatCount="indefinite" begin="1s" path="M 621 114 L 621 140"/>
+      </circle>
+
+      <!-- Phase dots at the bottom -->
+      <circle cx="260" cy="186" r="3" fill="rgba(57,255,142,0.15)" stroke="rgba(57,255,142,0.25)" stroke-width="0.5">
+        <animate attributeName="fill-opacity" values="0.1;0.3;0.1" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <text x="260" y="196" text-anchor="middle" font-family="monospace" font-size="6" fill="#39ff8e" fill-opacity="0.4">Clarify</text>
+      <circle cx="330" cy="186" r="3" fill="rgba(57,255,142,0.15)" stroke="rgba(57,255,142,0.25)" stroke-width="0.5">
+        <animate attributeName="fill-opacity" values="0.1;0.3;0.1" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
+      <text x="330" y="196" text-anchor="middle" font-family="monospace" font-size="6" fill="#39ff8e" fill-opacity="0.4">Design</text>
+      <circle cx="400" cy="186" r="3" fill="rgba(57,255,142,0.15)" stroke="rgba(57,255,142,0.25)" stroke-width="0.5">
+        <animate attributeName="fill-opacity" values="0.1;0.3;0.1" dur="2s" repeatCount="indefinite" begin="1s"/>
+      </circle>
+      <text x="400" y="196" text-anchor="middle" font-family="monospace" font-size="6" fill="#39ff8e" fill-opacity="0.4">Build</text>
+      <circle cx="470" cy="186" r="3" fill="rgba(57,255,142,0.15)" stroke="rgba(57,255,142,0.25)" stroke-width="0.5">
+        <animate attributeName="fill-opacity" values="0.1;0.3;0.1" dur="2s" repeatCount="indefinite" begin="1.5s"/>
+      </circle>
+      <text x="470" y="196" text-anchor="middle" font-family="monospace" font-size="6" fill="#39ff8e" fill-opacity="0.4">Validate</text>
+    </svg>
   </div>
 
   <div class="flow-container" style="max-width:900px;padding-top:16px">
@@ -4157,9 +4825,129 @@ code your-new-repo</pre>
   </div>
 </div>
 <div id="view-workflows--comparison" class="view">
-  <div class="hero">
+  <div class="view-header">
     <h1 style="color:var(--green)">Workflow Comparison</h1>
     <p>Module vs Provider vs Consumer &mdash; Side by Side</p>
+  </div>
+
+  <div class="svg-diagram" style="max-width:720px;margin:0 auto;padding:12px 24px 0">
+    <svg viewBox="0 0 720 160" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="cmp-glow"><feGaussianBlur in="SourceGraphic" stdDeviation="3"/></filter>
+        <filter id="cmp-glow-sm"><feGaussianBlur in="SourceGraphic" stdDeviation="1.5"/></filter>
+      </defs>
+
+      <!-- === COLUMN 1: Module (pink) === -->
+      <g>
+        <!-- Column outline with breathing glow -->
+        <rect x="20" y="10" width="200" height="94" rx="8" fill="rgba(255,45,123,0.06)" stroke="rgba(255,45,123,0.35)" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0.25;0.6;0.25" dur="3s" repeatCount="indefinite"/>
+        </rect>
+        <rect x="20" y="10" width="200" height="94" rx="8" fill="none" stroke="rgba(255,45,123,0.1)" stroke-width="1.5" filter="url(#cmp-glow)"/>
+        <!-- Header bar -->
+        <rect x="20" y="10" width="200" height="22" rx="8" fill="rgba(255,45,123,0.12)"/>
+        <rect x="20" y="22" width="200" height="10" fill="rgba(255,45,123,0.12)"/>
+        <text x="120" y="26" text-anchor="middle" font-family="monospace" font-size="9" fill="#ff2d7b" font-weight="700">MODULE</text>
+        <!-- Plan / Impl split -->
+        <line x1="120" y1="36" x2="120" y2="94" stroke="rgba(255,45,123,0.08)" stroke-width="0.5"/>
+        <text x="70" y="50" text-anchor="middle" font-family="monospace" font-size="7" fill="#ff2d7b" fill-opacity="0.5">Plan</text>
+        <text x="70" y="62" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">research</text>
+        <text x="70" y="73" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">design</text>
+        <text x="170" y="50" text-anchor="middle" font-family="monospace" font-size="7" fill="#39ff8e" fill-opacity="0.5">Impl</text>
+        <text x="170" y="62" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">test-writer</text>
+        <text x="170" y="73" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">developer</text>
+        <!-- Key difference badge -->
+        <rect x="60" y="82" width="80" height="16" rx="4" fill="rgba(255,45,123,0.08)" stroke="rgba(255,45,123,0.25)" stroke-width="0.6"/>
+        <text x="100" y="93" text-anchor="middle" font-family="monospace" font-size="7" fill="#ff2d7b" fill-opacity="0.8" font-weight="600">HCL</text>
+      </g>
+
+      <!-- === COLUMN 2: Provider (cyan) === -->
+      <g>
+        <rect x="260" y="10" width="200" height="94" rx="8" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.35)" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0.25;0.6;0.25" dur="3s" repeatCount="indefinite" begin="1s"/>
+        </rect>
+        <rect x="260" y="10" width="200" height="94" rx="8" fill="none" stroke="rgba(0,240,255,0.1)" stroke-width="1.5" filter="url(#cmp-glow)"/>
+        <!-- Header bar -->
+        <rect x="260" y="10" width="200" height="22" rx="8" fill="rgba(0,240,255,0.12)"/>
+        <rect x="260" y="22" width="200" height="10" fill="rgba(0,240,255,0.12)"/>
+        <text x="360" y="26" text-anchor="middle" font-family="monospace" font-size="9" fill="#00f0ff" font-weight="700">PROVIDER</text>
+        <!-- Plan / Impl split -->
+        <line x1="360" y1="36" x2="360" y2="94" stroke="rgba(0,240,255,0.08)" stroke-width="0.5"/>
+        <text x="310" y="50" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f0ff" fill-opacity="0.5">Plan</text>
+        <text x="310" y="62" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">research</text>
+        <text x="310" y="73" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">design</text>
+        <text x="410" y="50" text-anchor="middle" font-family="monospace" font-size="7" fill="#39ff8e" fill-opacity="0.5">Impl</text>
+        <text x="410" y="62" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">test-writer</text>
+        <text x="410" y="73" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">developer</text>
+        <!-- Key difference badge -->
+        <rect x="300" y="82" width="80" height="16" rx="4" fill="rgba(0,240,255,0.08)" stroke="rgba(0,240,255,0.25)" stroke-width="0.6"/>
+        <text x="340" y="93" text-anchor="middle" font-family="monospace" font-size="7" fill="#00f0ff" fill-opacity="0.8" font-weight="600">Go</text>
+      </g>
+
+      <!-- === COLUMN 3: Consumer (purple) === -->
+      <g>
+        <rect x="500" y="10" width="200" height="94" rx="8" fill="rgba(180,77,255,0.06)" stroke="rgba(180,77,255,0.35)" stroke-width="1">
+          <animate attributeName="stroke-opacity" values="0.25;0.6;0.25" dur="3s" repeatCount="indefinite" begin="2s"/>
+        </rect>
+        <rect x="500" y="10" width="200" height="94" rx="8" fill="none" stroke="rgba(180,77,255,0.1)" stroke-width="1.5" filter="url(#cmp-glow)"/>
+        <!-- Header bar -->
+        <rect x="500" y="10" width="200" height="22" rx="8" fill="rgba(180,77,255,0.12)"/>
+        <rect x="500" y="22" width="200" height="10" fill="rgba(180,77,255,0.12)"/>
+        <text x="600" y="26" text-anchor="middle" font-family="monospace" font-size="9" fill="#b44dff" font-weight="700">CONSUMER</text>
+        <!-- Plan / Impl split -->
+        <line x1="600" y1="36" x2="600" y2="94" stroke="rgba(180,77,255,0.08)" stroke-width="0.5"/>
+        <text x="550" y="50" text-anchor="middle" font-family="monospace" font-size="7" fill="#b44dff" fill-opacity="0.5">Plan</text>
+        <text x="550" y="62" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">research</text>
+        <text x="550" y="73" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">design</text>
+        <text x="650" y="50" text-anchor="middle" font-family="monospace" font-size="7" fill="#39ff8e" fill-opacity="0.5">Impl</text>
+        <text x="650" y="62" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">developer</text>
+        <text x="650" y="73" text-anchor="middle" font-family="monospace" font-size="7" fill="#999" fill-opacity="0.7">validator</text>
+        <!-- Key difference badge -->
+        <rect x="540" y="82" width="80" height="16" rx="4" fill="rgba(180,77,255,0.08)" stroke="rgba(180,77,255,0.25)" stroke-width="0.6"/>
+        <text x="580" y="93" text-anchor="middle" font-family="monospace" font-size="7" fill="#b44dff" fill-opacity="0.8" font-weight="600">Composition</text>
+      </g>
+
+      <!-- === INTER-COLUMN DASHES (shared foundation links) === -->
+      <line x1="220" y1="57" x2="260" y2="57" stroke="rgba(168,200,255,0.15)" stroke-width="0.8" stroke-dasharray="3 3">
+        <animate attributeName="stroke-dashoffset" values="0;-12" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="460" y1="57" x2="500" y2="57" stroke="rgba(168,200,255,0.15)" stroke-width="0.8" stroke-dasharray="3 3">
+        <animate attributeName="stroke-dashoffset" values="0;-12" dur="2s" repeatCount="indefinite"/>
+      </line>
+
+      <!-- === SHARED FOUNDATION BAR === -->
+      <rect x="40" y="118" width="640" height="30" rx="6" fill="rgba(57,255,142,0.03)" stroke="rgba(57,255,142,0.12)" stroke-width="0.8">
+        <animate attributeName="stroke-opacity" values="0.08;0.22;0.08" dur="4s" repeatCount="indefinite"/>
+      </rect>
+      <!-- Flowing connector line inside bar -->
+      <line x1="50" y1="133" x2="670" y2="133" stroke="rgba(57,255,142,0.08)" stroke-width="0.5" stroke-dasharray="4 3">
+        <animate attributeName="stroke-dashoffset" values="0;-20" dur="3s" repeatCount="indefinite"/>
+      </line>
+      <!-- Shared label -->
+      <text x="360" y="130" text-anchor="middle" font-family="monospace" font-size="8" fill="#39ff8e" fill-opacity="0.7" font-weight="600">SHARED</text>
+      <text x="360" y="142" text-anchor="middle" font-family="monospace" font-size="6.5" fill="#39ff8e" fill-opacity="0.45">4-Phase SDD &#x2022; Constitution &#x2022; Design Templates &#x2022; MCP Tools</text>
+
+      <!-- Vertical connectors from columns to shared bar -->
+      <line x1="120" y1="104" x2="120" y2="118" stroke="rgba(57,255,142,0.1)" stroke-width="0.5" stroke-dasharray="2 2">
+        <animate attributeName="stroke-dashoffset" values="0;-8" dur="1.5s" repeatCount="indefinite"/>
+      </line>
+      <line x1="360" y1="104" x2="360" y2="118" stroke="rgba(57,255,142,0.1)" stroke-width="0.5" stroke-dasharray="2 2">
+        <animate attributeName="stroke-dashoffset" values="0;-8" dur="1.5s" repeatCount="indefinite"/>
+      </line>
+      <line x1="600" y1="104" x2="600" y2="118" stroke="rgba(57,255,142,0.1)" stroke-width="0.5" stroke-dasharray="2 2">
+        <animate attributeName="stroke-dashoffset" values="0;-8" dur="1.5s" repeatCount="indefinite"/>
+      </line>
+      <!-- Tiny downward particles -->
+      <circle r="1.2" fill="#39ff8e" opacity="0.5">
+        <animateMotion dur="1.2s" repeatCount="indefinite" path="M 120 104 L 120 118"/>
+      </circle>
+      <circle r="1.2" fill="#39ff8e" opacity="0.5">
+        <animateMotion dur="1.2s" repeatCount="indefinite" begin="0.4s" path="M 360 104 L 360 118"/>
+      </circle>
+      <circle r="1.2" fill="#39ff8e" opacity="0.5">
+        <animateMotion dur="1.2s" repeatCount="indefinite" begin="0.8s" path="M 600 104 L 600 118"/>
+      </circle>
+    </svg>
   </div>
 
   <div class="flow-container" style="max-width:920px;padding-top:16px">
@@ -4331,6 +5119,106 @@ code your-new-repo</pre>
   <div style="text-align:center;padding:16px 0 24px;opacity:0.4">
     <div style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#666">All three workflows follow the same 4-phase SDD pattern with workflow-specific agents and tooling</div>
   </div>
+</div>
+
+<!-- PREREQUISITES -->
+<div id="view-prerequisites--prerequisites" class="view">
+<div class="view-header">
+  <h1 style="color:var(--yellow)">Prerequisites</h1>
+  <p>Required software and environment variables</p>
+</div>
+<div class="flow-container">
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">Docker Desktop</h3>
+    <p>Required for running the devcontainer. Download Docker Desktop from <code>docker.com</code> and ensure it is running before proceeding.</p>
+  </div>
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">VS Code</h3>
+    <p>Recommended IDE with devcontainer support. Install the <code>Dev Containers</code> extension from the VS Code marketplace.</p>
+  </div>
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">Environment Variables</h3>
+    <p>Two tokens are required to authenticate with GitHub and HCP Terraform:</p>
+    <pre>GITHUB_TOKEN    # GitHub PAT with repo permissions
+TEAM_TFE_TOKEN  # HCP Terraform Team Token (must be a Team API Token, not user/org token)</pre>
+  </div>
+  <div class="gs-step">
+    <h3 style="color:var(--red)">Important: TEAM_TFE_TOKEN</h3>
+    <p>Must be a <strong style="color:var(--yellow)">Team API Token</strong> &mdash; not a user token or organization token. Create at:</p>
+    <pre>HCP Terraform &gt; Settings &gt; Teams &gt; [Your Team] &gt; Team API Token</pre>
+  </div>
+</div>
+</div>
+<div id="view-prerequisites--setup" class="view">
+<div class="view-header">
+  <h1 style="color:var(--yellow)">HCP Terraform Setup</h1>
+  <p>Configure HCP Terraform with an isolated environment for testing</p>
+</div>
+<div class="flow-container">
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">1. Create a Dedicated Project</h3>
+    <p>Navigate to <strong>Projects</strong> in HCP Terraform and create a new project (e.g., <code>sandbox</code>). This isolates test workspaces from production.</p>
+  </div>
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">2. Create a Dedicated Team</h3>
+    <p>Go to <strong>Settings &gt; Teams</strong>. Create a team and assign it to your project with the following permissions:</p>
+    <pre>Read, Create Workspaces, Delete Workspaces,
+Read Variables, Read State, Write State,
+Lock/Unlock Workspaces</pre>
+  </div>
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">3. Generate Team API Token</h3>
+    <p>In <strong>Settings &gt; Teams &gt; [Your Team]</strong>, click <strong>"Create a team token"</strong>. Save this value as <code>TEAM_TFE_TOKEN</code>.</p>
+  </div>
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">4. Configure Credential Inheritance</h3>
+    <p>Create a <strong>Variable Set</strong> with AWS credentials and attach it to your dedicated project. Workspaces inherit credentials automatically.</p>
+  </div>
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">5. AWS Credentials</h3>
+    <p>Prefer <strong>Dynamic Provider Credentials</strong> (OIDC federation) or a Variable Set with:</p>
+    <pre>AWS_ACCESS_KEY_ID
+AWS_SECRET_ACCESS_KEY
+AWS_REGION</pre>
+  </div>
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">6. Shell Configuration</h3>
+    <p>Add your tokens to your shell profile so they are available in every session:</p>
+    <pre># Add to ~/.bashrc or ~/.zshrc
+export GITHUB_TOKEN="ghp_your_token_here"
+export TEAM_TFE_TOKEN="your_terraform_team_token_here"
+
+# Reload
+source ~/.bashrc  # or source ~/.zshrc</pre>
+  </div>
+</div>
+</div>
+<div id="view-prerequisites--quickstart" class="view">
+<div class="view-header">
+  <h1 style="color:var(--yellow)">Quickstart</h1>
+  <p>Get up and running in 4 steps</p>
+</div>
+<div class="flow-container">
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">1. Create Repository from Template</h3>
+    <p>Navigate to the template repo on GitHub. Click <strong>"Use this template"</strong> &gt; <strong>"Create a new repository"</strong>. Name and configure your new repo.</p>
+  </div>
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">2. Clone and Open in VS Code</h3>
+    <p>Clone your new repository and open it in VS Code:</p>
+    <pre>git clone https://github.com/YOUR_ORG/your-new-repo.git
+code your-new-repo</pre>
+  </div>
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">3. Open in Devcontainer</h3>
+    <p>When VS Code opens, click <strong>"Reopen in Container"</strong> at the prompt. Or use Command Palette: <code>Dev Containers: Reopen in Container</code>. All tools are pre-configured.</p>
+  </div>
+  <div class="gs-step">
+    <h3 style="color:var(--yellow)">4. Run Your First Workflow</h3>
+    <p>Try your first agentic Terraform workflow:</p>
+    <pre>/tf-module-plan aws_s3_bucket aws - Create an S3 bucket module with encryption and versioning</pre>
+  </div>
+</div>
 </div>
 
 <!-- REFERENCE -->
@@ -4568,17 +5456,10 @@ code your-new-repo</pre>
 // SECTION CONFIG
 // ============================================================
 const sectionConfig = {
-  'getting-started': {
-    color: '#ffe14d',
-    tabs: [
-      { id: 'prerequisites', label: 'Prerequisites' },
-      { id: 'setup', label: 'Setup' },
-      { id: 'quickstart', label: 'Quickstart' }
-    ]
-  },
   'foundations': {
     color: '#b44dff',
     tabs: [
+      { id: 'overview', label: 'Overview' },
       { id: 'skills', label: 'Skills' },
       { id: 'subagents', label: 'Subagents' },
       { id: 'context-eng', label: 'Context Eng.' },
@@ -4613,14 +5494,22 @@ const sectionConfig = {
   'workflows': {
     color: '#39ff8e',
     tabs: [
-      { id: 'module-plan', label: 'Module Plan' },
-      { id: 'module-impl', label: 'Module Impl' },
-      { id: 'provider-plan', label: 'Provider Plan' },
-      { id: 'provider-impl', label: 'Provider Impl' },
-      { id: 'consumer-plan', label: 'Consumer Plan' },
-      { id: 'consumer-impl', label: 'Consumer Impl' },
+      { id: 'module-plan', label: 'Plan', group: 'Module' },
+      { id: 'module-impl', label: 'Impl', group: 'Module' },
+      { id: 'consumer-plan', label: 'Plan', group: 'Consumer' },
+      { id: 'consumer-impl', label: 'Impl', group: 'Consumer' },
+      { id: 'provider-plan', label: 'Plan', group: 'Provider' },
+      { id: 'provider-impl', label: 'Impl', group: 'Provider' },
       { id: 'e2e-chain', label: 'E2E Chain' },
       { id: 'comparison', label: 'Comparison' }
+    ]
+  },
+  'prerequisites': {
+    color: '#ffe14d',
+    tabs: [
+      { id: 'prerequisites', label: 'Prerequisites' },
+      { id: 'setup', label: 'Setup' },
+      { id: 'quickstart', label: 'Quickstart' }
     ]
   },
   'reference': {
@@ -4927,8 +5816,8 @@ workflowViewKeys.forEach(k => {
 // ============================================================
 // STATE
 // ============================================================
-let currentSection = 'getting-started';
-let currentTab = 'prerequisites';
+let currentSection = 'foundations';
+let currentTab = 'overview';
 let selectedId = null;
 let activeVP = null;
 
@@ -4957,7 +5846,15 @@ function switchView(section, tab) {
 
   // Build sub nav
   subNav.innerHTML = '';
+  let lastGroup = null;
   cfg.tabs.forEach(t => {
+    if (t.group && t.group !== lastGroup) {
+        const groupLabel = document.createElement('span');
+        groupLabel.className = 'sub-tab-group';
+        groupLabel.innerHTML = '<span class="sub-tab-group-dot" style="background:' + cfg.color + '"></span>' + t.group;
+        subNav.appendChild(groupLabel);
+        lastGroup = t.group;
+    }
     const btn = document.createElement('button');
     btn.className = 'sub-tab' + (t.id === tab ? ' active' : '');
     btn.dataset.tab = t.id;
@@ -5268,7 +6165,7 @@ document.addEventListener('keydown', e => {
 // INIT — route from hash or default view
 // ============================================================
 if (location.hash) routeFromHash();
-else switchView('getting-started', 'prerequisites');
+else switchView('foundations', 'overview');
 </script>
 </body>
 </html>
