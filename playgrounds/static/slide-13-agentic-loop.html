@@ -74,36 +74,32 @@ body {
 <div class="title-bar">
     <div class="section-label">FOUNDATIONS</div>
     <h1>Agentic Loop</h1>
-    <p>TDD implementation cycle from the module workflow</p>
+    <p>Validation-driven cycle: write tests, write code, validate, deploy</p>
 </div>
 
 <div class="content">
     <div class="bullets">
         <div class="bullet">
             <div class="bullet-dot"></div>
-            <div class="bullet-text"><span>Tests first</span> &mdash; test-writer agent creates .tftest.hcl files with 1:1 assertion mapping from design.md before any module code exists</div>
-        </div>
-        <div class="bullet">
-            <div class="bullet-dot"></div>
-            <div class="bullet-text"><span>RED baseline</span> &mdash; terraform init + validate confirms tests compile as valid HCL but fail with no implementation yet
+            <div class="bullet-text"><span>Write tests</span> &mdash; test-writer agent creates .tftest.hcl from design.md with 1:1 assertion mapping before any implementation
                 <br><span class="cmd">terraform init -backend=false</span> <span class="cmd">terraform validate</span>
             </div>
         </div>
         <div class="bullet">
             <div class="bullet-dot"></div>
-            <div class="bullet-text"><span>Iterative build</span> &mdash; developer agent is dispatched once per checklist item, each gated by validate + test before continuing
+            <div class="bullet-text"><span>Write code</span> &mdash; developer agent implements one checklist item at a time; tests provide the feedback loop for iteration
                 <br><span class="cmd">terraform validate</span> <span class="cmd">terraform test</span>
             </div>
         </div>
         <div class="bullet">
             <div class="bullet-dot"></div>
-            <div class="bullet-text"><span>Checkpoint commits</span> &mdash; each passing iteration gets committed automatically; progress posted to the GitHub issue via post-issue-progress.sh</div>
+            <div class="bullet-text"><span>Validate</span> &mdash; full pipeline runs fmt, validate, test, tflint, trivy; validator agent scores across 6 quality dimensions
+                <br><span class="cmd">trivy config .</span> <span class="cmd">terraform-docs</span>
+            </div>
         </div>
         <div class="bullet">
             <div class="bullet-dot"></div>
-            <div class="bullet-text"><span>Quality gate</span> &mdash; validator scores output across 6 dimensions; security weighted at 30% can block release
-                <br><span class="cmd">trivy config .</span> <span class="cmd">terraform-docs</span>
-            </div>
+            <div class="bullet-text"><span>Deploy</span> &mdash; checkpoint commits on each passing iteration; PR created for human review; HCP Terraform runs plan/apply</div>
         </div>
     </div>
 
@@ -140,51 +136,51 @@ body {
             <circle cx="370" cy="100" r="18" fill="rgba(167,139,250,0.15)" stroke="rgba(167,139,250,0.4)" stroke-width="1.5"/>
             <text x="370" y="106" text-anchor="middle" fill="#C4B5FD" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">1</text>
             <text x="398" y="106" fill="#C4B5FD" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">Write Tests</text>
-            <text x="350" y="132" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Test-writer agent produces</text>
-            <text x="350" y="150" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">.tftest.hcl from design.md</text>
+            <text x="350" y="132" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Test agent creates .tftest.hcl</text>
+            <text x="350" y="150" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">from design.md assertions</text>
             <!-- Label: Agent role -->
             <rect x="350" y="160" width="90" height="18" rx="4" fill="rgba(167,139,250,0.08)"/>
             <text x="395" y="173" text-anchor="middle" fill="#A78BFA" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">TEST-WRITER</text>
 
-            <!-- Step 2: RED Baseline (right) -->
-            <rect x="660" y="320" width="240" height="120" rx="12" fill="rgba(220,71,125,0.05)" stroke="rgba(220,71,125,0.2)" stroke-width="1.5"/>
-            <circle cx="700" cy="360" r="18" fill="rgba(220,71,125,0.12)" stroke="rgba(220,71,125,0.35)" stroke-width="1.5"/>
-            <text x="700" y="366" text-anchor="middle" fill="#DC477D" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">2</text>
-            <text x="728" y="366" fill="#DC477D" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">RED Baseline</text>
-            <text x="680" y="392" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">terraform init + validate</text>
-            <text x="680" y="410" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Confirm valid HCL, tests fail</text>
+            <!-- Step 2: Write Code (right) -->
+            <rect x="660" y="320" width="240" height="120" rx="12" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.2)" stroke-width="1.5"/>
+            <circle cx="700" cy="360" r="18" fill="rgba(98,212,220,0.1)" stroke="rgba(98,212,220,0.3)" stroke-width="1.5"/>
+            <text x="700" y="366" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">2</text>
+            <text x="728" y="366" fill="#62D4DC" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">Write Code</text>
+            <text x="680" y="392" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Developer agent implements</text>
+            <text x="680" y="410" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">one checklist item at a time</text>
             <!-- Label -->
-            <rect x="680" y="420" width="80" height="18" rx="4" fill="rgba(220,71,125,0.08)"/>
-            <text x="720" y="433" text-anchor="middle" fill="#DC477D" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">BASELINE</text>
+            <rect x="680" y="420" width="90" height="18" rx="4" fill="rgba(98,212,220,0.06)"/>
+            <text x="725" y="433" text-anchor="middle" fill="#62D4DC" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">DEVELOPER xN</text>
 
-            <!-- Step 3: Implement (bottom) -->
-            <rect x="330" y="580" width="260" height="140" rx="12" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.2)" stroke-width="1.5"/>
-            <circle cx="370" cy="620" r="18" fill="rgba(98,212,220,0.1)" stroke="rgba(98,212,220,0.3)" stroke-width="1.5"/>
-            <text x="370" y="626" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">3</text>
-            <text x="398" y="626" fill="#62D4DC" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">Implement</text>
-            <text x="350" y="652" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Developer agent xN dispatched</text>
-            <text x="350" y="670" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">one per checklist item</text>
-            <text x="350" y="688" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">checkpoint-commit per item</text>
+            <!-- Step 3: Validate (bottom) -->
+            <rect x="330" y="580" width="260" height="130" rx="12" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.18)" stroke-width="1.5"/>
+            <circle cx="370" cy="620" r="18" fill="rgba(255,207,37,0.1)" stroke="rgba(255,207,37,0.3)" stroke-width="1.5"/>
+            <text x="370" y="626" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">3</text>
+            <text x="398" y="626" fill="#FFCF25" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">Validate</text>
+            <text x="350" y="652" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">fmt, validate, test, tflint,</text>
+            <text x="350" y="670" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">trivy, terraform-docs</text>
+            <text x="350" y="688" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">checkpoint-commit on pass</text>
             <!-- Labels -->
-            <rect x="350" y="698" width="90" height="18" rx="4" fill="rgba(98,212,220,0.06)"/>
-            <text x="395" y="711" text-anchor="middle" fill="#62D4DC" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">DEVELOPER xN</text>
+            <rect x="350" y="698" width="80" height="18" rx="4" fill="rgba(255,207,37,0.06)"/>
+            <text x="390" y="711" text-anchor="middle" fill="#FFCF25" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">VALIDATOR</text>
 
-            <!-- Step 4: Validate (left) -->
-            <rect x="20" y="320" width="240" height="120" rx="12" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.18)" stroke-width="1.5"/>
-            <circle cx="60" cy="360" r="18" fill="rgba(255,207,37,0.1)" stroke="rgba(255,207,37,0.3)" stroke-width="1.5"/>
-            <text x="60" y="366" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">4</text>
-            <text x="88" y="366" fill="#FFCF25" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">Validate</text>
-            <text x="40" y="392" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Full pipeline: fmt, validate,</text>
-            <text x="40" y="410" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">test, tflint, trivy, docs</text>
+            <!-- Step 4: Deploy (left) -->
+            <rect x="20" y="320" width="240" height="120" rx="12" fill="rgba(96,222,169,0.04)" stroke="rgba(96,222,169,0.18)" stroke-width="1.5"/>
+            <circle cx="60" cy="360" r="18" fill="rgba(96,222,169,0.1)" stroke="rgba(96,222,169,0.3)" stroke-width="1.5"/>
+            <text x="60" y="366" text-anchor="middle" fill="#60DEA9" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">4</text>
+            <text x="88" y="366" fill="#60DEA9" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">Deploy</text>
+            <text x="40" y="392" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">PR for human review</text>
+            <text x="40" y="410" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">HCP Terraform plan/apply</text>
             <!-- Label -->
-            <rect x="40" y="420" width="80" height="18" rx="4" fill="rgba(255,207,37,0.06)"/>
-            <text x="80" y="433" text-anchor="middle" fill="#FFCF25" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">VALIDATOR</text>
+            <rect x="40" y="420" width="100" height="18" rx="4" fill="rgba(96,222,169,0.06)"/>
+            <text x="90" y="433" text-anchor="middle" fill="#60DEA9" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">HCP TERRAFORM</text>
 
             <!-- Pass/Fail loop indicator -->
             <rect x="100" y="470" width="130" height="30" rx="8" fill="rgba(220,71,125,0.05)" stroke="rgba(220,71,125,0.15)" stroke-width="1"/>
-            <text x="165" y="490" text-anchor="middle" fill="#DC477D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">FAIL &rarr; re-dispatch</text>
+            <text x="165" y="490" text-anchor="middle" fill="#DC477D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">FAIL &#x2192; step 2</text>
             <rect x="100" y="508" width="130" height="30" rx="8" fill="rgba(96,222,169,0.05)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
-            <text x="165" y="528" text-anchor="middle" fill="#60DEA9" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">PASS &rarr; complete</text>
+            <text x="165" y="528" text-anchor="middle" fill="#60DEA9" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">PASS &#x2192; deploy</text>
         </svg>
     </div>
 </div>

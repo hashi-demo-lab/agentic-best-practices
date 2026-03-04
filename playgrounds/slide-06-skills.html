@@ -5,15 +5,15 @@
 <meta name="viewport" content="width=1920">
 <title>Skills: Domain Knowledge for Agents</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
     width: 1920px; height: 1080px; overflow: hidden;
     background: #000000;
     font-family: 'Inter', Arial, sans-serif;
     color: #FFFFFF;
-  }
+}
 
-  body::before {
+body::before {
     content: '';
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-image:
@@ -21,189 +21,215 @@
       linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
     background-size: 60px 60px;
     pointer-events: none; z-index: 0;
-  }
+}
+
+.title-bar {
+    padding: 48px 80px 32px;
+    border-bottom: 1px solid rgba(98,212,220,0.12);
+}
+.section-label {
+    font-size: 12px; font-weight: 500; color: #FFCF25;
+    text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px;
+}
+.title-bar h1 {
+    font-size: 36px; font-weight: 600; color: #FFFFFF;
+    margin-bottom: 8px;
+}
+.title-bar p {
+    font-size: 20px; color: #CCCCCC; font-weight: 400;
+}
+
+.content {
+    display: flex; padding: 48px 80px 0; gap: 64px;
+    align-items: flex-start;
+}
+
+.bullets {
+    width: 38%; display: flex; flex-direction: column; gap: 28px;
+    padding-top: 16px;
+}
+.bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+}
+.bullet-dot {
+    width: 8px; height: 8px; border-radius: 2px;
+    margin-top: 8px; flex-shrink: 0;
+}
+.bullet-text {
+    font-size: 22px; line-height: 1.5; color: #FFFFFF;
+}
+.bullet-text span {
+    font-weight: 600;
+}
+
+.visual {
+    width: 62%; display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 0;
+}
 </style>
 </head>
 <body>
 
-<div class="slide" style="width:1920px;height:1080px;padding:60px 80px;display:flex;flex-direction:column;position:relative;z-index:1;">
+<div class="title-bar" style="position:relative;z-index:1;">
+    <div class="section-label">FOUNDATIONS</div>
+    <h1>Skills: Domain Knowledge for Agents</h1>
+    <p>SKILL.MD files package reusable expertise that the agent selects by matching name and description</p>
+</div>
 
-  <div class="header" style="margin-bottom:40px;">
-    <div style="font-size:12px;font-weight:500;color:#FFCF25;text-transform:uppercase;letter-spacing:3px;margin-bottom:12px;font-family:'Inter Medium','Inter',Arial,sans-serif;">FOUNDATIONS</div>
-    <h1 style="font-size:34px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Skills: Domain Knowledge for Agents</h1>
-    <div style="font-size:20px;color:#CCCCCC;">SKILL.MD files package reusable expertise that the agent selects by matching name and description</div>
-  </div>
-
-  <div class="content" style="flex:1;display:flex;gap:60px;align-items:center;">
-
-    <!-- Bullets -->
-    <div class="bullets" style="flex:0 0 42%;display:flex;flex-direction:column;gap:32px;">
-
-      <div style="display:flex;align-items:flex-start;gap:14px;">
-        <div style="width:8px;height:8px;border-radius:2px;background:#62D4DC;margin-top:8px;flex-shrink:0;"></div>
-        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#62D4DC;font-size:22px;">Name and description</span> — each SKILL.md declares a name and description in its frontmatter; the agent reads the description to decide when to use the skill</div>
-      </div>
-
-      <div style="display:flex;align-items:flex-start;gap:14px;">
-        <div style="width:8px;height:8px;border-radius:2px;background:#A78BFA;margin-top:8px;flex-shrink:0;"></div>
-        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#A78BFA;font-size:22px;">Domain injection</span> — encode security baselines, coding patterns, workflow steps, and instructions as markdown files</div>
-      </div>
-
-      <div style="display:flex;align-items:flex-start;gap:14px;">
-        <div style="width:8px;height:8px;border-radius:2px;background:#DC477D;margin-top:8px;flex-shrink:0;"></div>
-        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#DC477D;font-size:22px;">Version-controlled</span> — stored in .agent/skills/, shared via git, reusable across agents and projects</div>
-      </div>
-
-      <div style="display:flex;align-items:flex-start;gap:14px;">
-        <div style="width:8px;height:8px;border-radius:2px;background:#FFCF25;margin-top:8px;flex-shrink:0;"></div>
-        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#FFCF25;font-size:22px;">User-invocable option</span> — skills can declare user-invocable: true so users launch them directly as slash commands</div>
-      </div>
-
+<div class="content" style="position:relative;z-index:1;">
+    <div class="bullets">
+        <div class="bullet">
+            <div class="bullet-dot" style="background:#62D4DC;"></div>
+            <div class="bullet-text"><span style="color:#62D4DC;">Name and description</span> &mdash; each SKILL.md declares a name and description in its frontmatter; the agent reads the description to decide when to use the skill</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot" style="background:#A78BFA;"></div>
+            <div class="bullet-text"><span style="color:#A78BFA;">Progressive disclosure</span> &mdash; only metadata loaded into context until triggered; full skill content injected on-demand, enabling unbounded context bundling</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot" style="background:#DC477D;"></div>
+            <div class="bullet-text"><span style="color:#DC477D;">Version-controlled</span> &mdash; stored in .claude/skills/, shared via git, reusable across agents and projects</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot" style="background:#FFCF25;"></div>
+            <div class="bullet-text"><span style="color:#FFCF25;">User-invocable option</span> &mdash; skills can declare user-invocable: true so users launch them directly as slash commands</div>
+        </div>
     </div>
 
-    <!-- Visual: SKILL.md file structure + skill list -->
-    <div class="visual" style="flex:1;display:flex;align-items:center;justify-content:center;">
-      <svg width="840" height="720" viewBox="0 0 840 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="visual">
+        <svg width="960" height="700" viewBox="0 0 960 700" fill="none" xmlns="http://www.w3.org/2000/svg">
 
-        <!-- File structure panel -->
-        <defs>
-          <linearGradient id="cardGrad1" x1="0" y1="10" x2="0" y2="430" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#121212"/>
-            <stop offset="100%" stop-color="#000000"/>
-          </linearGradient>
-          <linearGradient id="cardGrad2" x1="0" y1="10" x2="0" y2="430" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#121212"/>
-            <stop offset="100%" stop-color="#000000"/>
-          </linearGradient>
-        </defs>
-        <rect x="20" y="10" width="420" height="420" rx="12" fill="url(#cardGrad1)"/>
-        <text x="40" y="42" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="12" fill="#62D4DC" font-weight="500" letter-spacing="3">SKILL.MD STRUCTURE</text>
+            <defs>
+                <linearGradient id="codeGrad" x1="0" y1="0" x2="0" y2="480" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#0E0E0E"/>
+                    <stop offset="100%" stop-color="#060606"/>
+                </linearGradient>
+                <linearGradient id="listGrad" x1="0" y1="0" x2="0" y2="480" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#0E0E0E"/>
+                    <stop offset="100%" stop-color="#060606"/>
+                </linearGradient>
+            </defs>
 
-        <!-- File icon -->
-        <rect x="40" y="60" width="380" height="350" rx="8" fill="rgba(18,18,18,0.9)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
+            <!-- ====== SKILL.MD STRUCTURE (left panel) ====== -->
+            <rect x="0" y="0" width="510" height="520" rx="12" fill="url(#codeGrad)" stroke="rgba(98,212,220,0.12)" stroke-width="1"/>
+            <text x="24" y="32" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="13" fill="#62D4DC" font-weight="500" letter-spacing="3">SKILL.MD STRUCTURE</text>
 
-        <!-- Frontmatter section -->
-        <text x="60" y="88" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#82748C">---</text>
-        <text x="60" y="112" font-family="'SF Mono', 'Fira Code', monospace" font-size="13">
-          <tspan fill="#A78BFA">name</tspan><tspan fill="#82748C">: </tspan><tspan fill="#62D4DC">tf-module-plan</tspan>
-        </text>
-        <text x="60" y="136" font-family="'SF Mono', 'Fira Code', monospace" font-size="13">
-          <tspan fill="#A78BFA">description</tspan><tspan fill="#82748C">: </tspan><tspan fill="#62D4DC">SDD Phases 1-2.</tspan>
-        </text>
-        <text x="60" y="154" font-family="'SF Mono', 'Fira Code', monospace" font-size="13">
-          <tspan fill="#62D4DC">  Clarify, research, design.</tspan>
-        </text>
-        <text x="60" y="178" font-family="'SF Mono', 'Fira Code', monospace" font-size="13">
-          <tspan fill="#A78BFA">user-invocable</tspan><tspan fill="#82748C">: </tspan><tspan fill="#62D4DC">true</tspan>
-        </text>
-        <text x="60" y="202" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#82748C">---</text>
+            <!-- Code block background -->
+            <rect x="20" y="48" width="470" height="452" rx="8" fill="rgba(18,18,18,0.9)" stroke="rgba(98,212,220,0.08)" stroke-width="1"/>
 
-        <!-- Divider -->
-        <line x1="60" y1="218" x2="400" y2="218" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
+            <!-- Frontmatter -->
+            <text x="44" y="82" font-family="'SF Mono','Fira Code',monospace" font-size="16" fill="#9E94A8">---</text>
 
-        <!-- Body content -->
-        <text x="60" y="246" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#CCCCCC"># SDD -- Plan</text>
-        <text x="60" y="270" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" fill="#82748C">Produces design.md from requirements.</text>
-        <text x="60" y="298" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#CCCCCC">## Phase 1: Requirements</text>
-        <text x="60" y="320" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" fill="#82748C">- Gather requirements</text>
-        <text x="60" y="340" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" fill="#82748C">- Research provider docs</text>
-        <text x="60" y="368" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#CCCCCC">## Phase 2: Design</text>
-        <text x="60" y="390" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" fill="#82748C">- Produce design.md</text>
+            <text x="44" y="112" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#A78BFA">name</tspan><tspan fill="#9E94A8">: </tspan><tspan fill="#62D4DC">tf-module-plan</tspan>
+            </text>
 
-        <!-- Frontmatter annotation -->
-        <rect x="300" y="88" width="108" height="24" rx="4" fill="rgba(167,139,250,0.12)" stroke="rgba(167,139,250,0.3)" stroke-width="1"/>
-        <text x="354" y="105" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="11" fill="#A78BFA" font-weight="600">frontmatter</text>
+            <text x="44" y="142" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#A78BFA">description</tspan><tspan fill="#9E94A8">: </tspan><tspan fill="#62D4DC">SDD Phases 1-2.</tspan>
+            </text>
+            <text x="44" y="166" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#62D4DC">  Clarify, research, design.</tspan>
+            </text>
 
-        <!-- Content annotation -->
-        <rect x="300" y="240" width="108" height="24" rx="4" fill="rgba(98,212,220,0.12)" stroke="rgba(98,212,220,0.3)" stroke-width="1"/>
-        <text x="354" y="257" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="11" fill="#62D4DC" font-weight="600">skill content</text>
+            <text x="44" y="196" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#A78BFA">user-invocable</tspan><tspan fill="#9E94A8">: </tspan><tspan fill="#62D4DC">true</tspan>
+            </text>
 
-        <!-- Skills list panel -->
-        <rect x="460" y="10" width="360" height="420" rx="12" fill="url(#cardGrad2)"/>
-        <text x="480" y="42" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="12" fill="#A78BFA" font-weight="500" letter-spacing="3">REPO SKILLS</text>
+            <text x="44" y="226" font-family="'SF Mono','Fira Code',monospace" font-size="16" fill="#9E94A8">---</text>
 
-        <!-- Skill 1 -->
-        <rect x="480" y="60" width="320" height="60" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
-        <circle cx="502" cy="90" r="6" fill="#62D4DC" opacity="0.6"/>
-        <text x="520" y="82" font-family="'SF Mono', monospace" font-size="14" fill="#62D4DC" font-weight="600">tf-module-plan</text>
-        <text x="520" y="102" font-family="'Inter',Arial,sans-serif" font-size="12" fill="#82748C">SDD Phases 1-2: clarify, research, design</text>
+            <!-- Divider line -->
+            <line x1="44" y1="248" x2="490" y2="248" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
 
-        <!-- Skill 2 -->
-        <rect x="480" y="130" width="320" height="60" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(220,71,125,0.15)" stroke-width="1"/>
-        <circle cx="502" cy="160" r="6" fill="#DC477D" opacity="0.6"/>
-        <text x="520" y="152" font-family="'SF Mono', monospace" font-size="14" fill="#DC477D" font-weight="600">tf-research</text>
-        <text x="520" y="172" font-family="'Inter',Arial,sans-serif" font-size="12" fill="#82748C">AWS docs, provider docs, registry patterns</text>
+            <!-- Body content -->
+            <text x="44" y="280" font-family="'SF Mono','Fira Code',monospace" font-size="16" fill="#CCCCCC" font-weight="600"># SDD &mdash; Plan</text>
 
-        <!-- Skill 3 -->
-        <rect x="480" y="200" width="320" height="60" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
-        <circle cx="502" cy="230" r="6" fill="#FFCF25" opacity="0.6"/>
-        <text x="520" y="222" font-family="'SF Mono', monospace" font-size="14" fill="#FFCF25" font-weight="600">tf-judge-criteria</text>
-        <text x="520" y="242" font-family="'Inter',Arial,sans-serif" font-size="12" fill="#82748C">Scoring rubrics, evaluation methodology</text>
+            <text x="44" y="308" font-family="'SF Mono','Fira Code',monospace" font-size="14" fill="#9E94A8">Produces design.md from requirements.</text>
 
-        <!-- Skill 4 -->
-        <rect x="480" y="270" width="320" height="60" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(167,139,250,0.15)" stroke-width="1"/>
-        <circle cx="502" cy="300" r="6" fill="#A78BFA" opacity="0.6"/>
-        <text x="520" y="292" font-family="'SF Mono', monospace" font-size="14" fill="#A78BFA" font-weight="600">terraform-test</text>
-        <text x="520" y="312" font-family="'Inter',Arial,sans-serif" font-size="12" fill="#82748C">Guide for .tftest.hcl: run, assert, mock</text>
+            <text x="44" y="344" font-family="'SF Mono','Fira Code',monospace" font-size="16" fill="#CCCCCC" font-weight="600">## Phase 1: Requirements</text>
+            <text x="44" y="372" font-family="'SF Mono','Fira Code',monospace" font-size="14" fill="#9E94A8">- Gather requirements</text>
+            <text x="44" y="396" font-family="'SF Mono','Fira Code',monospace" font-size="14" fill="#9E94A8">- Research provider docs</text>
 
-        <!-- Skill 5 -->
-        <rect x="480" y="340" width="320" height="60" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
-        <circle cx="502" cy="370" r="6" fill="#60DEA9" opacity="0.6"/>
-        <text x="520" y="362" font-family="'SF Mono', monospace" font-size="14" fill="#60DEA9" font-weight="600">tf-security-baselines</text>
-        <text x="520" y="382" font-family="'Inter',Arial,sans-serif" font-size="12" fill="#82748C">AWS security domains, CIS/NIST baselines</text>
+            <text x="44" y="432" font-family="'SF Mono','Fira Code',monospace" font-size="16" fill="#CCCCCC" font-weight="600">## Phase 2: Design</text>
+            <text x="44" y="460" font-family="'SF Mono','Fira Code',monospace" font-size="14" fill="#9E94A8">- Produce design.md</text>
+            <text x="44" y="484" font-family="'SF Mono','Fira Code',monospace" font-size="14" fill="#9E94A8">- Document architecture decisions</text>
 
-        <!-- How the agent selects skills -->
-        <rect x="20" y="460" width="800" height="100" rx="12" fill="rgba(167,139,250,0.04)" stroke="none"/>
-        <text x="40" y="490" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="12" fill="#A78BFA" font-weight="500" letter-spacing="3">HOW THE AGENT SELECTS SKILLS</text>
+            <!-- Frontmatter badge -->
+            <rect x="362" y="96" width="112" height="28" rx="6" fill="rgba(167,139,250,0.12)" stroke="rgba(167,139,250,0.3)" stroke-width="1"/>
+            <text x="418" y="115" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#A78BFA" font-weight="600">frontmatter</text>
 
-        <!-- Flow steps -->
-        <rect x="40" y="508" width="160" height="36" rx="8" fill="rgba(98,212,220,0.1)" stroke="rgba(98,212,220,0.25)" stroke-width="1"/>
-        <text x="120" y="531" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#62D4DC" font-weight="600">Reads description</text>
+            <!-- Skill content badge -->
+            <rect x="362" y="272" width="112" height="28" rx="6" fill="rgba(98,212,220,0.12)" stroke="rgba(98,212,220,0.3)" stroke-width="1"/>
+            <text x="418" y="291" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#62D4DC" font-weight="600">skill content</text>
 
-        <!-- Arrow -->
-        <line x1="210" y1="526" x2="244" y2="526" stroke="rgba(167,139,250,0.3)" stroke-width="1.5"/>
-        <polygon points="240,521 250,526 240,531" fill="rgba(167,139,250,0.3)"/>
+            <!-- ====== REPO SKILLS (right panel) ====== -->
+            <rect x="550" y="0" width="410" height="520" rx="12" fill="url(#listGrad)" stroke="rgba(167,139,250,0.12)" stroke-width="1"/>
+            <text x="574" y="32" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="13" fill="#A78BFA" font-weight="500" letter-spacing="3">REPO SKILLS</text>
 
-        <rect x="256" y="508" width="160" height="36" rx="8" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.25)" stroke-width="1"/>
-        <text x="336" y="531" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#A78BFA" font-weight="600">Matches to task</text>
+            <!-- Skill 1 -->
+            <rect x="570" y="52" width="370" height="72" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
+            <circle cx="594" cy="88" r="8" fill="#62D4DC" opacity="0.5"/>
+            <text x="614" y="80" font-family="'SF Mono',monospace" font-size="16" fill="#62D4DC" font-weight="600">tf-module-plan</text>
+            <text x="614" y="102" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8">SDD Phases 1-2: clarify, research, design</text>
 
-        <!-- Arrow -->
-        <line x1="426" y1="526" x2="460" y2="526" stroke="rgba(167,139,250,0.3)" stroke-width="1.5"/>
-        <polygon points="456,521 466,526 456,531" fill="rgba(167,139,250,0.3)"/>
+            <!-- Skill 2 -->
+            <rect x="570" y="136" width="370" height="72" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(220,71,125,0.15)" stroke-width="1"/>
+            <circle cx="594" cy="172" r="8" fill="#DC477D" opacity="0.5"/>
+            <text x="614" y="164" font-family="'SF Mono',monospace" font-size="16" fill="#DC477D" font-weight="600">tf-research</text>
+            <text x="614" y="186" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8">AWS docs, provider docs, registry patterns</text>
 
-        <rect x="472" y="508" width="160" height="36" rx="8" fill="rgba(220,71,125,0.1)" stroke="rgba(220,71,125,0.25)" stroke-width="1"/>
-        <text x="552" y="531" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#DC477D" font-weight="600">Loads full content</text>
+            <!-- Skill 3 -->
+            <rect x="570" y="220" width="370" height="72" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
+            <circle cx="594" cy="256" r="8" fill="#FFCF25" opacity="0.5"/>
+            <text x="614" y="248" font-family="'SF Mono',monospace" font-size="16" fill="#FFCF25" font-weight="600">tf-judge-criteria</text>
+            <text x="614" y="270" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8">Scoring rubrics, evaluation methodology</text>
 
-        <!-- Arrow -->
-        <line x1="642" y1="526" x2="676" y2="526" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
-        <polygon points="672,521 682,526 672,531" fill="rgba(220,71,125,0.3)"/>
+            <!-- Skill 4 -->
+            <rect x="570" y="304" width="370" height="72" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(167,139,250,0.15)" stroke-width="1"/>
+            <circle cx="594" cy="340" r="8" fill="#A78BFA" opacity="0.5"/>
+            <text x="614" y="332" font-family="'SF Mono',monospace" font-size="16" fill="#A78BFA" font-weight="600">terraform-test</text>
+            <text x="614" y="354" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8">Guide for .tftest.hcl: run, assert, mock</text>
 
-        <rect x="688" y="508" width="120" height="36" rx="8" fill="rgba(255,207,37,0.1)" stroke="rgba(255,207,37,0.25)" stroke-width="1"/>
-        <text x="748" y="531" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#FFCF25" font-weight="600">Executes skill</text>
+            <!-- Skill 5 -->
+            <rect x="570" y="388" width="370" height="72" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+            <circle cx="594" cy="424" r="8" fill="#60DEA9" opacity="0.5"/>
+            <text x="614" y="416" font-family="'SF Mono',monospace" font-size="16" fill="#60DEA9" font-weight="600">tf-security-baselines</text>
+            <text x="614" y="438" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8">AWS security domains, CIS/NIST baselines</text>
 
-        <!-- Storage tiers at bottom -->
-        <rect x="20" y="590" width="800" height="120" rx="12" fill="rgba(255,207,37,0.03)" stroke="none"/>
-        <text x="40" y="622" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="12" fill="#FFCF25" font-weight="500" letter-spacing="3">STORAGE LOCATIONS</text>
+            <!-- Highlight connection: first skill matches the code panel -->
+            <line x1="510" y1="90" x2="570" y2="90" stroke="rgba(98,212,220,0.35)" stroke-width="1.5" stroke-dasharray="4,3"/>
 
-        <!-- Three tier bars -->
-        <rect x="40" y="640" width="240" height="32" rx="6" fill="rgba(255,207,37,0.1)" stroke="rgba(255,207,37,0.2)" stroke-width="1"/>
-        <text x="160" y="661" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#FFCF25" font-weight="600">Enterprise (highest)</text>
+            <!-- ====== STORAGE + SELECTION (bottom bar) ====== -->
+            <rect x="0" y="540" width="960" height="68" rx="10" fill="rgba(167,139,250,0.03)" stroke="rgba(167,139,250,0.08)" stroke-width="1"/>
 
-        <rect x="300" y="640" width="240" height="32" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
-        <text x="420" y="661" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#A78BFA" font-weight="600">Personal ~/.agent/</text>
+            <!-- Storage tiers -->
+            <text x="24" y="580" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8" font-weight="500">STORAGE</text>
 
-        <rect x="560" y="640" width="240" height="32" rx="6" fill="rgba(98,212,220,0.1)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
-        <text x="680" y="661" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#62D4DC" font-weight="600">Project .agent/</text>
+            <rect x="110" y="562" width="150" height="32" rx="6" fill="rgba(255,207,37,0.08)" stroke="rgba(255,207,37,0.18)" stroke-width="1"/>
+            <text x="185" y="583" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#FFCF25" font-weight="600">Enterprise</text>
 
-        <!-- Priority arrows -->
-        <text x="275" y="661" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">&#8250;</text>
-        <text x="545" y="661" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">&#8250;</text>
+            <text x="276" y="583" fill="#9E94A8" font-size="16" font-weight="600">&#x203A;</text>
 
-      </svg>
+            <rect x="296" y="562" width="170" height="32" rx="6" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.18)" stroke-width="1"/>
+            <text x="381" y="583" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#A78BFA" font-weight="600">~/.claude/skills/</text>
+
+            <text x="482" y="583" fill="#9E94A8" font-size="16" font-weight="600">&#x203A;</text>
+
+            <rect x="502" y="562" width="160" height="32" rx="6" fill="rgba(98,212,220,0.08)" stroke="rgba(98,212,220,0.18)" stroke-width="1"/>
+            <text x="582" y="583" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#62D4DC" font-weight="600">.claude/skills/</text>
+
+            <!-- Selection flow -->
+            <text x="696" y="580" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8" font-weight="500">SELECTION</text>
+
+            <text x="782" y="580" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#62D4DC" font-weight="600">read</text>
+            <text x="812" y="580" fill="#9E94A8" font-size="14">&#x2192;</text>
+            <text x="830" y="580" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#A78BFA" font-weight="600">match</text>
+            <text x="874" y="580" fill="#9E94A8" font-size="14">&#x2192;</text>
+            <text x="892" y="580" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#DC477D" font-weight="600">load</text>
+            <text x="922" y="580" fill="#9E94A8" font-size="14">&#x2192;</text>
+            <text x="938" y="580" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#FFCF25" font-weight="600">run</text>
+
+        </svg>
     </div>
-
-  </div>
-
 </div>
 
 </body>

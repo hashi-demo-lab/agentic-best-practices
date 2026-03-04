@@ -111,7 +111,10 @@ addDividerSlide("Foundations", "Core concepts that power agentic workflows");
 // Slide 6: Skills
 addImageSlide("slide-06-skills.png");
 
-// Slide 7: Subagents
+// Slide 7: Subagents — What they are
+addImageSlide("slide-07-subagents.png");
+
+// Slide 8: Subagent Architecture
 addImageSlide("slide-07-08-subagents.png");
 
 // Slide 8: Context Engineering

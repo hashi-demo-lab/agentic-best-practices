@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Subagents: Custom Specialists</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+}
+
+body::before {
+    content: '';
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none; z-index: 0;
+}
+
+.title-bar {
+    padding: 48px 80px 32px;
+    border-bottom: 1px solid rgba(96,222,169,0.12);
+}
+.section-label {
+    font-size: 12px; font-weight: 500; color: #FFCF25;
+    text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px;
+}
+.title-bar h1 {
+    font-size: 36px; font-weight: 600; color: #FFFFFF;
+    margin-bottom: 8px;
+}
+.title-bar p {
+    font-size: 20px; color: #CCCCCC; font-weight: 400;
+}
+
+.content {
+    display: flex; padding: 48px 80px 0; gap: 64px;
+    align-items: flex-start;
+}
+
+.bullets {
+    width: 38%; display: flex; flex-direction: column; gap: 28px;
+    padding-top: 16px;
+}
+.bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+}
+.bullet-dot {
+    width: 8px; height: 8px; border-radius: 2px;
+    margin-top: 8px; flex-shrink: 0;
+}
+.bullet-text {
+    font-size: 22px; line-height: 1.5; color: #FFFFFF;
+}
+.bullet-text span {
+    font-weight: 600;
+}
+
+.visual {
+    width: 62%; display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="title-bar" style="position:relative;z-index:1;">
+    <div class="section-label">FOUNDATIONS</div>
+    <h1>Subagents: Custom Specialists</h1>
+    <p>Markdown files that define specialized AI assistants with scoped tools, models, and permissions</p>
+</div>
+
+<div class="content" style="position:relative;z-index:1;">
+    <div class="bullets">
+        <div class="bullet">
+            <div class="bullet-dot" style="background:#60DEA9;"></div>
+            <div class="bullet-text"><span style="color:#60DEA9;">Definition</span> &mdash; markdown files with YAML frontmatter defining custom prompts, tool access, model selection, and permission boundaries</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot" style="background:#A78BFA;"></div>
+            <div class="bullet-text"><span style="color:#A78BFA;">Scoped capabilities</span> &mdash; each agent gets only the tools it needs; disallowedTools blocks dangerous operations at the boundary</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot" style="background:#DC477D;"></div>
+            <div class="bullet-text"><span style="color:#DC477D;">Context extension</span> &mdash; isolated context windows extend total capacity beyond single-agent limits; agents hand off via disk artifacts, keeping each window focused</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot" style="background:#FFCF25;"></div>
+            <div class="bullet-text"><span style="color:#FFCF25;">Built-in types</span> &mdash; Explore (Haiku, read-only), Plan (read-only), General-purpose (all tools), or define your own custom specialists</div>
+        </div>
+    </div>
+
+    <div class="visual">
+        <svg width="960" height="700" viewBox="0 0 960 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+            <defs>
+                <linearGradient id="codeGrad" x1="0" y1="0" x2="0" y2="560" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#0E0E0E"/>
+                    <stop offset="100%" stop-color="#060606"/>
+                </linearGradient>
+                <linearGradient id="listGrad" x1="0" y1="0" x2="0" y2="560" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#0E0E0E"/>
+                    <stop offset="100%" stop-color="#060606"/>
+                </linearGradient>
+            </defs>
+
+            <!-- ====== AGENT.MD STRUCTURE (left panel) ====== -->
+            <rect x="0" y="0" width="510" height="600" rx="12" fill="url(#codeGrad)" stroke="rgba(96,222,169,0.12)" stroke-width="1"/>
+            <text x="24" y="32" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="13" fill="#60DEA9" font-weight="500" letter-spacing="3">AGENT.MD STRUCTURE</text>
+
+            <!-- Code block background -->
+            <rect x="20" y="48" width="470" height="532" rx="8" fill="rgba(18,18,18,0.9)" stroke="rgba(96,222,169,0.08)" stroke-width="1"/>
+
+            <!-- Frontmatter -->
+            <text x="44" y="82" font-family="'SF Mono','Fira Code',monospace" font-size="16" fill="#9E94A8">---</text>
+
+            <text x="44" y="112" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#A78BFA">name</tspan><tspan fill="#9E94A8">: </tspan><tspan fill="#60DEA9">tf-researcher</tspan>
+            </text>
+
+            <text x="44" y="142" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#A78BFA">description</tspan><tspan fill="#9E94A8">: </tspan><tspan fill="#60DEA9">Research AWS</tspan>
+            </text>
+            <text x="44" y="166" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#60DEA9">  provider docs and patterns</tspan>
+            </text>
+
+            <text x="44" y="196" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#A78BFA">model</tspan><tspan fill="#9E94A8">: </tspan><tspan fill="#60DEA9">haiku</tspan>
+            </text>
+
+            <text x="44" y="226" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#A78BFA">tools</tspan><tspan fill="#9E94A8">:</tspan>
+            </text>
+            <text x="44" y="250" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#9E94A8">  - </tspan><tspan fill="#62D4DC">Read</tspan>
+            </text>
+            <text x="44" y="274" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#9E94A8">  - </tspan><tspan fill="#62D4DC">Glob</tspan>
+            </text>
+            <text x="44" y="298" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#9E94A8">  - </tspan><tspan fill="#62D4DC">Grep</tspan>
+            </text>
+            <text x="44" y="322" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#9E94A8">  - </tspan><tspan fill="#62D4DC">WebFetch</tspan>
+            </text>
+
+            <text x="44" y="352" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#A78BFA">skills</tspan><tspan fill="#9E94A8">:</tspan>
+            </text>
+            <text x="44" y="376" font-family="'SF Mono','Fira Code',monospace" font-size="16">
+                <tspan fill="#9E94A8">  - </tspan><tspan fill="#62D4DC">tf-research</tspan>
+            </text>
+
+            <text x="44" y="406" font-family="'SF Mono','Fira Code',monospace" font-size="16" fill="#9E94A8">---</text>
+
+            <!-- Divider line -->
+            <line x1="44" y1="426" x2="470" y2="426" stroke="rgba(96,222,169,0.1)" stroke-width="1"/>
+
+            <!-- System prompt content -->
+            <text x="44" y="456" font-family="'SF Mono','Fira Code',monospace" font-size="16" fill="#CCCCCC" font-weight="600"># Research Agent</text>
+
+            <text x="44" y="484" font-family="'SF Mono','Fira Code',monospace" font-size="14" fill="#9E94A8">You are a Terraform research specialist.</text>
+            <text x="44" y="508" font-family="'SF Mono','Fira Code',monospace" font-size="14" fill="#9E94A8">Investigate provider documentation,</text>
+            <text x="44" y="532" font-family="'SF Mono','Fira Code',monospace" font-size="14" fill="#9E94A8">registry patterns, and best practices.</text>
+            <text x="44" y="560" font-family="'SF Mono','Fira Code',monospace" font-size="14" fill="#9E94A8">Return concise summaries only.</text>
+
+            <!-- Frontmatter badge -->
+            <rect x="362" y="96" width="112" height="28" rx="6" fill="rgba(167,139,250,0.12)" stroke="rgba(167,139,250,0.3)" stroke-width="1"/>
+            <text x="418" y="115" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#A78BFA" font-weight="600">frontmatter</text>
+
+            <!-- System prompt badge -->
+            <rect x="362" y="432" width="112" height="28" rx="6" fill="rgba(96,222,169,0.12)" stroke="rgba(96,222,169,0.3)" stroke-width="1"/>
+            <text x="418" y="451" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#60DEA9" font-weight="600">system prompt</text>
+
+            <!-- ====== BUILT-IN AGENTS (right panel) ====== -->
+            <rect x="556" y="0" width="404" height="420" rx="12" fill="url(#listGrad)" stroke="rgba(167,139,250,0.12)" stroke-width="1"/>
+            <text x="580" y="32" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="13" fill="#A78BFA" font-weight="500" letter-spacing="3">BUILT-IN AGENT TYPES</text>
+
+            <!-- Explore -->
+            <rect x="576" y="52" width="364" height="84" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
+            <circle cx="600" cy="82" r="8" fill="#62D4DC" opacity="0.5"/>
+            <text x="620" y="76" font-family="'SF Mono',monospace" font-size="16" fill="#62D4DC" font-weight="600">Explore</text>
+            <text x="620" y="98" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8">Haiku model, read-only tools</text>
+            <text x="620" y="118" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8">Fast codebase search and analysis</text>
+
+            <!-- Plan -->
+            <rect x="576" y="148" width="364" height="84" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(167,139,250,0.15)" stroke-width="1"/>
+            <circle cx="600" cy="178" r="8" fill="#A78BFA" opacity="0.5"/>
+            <text x="620" y="172" font-family="'SF Mono',monospace" font-size="16" fill="#A78BFA" font-weight="600">Plan</text>
+            <text x="620" y="194" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8">Inherited model, read-only tools</text>
+            <text x="620" y="214" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8">Architecture design and planning</text>
+
+            <!-- General-purpose -->
+            <rect x="576" y="244" width="364" height="84" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+            <circle cx="600" cy="274" r="8" fill="#60DEA9" opacity="0.5"/>
+            <text x="620" y="268" font-family="'SF Mono',monospace" font-size="16" fill="#60DEA9" font-weight="600">General-purpose</text>
+            <text x="620" y="290" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8">Full tool access, all capabilities</text>
+            <text x="620" y="310" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#9E94A8">Complex multi-step tasks</text>
+
+            <!-- Custom -->
+            <rect x="576" y="340" width="364" height="68" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
+            <circle cx="600" cy="362" r="8" fill="#FFCF25" opacity="0.5"/>
+            <text x="620" y="358" font-family="'SF Mono',monospace" font-size="16" fill="#FFCF25" font-weight="600">Custom agents</text>
+            <text x="620" y="378" font-family="'SF Mono',monospace" font-size="13" fill="#9E94A8">tf-module-developer</text>
+            <text x="790" y="378" font-family="'SF Mono',monospace" font-size="13" fill="#9E94A8">tf-module-validator</text>
+            <text x="620" y="396" font-family="'SF Mono',monospace" font-size="13" fill="#9E94A8">tf-consumer-research</text>
+            <text x="790" y="396" font-family="'SF Mono',monospace" font-size="13" fill="#9E94A8">tf-module-design</text>
+
+            <!-- ====== STORAGE LOCATIONS (right panel bottom) ====== -->
+            <rect x="556" y="440" width="404" height="160" rx="12" fill="url(#listGrad)" stroke="rgba(255,207,37,0.1)" stroke-width="1"/>
+            <text x="580" y="472" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="13" fill="#FFCF25" font-weight="500" letter-spacing="3">STORAGE</text>
+
+            <rect x="576" y="492" width="364" height="40" rx="6" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
+            <text x="590" y="517" font-family="'SF Mono',monospace" font-size="14" fill="#62D4DC" font-weight="600">.claude/agents/</text>
+            <text x="808" y="517" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#9E94A8">Project</text>
+
+            <rect x="576" y="544" width="364" height="40" rx="6" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.15)" stroke-width="1"/>
+            <text x="590" y="569" font-family="'SF Mono',monospace" font-size="14" fill="#A78BFA" font-weight="600">~/.claude/agents/</text>
+            <text x="808" y="569" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#9E94A8">Personal</text>
+
+            <!-- Connection line from agent.md to built-in list -->
+            <line x1="510" y1="82" x2="556" y2="82" stroke="rgba(96,222,169,0.3)" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+        </svg>
+    </div>
+</div>
+
+</body>
+</html>

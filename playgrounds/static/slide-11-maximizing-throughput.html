@@ -29,7 +29,7 @@ body {
     margin-bottom: 8px;
 }
 .title-bar p {
-    font-size: 18px; color: #CCCCCC; font-weight: 400;
+    font-size: 20px; color: #CCCCCC; font-weight: 400;
 }
 
 /* Content area */
@@ -51,7 +51,7 @@ body {
     background: #62D4DC; margin-top: 8px; flex-shrink: 0;
 }
 .bullet-text {
-    font-size: 18px; line-height: 1.6; color: #FFFFFF;
+    font-size: 22px; line-height: 1.5; color: #FFFFFF;
     font-family: 'Inter', Arial, sans-serif;
 }
 .bullet-text span {
@@ -80,7 +80,7 @@ body {
         </div>
         <div class="bullet">
             <div class="bullet-dot"></div>
-            <div class="bullet-text"><span>Research returns &lt;500 tokens</span> &mdash; in-memory findings only, never write to disk</div>
+            <div class="bullet-text"><span>Minimize return payload</span> &mdash; instruct subagents to return summaries, not raw data</div>
         </div>
         <div class="bullet">
             <div class="bullet-dot"></div>
@@ -109,25 +109,25 @@ body {
             <text x="110" y="132" text-anchor="middle" fill="#A78BFA" font-size="22" font-weight="700" font-family="Inter, Arial, sans-serif">O</text>
             <!-- Opus text -->
             <text x="164" y="105" fill="#C4B5FD" font-size="24" font-weight="700" font-family="Inter, Arial, sans-serif">Opus</text>
-            <text x="164" y="132" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Highest quality  |  Deep reasoning  |  Complex decisions</text>
+            <text x="164" y="132" fill="#CCCCCC" font-size="18" font-family="Inter, Arial, sans-serif">Highest quality  |  Deep reasoning  |  Complex decisions</text>
             <!-- Role badges -->
             <rect x="164" y="148" width="90" height="26" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
-            <text x="209" y="165" text-anchor="middle" fill="#A78BFA" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">Research</text>
+            <text x="209" y="165" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Research</text>
             <rect x="264" y="148" width="80" height="26" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
-            <text x="304" y="165" text-anchor="middle" fill="#A78BFA" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">Design</text>
+            <text x="304" y="165" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Design</text>
             <rect x="354" y="148" width="110" height="26" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
-            <text x="409" y="165" text-anchor="middle" fill="#A78BFA" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">Test-Writer</text>
+            <text x="409" y="165" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Test-Writer</text>
             <rect x="474" y="148" width="95" height="26" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
-            <text x="521" y="165" text-anchor="middle" fill="#A78BFA" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">Validator</text>
+            <text x="521" y="165" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Validator</text>
             <!-- Quality bar -->
             <rect x="640" y="95" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
             <rect x="640" y="95" width="150" height="8" rx="4" fill="rgba(167,139,250,0.5)"/>
-            <text x="640" y="85" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">QUALITY</text>
-            <text x="790" y="85" text-anchor="end" fill="#A78BFA" font-size="11" font-weight="600" font-family="Inter, Arial, sans-serif">HIGHEST</text>
+            <text x="640" y="85" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">QUALITY</text>
+            <text x="790" y="85" text-anchor="end" fill="#A78BFA" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">HIGHEST</text>
             <rect x="640" y="135" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
             <rect x="640" y="135" width="45" height="8" rx="4" fill="rgba(220,71,125,0.5)"/>
-            <text x="640" y="125" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">SPEED</text>
-            <text x="790" y="125" text-anchor="end" fill="#CCCCCC" font-size="11" font-family="Inter, Arial, sans-serif">SLOWER</text>
+            <text x="640" y="125" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">SPEED</text>
+            <text x="790" y="125" text-anchor="end" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">SLOWER</text>
 
             <!-- Tier 2: Sonnet -->
             <rect x="40" y="220" width="780" height="130" rx="12" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.2)" stroke-width="1.5"/>
@@ -136,21 +136,21 @@ body {
             <text x="110" y="292" text-anchor="middle" fill="#62D4DC" font-size="22" font-weight="700" font-family="Inter, Arial, sans-serif">S</text>
             <!-- Sonnet text -->
             <text x="164" y="265" fill="#62D4DC" font-size="24" font-weight="700" font-family="Inter, Arial, sans-serif">Sonnet</text>
-            <text x="164" y="292" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Balanced  |  Fast  |  Most agent workloads</text>
+            <text x="164" y="292" fill="#CCCCCC" font-size="18" font-family="Inter, Arial, sans-serif">Balanced  |  Fast  |  Most agent workloads</text>
             <!-- Role badges -->
             <rect x="164" y="308" width="100" height="26" rx="6" fill="rgba(98,212,220,0.08)" stroke="rgba(98,212,220,0.18)" stroke-width="1"/>
-            <text x="214" y="325" text-anchor="middle" fill="#62D4DC" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">Developer</text>
+            <text x="214" y="325" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Developer</text>
             <rect x="274" y="308" width="140" height="26" rx="6" fill="rgba(98,212,220,0.08)" stroke="rgba(98,212,220,0.18)" stroke-width="1"/>
-            <text x="344" y="325" text-anchor="middle" fill="#62D4DC" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">Implementation</text>
+            <text x="344" y="325" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Implementation</text>
             <!-- Quality bar -->
             <rect x="640" y="255" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
             <rect x="640" y="255" width="105" height="8" rx="4" fill="rgba(98,212,220,0.45)"/>
-            <text x="640" y="245" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">QUALITY</text>
-            <text x="790" y="245" text-anchor="end" fill="#62D4DC" font-size="11" font-weight="600" font-family="Inter, Arial, sans-serif">HIGH</text>
+            <text x="640" y="245" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">QUALITY</text>
+            <text x="790" y="245" text-anchor="end" fill="#62D4DC" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">HIGH</text>
             <rect x="640" y="295" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
             <rect x="640" y="295" width="120" height="8" rx="4" fill="rgba(96,222,169,0.5)"/>
-            <text x="640" y="285" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">SPEED</text>
-            <text x="790" y="285" text-anchor="end" fill="#60DEA9" font-size="11" font-weight="600" font-family="Inter, Arial, sans-serif">FAST</text>
+            <text x="640" y="285" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">SPEED</text>
+            <text x="790" y="285" text-anchor="end" fill="#60DEA9" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">FAST</text>
 
             <!-- Tier 3: Haiku -->
             <rect x="40" y="380" width="780" height="130" rx="12" fill="rgba(255,207,37,0.03)" stroke="rgba(255,207,37,0.18)" stroke-width="1.5"/>
@@ -159,21 +159,21 @@ body {
             <text x="110" y="452" text-anchor="middle" fill="#FFCF25" font-size="22" font-weight="700" font-family="Inter, Arial, sans-serif">H</text>
             <!-- Haiku text -->
             <text x="164" y="425" fill="#FFCF25" font-size="24" font-weight="700" font-family="Inter, Arial, sans-serif">Haiku</text>
-            <text x="164" y="452" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Fastest  |  Cheapest  |  Simple structured tasks</text>
+            <text x="164" y="452" fill="#CCCCCC" font-size="18" font-family="Inter, Arial, sans-serif">Fastest  |  Cheapest  |  Simple structured tasks</text>
             <!-- Role badges -->
             <rect x="164" y="468" width="130" height="26" rx="6" fill="rgba(255,207,37,0.06)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
-            <text x="229" y="485" text-anchor="middle" fill="#FFCF25" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">Research Parsing</text>
+            <text x="229" y="485" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Research Parsing</text>
             <rect x="304" y="468" width="120" height="26" rx="6" fill="rgba(255,207,37,0.06)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
-            <text x="364" y="485" text-anchor="middle" fill="#FFCF25" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">Classification</text>
+            <text x="364" y="485" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Classification</text>
             <!-- Quality bar -->
             <rect x="640" y="415" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
             <rect x="640" y="415" width="60" height="8" rx="4" fill="rgba(255,207,37,0.45)"/>
-            <text x="640" y="405" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">QUALITY</text>
-            <text x="790" y="405" text-anchor="end" fill="#CCCCCC" font-size="11" font-family="Inter, Arial, sans-serif">GOOD</text>
+            <text x="640" y="405" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">QUALITY</text>
+            <text x="790" y="405" text-anchor="end" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">GOOD</text>
             <rect x="640" y="455" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
             <rect x="640" y="455" width="150" height="8" rx="4" fill="rgba(255,207,37,0.5)"/>
-            <text x="640" y="445" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">SPEED</text>
-            <text x="790" y="445" text-anchor="end" fill="#FFCF25" font-size="11" font-weight="600" font-family="Inter, Arial, sans-serif">FASTEST</text>
+            <text x="640" y="445" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">SPEED</text>
+            <text x="790" y="445" text-anchor="end" fill="#FFCF25" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">FASTEST</text>
 
             <!-- Cost indicator -->
             <rect x="40" y="540" width="780" height="60" rx="12" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
