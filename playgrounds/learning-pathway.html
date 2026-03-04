@@ -340,6 +340,68 @@ body.has-selection .node.dimmed { opacity: var(--dim); }
 .search-result .sr-desc { font-size: 10px; color: #666; margin-top: 1px; }
 .search-empty { padding: 20px; text-align: center; color: #444; font-size: 12px; }
 
+/* === SVG DIAGRAM CONTAINER === */
+.svg-diagram {
+  max-width: 720px; margin: 0 auto 8px; padding: 0 24px;
+  position: relative; z-index: 1;
+}
+.svg-diagram svg { width: 100%; height: auto; display: block; }
+.svg-diagram [data-id] { cursor: pointer; transition: filter 0.25s ease; }
+.svg-diagram [data-id]:hover { filter: drop-shadow(0 0 8px rgba(180,77,255,0.5)); }
+
+/* === SVG ANIMATION KEYFRAMES === */
+@keyframes stagger-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes flow-dash {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -20; }
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+@keyframes bar-fill {
+  from { width: 0; }
+  to { width: var(--fill-width, 100%); }
+}
+@keyframes glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px var(--glow-color, rgba(180,77,255,0.3))); }
+  50% { filter: drop-shadow(0 0 12px var(--glow-color, rgba(180,77,255,0.5))); }
+}
+@keyframes gate-pulse {
+  0%, 100% { stroke-opacity: 0.4; }
+  50% { stroke-opacity: 1; }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes float-dot {
+  0% { offset-distance: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+@keyframes bar-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes rotate-loop {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* SVG entrance animations */
+.svg-diagram .entrance {
+  animation: stagger-in 0.5s ease both;
+}
+.svg-diagram .flow-line {
+  stroke-dasharray: 6 4;
+  animation: flow-dash 0.8s linear infinite;
+}
+
 @media (max-width:900px) {
   #nav { padding: 0 12px; }
   .nav-title { margin-right: 12px; font-size: 9px; letter-spacing: 2px; }
@@ -487,6 +549,84 @@ code your-new-repo</pre>
   <h1 style="color:var(--purple)">Skills: Domain Knowledge for Agents</h1>
   <p>SKILL.MD files package reusable expertise that the agent selects by matching name and description</p>
 </div>
+<div class="svg-diagram">
+  <svg viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="sk-code-bg" x1="0" y1="0" x2="0" y2="360">
+        <stop offset="0%" stop-color="#111118"/>
+        <stop offset="100%" stop-color="#08080c"/>
+      </linearGradient>
+      <filter id="sk-glow"><feGaussianBlur in="SourceGraphic" stdDeviation="3"/></filter>
+    </defs>
+    <!-- SKILL.MD file mockup (left) -->
+    <g class="entrance" style="animation-delay:0.1s" data-id="concept-skills" data-type="concept">
+      <rect x="16" y="16" width="280" height="328" rx="8" fill="url(#sk-code-bg)" stroke="rgba(0,240,255,0.15)" stroke-width="1"/>
+      <rect x="16" y="16" width="280" height="328" rx="8" fill="none" stroke="rgba(0,240,255,0.06)" stroke-width="1" filter="url(#sk-glow)"/>
+      <text x="30" y="40" font-family="monospace" font-size="10" fill="rgba(0,240,255,0.5)" letter-spacing="2" font-weight="600">SKILL.MD</text>
+      <!-- Code content -->
+      <rect x="28" y="52" width="254" height="280" rx="5" fill="rgba(10,10,16,0.8)" stroke="rgba(0,240,255,0.06)" stroke-width="0.5"/>
+      <text x="40" y="72" font-family="monospace" font-size="11" fill="#666">---</text>
+      <text x="40" y="90" font-family="monospace" font-size="11"><tspan fill="#b44dff">name</tspan><tspan fill="#666">: </tspan><tspan fill="#00f0ff">tf-module-plan</tspan></text>
+      <text x="40" y="108" font-family="monospace" font-size="11"><tspan fill="#b44dff">description</tspan><tspan fill="#666">: </tspan><tspan fill="#00f0ff">SDD Phases 1-2.</tspan></text>
+      <text x="40" y="124" font-family="monospace" font-size="11"><tspan fill="#00f0ff">  Clarify, research, design.</tspan></text>
+      <text x="40" y="142" font-family="monospace" font-size="11"><tspan fill="#b44dff">user-invocable</tspan><tspan fill="#666">: </tspan><tspan fill="#39ff8e">true</tspan></text>
+      <text x="40" y="160" font-family="monospace" font-size="11" fill="#666">---</text>
+      <!-- Divider -->
+      <line x1="40" y1="174" x2="268" y2="174" stroke="rgba(0,240,255,0.08)" stroke-width="0.5"/>
+      <!-- Body -->
+      <text x="40" y="194" font-family="monospace" font-size="11" fill="#ccc" font-weight="600"># SDD Plan</text>
+      <text x="40" y="212" font-family="monospace" font-size="10" fill="#777">Produces design.md from requirements.</text>
+      <text x="40" y="234" font-family="monospace" font-size="11" fill="#ccc" font-weight="600">## Phase 1: Requirements</text>
+      <text x="40" y="252" font-family="monospace" font-size="10" fill="#777">- Gather requirements</text>
+      <text x="40" y="268" font-family="monospace" font-size="10" fill="#777">- Research provider docs</text>
+      <text x="40" y="290" font-family="monospace" font-size="11" fill="#ccc" font-weight="600">## Phase 2: Design</text>
+      <text x="40" y="308" font-family="monospace" font-size="10" fill="#777">- Produce design.md</text>
+      <text x="40" y="324" font-family="monospace" font-size="10" fill="#777">- Document architecture</text>
+      <!-- Badges -->
+      <rect x="198" y="76" width="72" height="20" rx="4" fill="rgba(180,77,255,0.12)" stroke="rgba(180,77,255,0.3)" stroke-width="0.8"/>
+      <text x="234" y="90" text-anchor="middle" font-size="9" fill="#b44dff" font-weight="600">frontmatter</text>
+      <rect x="198" y="186" width="72" height="20" rx="4" fill="rgba(0,240,255,0.1)" stroke="rgba(0,240,255,0.3)" stroke-width="0.8"/>
+      <text x="234" y="200" text-anchor="middle" font-size="9" fill="#00f0ff" font-weight="600">skill body</text>
+    </g>
+    <!-- Dashed connection lines -->
+    <line x1="296" y1="100" x2="380" y2="64" class="flow-line" stroke="rgba(0,240,255,0.25)" stroke-width="1.2"/>
+    <line x1="296" y1="140" x2="380" y2="128" class="flow-line" stroke="rgba(180,77,255,0.25)" stroke-width="1.2"/>
+    <line x1="296" y1="180" x2="380" y2="192" class="flow-line" stroke="rgba(255,45,123,0.25)" stroke-width="1.2"/>
+    <line x1="296" y1="220" x2="380" y2="256" class="flow-line" stroke="rgba(255,225,77,0.25)" stroke-width="1.2"/>
+    <line x1="296" y1="260" x2="380" y2="320" class="flow-line" stroke="rgba(57,255,142,0.25)" stroke-width="1.2"/>
+    <!-- Skill cards (right) -->
+    <g class="entrance" style="animation-delay:0.2s">
+      <rect x="380" y="40" width="300" height="48" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(0,240,255,0.2)" stroke-width="1"/>
+      <rect x="380" y="40" width="4" height="48" rx="2" fill="#00f0ff"/>
+      <text x="400" y="60" font-family="monospace" font-size="12" fill="#00f0ff" font-weight="600">tf-module-plan</text>
+      <text x="400" y="78" font-size="10" fill="#777">SDD Phases 1-2: clarify, research</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.35s">
+      <rect x="380" y="104" width="300" height="48" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(180,77,255,0.2)" stroke-width="1"/>
+      <rect x="380" y="104" width="4" height="48" rx="2" fill="#b44dff"/>
+      <text x="400" y="124" font-family="monospace" font-size="12" fill="#b44dff" font-weight="600">tf-research</text>
+      <text x="400" y="142" font-size="10" fill="#777">AWS docs, registry patterns</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.5s">
+      <rect x="380" y="168" width="300" height="48" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(255,45,123,0.2)" stroke-width="1"/>
+      <rect x="380" y="168" width="4" height="48" rx="2" fill="#ff2d7b"/>
+      <text x="400" y="188" font-family="monospace" font-size="12" fill="#ff2d7b" font-weight="600">tf-judge-criteria</text>
+      <text x="400" y="206" font-size="10" fill="#777">Scoring rubrics, evaluation</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.65s">
+      <rect x="380" y="232" width="300" height="48" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(255,225,77,0.2)" stroke-width="1"/>
+      <rect x="380" y="232" width="4" height="48" rx="2" fill="#ffe14d"/>
+      <text x="400" y="252" font-family="monospace" font-size="12" fill="#ffe14d" font-weight="600">terraform-test</text>
+      <text x="400" y="270" font-size="10" fill="#777">.tftest.hcl: run, assert, mock</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.8s">
+      <rect x="380" y="296" width="300" height="48" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(57,255,142,0.2)" stroke-width="1"/>
+      <rect x="380" y="296" width="4" height="48" rx="2" fill="#39ff8e"/>
+      <text x="400" y="316" font-family="monospace" font-size="12" fill="#39ff8e" font-weight="600">tf-security-baselines</text>
+      <text x="400" y="334" font-size="10" fill="#777">AWS security, CIS/NIST baselines</text>
+    </g>
+  </svg>
+</div>
 <div class="card-grid">
   <div class="concept-card">
     <h3 style="color:var(--purple)">Name &amp; Description Matching</h3>
@@ -522,6 +662,77 @@ code your-new-repo</pre>
 <div class="view-header">
   <h1 style="color:var(--purple)">Subagents: Custom Specialists</h1>
   <p>Markdown files that define specialized AI assistants with scoped tools, models, and permissions</p>
+</div>
+<div class="svg-diagram">
+  <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="sa-bg" x1="0" y1="0" x2="0" y2="380">
+        <stop offset="0%" stop-color="#111118"/><stop offset="100%" stop-color="#08080c"/>
+      </linearGradient>
+      <filter id="sa-glow"><feGaussianBlur in="SourceGraphic" stdDeviation="3"/></filter>
+    </defs>
+    <!-- SUBAGENT.MD file mockup (left) -->
+    <g class="entrance" style="animation-delay:0.1s" data-id="concept-subagents" data-type="concept">
+      <rect x="16" y="12" width="270" height="310" rx="8" fill="url(#sa-bg)" stroke="rgba(57,255,142,0.15)" stroke-width="1"/>
+      <rect x="16" y="12" width="270" height="310" rx="8" fill="none" stroke="rgba(57,255,142,0.06)" stroke-width="1" filter="url(#sa-glow)"/>
+      <text x="30" y="36" font-family="monospace" font-size="10" fill="rgba(57,255,142,0.5)" letter-spacing="2" font-weight="600">SUBAGENT.MD</text>
+      <rect x="28" y="48" width="246" height="262" rx="5" fill="rgba(10,10,16,0.8)" stroke="rgba(57,255,142,0.06)" stroke-width="0.5"/>
+      <text x="38" y="68" font-family="monospace" font-size="11" fill="#666">---</text>
+      <text x="38" y="84" font-family="monospace" font-size="11"><tspan fill="#b44dff">name</tspan><tspan fill="#666">: </tspan><tspan fill="#39ff8e">tf-researcher</tspan></text>
+      <text x="38" y="100" font-family="monospace" font-size="11"><tspan fill="#b44dff">model</tspan><tspan fill="#666">: </tspan><tspan fill="#39ff8e">haiku</tspan></text>
+      <text x="38" y="118" font-family="monospace" font-size="11"><tspan fill="#b44dff">tools</tspan><tspan fill="#666">:</tspan></text>
+      <text x="38" y="134" font-family="monospace" font-size="11"><tspan fill="#666">  - </tspan><tspan fill="#00f0ff">Read</tspan></text>
+      <text x="38" y="150" font-family="monospace" font-size="11"><tspan fill="#666">  - </tspan><tspan fill="#00f0ff">Glob</tspan></text>
+      <text x="38" y="166" font-family="monospace" font-size="11"><tspan fill="#666">  - </tspan><tspan fill="#00f0ff">WebFetch</tspan></text>
+      <text x="38" y="184" font-family="monospace" font-size="11"><tspan fill="#b44dff">skills</tspan><tspan fill="#666">:</tspan></text>
+      <text x="38" y="200" font-family="monospace" font-size="11"><tspan fill="#666">  - </tspan><tspan fill="#00f0ff">tf-research</tspan></text>
+      <text x="38" y="218" font-family="monospace" font-size="11" fill="#666">---</text>
+      <line x1="38" y1="230" x2="262" y2="230" stroke="rgba(57,255,142,0.08)" stroke-width="0.5"/>
+      <text x="38" y="250" font-family="monospace" font-size="11" fill="#ccc" font-weight="600"># Research Agent</text>
+      <text x="38" y="268" font-family="monospace" font-size="10" fill="#777">Terraform research specialist.</text>
+      <text x="38" y="284" font-family="monospace" font-size="10" fill="#777">Investigate provider docs,</text>
+      <text x="38" y="300" font-family="monospace" font-size="10" fill="#777">registry patterns, best practices.</text>
+    </g>
+    <!-- Connection line -->
+    <line x1="286" y1="100" x2="330" y2="60" class="flow-line" stroke="rgba(57,255,142,0.25)" stroke-width="1.2"/>
+    <line x1="286" y1="140" x2="330" y2="140" class="flow-line" stroke="rgba(180,77,255,0.25)" stroke-width="1.2"/>
+    <line x1="286" y1="180" x2="330" y2="220" class="flow-line" stroke="rgba(0,240,255,0.25)" stroke-width="1.2"/>
+    <line x1="286" y1="210" x2="330" y2="296" class="flow-line" stroke="rgba(255,45,123,0.25)" stroke-width="1.2"/>
+    <!-- Built-in type cards (right) -->
+    <g class="entrance" style="animation-delay:0.2s">
+      <rect x="330" y="34" width="240" height="52" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(0,240,255,0.2)" stroke-width="1"/>
+      <circle cx="350" cy="60" r="6" fill="#00f0ff" opacity="0.5"/>
+      <text x="366" y="56" font-family="monospace" font-size="12" fill="#00f0ff" font-weight="600">Explore</text>
+      <text x="366" y="72" font-size="10" fill="#777">Haiku, read-only tools</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.35s">
+      <rect x="330" y="102" width="240" height="52" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(180,77,255,0.2)" stroke-width="1"/>
+      <circle cx="350" cy="128" r="6" fill="#b44dff" opacity="0.5"/>
+      <text x="366" y="124" font-family="monospace" font-size="12" fill="#b44dff" font-weight="600">Plan</text>
+      <text x="366" y="140" font-size="10" fill="#777">Inherited model, read-only</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.5s">
+      <rect x="330" y="170" width="240" height="52" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(57,255,142,0.2)" stroke-width="1"/>
+      <circle cx="350" cy="196" r="6" fill="#39ff8e" opacity="0.5"/>
+      <text x="366" y="192" font-family="monospace" font-size="12" fill="#39ff8e" font-weight="600">General-purpose</text>
+      <text x="366" y="208" font-size="10" fill="#777">Full tool access</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.65s">
+      <rect x="330" y="238" width="240" height="52" rx="6" fill="rgba(10,10,16,0.9)" stroke="rgba(255,45,123,0.2)" stroke-width="1"/>
+      <circle cx="350" cy="264" r="6" fill="#ff2d7b" opacity="0.5"/>
+      <text x="366" y="260" font-family="monospace" font-size="12" fill="#ff2d7b" font-weight="600">Custom</text>
+      <text x="366" y="276" font-size="10" fill="#777">tf-researcher, tf-developer...</text>
+    </g>
+    <!-- Storage location indicator -->
+    <g class="entrance" style="animation-delay:0.8s">
+      <rect x="330" y="310" width="354" height="38" rx="6" fill="rgba(255,225,77,0.04)" stroke="rgba(255,225,77,0.12)" stroke-width="0.8"/>
+      <text x="346" y="334" font-family="monospace" font-size="10" fill="#ffe14d" font-weight="600">.claude/agents/</text>
+      <text x="490" y="334" font-size="10" fill="#666">Project</text>
+      <text x="540" y="334" fill="#444" font-size="10">|</text>
+      <text x="558" y="334" font-family="monospace" font-size="10" fill="#b44dff" font-weight="600">~/.claude/agents/</text>
+      <text x="668" y="334" font-size="10" fill="#666">User</text>
+    </g>
+  </svg>
 </div>
 <div class="card-grid">
   <div class="concept-card">
@@ -559,6 +770,113 @@ code your-new-repo</pre>
   <h1 style="color:var(--purple)">Context Engineering</h1>
   <p>Why multi-agent architectures require deliberate context isolation</p>
 </div>
+<div class="svg-diagram">
+  <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="ce-single" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="rgba(255,68,68,0.1)"/><stop offset="100%" stop-color="rgba(255,68,68,0.03)"/>
+      </linearGradient>
+      <linearGradient id="ce-multi" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="rgba(57,255,142,0.08)"/><stop offset="100%" stop-color="rgba(57,255,142,0.02)"/>
+      </linearGradient>
+      <linearGradient id="ce-arrow" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#ff4444" stop-opacity="0.4"/><stop offset="50%" stop-color="#b44dff" stop-opacity="0.6"/><stop offset="100%" stop-color="#39ff8e" stop-opacity="0.4"/>
+      </linearGradient>
+      <filter id="ce-glow"><feGaussianBlur in="SourceGraphic" stdDeviation="3"/></filter>
+    </defs>
+    <!-- LEFT: Single Agent -->
+    <g class="entrance" style="animation-delay:0.1s" data-id="concept-context-engineering" data-type="concept">
+      <rect x="10" y="10" width="290" height="320" rx="10" fill="url(#ce-single)" stroke="rgba(255,68,68,0.18)" stroke-width="1"/>
+      <text x="155" y="36" text-anchor="middle" font-size="13" fill="#ff4444" font-weight="700">Single Agent</text>
+      <!-- Agent box -->
+      <rect x="80" y="52" width="130" height="44" rx="8" fill="rgba(255,68,68,0.06)" stroke="rgba(255,68,68,0.25)" stroke-width="1.2" stroke-dasharray="4 2"/>
+      <text x="145" y="72" text-anchor="middle" font-size="11" fill="#ff4444" font-weight="600">Agent</text>
+      <text x="145" y="86" text-anchor="middle" font-size="9" fill="#999">One context window</text>
+      <!-- Sequential task boxes -->
+      <line x1="145" y1="96" x2="145" y2="110" stroke="rgba(255,68,68,0.2)" stroke-width="1"/>
+      <rect x="96" y="112" width="98" height="26" rx="5" fill="rgba(10,10,16,0.8)" stroke="rgba(255,68,68,0.15)" stroke-width="0.8"/>
+      <text x="145" y="129" text-anchor="middle" font-size="10" fill="#ccc">Task 1</text>
+      <line x1="145" y1="138" x2="145" y2="148" stroke="rgba(255,68,68,0.15)" stroke-width="1"/>
+      <rect x="96" y="150" width="98" height="26" rx="5" fill="rgba(10,10,16,0.8)" stroke="rgba(255,68,68,0.15)" stroke-width="0.8"/>
+      <text x="145" y="167" text-anchor="middle" font-size="10" fill="#ccc">Task 2</text>
+      <line x1="145" y1="176" x2="145" y2="186" stroke="rgba(255,68,68,0.15)" stroke-width="1"/>
+      <rect x="96" y="188" width="98" height="26" rx="5" fill="rgba(10,10,16,0.8)" stroke="rgba(255,68,68,0.15)" stroke-width="0.8"/>
+      <text x="145" y="205" text-anchor="middle" font-size="10" fill="#ccc">Task 3</text>
+      <!-- Context bar - FULL (92%) -->
+      <text x="30" y="244" font-size="9" fill="#ff4444" font-weight="500" letter-spacing="1">CONTEXT WINDOW</text>
+      <rect x="30" y="252" width="250" height="18" rx="4" fill="rgba(10,10,16,0.8)" stroke="rgba(255,68,68,0.15)" stroke-width="0.8"/>
+      <rect x="31" y="253" width="228" height="16" rx="3" fill="rgba(255,68,68,0.15)">
+        <animate attributeName="width" from="0" to="228" dur="1.5s" fill="freeze"/>
+      </rect>
+      <text x="266" y="265" text-anchor="end" font-family="monospace" font-size="9" fill="#ff4444" font-weight="600">92%</text>
+      <!-- Warning text -->
+      <text x="155" y="296" text-anchor="middle" font-size="10" fill="#ff4444" font-weight="600">Quality degrades.</text>
+      <text x="155" y="312" text-anchor="middle" font-size="10" fill="#ff4444" font-weight="600">Compaction loses instructions.</text>
+    </g>
+
+    <!-- CENTER: Evolution arrow -->
+    <g class="entrance" style="animation-delay:0.4s">
+      <rect x="316" y="150" width="68" height="3" rx="1.5" fill="url(#ce-arrow)"/>
+      <polygon points="380,142 396,152 380,162" fill="rgba(57,255,142,0.35)"/>
+      <polygon points="380,142 396,152 380,162" fill="rgba(57,255,142,0.12)" filter="url(#ce-glow)"/>
+      <text x="350" y="138" text-anchor="middle" font-size="11" fill="#b44dff" font-weight="600">Evolution</text>
+      <text x="350" y="178" text-anchor="middle" font-size="8" fill="#666">Task horizons</text>
+      <text x="350" y="190" text-anchor="middle" font-size="8" fill="#666">expand</text>
+    </g>
+
+    <!-- RIGHT: Multi-Agent -->
+    <g class="entrance" style="animation-delay:0.2s">
+      <rect x="400" y="10" width="290" height="320" rx="10" fill="url(#ce-multi)" stroke="rgba(57,255,142,0.15)" stroke-width="1"/>
+      <text x="545" y="36" text-anchor="middle" font-size="13" fill="#39ff8e" font-weight="700">Multi-Agent</text>
+      <!-- Orchestrator -->
+      <rect x="475" y="48" width="140" height="36" rx="8" fill="rgba(57,255,142,0.08)" stroke="rgba(57,255,142,0.3)" stroke-width="1.2"/>
+      <text x="545" y="70" text-anchor="middle" font-size="10" fill="#39ff8e" font-weight="600">Orchestrator</text>
+      <!-- Fan-out lines -->
+      <line x1="505" y1="84" x2="455" y2="110" stroke="rgba(180,77,255,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+      <line x1="530" y1="84" x2="525" y2="110" stroke="rgba(0,240,255,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+      <line x1="560" y1="84" x2="595" y2="110" stroke="rgba(168,200,255,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+      <line x1="585" y1="84" x2="660" y2="110" stroke="rgba(255,45,123,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+      <!-- Specialist boxes -->
+      <rect x="420" y="112" width="70" height="34" rx="5" fill="rgba(10,10,16,0.8)" stroke="rgba(180,77,255,0.2)" stroke-width="0.8"/>
+      <text x="455" y="133" text-anchor="middle" font-size="9" fill="#b44dff" font-weight="600">Spec A</text>
+      <rect x="498" y="112" width="56" height="34" rx="5" fill="rgba(10,10,16,0.8)" stroke="rgba(0,240,255,0.2)" stroke-width="0.8"/>
+      <text x="526" y="133" text-anchor="middle" font-size="9" fill="#00f0ff" font-weight="600">Spec B</text>
+      <rect x="562" y="112" width="56" height="34" rx="5" fill="rgba(10,10,16,0.8)" stroke="rgba(168,200,255,0.2)" stroke-width="0.8"/>
+      <text x="590" y="133" text-anchor="middle" font-size="9" fill="#a8c8ff" font-weight="600">Spec C</text>
+      <rect x="626" y="112" width="56" height="34" rx="5" fill="rgba(10,10,16,0.8)" stroke="rgba(255,45,123,0.2)" stroke-width="0.8"/>
+      <text x="652" y="133" text-anchor="middle" font-size="9" fill="#ff2d7b" font-weight="600">Spec D</text>
+      <!-- 4 small context bars -->
+      <text x="420" y="172" font-size="9" fill="#39ff8e" font-weight="500" letter-spacing="1">ISOLATED CONTEXTS</text>
+      <!-- Bar 1: 32% -->
+      <rect x="420" y="182" width="134" height="12" rx="3" fill="rgba(10,10,16,0.8)" stroke="rgba(180,77,255,0.15)" stroke-width="0.5"/>
+      <rect x="421" y="183" width="42" height="10" rx="2" fill="rgba(180,77,255,0.2)">
+        <animate attributeName="width" from="0" to="42" dur="1s" begin="0.5s" fill="freeze"/>
+      </rect>
+      <text x="560" y="193" font-family="monospace" font-size="8" fill="#b44dff">32%</text>
+      <!-- Bar 2: 38% -->
+      <rect x="420" y="200" width="134" height="12" rx="3" fill="rgba(10,10,16,0.8)" stroke="rgba(0,240,255,0.15)" stroke-width="0.5"/>
+      <rect x="421" y="201" width="50" height="10" rx="2" fill="rgba(0,240,255,0.2)">
+        <animate attributeName="width" from="0" to="50" dur="1s" begin="0.6s" fill="freeze"/>
+      </rect>
+      <text x="560" y="211" font-family="monospace" font-size="8" fill="#00f0ff">38%</text>
+      <!-- Bar 3: 27% -->
+      <rect x="420" y="218" width="134" height="12" rx="3" fill="rgba(10,10,16,0.8)" stroke="rgba(168,200,255,0.15)" stroke-width="0.5"/>
+      <rect x="421" y="219" width="36" height="10" rx="2" fill="rgba(168,200,255,0.2)">
+        <animate attributeName="width" from="0" to="36" dur="1s" begin="0.7s" fill="freeze"/>
+      </rect>
+      <text x="560" y="229" font-family="monospace" font-size="8" fill="#a8c8ff">27%</text>
+      <!-- Bar 4: 23% -->
+      <rect x="420" y="236" width="134" height="12" rx="3" fill="rgba(10,10,16,0.8)" stroke="rgba(57,255,142,0.15)" stroke-width="0.5"/>
+      <rect x="421" y="237" width="30" height="10" rx="2" fill="rgba(57,255,142,0.2)">
+        <animate attributeName="width" from="0" to="30" dur="1s" begin="0.8s" fill="freeze"/>
+      </rect>
+      <text x="560" y="247" font-family="monospace" font-size="8" fill="#39ff8e">23%</text>
+      <!-- Bottom message -->
+      <text x="545" y="280" text-anchor="middle" font-size="10" fill="#39ff8e" font-weight="600">60-75% available</text>
+      <text x="545" y="296" text-anchor="middle" font-size="10" fill="#39ff8e" font-weight="600">for reasoning</text>
+    </g>
+  </svg>
+</div>
 <div class="card-grid">
   <div class="concept-card">
     <h3 style="color:var(--purple)">Single-Agent Limits</h3>
@@ -589,6 +907,98 @@ code your-new-repo</pre>
 <div class="view-header">
   <h1 style="color:var(--purple)">Concurrent Execution: Fan-Out Research</h1>
   <p>Parallel foreground dispatch for multi-source investigation</p>
+</div>
+<div class="svg-diagram">
+  <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="cc-glow"><feGaussianBlur in="SourceGraphic" stdDeviation="3"/></filter>
+      <path id="cc-path1" d="M 350 76 L 130 150"/>
+      <path id="cc-path2" d="M 350 76 L 280 150"/>
+      <path id="cc-path3" d="M 350 76 L 420 150"/>
+      <path id="cc-path4" d="M 350 76 L 570 150"/>
+      <path id="cc-down1" d="M 130 230 L 280 310"/>
+      <path id="cc-down2" d="M 280 230 L 310 310"/>
+      <path id="cc-down3" d="M 420 230 L 380 310"/>
+      <path id="cc-down4" d="M 570 230 L 420 310"/>
+    </defs>
+    <!-- Orchestrator (top) -->
+    <g class="entrance" style="animation-delay:0.1s" data-id="concept-concurrency" data-type="concept">
+      <rect x="240" y="16" width="220" height="56" rx="10" fill="rgba(57,255,142,0.06)" stroke="rgba(57,255,142,0.3)" stroke-width="1.5"/>
+      <rect x="240" y="16" width="220" height="56" rx="10" fill="none" stroke="rgba(57,255,142,0.12)" stroke-width="1.5" filter="url(#cc-glow)"/>
+      <text x="350" y="42" text-anchor="middle" font-size="14" fill="#39ff8e" font-weight="700">Orchestrator</text>
+      <text x="350" y="60" text-anchor="middle" font-size="9" fill="#999">Single message dispatch</text>
+    </g>
+    <!-- Fan-out dashed lines with animated dots -->
+    <line x1="290" y1="72" x2="130" y2="148" class="flow-line" stroke="rgba(168,200,255,0.25)" stroke-width="1.2"/>
+    <line x1="320" y1="72" x2="280" y2="148" class="flow-line" stroke="rgba(180,77,255,0.25)" stroke-width="1.2"/>
+    <line x1="380" y1="72" x2="420" y2="148" class="flow-line" stroke="rgba(0,240,255,0.25)" stroke-width="1.2"/>
+    <line x1="410" y1="72" x2="570" y2="148" class="flow-line" stroke="rgba(255,45,123,0.25)" stroke-width="1.2"/>
+    <!-- Animated travelling dots -->
+    <circle r="3" fill="#a8c8ff" opacity="0.8"><animateMotion dur="1.8s" repeatCount="indefinite" path="M 290 72 L 130 148"/></circle>
+    <circle r="3" fill="#b44dff" opacity="0.8"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.3s" path="M 320 72 L 280 148"/></circle>
+    <circle r="3" fill="#00f0ff" opacity="0.8"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.6s" path="M 380 72 L 420 148"/></circle>
+    <circle r="3" fill="#ff2d7b" opacity="0.8"><animateMotion dur="1.8s" repeatCount="indefinite" begin="0.9s" path="M 410 72 L 570 148"/></circle>
+    <!-- 4 Research Agent boxes -->
+    <g class="entrance" style="animation-delay:0.25s">
+      <rect x="58" y="150" width="144" height="74" rx="8" fill="rgba(10,10,16,0.85)" stroke="rgba(168,200,255,0.25)" stroke-width="1"/>
+      <text x="130" y="172" text-anchor="middle" font-family="monospace" font-size="9" fill="#a8c8ff" font-weight="600">tf-module-research</text>
+      <text x="130" y="190" text-anchor="middle" font-size="10" fill="#ddd" font-weight="600">AWS Docs</text>
+      <text x="130" y="206" text-anchor="middle" font-size="9" fill="#777">API constraints</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.4s">
+      <rect x="210" y="150" width="140" height="74" rx="8" fill="rgba(10,10,16,0.85)" stroke="rgba(180,77,255,0.25)" stroke-width="1"/>
+      <text x="280" y="172" text-anchor="middle" font-family="monospace" font-size="9" fill="#b44dff" font-weight="600">tf-module-research</text>
+      <text x="280" y="190" text-anchor="middle" font-size="10" fill="#ddd" font-weight="600">Registry</text>
+      <text x="280" y="206" text-anchor="middle" font-size="9" fill="#777">Existing modules</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.55s">
+      <rect x="358" y="150" width="124" height="74" rx="8" fill="rgba(10,10,16,0.85)" stroke="rgba(0,240,255,0.25)" stroke-width="1"/>
+      <text x="420" y="172" text-anchor="middle" font-family="monospace" font-size="9" fill="#00f0ff" font-weight="600">tf-module-research</text>
+      <text x="420" y="190" text-anchor="middle" font-size="10" fill="#ddd" font-weight="600">Security</text>
+      <text x="420" y="206" text-anchor="middle" font-size="9" fill="#777">IAM, encryption</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.7s">
+      <rect x="490" y="150" width="158" height="74" rx="8" fill="rgba(10,10,16,0.85)" stroke="rgba(255,45,123,0.25)" stroke-width="1"/>
+      <text x="569" y="172" text-anchor="middle" font-family="monospace" font-size="9" fill="#ff2d7b" font-weight="600">tf-module-research</text>
+      <text x="569" y="190" text-anchor="middle" font-size="10" fill="#ddd" font-weight="600">Best Practices</text>
+      <text x="569" y="206" text-anchor="middle" font-size="9" fill="#777">Testing, docs</text>
+    </g>
+    <!-- Disk write section -->
+    <line x1="130" y1="224" x2="130" y2="260" stroke="rgba(255,225,77,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+    <line x1="280" y1="224" x2="280" y2="260" stroke="rgba(255,225,77,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+    <line x1="420" y1="224" x2="420" y2="260" stroke="rgba(255,225,77,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+    <line x1="569" y1="224" x2="569" y2="260" stroke="rgba(255,225,77,0.2)" stroke-width="1" stroke-dasharray="3 2"/>
+    <!-- Disk artifacts -->
+    <rect x="88" y="262" width="84" height="22" rx="4" fill="rgba(255,225,77,0.05)" stroke="rgba(255,225,77,0.15)" stroke-width="0.8"/>
+    <text x="130" y="277" text-anchor="middle" font-family="monospace" font-size="9" fill="#ffe14d" font-weight="600">findings-1</text>
+    <rect x="238" y="262" width="84" height="22" rx="4" fill="rgba(255,225,77,0.05)" stroke="rgba(255,225,77,0.15)" stroke-width="0.8"/>
+    <text x="280" y="277" text-anchor="middle" font-family="monospace" font-size="9" fill="#ffe14d" font-weight="600">findings-2</text>
+    <rect x="378" y="262" width="84" height="22" rx="4" fill="rgba(255,225,77,0.05)" stroke="rgba(255,225,77,0.15)" stroke-width="0.8"/>
+    <text x="420" y="277" text-anchor="middle" font-family="monospace" font-size="9" fill="#ffe14d" font-weight="600">findings-3</text>
+    <rect x="527" y="262" width="84" height="22" rx="4" fill="rgba(255,225,77,0.05)" stroke="rgba(255,225,77,0.15)" stroke-width="0.8"/>
+    <text x="569" y="277" text-anchor="middle" font-family="monospace" font-size="9" fill="#ffe14d" font-weight="600">findings-4</text>
+    <!-- Shared disk bar -->
+    <rect x="88" y="294" width="523" height="2" rx="1" fill="rgba(255,225,77,0.12)"/>
+    <text x="350" y="312" text-anchor="middle" font-size="10" fill="#ffe14d" font-weight="600">All agents write to disk</text>
+    <!-- Converge lines with animated dots -->
+    <line x1="130" y1="296" x2="290" y2="346" stroke="rgba(255,45,123,0.15)" stroke-width="0.8"/>
+    <line x1="280" y1="296" x2="320" y2="346" stroke="rgba(255,45,123,0.15)" stroke-width="0.8"/>
+    <line x1="420" y1="296" x2="380" y2="346" stroke="rgba(255,45,123,0.15)" stroke-width="0.8"/>
+    <line x1="569" y1="296" x2="410" y2="346" stroke="rgba(255,45,123,0.15)" stroke-width="0.8"/>
+    <circle r="2.5" fill="#ff2d7b" opacity="0.7"><animateMotion dur="2s" repeatCount="indefinite" path="M 130 296 L 290 346"/></circle>
+    <circle r="2.5" fill="#ff2d7b" opacity="0.7"><animateMotion dur="2s" repeatCount="indefinite" begin="0.5s" path="M 569 296 L 410 346"/></circle>
+    <!-- Design Agent (bottom) -->
+    <g class="entrance" style="animation-delay:0.9s">
+      <rect x="250" y="348" width="200" height="48" rx="10" fill="rgba(255,45,123,0.05)" stroke="rgba(255,45,123,0.25)" stroke-width="1.5"/>
+      <rect x="250" y="348" width="200" height="48" rx="10" fill="none" stroke="rgba(255,45,123,0.1)" stroke-width="1.5" filter="url(#cc-glow)"/>
+      <text x="350" y="370" text-anchor="middle" font-size="14" fill="#ff2d7b" font-weight="700">Design Agent</text>
+      <text x="350" y="386" text-anchor="middle" font-size="9" fill="#999">Reads findings, writes design.md</text>
+    </g>
+    <!-- Output -->
+    <line x1="350" y1="396" x2="350" y2="408" stroke="rgba(57,255,142,0.2)" stroke-width="1"/>
+    <rect x="306" y="408" width="88" height="14" rx="3" fill="rgba(57,255,142,0.05)" stroke="rgba(57,255,142,0.12)" stroke-width="0.5"/>
+    <text x="350" y="419" text-anchor="middle" font-family="monospace" font-size="8" fill="#39ff8e" font-weight="600">design.md</text>
+  </svg>
 </div>
 <div class="card-grid">
   <div class="concept-card">
@@ -621,6 +1031,89 @@ code your-new-repo</pre>
 <div class="view-header">
   <h1 style="color:var(--purple)">Maximizing Throughput</h1>
   <p>Right-size models and manage context for agent performance</p>
+</div>
+<div class="svg-diagram">
+  <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="tp-glow"><feGaussianBlur in="SourceGraphic" stdDeviation="2"/></filter>
+    </defs>
+    <text x="350" y="24" text-anchor="middle" font-size="10" fill="#888" font-weight="600" letter-spacing="2">MODEL SELECTION TIERS</text>
+    <!-- Tier 1: Opus -->
+    <g class="entrance" style="animation-delay:0.1s" data-id="concept-throughput" data-type="concept">
+      <rect x="20" y="40" width="660" height="84" rx="8" fill="rgba(180,77,255,0.05)" stroke="rgba(180,77,255,0.2)" stroke-width="1"/>
+      <circle cx="56" cy="72" r="18" fill="rgba(180,77,255,0.1)" stroke="rgba(180,77,255,0.3)" stroke-width="1"/>
+      <text x="56" y="78" text-anchor="middle" font-size="16" fill="#b44dff" font-weight="700">O</text>
+      <text x="86" y="68" font-size="16" fill="#b44dff" font-weight="700">Opus</text>
+      <text x="86" y="86" font-size="11" fill="#999">Deep reasoning, complex decisions</text>
+      <!-- Quality bar -->
+      <text x="370" y="58" font-size="9" fill="#666">QUALITY</text>
+      <rect x="430" y="48" width="120" height="8" rx="3" fill="rgba(255,255,255,0.04)"/>
+      <rect x="430" y="48" width="108" height="8" rx="3" fill="rgba(180,77,255,0.4)" style="transform-origin:430px 52px">
+        <animate attributeName="width" from="0" to="108" dur="1.2s" fill="freeze"/>
+      </rect>
+      <text x="556" y="56" font-size="9" fill="#b44dff" font-weight="600">90%</text>
+      <!-- Speed bar -->
+      <text x="370" y="78" font-size="9" fill="#666">SPEED</text>
+      <rect x="430" y="68" width="120" height="8" rx="3" fill="rgba(255,255,255,0.04)"/>
+      <rect x="430" y="68" width="36" height="8" rx="3" fill="rgba(255,45,123,0.4)">
+        <animate attributeName="width" from="0" to="36" dur="1.2s" fill="freeze"/>
+      </rect>
+      <text x="556" y="76" font-size="9" fill="#ff2d7b">30%</text>
+      <!-- Cost -->
+      <text x="600" y="58" font-size="9" fill="#666">COST</text>
+      <text x="600" y="76" font-size="14" fill="#b44dff" font-weight="700">$$$</text>
+    </g>
+    <!-- Tier 2: Sonnet -->
+    <g class="entrance" style="animation-delay:0.3s">
+      <rect x="20" y="140" width="660" height="84" rx="8" fill="rgba(0,240,255,0.03)" stroke="rgba(0,240,255,0.15)" stroke-width="1"/>
+      <circle cx="56" cy="172" r="18" fill="rgba(0,240,255,0.08)" stroke="rgba(0,240,255,0.25)" stroke-width="1"/>
+      <text x="56" y="178" text-anchor="middle" font-size="16" fill="#00f0ff" font-weight="700">S</text>
+      <text x="86" y="168" font-size="16" fill="#00f0ff" font-weight="700">Sonnet</text>
+      <text x="86" y="186" font-size="11" fill="#999">Balanced, most agent workloads</text>
+      <!-- Quality bar -->
+      <text x="370" y="158" font-size="9" fill="#666">QUALITY</text>
+      <rect x="430" y="148" width="120" height="8" rx="3" fill="rgba(255,255,255,0.04)"/>
+      <rect x="430" y="148" width="90" height="8" rx="3" fill="rgba(0,240,255,0.35)">
+        <animate attributeName="width" from="0" to="90" dur="1.2s" begin="0.3s" fill="freeze"/>
+      </rect>
+      <text x="556" y="156" font-size="9" fill="#00f0ff" font-weight="600">75%</text>
+      <!-- Speed bar -->
+      <text x="370" y="178" font-size="9" fill="#666">SPEED</text>
+      <rect x="430" y="168" width="120" height="8" rx="3" fill="rgba(255,255,255,0.04)"/>
+      <rect x="430" y="168" width="84" height="8" rx="3" fill="rgba(57,255,142,0.4)">
+        <animate attributeName="width" from="0" to="84" dur="1.2s" begin="0.3s" fill="freeze"/>
+      </rect>
+      <text x="556" y="176" font-size="9" fill="#39ff8e" font-weight="600">70%</text>
+      <!-- Cost -->
+      <text x="600" y="158" font-size="9" fill="#666">COST</text>
+      <text x="600" y="176" font-size="14" fill="#00f0ff" font-weight="700">$$</text>
+    </g>
+    <!-- Tier 3: Haiku -->
+    <g class="entrance" style="animation-delay:0.5s">
+      <rect x="20" y="240" width="660" height="84" rx="8" fill="rgba(255,225,77,0.02)" stroke="rgba(255,225,77,0.12)" stroke-width="1"/>
+      <circle cx="56" cy="272" r="18" fill="rgba(255,225,77,0.06)" stroke="rgba(255,225,77,0.2)" stroke-width="1"/>
+      <text x="56" y="278" text-anchor="middle" font-size="16" fill="#ffe14d" font-weight="700">H</text>
+      <text x="86" y="268" font-size="16" fill="#ffe14d" font-weight="700">Haiku</text>
+      <text x="86" y="286" font-size="11" fill="#999">Fastest, simple structured tasks</text>
+      <!-- Quality bar -->
+      <text x="370" y="258" font-size="9" fill="#666">QUALITY</text>
+      <rect x="430" y="248" width="120" height="8" rx="3" fill="rgba(255,255,255,0.04)"/>
+      <rect x="430" y="248" width="60" height="8" rx="3" fill="rgba(255,225,77,0.35)">
+        <animate attributeName="width" from="0" to="60" dur="1.2s" begin="0.5s" fill="freeze"/>
+      </rect>
+      <text x="556" y="256" font-size="9" fill="#ffe14d">50%</text>
+      <!-- Speed bar -->
+      <text x="370" y="278" font-size="9" fill="#666">SPEED</text>
+      <rect x="430" y="268" width="120" height="8" rx="3" fill="rgba(255,255,255,0.04)"/>
+      <rect x="430" y="268" width="114" height="8" rx="3" fill="rgba(255,225,77,0.4)">
+        <animate attributeName="width" from="0" to="114" dur="1.2s" begin="0.5s" fill="freeze"/>
+      </rect>
+      <text x="556" y="276" font-size="9" fill="#ffe14d" font-weight="600">95%</text>
+      <!-- Cost -->
+      <text x="600" y="258" font-size="9" fill="#666">COST</text>
+      <text x="600" y="276" font-size="14" fill="#ffe14d" font-weight="700">$</text>
+    </g>
+  </svg>
 </div>
 <div class="card-grid">
   <div class="concept-card">
@@ -658,6 +1151,82 @@ code your-new-repo</pre>
   <h1 style="color:var(--purple)">Decision Framework</h1>
   <p>When to use subagents vs direct tools vs headless mode</p>
 </div>
+<div class="svg-diagram">
+  <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="df-glow"><feGaussianBlur in="SourceGraphic" stdDeviation="3"/></filter>
+    </defs>
+    <text x="350" y="22" text-anchor="middle" font-size="10" fill="#888" font-weight="600" letter-spacing="2">EXECUTION MODEL MATRIX</text>
+    <!-- Axis labels -->
+    <text x="350" y="46" text-anchor="middle" font-size="10" fill="#666">TASK SCOPE &#x2192;</text>
+    <g transform="translate(22,220)"><text transform="rotate(-90)" text-anchor="middle" font-size="10" fill="#666">INTERACTIVITY &#x2192;</text></g>
+    <!-- Axis lines with animate -->
+    <line x1="46" y1="56" x2="46" y2="390" stroke="rgba(255,255,255,0.06)" stroke-width="0.8">
+      <animate attributeName="y2" from="56" to="390" dur="0.6s" fill="freeze"/>
+    </line>
+    <line x1="46" y1="220" x2="690" y2="220" stroke="rgba(255,255,255,0.06)" stroke-width="0.8">
+      <animate attributeName="x2" from="46" to="690" dur="0.6s" fill="freeze"/>
+    </line>
+    <!-- Quadrant labels -->
+    <text x="200" y="68" text-anchor="middle" font-size="8" fill="#555" font-weight="600" letter-spacing="1">FOCUSED</text>
+    <text x="530" y="68" text-anchor="middle" font-size="8" fill="#555" font-weight="600" letter-spacing="1">BROAD</text>
+    <!-- Q1: Main Conversation (top-left) -->
+    <g class="entrance" style="animation-delay:0.15s" data-id="concept-decision-framework" data-type="concept">
+      <rect x="56" y="76" width="290" height="132" rx="8" fill="rgba(168,200,255,0.04)" stroke="rgba(168,200,255,0.15)" stroke-width="1">
+        <animate attributeName="opacity" from="0" to="1" dur="0.4s" begin="0.15s" fill="freeze"/>
+      </rect>
+      <circle cx="80" cy="102" r="12" fill="rgba(168,200,255,0.08)" stroke="rgba(168,200,255,0.25)" stroke-width="1"/>
+      <text x="80" y="106" text-anchor="middle" font-size="10" fill="#a8c8ff">&#x25EF;</text>
+      <text x="100" y="106" font-size="14" fill="#a8c8ff" font-weight="700">Main Conversation</text>
+      <text x="72" y="126" font-size="10" fill="#999">Frequent back-and-forth</text>
+      <text x="72" y="142" font-size="10" fill="#999">Quick focused edits</text>
+      <text x="72" y="158" font-size="10" fill="#999">Shared context between phases</text>
+      <rect x="72" y="172" width="68" height="18" rx="4" fill="rgba(168,200,255,0.08)" stroke="rgba(168,200,255,0.18)" stroke-width="0.8"/>
+      <text x="106" y="185" text-anchor="middle" font-size="8" fill="#a8c8ff" font-weight="600">INTERACTIVE</text>
+    </g>
+    <!-- Q2: Subagents (top-right) -->
+    <g class="entrance" style="animation-delay:0.3s">
+      <rect x="356" y="76" width="328" height="132" rx="8" fill="rgba(180,77,255,0.04)" stroke="rgba(180,77,255,0.15)" stroke-width="1"/>
+      <circle cx="380" cy="102" r="12" fill="rgba(180,77,255,0.08)" stroke="rgba(180,77,255,0.25)" stroke-width="1"/>
+      <text x="380" y="106" text-anchor="middle" font-size="10" fill="#b44dff">&#x2699;</text>
+      <text x="400" y="106" font-size="14" fill="#b44dff" font-weight="700">Subagents</text>
+      <text x="372" y="126" font-size="10" fill="#999">Verbose output, broad scope</text>
+      <text x="372" y="142" font-size="10" fill="#999">Self-contained with clear I/O</text>
+      <text x="372" y="158" font-size="10" fill="#999">Parallel investigation</text>
+      <rect x="372" y="172" width="62" height="18" rx="4" fill="rgba(180,77,255,0.08)" stroke="rgba(180,77,255,0.18)" stroke-width="0.8"/>
+      <text x="403" y="185" text-anchor="middle" font-size="8" fill="#b44dff" font-weight="600">ISOLATION</text>
+    </g>
+    <!-- Q3: Skills (bottom-left) -->
+    <g class="entrance" style="animation-delay:0.45s">
+      <rect x="56" y="232" width="290" height="132" rx="8" fill="rgba(0,240,255,0.03)" stroke="rgba(0,240,255,0.12)" stroke-width="1"/>
+      <circle cx="80" cy="258" r="12" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.2)" stroke-width="1"/>
+      <text x="80" y="262" text-anchor="middle" font-size="10" fill="#00f0ff">&#x2605;</text>
+      <text x="100" y="262" font-size="14" fill="#00f0ff" font-weight="700">Skills</text>
+      <text x="72" y="282" font-size="10" fill="#999">Reusable prompts &amp; workflows</text>
+      <text x="72" y="298" font-size="10" fill="#999">Reference knowledge</text>
+      <text x="72" y="314" font-size="10" fill="#999">Pattern match triggered</text>
+      <rect x="72" y="328" width="60" height="18" rx="4" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.15)" stroke-width="0.8"/>
+      <text x="102" y="341" text-anchor="middle" font-size="8" fill="#00f0ff" font-weight="600">REUSABLE</text>
+    </g>
+    <!-- Q4: Headless (bottom-right) -->
+    <g class="entrance" style="animation-delay:0.6s">
+      <rect x="356" y="232" width="328" height="132" rx="8" fill="rgba(255,225,77,0.02)" stroke="rgba(255,225,77,0.1)" stroke-width="1"/>
+      <circle cx="380" cy="258" r="12" fill="rgba(255,225,77,0.05)" stroke="rgba(255,225,77,0.18)" stroke-width="1"/>
+      <text x="380" y="262" text-anchor="middle" font-size="10" fill="#ffe14d">&#x26A1;</text>
+      <text x="400" y="262" font-size="14" fill="#ffe14d" font-weight="700">Headless Mode</text>
+      <text x="372" y="282" font-size="10" fill="#999">Process-level parallelism</text>
+      <text x="372" y="298" font-size="10" fill="#999">Batch processing</text>
+      <text x="372" y="314" font-size="10" fill="#999">CI/CD integration</text>
+      <rect x="372" y="328" width="78" height="18" rx="4" fill="rgba(255,225,77,0.04)" stroke="rgba(255,225,77,0.12)" stroke-width="0.8"/>
+      <text x="411" y="341" text-anchor="middle" font-size="8" fill="#ffe14d" font-weight="600">AUTOMATION</text>
+    </g>
+    <!-- Key principle -->
+    <g class="entrance" style="animation-delay:0.8s">
+      <rect x="56" y="376" width="628" height="20" rx="4" fill="rgba(168,200,255,0.03)" stroke="rgba(168,200,255,0.08)" stroke-width="0.5"/>
+      <text x="350" y="390" text-anchor="middle" font-size="10" fill="#999"><tspan fill="#a8c8ff" font-weight="600">Key:</tspan> Match execution model to task characteristics</text>
+    </g>
+  </svg>
+</div>
 <div class="card-grid two-col">
   <div class="concept-card">
     <h3 style="color:var(--purple)">Main Conversation</h3>
@@ -692,6 +1261,86 @@ code your-new-repo</pre>
 <div class="view-header">
   <h1 style="color:var(--purple)">Agentic Loop</h1>
   <p>Validation-driven cycle: write tests, write code, validate, deploy</p>
+</div>
+<div class="svg-diagram">
+  <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="al-glow"><feGaussianBlur in="SourceGraphic" stdDeviation="3"/></filter>
+      <marker id="al-arr-p" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="8" markerHeight="8" orient="auto">
+        <path d="M 0 1 L 6 4 L 0 7 z" fill="rgba(180,77,255,0.6)"/>
+      </marker>
+      <marker id="al-arr-c" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="8" markerHeight="8" orient="auto">
+        <path d="M 0 1 L 6 4 L 0 7 z" fill="rgba(0,240,255,0.6)"/>
+      </marker>
+      <marker id="al-arr-y" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="8" markerHeight="8" orient="auto">
+        <path d="M 0 1 L 6 4 L 0 7 z" fill="rgba(255,225,77,0.6)"/>
+      </marker>
+      <marker id="al-arr-g" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="8" markerHeight="8" orient="auto">
+        <path d="M 0 1 L 6 4 L 0 7 z" fill="rgba(57,255,142,0.6)"/>
+      </marker>
+    </defs>
+    <text x="350" y="22" text-anchor="middle" font-size="10" fill="#888" font-weight="600" letter-spacing="2">TDD IMPLEMENTATION CYCLE</text>
+    <!-- Circular track -->
+    <circle cx="350" cy="210" r="130" fill="none" stroke="rgba(180,77,255,0.04)" stroke-width="20"/>
+    <circle cx="350" cy="210" r="130" fill="none" stroke="rgba(180,77,255,0.08)" stroke-width="1">
+      <animate attributeName="stroke-opacity" values="0.06;0.12;0.06" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <!-- Curved arrow arcs (flow between phases) -->
+    <path d="M 420 92 A 130 130 0 0 1 472 150" fill="none" stroke="rgba(180,77,255,0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#al-arr-p)" class="flow-line"/>
+    <path d="M 472 270 A 130 130 0 0 1 420 328" fill="none" stroke="rgba(0,240,255,0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#al-arr-c)" class="flow-line"/>
+    <path d="M 280 328 A 130 130 0 0 1 228 270" fill="none" stroke="rgba(255,225,77,0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#al-arr-y)" class="flow-line"/>
+    <path d="M 228 150 A 130 130 0 0 1 280 92" fill="none" stroke="rgba(57,255,142,0.4)" stroke-width="2.5" stroke-linecap="round" marker-end="url(#al-arr-g)" class="flow-line"/>
+    <!-- Center icon -->
+    <g data-id="concept-agentic-loop" data-type="concept">
+      <circle cx="350" cy="210" r="32" fill="rgba(180,77,255,0.03)" stroke="rgba(180,77,255,0.15)" stroke-width="1">
+        <animate attributeName="r" values="30;34;30" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+      <text x="350" y="206" text-anchor="middle" font-size="20" fill="#b44dff" opacity="0.7">&#x21BB;</text>
+      <text x="350" y="222" text-anchor="middle" font-size="7" fill="#666" font-weight="700" letter-spacing="2">TDD LOOP</text>
+    </g>
+    <!-- Step 1: Write Tests (top) -->
+    <g class="entrance" style="animation-delay:0.15s">
+      <rect x="270" y="40" width="160" height="56" rx="8" fill="rgba(180,77,255,0.05)" stroke="rgba(180,77,255,0.2)" stroke-width="1"/>
+      <circle cx="294" cy="62" r="10" fill="rgba(180,77,255,0.12)" stroke="rgba(180,77,255,0.3)" stroke-width="1"/>
+      <text x="294" y="66" text-anchor="middle" font-size="10" fill="#b44dff" font-weight="700">1</text>
+      <text x="312" y="66" font-size="12" fill="#b44dff" font-weight="700">Write Tests</text>
+      <text x="286" y="84" font-size="9" fill="#999">Test agent creates .tftest.hcl</text>
+    </g>
+    <!-- Step 2: Write Code (right) -->
+    <g class="entrance" style="animation-delay:0.3s">
+      <rect x="476" y="180" width="160" height="56" rx="8" fill="rgba(0,240,255,0.04)" stroke="rgba(0,240,255,0.15)" stroke-width="1"/>
+      <circle cx="500" cy="202" r="10" fill="rgba(0,240,255,0.08)" stroke="rgba(0,240,255,0.25)" stroke-width="1"/>
+      <text x="500" y="206" text-anchor="middle" font-size="10" fill="#00f0ff" font-weight="700">2</text>
+      <text x="518" y="206" font-size="12" fill="#00f0ff" font-weight="700">Write Code</text>
+      <text x="492" y="224" font-size="9" fill="#999">One checklist item at a time</text>
+    </g>
+    <!-- Step 3: Validate (bottom) -->
+    <g class="entrance" style="animation-delay:0.45s">
+      <rect x="270" y="332" width="160" height="64" rx="8" fill="rgba(255,225,77,0.03)" stroke="rgba(255,225,77,0.12)" stroke-width="1"/>
+      <circle cx="294" cy="354" r="10" fill="rgba(255,225,77,0.08)" stroke="rgba(255,225,77,0.2)" stroke-width="1"/>
+      <text x="294" y="358" text-anchor="middle" font-size="10" fill="#ffe14d" font-weight="700">3</text>
+      <text x="312" y="358" font-size="12" fill="#ffe14d" font-weight="700">Validate</text>
+      <text x="286" y="376" font-size="9" fill="#999">fmt, validate, test, tflint</text>
+      <text x="286" y="390" font-size="9" fill="#999">trivy, terraform-docs</text>
+    </g>
+    <!-- Step 4: Deploy (left) -->
+    <g class="entrance" style="animation-delay:0.6s">
+      <rect x="64" y="180" width="160" height="56" rx="8" fill="rgba(57,255,142,0.03)" stroke="rgba(57,255,142,0.12)" stroke-width="1"/>
+      <circle cx="88" cy="202" r="10" fill="rgba(57,255,142,0.08)" stroke="rgba(57,255,142,0.2)" stroke-width="1"/>
+      <text x="88" y="206" text-anchor="middle" font-size="10" fill="#39ff8e" font-weight="700">4</text>
+      <text x="106" y="206" font-size="12" fill="#39ff8e" font-weight="700">Deploy</text>
+      <text x="80" y="224" font-size="9" fill="#999">PR + HCP Terraform</text>
+    </g>
+    <!-- FAIL / PASS indicators -->
+    <g class="entrance" style="animation-delay:0.75s">
+      <rect x="64" y="254" width="80" height="22" rx="5" fill="rgba(255,68,68,0.05)" stroke="rgba(255,68,68,0.15)" stroke-width="0.8">
+        <animate attributeName="stroke-opacity" values="0.15;0.4;0.15" dur="2s" repeatCount="indefinite"/>
+      </rect>
+      <text x="104" y="269" text-anchor="middle" font-size="10" fill="#ff4444" font-weight="600">FAIL &#x2192; 2</text>
+      <rect x="64" y="282" width="80" height="22" rx="5" fill="rgba(57,255,142,0.04)" stroke="rgba(57,255,142,0.12)" stroke-width="0.8"/>
+      <text x="104" y="297" text-anchor="middle" font-size="10" fill="#39ff8e" font-weight="600">PASS &#x2192; 4</text>
+    </g>
+  </svg>
 </div>
 <div class="card-grid">
   <div class="concept-card">
@@ -730,6 +1379,113 @@ code your-new-repo</pre>
 <div class="view-header">
   <h1 style="color:var(--purple)">Workflow Observability</h1>
   <p>Monitor agent workflows with OTEL traces and quality scoring</p>
+</div>
+<div class="svg-diagram">
+  <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="ob-glow"><feGaussianBlur in="SourceGraphic" stdDeviation="3"/></filter>
+      <filter id="ob-sec-glow"><feGaussianBlur in="SourceGraphic" stdDeviation="5"/></filter>
+    </defs>
+    <text x="350" y="22" text-anchor="middle" font-size="10" fill="#888" font-weight="600" letter-spacing="2">OBSERVABILITY PIPELINE</text>
+    <!-- Top pipeline: Agent -> OTEL -> Dashboard -->
+    <g class="entrance" style="animation-delay:0.1s" data-id="concept-observability" data-type="concept">
+      <!-- Agent box -->
+      <rect x="40" y="40" width="160" height="64" rx="8" fill="rgba(180,77,255,0.05)" stroke="rgba(180,77,255,0.2)" stroke-width="1"/>
+      <circle cx="74" cy="64" r="12" fill="rgba(180,77,255,0.1)" stroke="rgba(180,77,255,0.25)" stroke-width="1"/>
+      <text x="74" y="68" text-anchor="middle" font-size="10" fill="#b44dff">&#x2699;</text>
+      <text x="94" y="68" font-size="13" fill="#b44dff" font-weight="700">Agent</text>
+      <text x="56" y="88" font-size="9" fill="#999">Traces, metrics, logs</text>
+    </g>
+    <!-- Arrow Agent -> OTEL with flowing particles -->
+    <line x1="200" y1="72" x2="268" y2="72" class="flow-line" stroke="rgba(168,200,255,0.3)" stroke-width="1.5"/>
+    <circle r="2.5" fill="#a8c8ff" opacity="0.8"><animateMotion dur="1.5s" repeatCount="indefinite" path="M 200 72 L 268 72"/></circle>
+    <text x="234" y="64" text-anchor="middle" font-size="8" fill="#666">OTLP</text>
+    <!-- OTEL Collector -->
+    <g class="entrance" style="animation-delay:0.2s">
+      <rect x="270" y="40" width="180" height="64" rx="8" fill="rgba(168,200,255,0.04)" stroke="rgba(168,200,255,0.15)" stroke-width="1"/>
+      <text x="360" y="66" text-anchor="middle" font-size="13" fill="#a8c8ff" font-weight="700">OTEL Collector</text>
+      <text x="360" y="86" text-anchor="middle" font-size="9" fill="#999">http/protobuf :4318</text>
+    </g>
+    <!-- Arrow OTEL -> Dashboard -->
+    <line x1="450" y1="72" x2="502" y2="72" class="flow-line" stroke="rgba(0,240,255,0.3)" stroke-width="1.5"/>
+    <circle r="2.5" fill="#00f0ff" opacity="0.8"><animateMotion dur="1.5s" repeatCount="indefinite" begin="0.5s" path="M 450 72 L 502 72"/></circle>
+    <!-- Dashboard -->
+    <g class="entrance" style="animation-delay:0.3s">
+      <rect x="504" y="40" width="160" height="64" rx="8" fill="rgba(0,240,255,0.03)" stroke="rgba(0,240,255,0.12)" stroke-width="1"/>
+      <text x="584" y="66" text-anchor="middle" font-size="13" fill="#00f0ff" font-weight="700">Dashboard</text>
+      <text x="584" y="86" text-anchor="middle" font-size="9" fill="#999">Traces, cost analysis</text>
+    </g>
+
+    <!-- Quality Dimensions Section -->
+    <text x="40" y="136" font-size="10" fill="#888" font-weight="600" letter-spacing="1.5">QUALITY SCORING DIMENSIONS</text>
+    <!-- 6 quality cards in 3x2 grid -->
+    <!-- Row 1 -->
+    <g class="entrance" style="animation-delay:0.4s">
+      <rect x="40" y="150" width="196" height="64" rx="6" fill="rgba(168,200,255,0.03)" stroke="rgba(168,200,255,0.1)" stroke-width="0.8"/>
+      <text x="138" y="170" text-anchor="middle" font-size="12" fill="#a8c8ff" font-weight="600">Correctness</text>
+      <rect x="60" y="180" width="156" height="6" rx="3" fill="rgba(255,255,255,0.03)"/>
+      <rect x="60" y="180" width="0" height="6" rx="3" fill="rgba(168,200,255,0.3)">
+        <animate attributeName="width" from="0" to="130" dur="1s" begin="0.5s" fill="freeze"/>
+      </rect>
+      <text x="138" y="202" text-anchor="middle" font-size="8" fill="#666">20% weight</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.45s">
+      <!-- Security - EMPHASIZED -->
+      <rect x="252" y="150" width="196" height="64" rx="6" fill="rgba(255,45,123,0.05)" stroke="rgba(255,45,123,0.2)" stroke-width="1.2"/>
+      <rect x="252" y="150" width="196" height="64" rx="6" fill="none" stroke="rgba(255,45,123,0.08)" stroke-width="1.2" filter="url(#ob-sec-glow)"/>
+      <text x="350" y="170" text-anchor="middle" font-size="13" fill="#ff2d7b" font-weight="700">Security</text>
+      <rect x="272" y="180" width="156" height="6" rx="3" fill="rgba(255,255,255,0.03)"/>
+      <rect x="272" y="180" width="0" height="6" rx="3" fill="rgba(255,45,123,0.4)">
+        <animate attributeName="width" from="0" to="156" dur="1s" begin="0.55s" fill="freeze"/>
+      </rect>
+      <text x="350" y="202" text-anchor="middle" font-size="8" fill="#ff2d7b" font-weight="600">30% weight</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.5s">
+      <rect x="464" y="150" width="196" height="64" rx="6" fill="rgba(180,77,255,0.03)" stroke="rgba(180,77,255,0.1)" stroke-width="0.8"/>
+      <text x="562" y="170" text-anchor="middle" font-size="12" fill="#b44dff" font-weight="600">Best Practices</text>
+      <rect x="484" y="180" width="156" height="6" rx="3" fill="rgba(255,255,255,0.03)"/>
+      <rect x="484" y="180" width="0" height="6" rx="3" fill="rgba(180,77,255,0.3)">
+        <animate attributeName="width" from="0" to="110" dur="1s" begin="0.6s" fill="freeze"/>
+      </rect>
+      <text x="562" y="202" text-anchor="middle" font-size="8" fill="#666">15% weight</text>
+    </g>
+    <!-- Row 2 -->
+    <g class="entrance" style="animation-delay:0.55s">
+      <rect x="40" y="228" width="196" height="64" rx="6" fill="rgba(0,240,255,0.03)" stroke="rgba(0,240,255,0.1)" stroke-width="0.8"/>
+      <text x="138" y="248" text-anchor="middle" font-size="12" fill="#00f0ff" font-weight="600">Testing</text>
+      <rect x="60" y="258" width="156" height="6" rx="3" fill="rgba(255,255,255,0.03)"/>
+      <rect x="60" y="258" width="0" height="6" rx="3" fill="rgba(0,240,255,0.3)">
+        <animate attributeName="width" from="0" to="100" dur="1s" begin="0.65s" fill="freeze"/>
+      </rect>
+      <text x="138" y="280" text-anchor="middle" font-size="8" fill="#666">15% weight</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.6s">
+      <rect x="252" y="228" width="196" height="64" rx="6" fill="rgba(255,225,77,0.02)" stroke="rgba(255,225,77,0.08)" stroke-width="0.8"/>
+      <text x="350" y="248" text-anchor="middle" font-size="12" fill="#ffe14d" font-weight="600">Documentation</text>
+      <rect x="272" y="258" width="156" height="6" rx="3" fill="rgba(255,255,255,0.03)"/>
+      <rect x="272" y="258" width="0" height="6" rx="3" fill="rgba(255,225,77,0.3)">
+        <animate attributeName="width" from="0" to="80" dur="1s" begin="0.7s" fill="freeze"/>
+      </rect>
+      <text x="350" y="280" text-anchor="middle" font-size="8" fill="#666">10% weight</text>
+    </g>
+    <g class="entrance" style="animation-delay:0.65s">
+      <rect x="464" y="228" width="196" height="64" rx="6" fill="rgba(57,255,142,0.02)" stroke="rgba(57,255,142,0.08)" stroke-width="0.8"/>
+      <text x="562" y="248" text-anchor="middle" font-size="12" fill="#39ff8e" font-weight="600">Completeness</text>
+      <rect x="484" y="258" width="156" height="6" rx="3" fill="rgba(255,255,255,0.03)"/>
+      <rect x="484" y="258" width="0" height="6" rx="3" fill="rgba(57,255,142,0.3)">
+        <animate attributeName="width" from="0" to="62" dur="1s" begin="0.75s" fill="freeze"/>
+      </rect>
+      <text x="562" y="280" text-anchor="middle" font-size="8" fill="#666">10% weight</text>
+    </g>
+    <!-- Feedback loop bar -->
+    <g class="entrance" style="animation-delay:0.8s">
+      <rect x="40" y="310" width="620" height="52" rx="8" fill="rgba(180,77,255,0.02)" stroke="rgba(180,77,255,0.08)" stroke-width="0.8"/>
+      <text x="350" y="334" text-anchor="middle" font-size="11" fill="#ccc">
+        <tspan fill="#b44dff" font-weight="600">Feedback Loop:</tspan>  Execute &#x2192; Record &#x2192; Analyze &#x2192; Optimize &#x2192; Repeat
+      </text>
+      <text x="350" y="352" text-anchor="middle" font-size="9" fill="#666">Compare quantitatively across model versions, not by vibes</text>
+    </g>
+  </svg>
 </div>
 <div class="card-grid">
   <div class="concept-card">
