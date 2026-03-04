@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Resources &amp; Next Steps</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+
+  /* Section label */
+  .section-label {
+    padding: 48px 80px 0; text-align: center;
+  }
+  .section-label span {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 3px; color: #FFCF25;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 12px 80px 0; text-align: center;
+  }
+  .title-bar h1 {
+    font-size: 36px; font-weight: 600; color: #FFFFFF;
+    letter-spacing: -0.02em;
+  }
+  .title-bar p {
+    font-size: 20px; font-weight: 400; color: #82748C; margin-top: 6px;
+  }
+
+  /* Content: centered layout */
+  .content {
+    display: flex; gap: 60px; padding: 48px 100px 0;
+    align-items: flex-start;
+  }
+
+  /* Left: bullets */
+  .bullets {
+    width: 38%; display: flex; flex-direction: column; gap: 28px;
+    padding-top: 32px;
+  }
+  .bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .bullet-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #62D4DC; flex-shrink: 0;
+    margin-top: 8px;
+  }
+  .bullet-text {
+    font-size: 22px; font-weight: 400; color: #CCCCCC; line-height: 1.5;
+  }
+  .bullet-text strong {
+    color: #FFFFFF; font-weight: 600;
+  }
+
+  /* Right: 2x2 card grid */
+  .card-grid {
+    width: 62%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .resource-card {
+    border-radius: 12px; overflow: hidden;
+    display: flex; flex-direction: column;
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+
+  .card-accent {
+    height: 3px; width: 100%;
+  }
+
+  .card-content {
+    padding: 28px 28px 24px;
+    display: flex; flex-direction: column; gap: 12px;
+    flex: 1;
+  }
+
+  .card-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .card-title {
+    font-size: 20px; font-weight: 600; color: #FFFFFF;
+  }
+
+  .card-desc {
+    font-size: 20px; font-weight: 400; color: #82748C; line-height: 1.5; flex: 1;
+  }
+
+  .card-link {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 16px; font-weight: 500;
+    padding: 6px 14px; border-radius: 8px;
+    align-self: flex-start;
+    text-decoration: none;
+  }
+
+  /* Card 1: Blog */
+  .card-blog .card-accent { background: #A78BFA; }
+  .card-blog .card-icon {
+    background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.2);
+  }
+  .card-blog .card-link {
+    color: #A78BFA; background: rgba(167,139,250,0.08); border: 1px solid rgba(167,139,250,0.15);
+  }
+
+  /* Card 2: Talks */
+  .card-talks .card-accent { background: #DC477D; }
+  .card-talks .card-icon {
+    background: rgba(220,71,125,0.1); border: 1px solid rgba(220,71,125,0.2);
+  }
+  .card-talks .card-link {
+    color: #DC477D; background: rgba(220,71,125,0.08); border: 1px solid rgba(220,71,125,0.15);
+  }
+
+  /* Card 3: Repository */
+  .card-repo .card-accent { background: #62D4DC; }
+  .card-repo .card-icon {
+    background: rgba(98,212,220,0.1); border: 1px solid rgba(98,212,220,0.2);
+  }
+  .card-repo .card-link {
+    color: #62D4DC; background: rgba(98,212,220,0.08); border: 1px solid rgba(98,212,220,0.15);
+  }
+
+  /* Card 4: Support */
+  .card-support .card-accent { background: #60DEA9; }
+  .card-support .card-icon {
+    background: rgba(96,222,169,0.1); border: 1px solid rgba(96,222,169,0.2);
+  }
+  .card-support .card-link {
+    color: #60DEA9; background: rgba(96,222,169,0.08); border: 1px solid rgba(96,222,169,0.15);
+  }
+
+  .icon-svg {
+    width: 24px; height: 24px;
+  }
+
+  /* Footer */
+  .footer {
+    position: absolute; bottom: 56px; left: 0; right: 0;
+    text-align: center;
+  }
+  .footer p {
+    font-size: 20px; font-weight: 400; color: #82748C;
+  }
+  .footer .cyan { color: #62D4DC; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="section-label">
+  <span>GETTING STARTED</span>
+</div>
+
+<div class="title-bar">
+  <h1>Resources and Next Steps</h1>
+  <p>Further reading, community, and getting started</p>
+</div>
+
+<div class="content">
+  <div class="bullets">
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Anthropic engineering blog</strong> -- context engineering, agentic patterns, sub-agent architecture</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>AI coding agent documentation</strong> -- agents, skills, MCP tools, and AGENTS.md conventions</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>terraform-agentic-workflows</strong> -- full SDD implementation with 3 workflows and 15 agents</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Team Slack channel</strong> -- questions, feedback, and collaboration</div>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <!-- Blog -->
+    <div class="resource-card card-blog">
+      <div class="card-accent"></div>
+      <div class="card-content">
+        <div class="card-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2">
+            <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+          </svg>
+        </div>
+        <div class="card-title">Blog</div>
+        <div class="card-desc">Context engineering, agentic patterns, and best practices for building reliable AI systems</div>
+        <span class="card-link">anthropic.com/engineering</span>
+      </div>
+    </div>
+
+    <!-- Talks -->
+    <div class="resource-card card-talks">
+      <div class="card-accent"></div>
+      <div class="card-content">
+        <div class="card-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#DC477D" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+        </div>
+        <div class="card-title">Talks</div>
+        <div class="card-desc">Conference presentations on agentic workflows and Terraform automation patterns</div>
+        <span class="card-link">AI Engineer talks</span>
+      </div>
+    </div>
+
+    <!-- Repository -->
+    <div class="resource-card card-repo">
+      <div class="card-accent"></div>
+      <div class="card-content">
+        <div class="card-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#62D4DC" stroke-width="2">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
+          </svg>
+        </div>
+        <div class="card-title">Repository</div>
+        <div class="card-desc">terraform-agentic-workflows -- 3 workflows, 15 agents, 25 skills, constitutions, templates</div>
+        <span class="card-link">terraform-agentic-workflows</span>
+      </div>
+    </div>
+
+    <!-- Support -->
+    <div class="resource-card card-support">
+      <div class="card-accent"></div>
+      <div class="card-content">
+        <div class="card-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60DEA9" stroke-width="2">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+          </svg>
+        </div>
+        <div class="card-title">Support</div>
+        <div class="card-desc">Team Slack channel for questions, feedback, and collaboration on agentic workflows</div>
+        <span class="card-link">#agentic-workflows</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p><span class="cyan">Thank you</span> -- start with /tf-consumer-plan and build from there</p>
+</div>
+
+</body>
+</html>

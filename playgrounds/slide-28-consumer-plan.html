@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Consumer: /tf-consumer-plan</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.03;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 36px 80px 16px;
+    position: relative; z-index: 1;
+  }
+  .section-label {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 3px; color: #FFCF25; margin-bottom: 8px;
+  }
+  .title-bar h1 {
+    font-size: 36px; font-weight: 600; letter-spacing: -0.02em;
+    color: #60DEA9;
+  }
+  .title-bar h1 code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: #60DEA9;
+  }
+  .title-bar p {
+    font-size: 20px; color: #82748C; margin-top: 4px; font-weight: 400;
+  }
+
+  /* Flow diagram area (top 60%) */
+  .flow-area {
+    padding: 10px 80px 0;
+    position: relative; z-index: 1;
+  }
+
+  .flow-svg {
+    width: 100%;
+  }
+
+  /* Bullets area (bottom 40%) */
+  .bullets-area {
+    display: flex; gap: 60px;
+    padding: 30px 80px 0;
+    position: relative; z-index: 1;
+  }
+
+  .bullet-col {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+
+  .bullet-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 22px; color: #CCCCCC; line-height: 1.5; font-weight: 400;
+  }
+  .bullet-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 8px;
+    background: #60DEA9;
+  }
+  .bullet-item strong { color: #FFFFFF; font-weight: 600; }
+  .bullet-item code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 20px; color: #60DEA9;
+    background: rgba(96,222,169,0.08); padding: 2px 6px; border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="title-bar">
+  <div class="section-label">WORKFLOWS</div>
+  <h1>Consumer: <code>/tf-consumer-plan</code></h1>
+  <p>Phases 1 &amp; 2 &mdash; Requirements + Design</p>
+</div>
+
+<!-- Flow diagram -->
+<div class="flow-area">
+  <svg class="flow-svg" viewBox="0 0 1760 420" xmlns="http://www.w3.org/2000/svg">
+    <!-- Phase 1 box -->
+    <rect x="0" y="0" width="920" height="400" rx="16" fill="rgba(14,14,22,0.5)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+    <text x="24" y="32" fill="#60DEA9" font-size="14" font-weight="700" letter-spacing="2">PHASE 1: REQUIREMENTS</text>
+
+    <!-- Setup group -->
+    <rect x="20" y="50" width="260" height="140" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <text x="36" y="72" fill="#82748C" font-size="13" font-weight="700" letter-spacing="1">SETUP</text>
+    <rect x="36" y="84" width="110" height="26" rx="5" fill="rgba(96,222,169,0.06)" stroke="rgba(96,222,169,0.2)" stroke-width="1"/>
+    <text x="91" y="101" text-anchor="middle" fill="#60DEA9" font-family="'SF Mono', monospace" font-size="12">validate-env.sh</text>
+    <rect x="152" y="84" width="112" height="26" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="208" y="101" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="12">gh issue create</text>
+    <rect x="36" y="118" width="140" height="26" rx="5" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
+    <text x="106" y="135" text-anchor="middle" fill="#A78BFA" font-family="'SF Mono', monospace" font-size="12">issue-body-template</text>
+    <rect x="36" y="152" width="140" height="26" rx="5" fill="rgba(96,222,169,0.06)" stroke="rgba(96,222,169,0.2)" stroke-width="1"/>
+    <text x="106" y="169" text-anchor="middle" fill="#60DEA9" font-family="'SF Mono', monospace" font-size="12">create-new-feature.sh</text>
+
+    <!-- Arrow Setup -> Clarify -->
+    <line x1="280" y1="120" x2="310" y2="120" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polygon points="306,116 314,120 306,124" fill="rgba(255,255,255,0.15)"/>
+
+    <!-- Clarify group -->
+    <rect x="310" y="50" width="220" height="140" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <text x="326" y="72" fill="#82748C" font-size="13" font-weight="700" letter-spacing="1">CLARIFY</text>
+    <rect x="326" y="84" width="140" height="26" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="396" y="101" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="12">tf-domain-category</text>
+    <text x="326" y="134" fill="#82748C" font-size="12" font-style="italic">Module selection</text>
+    <text x="326" y="148" fill="#82748C" font-size="12" font-style="italic">ambiguities</text>
+
+    <!-- Arrow Clarify -> Research -->
+    <line x1="530" y1="120" x2="560" y2="120" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polygon points="556,116 564,120 556,124" fill="rgba(255,255,255,0.15)"/>
+
+    <!-- Research group -->
+    <rect x="560" y="50" width="340" height="200" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <text x="576" y="72" fill="#82748C" font-size="13" font-weight="700" letter-spacing="1">RESEARCH</text>
+    <rect x="576" y="84" width="180" height="26" rx="5" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.25)" stroke-width="1"/>
+    <text x="666" y="101" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="12" font-weight="600">tf-consumer-research x3-4</text>
+    <rect x="576" y="118" width="100" height="26" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="626" y="135" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="12">tf-research</text>
+    <rect x="684" y="118" width="130" height="26" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="749" y="135" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="12">tf-security-baselines</text>
+    <rect x="576" y="156" width="140" height="26" rx="5" fill="rgba(255,208,108,0.06)" stroke="rgba(255,208,108,0.2)" stroke-width="1"/>
+    <text x="646" y="173" text-anchor="middle" fill="#FFD06C" font-family="'SF Mono', monospace" font-size="12">aws-knowledge-mcp</text>
+    <rect x="576" y="190" width="160" height="26" rx="5" fill="rgba(255,208,108,0.06)" stroke="rgba(255,208,108,0.2)" stroke-width="1"/>
+    <text x="656" y="207" text-anchor="middle" fill="#FFD06C" font-family="'SF Mono', monospace" font-size="12">terraform-mcp (private)</text>
+
+    <!-- Output for Phase 1 -->
+    <rect x="20" y="280" width="880" height="40" rx="8" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+    <text x="36" y="305" fill="#FFCF25" font-size="13" font-weight="700" letter-spacing="1.5">OUTPUT</text>
+    <text x="120" y="305" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="15">GH Issue + research findings (in-memory)</text>
+
+    <!-- Big arrow between phases -->
+    <line x1="940" y1="200" x2="980" y2="200" stroke="rgba(96,222,169,0.25)" stroke-width="2"/>
+    <polygon points="976,194 986,200 976,206" fill="rgba(96,222,169,0.35)"/>
+
+    <!-- Phase 2 box -->
+    <rect x="990" y="0" width="770" height="400" rx="16" fill="rgba(14,14,22,0.5)" stroke="rgba(167,139,250,0.15)" stroke-width="1"/>
+    <text x="1014" y="32" fill="#A78BFA" font-size="14" font-weight="700" letter-spacing="2">PHASE 2: DESIGN</text>
+
+    <!-- Author group -->
+    <rect x="1010" y="50" width="340" height="200" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <text x="1026" y="72" fill="#82748C" font-size="13" font-weight="700" letter-spacing="1">AUTHOR</text>
+    <rect x="1026" y="84" width="160" height="26" rx="5" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.25)" stroke-width="1"/>
+    <text x="1106" y="101" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="12" font-weight="600">tf-consumer-design</text>
+    <rect x="1026" y="118" width="155" height="26" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="1103" y="135" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="12">tf-architecture-patterns</text>
+    <rect x="1189" y="118" width="130" height="26" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="1254" y="135" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="12">tf-security-baselines</text>
+    <rect x="1026" y="156" width="175" height="26" rx="5" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
+    <text x="1113" y="173" text-anchor="middle" fill="#A78BFA" font-family="'SF Mono', monospace" font-size="12">consumer-design-template</text>
+    <rect x="1026" y="190" width="170" height="26" rx="5" fill="rgba(98,126,239,0.06)" stroke="rgba(98,126,239,0.2)" stroke-width="1"/>
+    <text x="1111" y="207" text-anchor="middle" fill="#627EEF" font-family="'SF Mono', monospace" font-size="12">consumer-constitution.md</text>
+
+    <!-- Arrow Author -> Gate -->
+    <line x1="1350" y1="150" x2="1400" y2="150" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polygon points="1396,146 1404,150 1396,154" fill="rgba(255,255,255,0.15)"/>
+
+    <!-- Human Approval Gate -->
+    <rect x="1400" y="60" width="170" height="180" rx="10" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.2)" stroke-width="1.5"/>
+    <text x="1485" y="88" text-anchor="middle" fill="#FFCF25" font-size="13" font-weight="700" letter-spacing="1.5">HUMAN GATE</text>
+    <text x="1485" y="120" text-anchor="middle" fill="#82748C" font-size="13">Verify file exists</text>
+    <text x="1485" y="140" text-anchor="middle" fill="#82748C" font-size="13">Confirm 6 sections</text>
+    <text x="1485" y="160" text-anchor="middle" fill="#82748C" font-size="13">Present summary</text>
+    <rect x="1430" y="178" width="110" height="28" rx="6" fill="rgba(255,207,37,0.1)" stroke="rgba(255,207,37,0.3)" stroke-width="1"/>
+    <text x="1485" y="197" text-anchor="middle" fill="#FFCF25" font-size="12" font-weight="600">Approve</text>
+
+    <!-- Output for Phase 2 -->
+    <rect x="1010" y="280" width="730" height="40" rx="8" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+    <text x="1026" y="305" fill="#FFCF25" font-size="13" font-weight="700" letter-spacing="1.5">OUTPUT</text>
+    <text x="1110" y="305" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="15">consumer-design.md</text>
+
+    <!-- Legend -->
+    <circle cx="30" cy="380" r="4" fill="#DC477D"/>
+    <text x="40" y="384" fill="#82748C" font-size="13">Agent</text>
+    <circle cx="100" cy="380" r="4" fill="#62D4DC"/>
+    <text x="110" y="384" fill="#82748C" font-size="13">Skill</text>
+    <circle cx="165" cy="380" r="4" fill="#A78BFA"/>
+    <text x="175" y="384" fill="#82748C" font-size="13">Template</text>
+    <circle cx="250" cy="380" r="4" fill="#60DEA9"/>
+    <text x="260" y="384" fill="#82748C" font-size="13">Script</text>
+    <circle cx="320" cy="380" r="4" fill="#FFD06C"/>
+    <text x="330" y="384" fill="#82748C" font-size="13">MCP</text>
+    <circle cx="370" cy="380" r="4" fill="#627EEF"/>
+    <text x="380" y="384" fill="#82748C" font-size="13">Reference</text>
+    <circle cx="450" cy="380" r="4" fill="#EC585D"/>
+    <text x="460" y="384" fill="#82748C" font-size="13">Command</text>
+    <circle cx="530" cy="380" r="4" fill="#FFCF25"/>
+    <text x="540" y="384" fill="#82748C" font-size="13">Artifact</text>
+  </svg>
+</div>
+
+<!-- Key bullets -->
+<div class="bullets-area">
+  <div class="bullet-col">
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>3-4 parallel research agents</strong> &mdash; each answers one research question concurrently</div>
+    </div>
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>MCP queries private registry</strong> &mdash; terraform-mcp searches module interfaces and composition patterns</div>
+    </div>
+  </div>
+  <div class="bullet-col">
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>Human gate before code</strong> &mdash; design must be approved before implementation begins</div>
+    </div>
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>consumer-design.md output</strong> &mdash; covers module selection, wiring, security, and checklist</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

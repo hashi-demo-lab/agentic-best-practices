@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Provider: /tf-provider-plan</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+
+  /* Section label */
+  .section-label {
+    padding: 48px 80px 0;
+  }
+  .section-label span {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 3px; color: #FFCF25;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 12px 80px 0;
+  }
+  .title-bar h1 {
+    font-size: 36px; font-weight: 600; color: #DC477D;
+    letter-spacing: -0.02em;
+  }
+  .title-bar h1 code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: #DC477D;
+  }
+  .title-bar p {
+    font-size: 19px; font-weight: 400; color: #82748C; margin-top: 6px;
+  }
+
+  /* Flow diagram - top 60% */
+  .flow-area {
+    padding: 40px 80px 0;
+  }
+  .flow-row {
+    display: flex; align-items: center; gap: 0;
+  }
+
+  .flow-node {
+    padding: 20px 24px; border-radius: 12px;
+    display: flex; flex-direction: column; gap: 6px;
+    min-width: 200px; text-align: center;
+    position: relative;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .flow-node.setup {
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+  }
+  .flow-node.clarify {
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+  }
+  .flow-node.research {
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    min-width: 260px;
+  }
+  .flow-node.design {
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    min-width: 280px;
+  }
+  .flow-node.gate {
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    border: 1px dashed rgba(255,207,37,0.3);
+  }
+
+  .flow-node-title {
+    font-size: 16px; font-weight: 600;
+  }
+  .flow-node.setup .flow-node-title { color: #60DEA9; }
+  .flow-node.clarify .flow-node-title { color: #DC477D; }
+  .flow-node.research .flow-node-title { color: #DC477D; }
+  .flow-node.design .flow-node-title { color: #A78BFA; }
+  .flow-node.gate .flow-node-title { color: #FFCF25; }
+
+  .flow-node-detail {
+    font-size: 13px; font-weight: 400; color: #82748C; line-height: 1.4;
+  }
+  .flow-node-detail code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px; color: #62D4DC;
+    background: rgba(98,212,220,0.06); padding: 1px 5px; border-radius: 3px;
+  }
+
+  .flow-tags {
+    display: flex; flex-wrap: wrap; gap: 4px; justify-content: center;
+    margin-top: 4px;
+  }
+  .tag {
+    padding: 3px 8px; border-radius: 5px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11px; font-weight: 500;
+  }
+  .tag-agent { background: rgba(220,71,125,0.08); color: #DC477D; border: 1px solid rgba(220,71,125,0.15); }
+  .tag-skill { background: rgba(98,212,220,0.06); color: #62D4DC; border: 1px solid rgba(98,212,220,0.15); }
+  .tag-template { background: rgba(167,139,250,0.06); color: #A78BFA; border: 1px solid rgba(167,139,250,0.15); }
+  .tag-ref { background: rgba(98,126,239,0.06); color: #627EEF; border: 1px solid rgba(98,126,239,0.15); }
+
+  .flow-arrow {
+    display: flex; align-items: center; padding: 0 6px;
+  }
+  .flow-arrow svg {
+    width: 40px; height: 16px;
+  }
+
+  /* Phase labels under flow */
+  .phase-labels {
+    display: flex; margin-top: 14px; gap: 0;
+  }
+  .phase-label {
+    font-size: 12px; font-weight: 500; letter-spacing: 0.5px;
+    padding: 6px 14px; border-radius: 4px;
+  }
+  .phase-label.p1 { color: #DC477D; background: rgba(220,71,125,0.06); margin-left: 240px; }
+  .phase-label.p2 { color: #A78BFA; background: rgba(167,139,250,0.06); margin-left: auto; margin-right: 100px; }
+
+  /* Bullets - bottom 40% */
+  .bullet-area {
+    display: flex; gap: 60px; padding: 44px 80px 0;
+  }
+  .bullet-col {
+    flex: 1; display: flex; flex-direction: column; gap: 22px;
+  }
+  .bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .bullet-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #DC477D; flex-shrink: 0;
+    margin-top: 8px;
+  }
+  .bullet-text {
+    font-size: 19px; font-weight: 400; color: #CCCCCC; line-height: 1.5;
+  }
+  .bullet-text strong {
+    color: #FFFFFF; font-weight: 600;
+  }
+  .bullet-text code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 16px; color: #DC477D;
+    background: rgba(220,71,125,0.08); padding: 2px 7px; border-radius: 4px;
+  }
+
+  /* Output artifact */
+  .output-bar {
+    position: absolute; bottom: 48px; left: 80px; right: 80px;
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 20px; border-radius: 12px;
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .output-label {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 1.5px; color: #82748C;
+  }
+  .output-artifact {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 15px; color: #FFCF25;
+    background: rgba(255,207,37,0.06); padding: 4px 12px; border-radius: 6px;
+    border: 1px solid rgba(255,207,37,0.12);
+  }
+  .output-note {
+    font-size: 14px; font-weight: 400; color: #82748C; font-style: italic; margin-left: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="section-label">
+  <span>WORKFLOWS</span>
+</div>
+
+<div class="title-bar">
+  <h1>Provider: <code>/tf-provider-plan</code></h1>
+  <p>Phases 1 and 2 -- Requirements + Design</p>
+</div>
+
+<!-- Flow diagram -->
+<div class="flow-area">
+  <div class="flow-row">
+    <div class="flow-node setup">
+      <div class="flow-node-title">Setup</div>
+      <div class="flow-node-detail">Environment, issue,<br>feature branch</div>
+      <div class="flow-tags">
+        <span class="tag tag-skill">validate-env.sh</span>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <svg viewBox="0 0 40 16"><line x1="2" y1="8" x2="30" y2="8" stroke="#DC477D" stroke-width="2" opacity="0.4"/><polygon points="28,4 38,8 28,12" fill="#DC477D" opacity="0.5"/></svg>
+    </div>
+
+    <div class="flow-node clarify">
+      <div class="flow-node-title">Clarify</div>
+      <div class="flow-node-detail">CRUD semantics, API patterns,<br>state mapping</div>
+      <div class="flow-tags">
+        <span class="tag tag-skill">tf-domain-category</span>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <svg viewBox="0 0 40 16"><line x1="2" y1="8" x2="30" y2="8" stroke="#DC477D" stroke-width="2" opacity="0.4"/><polygon points="28,4 38,8 28,12" fill="#DC477D" opacity="0.5"/></svg>
+    </div>
+
+    <div class="flow-node research">
+      <div class="flow-node-title">Research</div>
+      <div class="flow-node-detail">3-4 concurrent agents<br>WebSearch / WebFetch for API docs</div>
+      <div class="flow-tags">
+        <span class="tag tag-agent">tf-provider-research x3-4</span>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <svg viewBox="0 0 40 16"><line x1="2" y1="8" x2="30" y2="8" stroke="#A78BFA" stroke-width="2" opacity="0.4"/><polygon points="28,4 38,8 28,12" fill="#A78BFA" opacity="0.5"/></svg>
+    </div>
+
+    <div class="flow-node design">
+      <div class="flow-node-title">Design</div>
+      <div class="flow-node-detail">Per-resource design doc<br>schema + CRUD + tests</div>
+      <div class="flow-tags">
+        <span class="tag tag-agent">tf-provider-design</span>
+        <span class="tag tag-skill">provider-resources</span>
+      </div>
+      <div class="flow-tags">
+        <span class="tag tag-template">provider-design-template</span>
+        <span class="tag tag-ref">provider-constitution</span>
+      </div>
+    </div>
+
+    <div class="flow-arrow">
+      <svg viewBox="0 0 40 16"><line x1="2" y1="8" x2="30" y2="8" stroke="#FFCF25" stroke-width="2" opacity="0.4"/><polygon points="28,4 38,8 28,12" fill="#FFCF25" opacity="0.5"/></svg>
+    </div>
+
+    <div class="flow-node gate">
+      <div class="flow-node-title">Human Approval</div>
+      <div class="flow-node-detail">Review design,<br>approve before Go code</div>
+    </div>
+  </div>
+
+  <div class="phase-labels">
+    <div class="phase-label p1">Phase 1: Requirements</div>
+    <div class="phase-label p2">Phase 2: Design</div>
+  </div>
+</div>
+
+<!-- Key bullets -->
+<div class="bullet-area">
+  <div class="bullet-col">
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>No MCP servers</strong> -- uses WebSearch/WebFetch for cloud API documentation</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>CRUD semantics clarified up front</strong> -- API patterns and state mapping before design</div>
+    </div>
+  </div>
+  <div class="bullet-col">
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Per-resource design docs</strong> -- <code>provider-design-{resource}.md</code> with full schema</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Human approval gate</strong> -- no Go code until design is explicitly approved</div>
+    </div>
+  </div>
+</div>
+
+<div class="output-bar">
+  <span class="output-label">Output</span>
+  <span class="output-artifact">provider-design-{resource}.md</span>
+  <span class="output-note">"Run /tf-provider-implement {FEATURE} when ready."</span>
+</div>
+
+</body>
+</html>

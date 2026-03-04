@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Getting Started</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+
+  /* Section label */
+  .section-label {
+    padding: 48px 80px 0;
+  }
+  .section-label span {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 3px; color: #FFCF25;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 12px 80px 0;
+  }
+  .title-bar h1 {
+    font-size: 36px; font-weight: 600; color: #FFFFFF;
+    letter-spacing: -0.02em;
+  }
+  .title-bar p {
+    font-size: 20px; font-weight: 400; color: #82748C; margin-top: 6px;
+  }
+
+  /* Content: visual top, bullets bottom */
+  .visual-area {
+    padding: 56px 120px 0;
+  }
+
+  /* Stepping stones */
+  .steps-row {
+    display: flex; align-items: center; gap: 0;
+  }
+
+  .step-card {
+    flex: 1; border-radius: 12px; overflow: hidden;
+    display: flex; flex-direction: column;
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+
+  .step-accent {
+    height: 3px; width: 100%;
+  }
+  .step-card.s1 .step-accent { background: #60DEA9; }
+  .step-card.s2 .step-accent { background: #A78BFA; }
+  .step-card.s3 .step-accent { background: #DC477D; }
+
+  .step-header {
+    padding: 28px 28px 18px; text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .step-number {
+    width: 48px; height: 48px; border-radius: 12px; margin: 0 auto 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 600;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .step-card.s1 .step-number {
+    background: rgba(96,222,169,0.1); border: 1px solid rgba(96,222,169,0.2); color: #60DEA9;
+  }
+  .step-card.s2 .step-number {
+    background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.2); color: #A78BFA;
+  }
+  .step-card.s3 .step-number {
+    background: rgba(220,71,125,0.1); border: 1px solid rgba(220,71,125,0.2); color: #DC477D;
+  }
+
+  .step-title {
+    font-size: 22px; font-weight: 600; margin-bottom: 4px;
+  }
+  .step-card.s1 .step-title { color: #60DEA9; }
+  .step-card.s2 .step-title { color: #A78BFA; }
+  .step-card.s3 .step-title { color: #DC477D; }
+
+  .step-subtitle {
+    font-size: 17px; font-weight: 400; color: #82748C;
+  }
+
+  .step-body {
+    padding: 20px 28px 28px;
+    display: flex; flex-direction: column; gap: 12px;
+    flex: 1;
+  }
+
+  .step-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 20px; font-weight: 400; color: #CCCCCC; line-height: 1.5;
+  }
+  .step-item-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 7px; opacity: 0.6;
+  }
+  .step-card.s1 .step-item-dot { background: #60DEA9; }
+  .step-card.s2 .step-item-dot { background: #A78BFA; }
+  .step-card.s3 .step-item-dot { background: #DC477D; }
+
+  .step-item code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 18px; padding: 2px 7px; border-radius: 4px;
+  }
+  .step-card.s1 .step-item code { color: #60DEA9; background: rgba(96,222,169,0.08); }
+  .step-card.s2 .step-item code { color: #A78BFA; background: rgba(167,139,250,0.08); }
+  .step-card.s3 .step-item code { color: #DC477D; background: rgba(220,71,125,0.08); }
+
+  .step-item strong { color: #FFFFFF; font-weight: 600; }
+
+  /* Step arrows */
+  .step-arrow {
+    width: 64px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-arrow svg {
+    width: 64px; height: 32px;
+  }
+
+  /* Bullet area */
+  .bullet-area {
+    display: flex; gap: 60px; padding: 56px 80px 0;
+  }
+  .bullet-col {
+    flex: 1; display: flex; flex-direction: column; gap: 22px;
+  }
+  .bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .bullet-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #62D4DC; flex-shrink: 0;
+    margin-top: 8px;
+  }
+  .bullet-text {
+    font-size: 22px; font-weight: 400; color: #CCCCCC; line-height: 1.5;
+  }
+  .bullet-text strong {
+    color: #FFFFFF; font-weight: 600;
+  }
+  .bullet-text .green { color: #60DEA9; font-weight: 600; }
+  .bullet-text .purple { color: #A78BFA; font-weight: 600; }
+  .bullet-text .pink { color: #DC477D; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="section-label">
+  <span>GETTING STARTED</span>
+</div>
+
+<div class="title-bar">
+  <h1>Getting Started: 3 Steps</h1>
+  <p>Start simple, graduate to advanced -- build team confidence progressively</p>
+</div>
+
+<!-- Visual: 3 stepping stones -->
+<div class="visual-area">
+  <div class="steps-row">
+    <!-- Step 1 -->
+    <div class="step-card s1">
+      <div class="step-accent"></div>
+      <div class="step-header">
+        <div class="step-number">1</div>
+        <div class="step-title">Setup</div>
+        <div class="step-subtitle">DevContainer environment</div>
+      </div>
+      <div class="step-body">
+        <div class="step-item"><div class="step-item-dot"></div><span>Configure <strong>devcontainer</strong> with Docker-in-Docker</span></div>
+        <div class="step-item"><div class="step-item-dot"></div><span>Enable AI coding agent extension</span></div>
+        <div class="step-item"><div class="step-item-dot"></div><span>Set <code>AGENT_SWARMS=true</code></span></div>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="step-arrow">
+      <svg viewBox="0 0 64 32">
+        <line x1="4" y1="16" x2="46" y2="16" stroke="#A78BFA" stroke-width="2" opacity="0.3"/>
+        <polygon points="44,10 60,16 44,22" fill="#A78BFA" opacity="0.4"/>
+      </svg>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-card s2">
+      <div class="step-accent"></div>
+      <div class="step-header">
+        <div class="step-number">2</div>
+        <div class="step-title">Start Simple</div>
+        <div class="step-subtitle">Consumer workflow first</div>
+      </div>
+      <div class="step-body">
+        <div class="step-item"><div class="step-item-dot"></div><span>Run <code>/tf-consumer-plan</code> -- simplest workflow</span></div>
+        <div class="step-item"><div class="step-item-dot"></div><span>4 agents, no TDD, sandbox validation</span></div>
+        <div class="step-item"><div class="step-item-dot"></div><span>Learn <strong>SDD methodology</strong> with guardrails</span></div>
+      </div>
+    </div>
+
+    <!-- Arrow -->
+    <div class="step-arrow">
+      <svg viewBox="0 0 64 32">
+        <line x1="4" y1="16" x2="46" y2="16" stroke="#DC477D" stroke-width="2" opacity="0.3"/>
+        <polygon points="44,10 60,16 44,22" fill="#DC477D" opacity="0.4"/>
+      </svg>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step-card s3">
+      <div class="step-accent"></div>
+      <div class="step-header">
+        <div class="step-number">3</div>
+        <div class="step-title">Graduate</div>
+        <div class="step-subtitle">Advanced workflows</div>
+      </div>
+      <div class="step-body">
+        <div class="step-item"><div class="step-item-dot"></div><span><code>/tf-module-plan</code> -- adds TDD + quality scoring</span></div>
+        <div class="step-item"><div class="step-item-dot"></div><span><code>/tf-provider-plan</code> -- Go, acceptance tests</span></div>
+        <div class="step-item"><div class="step-item-dot"></div><span>Same <strong>methodology</strong>, increasing capability</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Key bullets -->
+<div class="bullet-area">
+  <div class="bullet-col">
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Start with consumer workflow</strong> -- lowest risk, fastest feedback loop</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Build team confidence progressively</strong> -- each step adds new capabilities</div>
+    </div>
+  </div>
+  <div class="bullet-col">
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Constitutions and templates from day one</strong> -- guardrails exist before first workflow</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Full workflow mastery in weeks</strong> -- not months, not quarters</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>SDD: The 4-Phase Methodology</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+    display: flex; flex-direction: column;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 48px 80px 28px;
+    border-bottom: 1px solid #1a1a2e;
+  }
+  .section-label {
+    font-size: 12px; font-weight: 500; color: #FFCF25;
+    text-transform: uppercase; letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+  .title-bar h1 {
+    font-size: 34px; font-weight: 600; color: #FFFFFF;
+    margin-bottom: 8px;
+  }
+  .title-bar .subtitle {
+    font-size: 20px; font-weight: 400; color: #82748C;
+  }
+
+  /* Content area */
+  .content {
+    flex: 1; display: flex; flex-direction: column; padding: 36px 80px 36px; gap: 32px;
+  }
+
+  /* Phase pipeline -- uses explicit grid so the gate column is sized independently */
+  .pipeline {
+    display: grid;
+    grid-template-columns: 1fr 1fr 120px 1fr 1fr;
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .phase {
+    padding: 28px 24px 24px; position: relative;
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    border: 1px solid rgba(255,255,255,0.05);
+    display: flex; flex-direction: column; gap: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .phase[data-p="1"] { border-radius: 16px 0 0 16px; border-right: none; }
+  .phase[data-p="2"] { border-radius: 0; border-right: none; }
+  .phase[data-p="3"] { border-radius: 0; border-right: none; }
+  .phase[data-p="4"] { border-radius: 0 16px 16px 0; }
+
+  /* Bottom glow per phase */
+  .phase::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: var(--phase-color);
+    box-shadow: 0 0 16px var(--phase-color);
+  }
+
+  .phase[data-p="1"] { --phase-color: #DC477D; }
+  .phase[data-p="2"] { --phase-color: #8B5CF6; }
+  .phase[data-p="3"] { --phase-color: #60DEA9; }
+  .phase[data-p="4"] { --phase-color: #FFCF25; }
+
+  .phase-num {
+    font-size: 12px; font-weight: 600; color: var(--phase-color);
+    text-transform: uppercase; letter-spacing: 3px; opacity: 0.8;
+  }
+  .phase-title {
+    font-size: 28px; font-weight: 600; color: #FFFFFF;
+  }
+  .phase-desc {
+    font-size: 20px; font-weight: 400; color: #82748C; line-height: 1.5; margin-top: 4px;
+  }
+
+  /* Phase icon */
+  .phase-icon {
+    width: 40px; height: 40px; border-radius: 10px; margin-bottom: 4px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* Connector arrows on phases 1 and 3 */
+  .phase-arrow {
+    position: absolute; right: -12px; top: 50%; transform: translateY(-50%);
+    z-index: 5; color: rgba(255,255,255,0.15); font-size: 18px;
+  }
+
+  /* ===== Human Approval Gate — the dominant centre column ===== */
+  .approval-gate {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 10px;
+    position: relative;
+    background: linear-gradient(180deg, rgba(236,88,93,0.06) 0%, rgba(236,88,93,0.02) 100%);
+    border: 2px dashed rgba(236,88,93,0.45);
+    border-radius: 14px;
+    padding: 16px 10px;
+  }
+
+  /* pulsing glow behind the gate icon */
+  .gate-shield {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(236,88,93,0.25) 0%, transparent 70%);
+    border: 2.5px solid #EC585D;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 20px rgba(236,88,93,0.35), 0 0 48px rgba(236,88,93,0.12);
+    animation: gate-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes gate-pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(236,88,93,0.35), 0 0 48px rgba(236,88,93,0.12); }
+    50%      { box-shadow: 0 0 28px rgba(236,88,93,0.55), 0 0 64px rgba(236,88,93,0.22); }
+  }
+
+  .gate-title {
+    font-size: 11px; font-weight: 700; color: #EC585D;
+    text-transform: uppercase; letter-spacing: 2px;
+    text-align: center; line-height: 1.45;
+  }
+  .gate-sub {
+    font-size: 10px; font-weight: 500; color: rgba(236,88,93,0.7);
+    text-align: center; line-height: 1.4;
+  }
+
+  /* dashed vertical line above & below the gate */
+  .approval-gate::before,
+  .approval-gate::after {
+    content: '';
+    position: absolute; left: 50%; width: 0;
+    border-left: 2px dashed rgba(236,88,93,0.3);
+  }
+  .approval-gate::before { top: -8px; height: 8px; }
+  .approval-gate::after  { bottom: -8px; height: 8px; }
+
+  /* Skill mapping row */
+  .skill-map {
+    display: flex; gap: 16px; width: 100%;
+  }
+  .skill-block {
+    flex: 1; display: flex; align-items: center; gap: 14px;
+    padding: 18px 24px; border-radius: 12px;
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .skill-block.plan-skill {
+    border: 1px solid rgba(139,92,246,0.2);
+  }
+  .skill-block.impl-skill {
+    border: 1px solid rgba(96,222,169,0.2);
+  }
+  .skill-name {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 18px; font-weight: 600;
+  }
+  .plan-skill .skill-name { color: #8B5CF6; }
+  .impl-skill .skill-name { color: #60DEA9; }
+  .skill-covers {
+    font-size: 16px; font-weight: 400; color: #82748C;
+  }
+  .skill-pips {
+    display: flex; gap: 8px; margin-left: auto;
+  }
+  .skill-pip {
+    padding: 5px 14px; border-radius: 6px;
+    font-size: 16px; font-weight: 600; border: 1px solid;
+  }
+
+  /* Bottom section: bullets + workflows */
+  .bottom-row {
+    display: flex; gap: 48px; align-items: flex-start;
+  }
+
+  .key-points {
+    flex: 1; display: flex; flex-direction: column; gap: 16px;
+  }
+  .kp {
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .kp-dot {
+    width: 7px; height: 7px; border-radius: 50%; margin-top: 9px; flex-shrink: 0;
+    background: #8B5CF6;
+    box-shadow: 0 0 6px rgba(139,92,246,0.4);
+  }
+  .kp-dot.gate-dot {
+    background: #EC585D;
+    box-shadow: 0 0 6px rgba(236,88,93,0.5);
+  }
+  .kp-text {
+    font-size: 22px; font-weight: 400; line-height: 1.5; color: #CCCCCC;
+  }
+  .kp-text strong {
+    color: #FFFFFF; font-weight: 600;
+  }
+  .kp-text .gate-highlight {
+    color: #EC585D; font-weight: 600;
+  }
+
+  /* Workflow badges */
+  .workflows {
+    display: flex; flex-direction: column; gap: 12px; align-items: flex-end;
+  }
+  .wf-label {
+    font-size: 12px; color: #82748C; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .wf-badges {
+    display: flex; gap: 10px;
+  }
+  .wf-badge {
+    padding: 10px 24px; border-radius: 10px;
+    font-size: 18px; font-weight: 600; color: #02A8EF;
+    background: rgba(2,168,239,0.04);
+    border: 1px solid rgba(2,168,239,0.15);
+  }
+</style>
+</head>
+<body>
+
+<div class="title-bar">
+  <div class="section-label">SPEC-DRIVEN DEVELOPMENT</div>
+  <h1>Spec-Driven Development: 4 Phases</h1>
+  <div class="subtitle">Shared methodology across module, consumer, and provider workflows</div>
+</div>
+
+<div class="content">
+
+  <!-- Phase pipeline with prominent approval gate -->
+  <div class="pipeline">
+
+    <!-- Phase 1 -->
+    <div class="phase" data-p="1">
+      <div class="phase-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#DC477D" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div class="phase-num">Phase 1</div>
+      <div class="phase-title">Clarify</div>
+      <div class="phase-desc">Scan requirements, research patterns, flag ambiguity</div>
+      <span class="phase-arrow">&#10095;</span>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase" data-p="2">
+      <div class="phase-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4z"/></svg>
+      </div>
+      <div class="phase-num">Phase 2</div>
+      <div class="phase-title">Design</div>
+      <div class="phase-desc">Produce design document, single source of truth</div>
+    </div>
+
+    <!-- HUMAN APPROVAL GATE — visually dominant, breaks the flow -->
+    <div class="approval-gate">
+      <div class="gate-shield">
+        <!-- person + shield icon -->
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#EC585D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <circle cx="12" cy="10" r="2.5" fill="none"/>
+          <path d="M9 15.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5"/>
+        </svg>
+      </div>
+      <div class="gate-title">Human Approval<br>Required</div>
+      <div class="gate-sub">Automation pauses<br>Design review gate</div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase" data-p="3">
+      <div class="phase-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60DEA9" stroke-width="2" stroke-linecap="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      </div>
+      <div class="phase-num">Phase 3</div>
+      <div class="phase-title">Build + Test</div>
+      <div class="phase-desc">TDD cycle, implement from design checklist</div>
+      <span class="phase-arrow">&#10095;</span>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase" data-p="4">
+      <div class="phase-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFCF25" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="phase-num">Phase 4</div>
+      <div class="phase-title">Validate</div>
+      <div class="phase-desc">Quality scoring, security scan, auto-PR</div>
+    </div>
+  </div>
+
+  <!-- Skill mapping -->
+  <div class="skill-map">
+    <div class="skill-block plan-skill">
+      <span class="skill-name">/tf-{workflow}-plan</span>
+      <span class="skill-covers">covers</span>
+      <div class="skill-pips">
+        <span class="skill-pip" style="color:#DC477D; border-color:rgba(220,71,125,0.3); background:rgba(220,71,125,0.06);">Phase 1</span>
+        <span class="skill-pip" style="color:#8B5CF6; border-color:rgba(139,92,246,0.3); background:rgba(139,92,246,0.06);">Phase 2</span>
+      </div>
+    </div>
+    <div class="skill-block impl-skill">
+      <span class="skill-name">/tf-{workflow}-implement</span>
+      <span class="skill-covers">covers</span>
+      <div class="skill-pips">
+        <span class="skill-pip" style="color:#60DEA9; border-color:rgba(96,222,169,0.3); background:rgba(96,222,169,0.06);">Phase 3</span>
+        <span class="skill-pip" style="color:#FFCF25; border-color:rgba(255,207,37,0.3); background:rgba(255,207,37,0.06);">Phase 4</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom: Key points + workflow badges -->
+  <div class="bottom-row">
+    <div class="key-points">
+      <div class="kp">
+        <div class="kp-dot gate-dot"></div>
+        <div class="kp-text"><strong class="gate-highlight">No code is written until the design is approved by a human reviewer</strong> -- the mandatory checkpoint that separates SDD from autonomous AI</div>
+      </div>
+      <div class="kp">
+        <div class="kp-dot"></div>
+        <div class="kp-text"><strong>Design doc is the contract</strong> -- single source of truth all agents read from</div>
+      </div>
+      <div class="kp">
+        <div class="kp-dot"></div>
+        <div class="kp-text"><strong>Same structure, three workflows</strong> -- module, consumer, and provider share all 4 phases</div>
+      </div>
+    </div>
+
+    <div class="workflows">
+      <div class="wf-label">Shared across</div>
+      <div class="wf-badges">
+        <span class="wf-badge">Module</span>
+        <span class="wf-badge">Consumer</span>
+        <span class="wf-badge">Provider</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

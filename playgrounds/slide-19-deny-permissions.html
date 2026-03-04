@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Deny Permissions: Protecting Agent Guardrails</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+</style>
+</head>
+<body>
+
+<div style="width:1920px;height:1080px;padding:60px 80px;display:flex;flex-direction:column;">
+
+  <!-- Header -->
+  <div style="margin-bottom:36px;">
+    <div style="font-size:12px;font-weight:500;color:#FFCF25;text-transform:uppercase;letter-spacing:3px;margin-bottom:12px;">PLATFORM GUARDRAILS</div>
+    <h1 style="font-size:36px;font-weight:600;color:#FFFFFF;margin-bottom:8px;">Deny Permissions</h1>
+    <div style="font-size:20px;color:#CCCCCC;">Agents cannot modify their own verification tooling or guardrail configurations</div>
+  </div>
+
+  <!-- Content: bullets left, visual right -->
+  <div style="flex:1;display:flex;gap:60px;">
+
+    <!-- Bullets -->
+    <div style="flex:0 0 42%;display:flex;flex-direction:column;justify-content:center;gap:28px;">
+
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#EC585D;margin-top:10px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;"><span style="font-weight:600;color:#EC585D;">Immutable guardrails</span> — agents are denied write access to files that define their own verification and quality gates</div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#EC585D;margin-top:10px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;"><span style="font-weight:600;color:#EC585D;">Self-modification blocked</span> — an agent cannot weaken linting, disable pre-commit hooks, or alter MCP server config</div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#EC585D;margin-top:10px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;"><span style="font-weight:600;color:#EC585D;">Scoped allow-list</span> — explicit allow permissions grant only the commands agents need: terraform, git, pre-commit, MCP tools</div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#EC585D;margin-top:10px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;"><span style="font-weight:600;color:#EC585D;">Dangerous ops blocked</span> — workspace variable creation and run execution require human approval via MCP deny rules</div>
+      </div>
+
+    </div>
+
+    <!-- Visual: settings.local.json representation -->
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+      <svg width="920" height="820" viewBox="0 0 920 820" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- Title -->
+        <text x="460" y="30" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#82748C" font-weight="500">settings.local.json</text>
+
+        <!-- Deny section (prominent, red) -->
+        <rect x="20" y="50" width="880" height="390" rx="12" fill="#121212" stroke="#EC585D" stroke-width="2" stroke-opacity="0.5"/>
+        <rect x="20" y="50" width="880" height="44" rx="12" fill="rgba(236,88,93,0.12)"/>
+        <text x="50" y="78" font-family="Inter, Arial, sans-serif" font-size="18" fill="#EC585D" font-weight="600">DENY — Protected Files (Agents Cannot Modify)</text>
+
+        <!-- Protected file entries -->
+        <g transform="translate(50, 115)">
+          <!-- .gitignore -->
+          <rect x="0" y="0" width="260" height="90" rx="8" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+          <text x="20" y="30" font-family="'Courier New', monospace" font-size="16" fill="#EC585D" font-weight="600">.gitignore</text>
+          <text x="20" y="55" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">Controls what enters</text>
+          <text x="20" y="75" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">version control</text>
+
+          <!-- .tflint.hcl -->
+          <rect x="280" y="0" width="260" height="90" rx="8" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+          <text x="300" y="30" font-family="'Courier New', monospace" font-size="16" fill="#EC585D" font-weight="600">.tflint.hcl</text>
+          <text x="300" y="55" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">Terraform linting rules</text>
+          <text x="300" y="75" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">and plugin config</text>
+
+          <!-- .pre-commit-config.yaml -->
+          <rect x="560" y="0" width="260" height="90" rx="8" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+          <text x="580" y="30" font-family="'Courier New', monospace" font-size="15" fill="#EC585D" font-weight="600">.pre-commit-config.yaml</text>
+          <text x="580" y="55" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">Git hook definitions</text>
+          <text x="580" y="75" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">fmt, validate, trivy, radar</text>
+
+          <!-- .mcp.json -->
+          <rect x="0" y="110" width="260" height="90" rx="8" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+          <text x="20" y="140" font-family="'Courier New', monospace" font-size="16" fill="#EC585D" font-weight="600">.mcp.json</text>
+          <text x="20" y="165" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">MCP server config</text>
+          <text x="20" y="185" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">and tool access</text>
+
+          <!-- MCP deny: create_workspace_variable -->
+          <rect x="280" y="110" width="260" height="90" rx="8" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+          <text x="300" y="136" font-family="'Courier New', monospace" font-size="13" fill="#EC585D" font-weight="600">mcp: create_workspace</text>
+          <text x="300" y="155" font-family="'Courier New', monospace" font-size="13" fill="#EC585D" font-weight="600">_variable</text>
+          <text x="300" y="180" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">Prevents agents setting</text>
+          <text x="300" y="196" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">workspace env vars</text>
+
+          <!-- MCP deny: create_run -->
+          <rect x="560" y="110" width="260" height="90" rx="8" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+          <text x="580" y="140" font-family="'Courier New', monospace" font-size="16" fill="#EC585D" font-weight="600">mcp: create_run</text>
+          <text x="580" y="165" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">Prevents autonomous</text>
+          <text x="580" y="185" font-family="Inter, Arial, sans-serif" font-size="14" fill="#CCCCCC">terraform plan/apply runs</text>
+        </g>
+
+        <!-- Why it matters callout -->
+        <rect x="50" y="345" width="820" height="40" rx="6" fill="rgba(236,88,93,0.08)"/>
+        <text x="460" y="371" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="15" fill="#EC585D" font-weight="500">Write, Edit, and Update operations all blocked — agents cannot bypass via alternative tools</text>
+
+        <!-- Allow section (smaller, green, showing scoped access) -->
+        <rect x="20" y="460" width="880" height="340" rx="12" fill="#121212" stroke="#60DEA9" stroke-width="1" stroke-opacity="0.3"/>
+        <rect x="20" y="460" width="880" height="44" rx="12" fill="rgba(96,222,169,0.08)"/>
+        <text x="50" y="488" font-family="Inter, Arial, sans-serif" font-size="18" fill="#60DEA9" font-weight="600">ALLOW — Scoped Agent Permissions (Least Privilege)</text>
+
+        <!-- Allow categories -->
+        <g transform="translate(50, 525)">
+          <!-- Terraform -->
+          <rect x="0" y="0" width="200" height="120" rx="8" fill="rgba(96,222,169,0.04)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+          <text x="16" y="28" font-family="Inter, Arial, sans-serif" font-size="15" fill="#60DEA9" font-weight="600">Terraform</text>
+          <text x="16" y="52" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">terraform init</text>
+          <text x="16" y="72" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">terraform validate</text>
+          <text x="16" y="92" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">terraform fmt</text>
+          <text x="16" y="112" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">terraform plan</text>
+
+          <!-- Git -->
+          <rect x="220" y="0" width="200" height="120" rx="8" fill="rgba(96,222,169,0.04)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+          <text x="236" y="28" font-family="Inter, Arial, sans-serif" font-size="15" fill="#60DEA9" font-weight="600">Git</text>
+          <text x="236" y="52" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">git add / commit</text>
+          <text x="236" y="72" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">git fetch / log</text>
+          <text x="236" y="92" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">pre-commit run</text>
+          <text x="236" y="112" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">gh issue view</text>
+
+          <!-- MCP Tools -->
+          <rect x="440" y="0" width="200" height="120" rx="8" fill="rgba(96,222,169,0.04)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+          <text x="456" y="28" font-family="Inter, Arial, sans-serif" font-size="15" fill="#60DEA9" font-weight="600">MCP Tools</text>
+          <text x="456" y="52" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">search_modules</text>
+          <text x="456" y="72" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">get_module_details</text>
+          <text x="456" y="92" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">list_workspaces</text>
+          <text x="456" y="112" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">get_workspace</text>
+
+          <!-- Scripts -->
+          <rect x="660" y="0" width="200" height="120" rx="8" fill="rgba(96,222,169,0.04)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+          <text x="676" y="28" font-family="Inter, Arial, sans-serif" font-size="15" fill="#60DEA9" font-weight="600">Scripts</text>
+          <text x="676" y="52" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">validate-env.sh</text>
+          <text x="676" y="72" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">create-feature.sh</text>
+          <text x="676" y="92" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">setup-plan.sh</text>
+          <text x="676" y="112" font-family="'Courier New', monospace" font-size="13" fill="#CCCCCC">checkpoint.sh</text>
+        </g>
+
+        <!-- Principle bar -->
+        <rect x="50" y="670" width="820" height="44" rx="8" fill="rgba(96,222,169,0.06)"/>
+        <text x="460" y="698" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="16" fill="#60DEA9" font-weight="500">Principle: agents get the minimum permissions needed — deny by default, allow explicitly</text>
+
+        <!-- enableAllProjectMcpServers note -->
+        <text x="460" y="740" text-anchor="middle" font-family="'Courier New', monospace" font-size="14" fill="#82748C">enableAllProjectMcpServers: false — MCP servers individually enabled, not blanket access</text>
+
+      </svg>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -2,571 +2,187 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
 <title>Concurrent Execution Patterns</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: #0a0a12;
-    color: #e0e0e8;
-    width: 1920px;
-    height: 1080px;
-    overflow: hidden;
-    position: relative;
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
   }
 
-  /* ===== Static Background ===== */
   body::before {
     content: '';
-    position: absolute;
-    top: -200px;
-    left: -100px;
-    width: 700px;
-    height: 700px;
-    background: radial-gradient(circle, rgba(123,97,255,0.08) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none; z-index: 0;
   }
-
-  body::after {
-    content: '';
-    position: absolute;
-    bottom: -150px;
-    right: -50px;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(96,165,250,0.06) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Dot grid overlay */
-  .dot-grid {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-image: radial-gradient(rgba(123,97,255,0.08) 1px, transparent 1px);
-    background-size: 32px 32px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Third orb via an extra element */
-  .orb-teal {
-    position: absolute;
-    top: 300px;
-    right: 400px;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(94,234,212,0.05) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ===== Header ===== */
-  header {
-    text-align: center;
-    padding: 28px 20px 18px;
-    border-bottom: 1px solid rgba(123,97,255,0.15);
-    position: relative;
-    z-index: 1;
-    background: rgba(10,10,18,0.6);
-    backdrop-filter: blur(12px);
-  }
-
-  header h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #7b61ff, #a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 6px;
-  }
-
-  header p {
-    color: #8888a0;
-    font-size: 0.92rem;
-    letter-spacing: 0.05em;
-  }
-
-  /* ===== Main Layout ===== */
-  .main {
-    position: relative;
-    z-index: 1;
-    padding: 28px 48px 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 22px;
-  }
-
-  .pattern-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
-    width: 100%;
-  }
-
-  /* ===== Glass Cards ===== */
-  .pattern-card {
-    background: rgba(22,22,34,0.65);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(123,97,255,0.15);
-    border-radius: 16px;
-    padding: 22px 20px 18px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Top accent bar */
-  .pattern-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    opacity: 0.7;
-  }
-  .pattern-card.c-blue::before   { background: linear-gradient(90deg, transparent, #60a5fa, transparent); }
-  .pattern-card.c-purple::before { background: linear-gradient(90deg, transparent, #a78bfa, transparent); }
-  .pattern-card.c-teal::before   { background: linear-gradient(90deg, transparent, #5eead4, transparent); }
-  .pattern-card.c-pink::before   { background: linear-gradient(90deg, transparent, #f472b6, transparent); }
-  .pattern-card.c-amber::before  { background: linear-gradient(90deg, transparent, #fbbf24, transparent); }
-
-  /* ===== Icon Badge ===== */
-  .p-icon {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-  }
-
-  .p-icon-badge {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    flex-shrink: 0;
-  }
-  .c-blue .p-icon-badge   { background: rgba(96,165,250,0.15);  border: 1px solid rgba(96,165,250,0.25); }
-  .c-purple .p-icon-badge { background: rgba(167,139,250,0.15); border: 1px solid rgba(167,139,250,0.25); }
-  .c-teal .p-icon-badge   { background: rgba(94,234,212,0.15);  border: 1px solid rgba(94,234,212,0.25); }
-  .c-pink .p-icon-badge   { background: rgba(244,114,182,0.15); border: 1px solid rgba(244,114,182,0.25); }
-  .c-amber .p-icon-badge  { background: rgba(251,191,36,0.15);  border: 1px solid rgba(251,191,36,0.25); }
-
-  .p-name {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #d8d8ec;
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
-  }
-
-  .p-short {
-    font-size: 13px;
-    color: #8888a0;
-    line-height: 1.55;
-    margin-bottom: 12px;
-  }
-
-  /* ===== SVG Diagram Container ===== */
-  .p-svg-diagram {
-    width: 100%;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    background: rgba(10,10,18,0.7);
-    border: 1px solid rgba(255,255,255,0.04);
-    padding: 4px;
-    overflow: hidden;
-  }
-  .p-svg-diagram svg {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  /* SVG styling */
-  .svg-node-label {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    font-size: 9px;
-    font-weight: 600;
-    text-anchor: middle;
-    dominant-baseline: central;
-  }
-
-  /* ===== Flow Steps ===== */
-  .p-flow-steps {
-    display: flex;
-    gap: 2px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .p-flow-step {
-    padding: 4px 9px;
-    border-radius: 6px;
-    font-size: 11px;
-    font-weight: 600;
-    background: rgba(255,255,255,0.03);
-    color: #9898b0;
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .p-flow-arrow {
-    color: #44445a;
-    font-size: 11px;
-    padding: 0 3px;
-  }
-
-  /* Highlight variants */
-  .c-blue .p-flow-step.hl   { background: rgba(96,165,250,0.15);  color: #60a5fa; border-color: rgba(96,165,250,0.25); }
-  .c-purple .p-flow-step.hl { background: rgba(167,139,250,0.15); color: #a78bfa; border-color: rgba(167,139,250,0.25); }
-  .c-teal .p-flow-step.hl   { background: rgba(94,234,212,0.15);  color: #5eead4; border-color: rgba(94,234,212,0.25); }
-  .c-pink .p-flow-step.hl   { background: rgba(244,114,182,0.15); color: #f472b6; border-color: rgba(244,114,182,0.25); }
-  .c-amber .p-flow-step.hl  { background: rgba(251,191,36,0.15);  color: #fbbf24; border-color: rgba(251,191,36,0.25); }
-
-  /* ===== Description ===== */
-  .p-desc {
-    font-size: 13px;
-    color: #a0a0b8;
-    line-height: 1.6;
-    padding-left: 12px;
-    margin-bottom: 8px;
-  }
-  .c-blue .p-desc   { border-left: 2px solid rgba(96,165,250,0.25); }
-  .c-purple .p-desc { border-left: 2px solid rgba(167,139,250,0.25); }
-  .c-teal .p-desc   { border-left: 2px solid rgba(94,234,212,0.25); }
-  .c-pink .p-desc   { border-left: 2px solid rgba(244,114,182,0.25); }
-  .c-amber .p-desc  { border-left: 2px solid rgba(251,191,36,0.25); }
-
-  /* ===== Use Case Tag ===== */
-  .p-use {
-    font-size: 12px;
-    color: #7b7b98;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: auto;
-  }
-
-  .p-use-tag {
-    display: inline-block;
-    padding: 2px 9px;
-    border-radius: 20px;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    flex-shrink: 0;
-  }
-  .c-blue .p-use-tag   { background: rgba(96,165,250,0.15);  color: #60a5fa; }
-  .c-purple .p-use-tag { background: rgba(167,139,250,0.15); color: #a78bfa; }
-  .c-teal .p-use-tag   { background: rgba(94,234,212,0.15);  color: #5eead4; }
-  .c-pink .p-use-tag   { background: rgba(244,114,182,0.15); color: #f472b6; }
-  .c-amber .p-use-tag  { background: rgba(251,191,36,0.15);  color: #fbbf24; }
 </style>
 </head>
 <body>
 
-<div class="dot-grid"></div>
-<div class="orb-teal"></div>
+<div class="slide" style="width:1920px;height:1080px;padding:60px 80px;display:flex;flex-direction:column;position:relative;z-index:1;">
 
-<header>
-  <h1>Concurrent Execution Patterns</h1>
-  <p>Parallel Agent Strategies for IaC Workflows</p>
-</header>
+  <div class="header" style="margin-bottom:40px;">
+    <div style="font-size:12px;font-weight:500;color:#FFCF25;text-transform:uppercase;letter-spacing:3px;margin-bottom:12px;font-family:'Inter Medium','Inter',Arial,sans-serif;">FOUNDATIONS</div>
+    <h1 style="font-size:34px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Concurrent Execution: Fan-Out Research</h1>
+    <div style="font-size:20px;color:#CCCCCC;">Parallel foreground dispatch for multi-source investigation</div>
+  </div>
 
-<div class="main">
-  <div class="pattern-grid">
+  <div class="content" style="flex:1;display:flex;gap:60px;align-items:center;">
 
-    <!-- 1. Fan-Out Research -->
-    <div class="pattern-card c-blue">
-      <div class="p-icon"><div class="p-icon-badge">&#x1F52C;</div></div>
-      <div class="p-name">Fan-Out Research</div>
-      <div class="p-short">Spawn multiple subagents to investigate independent areas simultaneously, then synthesize findings</div>
+    <!-- Bullets -->
+    <div class="bullets" style="flex:0 0 40%;display:flex;flex-direction:column;gap:32px;">
 
-      <div class="p-svg-diagram">
-        <svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <marker id="arrow-fanout" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto">
-              <path d="M0,0 L10,3 L0,6" fill="#60a5fa" opacity="0.6"/>
-            </marker>
-          </defs>
-          <!-- Parent node -->
-          <rect x="12" y="37" width="76" height="26" rx="6" fill="rgba(96,165,250,0.2)" stroke="#60a5fa" stroke-width="1.5"/>
-          <text x="50" y="51" class="svg-node-label" fill="#60a5fa">Parent</text>
-          <!-- Agent A -->
-          <rect x="128" y="7" width="74" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
-          <text x="165" y="21" class="svg-node-label" fill="#9898b0">Agent A</text>
-          <!-- Agent B -->
-          <rect x="128" y="37" width="74" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
-          <text x="165" y="51" class="svg-node-label" fill="#9898b0">Agent B</text>
-          <!-- Agent C -->
-          <rect x="128" y="67" width="74" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
-          <text x="165" y="81" class="svg-node-label" fill="#9898b0">Agent C</text>
-          <!-- Synthesize node -->
-          <rect x="230" y="37" width="80" height="26" rx="6" fill="rgba(96,165,250,0.2)" stroke="#60a5fa" stroke-width="1.5"/>
-          <text x="270" y="51" class="svg-node-label" fill="#60a5fa">Synthesize</text>
-          <!-- Arrows out -->
-          <line x1="88" y1="45" x2="128" y2="22" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
-          <line x1="88" y1="50" x2="128" y2="50" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
-          <line x1="88" y1="55" x2="128" y2="78" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
-          <!-- Arrows in -->
-          <line x1="202" y1="22" x2="230" y2="45" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
-          <line x1="202" y1="50" x2="230" y2="50" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
-          <line x1="202" y1="78" x2="230" y2="55" stroke="#60a5fa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-fanout)"/>
-          <!-- Static dots on paths -->
-          <circle cx="108" cy="34" r="2.5" fill="#60a5fa" opacity="0.7"/>
-          <circle cx="108" cy="50" r="2.5" fill="#60a5fa" opacity="0.7"/>
-          <circle cx="108" cy="66" r="2.5" fill="#60a5fa" opacity="0.7"/>
-          <circle cx="216" cy="34" r="2.5" fill="#60a5fa" opacity="0.7"/>
-          <circle cx="216" cy="50" r="2.5" fill="#60a5fa" opacity="0.7"/>
-          <circle cx="216" cy="66" r="2.5" fill="#60a5fa" opacity="0.7"/>
-        </svg>
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#627EEF;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#627EEF;font-size:22px;">Parallel foreground</span> — 3-4 tf-module-research agents launched in a single message</div>
       </div>
 
-      <div class="p-flow-steps">
-        <span class="p-flow-step hl">Dispatch</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step">Parallel Explore</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step">Collect</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step hl">Synthesize</span>
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#A78BFA;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#A78BFA;font-size:22px;">&lt;500 token returns</span> — each agent answers one research question with concise findings</div>
       </div>
 
-      <div class="p-desc">Each agent explores a different area of the codebase or documentation. Parent collects summaries and synthesizes a unified view. Ideal for initial investigation of unfamiliar repos.</div>
-      <div class="p-use"><span class="p-use-tag">IaC</span> Investigate modules, providers, and policies in parallel</div>
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#62D4DC;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#62D4DC;font-size:22px;">Disk-based output</span> — each research agent writes findings to disk; orchestrator verifies via Glob</div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#DC477D;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#DC477D;font-size:22px;">Design synthesis</span> — collected research feeds directly into the design agent</div>
+      </div>
+
     </div>
 
-    <!-- 2. Writer / Reviewer -->
-    <div class="pattern-card c-purple">
-      <div class="p-icon"><div class="p-icon-badge">&#x1F50D;</div></div>
-      <div class="p-name">Writer / Reviewer</div>
-      <div class="p-short">Two parallel sessions with distinct roles &mdash; fresh context in reviewer prevents bias toward own code</div>
+    <!-- Visual: Fan-out diagram -->
+    <div class="visual" style="flex:1;display:flex;align-items:center;justify-content:center;">
+      <svg width="860" height="740" viewBox="0 0 860 740" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+          </filter>
+        </defs>
 
-      <div class="p-svg-diagram">
-        <svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <marker id="arrow-writer" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto">
-              <path d="M0,0 L10,3 L0,6" fill="#a78bfa" opacity="0.6"/>
-            </marker>
-          </defs>
-          <!-- Writer node -->
-          <rect x="42" y="37" width="100" height="26" rx="6" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="1.5"/>
-          <text x="92" y="51" class="svg-node-label" fill="#a78bfa">Writer Agent</text>
-          <!-- Reviewer node -->
-          <rect x="178" y="37" width="106" height="26" rx="6" fill="rgba(167,139,250,0.2)" stroke="#a78bfa" stroke-width="1.5"/>
-          <text x="231" y="51" class="svg-node-label" fill="#a78bfa">Reviewer Agent</text>
-          <!-- Top curve: code -->
-          <path d="M142,42 C167,15 197,15 218,42" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-writer)"/>
-          <!-- Bottom curve: feedback -->
-          <path d="M218,58 C197,85 167,85 142,58" fill="none" stroke="#a78bfa" stroke-width="1" opacity="0.35" marker-end="url(#arrow-writer)"/>
-          <!-- Labels -->
-          <text x="170" y="24" text-anchor="middle" fill="#a78bfa" opacity="0.5" font-size="7" font-family="system-ui">code</text>
-          <text x="170" y="84" text-anchor="middle" fill="#a78bfa" opacity="0.5" font-size="7" font-family="system-ui">feedback</text>
-          <!-- Static dots on curves -->
-          <circle cx="160" cy="18" r="2.5" fill="#a78bfa" opacity="0.7"/>
-          <circle cx="160" cy="82" r="2.5" fill="#a78bfa" opacity="0.7"/>
-        </svg>
-      </div>
+        <!-- Title label -->
+        <text x="430" y="28" text-anchor="middle" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="12" fill="#82748C" font-weight="500" letter-spacing="3">PARALLEL FOREGROUND DISPATCH</text>
 
-      <div class="p-flow-steps">
-        <span class="p-flow-step hl">Write</span>
-        <span class="p-flow-arrow">&#x21C4;</span>
-        <span class="p-flow-step hl">Review</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step">Revise</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step">Approve</span>
-      </div>
+        <!-- Orchestrator -->
+        <rect x="290" y="50" width="280" height="80" rx="14" fill="rgba(96,222,169,0.08)" stroke="rgba(96,222,169,0.35)" stroke-width="2"/>
+        <rect x="290" y="50" width="280" height="80" rx="14" fill="none" stroke="rgba(96,222,169,0.15)" stroke-width="2" filter="url(#glow)"/>
+        <text x="430" y="82" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="17" fill="#60DEA9" font-weight="700">Orchestrator</text>
+        <text x="430" y="106" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="12" fill="#CCCCCC">Dispatches all research in one message</text>
 
-      <div class="p-desc">Writer generates code, reviewer evaluates with fresh eyes. Separate contexts ensure the reviewer doesn't inherit the writer's assumptions. Catches issues a self-review would miss.</div>
-      <div class="p-use"><span class="p-use-tag">IaC</span> One agent writes module, another reviews for compliance</div>
-    </div>
+        <!-- "SINGLE MESSAGE" label -->
+        <rect x="310" y="148" width="240" height="28" rx="6" fill="rgba(98,126,239,0.08)" stroke="rgba(98,126,239,0.2)" stroke-width="1"/>
+        <text x="430" y="167" text-anchor="middle" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="11" fill="#627EEF" font-weight="500" letter-spacing="1">SINGLE MESSAGE DISPATCH</text>
 
-    <!-- 3. Subagent Chaining -->
-    <div class="pattern-card c-teal">
-      <div class="p-icon"><div class="p-icon-badge">&#x26D3;&#xFE0F;</div></div>
-      <div class="p-name">Subagent Chaining</div>
-      <div class="p-short">Sequential delegation where each subagent output feeds the next &mdash; parent orchestrates context passing</div>
+        <!-- Fan-out arrows -->
+        <line x1="340" y1="176" x2="120" y2="260" stroke="rgba(98,126,239,0.3)" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <polygon points="116,254 116,266 126,260" fill="rgba(98,126,239,0.3)"/>
 
-      <div class="p-svg-diagram">
-        <svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <marker id="arrow-chain" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto">
-              <path d="M0,0 L10,3 L0,6" fill="#5eead4" opacity="0.6"/>
-            </marker>
-          </defs>
-          <!-- Parent -->
-          <rect x="6" y="37" width="62" height="26" rx="6" fill="rgba(94,234,212,0.2)" stroke="#5eead4" stroke-width="1.5"/>
-          <text x="37" y="51" class="svg-node-label" fill="#5eead4">Parent</text>
-          <!-- Stage 1 -->
-          <rect x="86" y="37" width="62" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
-          <text x="117" y="51" class="svg-node-label" fill="#9898b0">Stage 1</text>
-          <!-- Stage 2 -->
-          <rect x="168" y="37" width="62" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
-          <text x="199" y="51" class="svg-node-label" fill="#9898b0">Stage 2</text>
-          <!-- Stage 3 -->
-          <rect x="250" y="37" width="62" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
-          <text x="281" y="51" class="svg-node-label" fill="#9898b0">Stage 3</text>
-          <!-- Arrows -->
-          <line x1="68" y1="50" x2="86" y2="50" stroke="#5eead4" stroke-width="1" opacity="0.35" marker-end="url(#arrow-chain)"/>
-          <line x1="148" y1="50" x2="168" y2="50" stroke="#5eead4" stroke-width="1" opacity="0.35" marker-end="url(#arrow-chain)"/>
-          <line x1="230" y1="50" x2="250" y2="50" stroke="#5eead4" stroke-width="1" opacity="0.35" marker-end="url(#arrow-chain)"/>
-          <!-- Static dots -->
-          <circle cx="77" cy="50" r="2.5" fill="#5eead4" opacity="0.7"/>
-          <circle cx="158" cy="50" r="2.5" fill="#5eead4" opacity="0.7"/>
-          <circle cx="240" cy="50" r="2.5" fill="#5eead4" opacity="0.7"/>
-        </svg>
-      </div>
+        <line x1="390" y1="176" x2="320" y2="260" stroke="rgba(167,139,250,0.3)" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <polygon points="316,254 316,266 326,260" fill="rgba(167,139,250,0.3)"/>
 
-      <div class="p-flow-steps">
-        <span class="p-flow-step hl">Spec</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step">Generate</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step">Test</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step hl">Document</span>
-      </div>
+        <line x1="470" y1="176" x2="540" y2="260" stroke="rgba(98,212,220,0.3)" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <polygon points="534,260 544,254 544,266" fill="rgba(98,212,220,0.3)"/>
 
-      <div class="p-desc">Pipeline pattern where each stage transforms input for the next. Parent passes relevant output from one agent to the next. Each agent has clean context focused on its stage.</div>
-      <div class="p-use"><span class="p-use-tag">IaC</span> Spec &#x2192; Generate &#x2192; Test &#x2192; Document pipeline</div>
-    </div>
+        <line x1="520" y1="176" x2="740" y2="260" stroke="rgba(220,71,125,0.3)" stroke-width="1.5" stroke-dasharray="5 3"/>
+        <polygon points="734,260 744,254 744,266" fill="rgba(220,71,125,0.3)"/>
 
-    <!-- 4. Isolate High-Volume Ops -->
-    <div class="pattern-card c-pink">
-      <div class="p-icon"><div class="p-icon-badge">&#x1F4E6;</div></div>
-      <div class="p-name">Isolate High-Volume Ops</div>
-      <div class="p-short">Delegate test suites, log analysis, doc fetching &mdash; verbose output stays in subagent context</div>
+        <!-- Research Agent 1 -->
+        <rect x="30" y="268" width="180" height="110" rx="10" fill="rgba(18,18,18,0.8)" stroke="rgba(98,126,239,0.3)" stroke-width="1.5"/>
+        <text x="120" y="296" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#627EEF" font-weight="700">tf-module-research</text>
+        <text x="120" y="318" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#FFFFFF" font-weight="600">AWS Provider Docs</text>
+        <text x="120" y="342" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#82748C">Resource schemas,</text>
+        <text x="120" y="358" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#82748C">API constraints</text>
 
-      <div class="p-svg-diagram">
-        <svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <marker id="arrow-isolate" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto">
-              <path d="M0,0 L10,3 L0,6" fill="#f472b6" opacity="0.6"/>
-            </marker>
-          </defs>
-          <!-- Parent -->
-          <rect x="12" y="37" width="76" height="26" rx="6" fill="rgba(244,114,182,0.2)" stroke="#f472b6" stroke-width="1.5"/>
-          <text x="50" y="51" class="svg-node-label" fill="#f472b6">Parent</text>
-          <!-- Test Runner -->
-          <rect x="126" y="37" width="88" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
-          <text x="170" y="51" class="svg-node-label" fill="#9898b0">Test Runner</text>
-          <!-- Summary -->
-          <rect x="238" y="37" width="72" height="26" rx="6" fill="rgba(244,114,182,0.2)" stroke="#f472b6" stroke-width="1.5"/>
-          <text x="274" y="51" class="svg-node-label" fill="#f472b6">Summary</text>
-          <!-- Verbose indicator dots around test runner -->
-          <circle cx="142" cy="28" r="1.5" fill="#f472b6" opacity="0.35"/>
-          <circle cx="198" cy="28" r="1.5" fill="#f472b6" opacity="0.35"/>
-          <circle cx="205" cy="50" r="1.5" fill="#f472b6" opacity="0.25"/>
-          <circle cx="142" cy="72" r="1.5" fill="#f472b6" opacity="0.35"/>
-          <circle cx="198" cy="72" r="1.5" fill="#f472b6" opacity="0.35"/>
-          <circle cx="135" cy="50" r="1.5" fill="#f472b6" opacity="0.25"/>
-          <!-- Arrows -->
-          <line x1="88" y1="50" x2="126" y2="50" stroke="#f472b6" stroke-width="1" opacity="0.35" marker-end="url(#arrow-isolate)"/>
-          <line x1="214" y1="50" x2="238" y2="50" stroke="#f472b6" stroke-width="1" opacity="0.35" marker-end="url(#arrow-isolate)"/>
-          <!-- Static dots -->
-          <circle cx="107" cy="50" r="2.5" fill="#f472b6" opacity="0.7"/>
-          <circle cx="226" cy="50" r="2.5" fill="#f472b6" opacity="0.7"/>
-          <!-- Verbose label -->
-          <text x="170" y="82" text-anchor="middle" fill="#f472b6" opacity="0.4" font-size="7" font-family="system-ui">(verbose output)</text>
-        </svg>
-      </div>
+        <!-- Research Agent 2 -->
+        <rect x="230" y="268" width="180" height="110" rx="10" fill="rgba(18,18,18,0.8)" stroke="rgba(167,139,250,0.3)" stroke-width="1.5"/>
+        <text x="320" y="296" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#A78BFA" font-weight="700">tf-module-research</text>
+        <text x="320" y="318" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#FFFFFF" font-weight="600">Registry Patterns</text>
+        <text x="320" y="342" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#82748C">Existing modules,</text>
+        <text x="320" y="358" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#82748C">interface conventions</text>
 
-      <div class="p-flow-steps">
-        <span class="p-flow-step hl">Delegate</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step">Process (verbose)</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step">Filter</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step hl">Summary</span>
-      </div>
+        <!-- Research Agent 3 -->
+        <rect x="450" y="268" width="180" height="110" rx="10" fill="rgba(18,18,18,0.8)" stroke="rgba(98,212,220,0.3)" stroke-width="1.5"/>
+        <text x="540" y="296" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#62D4DC" font-weight="700">tf-module-research</text>
+        <text x="540" y="318" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#FFFFFF" font-weight="600">Security Baselines</text>
+        <text x="540" y="342" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#82748C">Encryption, IAM,</text>
+        <text x="540" y="358" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#82748C">logging requirements</text>
 
-      <div class="p-desc">Protect the parent context from token-heavy operations. Subagent processes verbose test output, log files, or API responses and returns only a concise summary.</div>
-      <div class="p-use"><span class="p-use-tag">IaC</span> Run terraform plan in subagent, return only changes summary</div>
-    </div>
+        <!-- Research Agent 4 -->
+        <rect x="650" y="268" width="180" height="110" rx="10" fill="rgba(18,18,18,0.8)" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
+        <text x="740" y="296" text-anchor="middle" font-family="'SF Mono', monospace" font-size="12" fill="#DC477D" font-weight="700">tf-module-research</text>
+        <text x="740" y="318" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#FFFFFF" font-weight="600">Best Practices</text>
+        <text x="740" y="342" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#82748C">Testing patterns,</text>
+        <text x="740" y="358" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#82748C">documentation</text>
 
-    <!-- 5. Headless Mode -->
-    <div class="pattern-card c-amber">
-      <div class="p-icon"><div class="p-icon-badge">&#x1F916;</div></div>
-      <div class="p-name">Headless Mode</div>
-      <div class="p-short">True process-level parallelism for batch processing, CI/CD pipelines, and file migrations</div>
+        <!-- Token badges -->
+        <rect x="68" y="390" width="104" height="24" rx="6" fill="rgba(98,126,239,0.1)" stroke="rgba(98,126,239,0.2)" stroke-width="1"/>
+        <text x="120" y="407" text-anchor="middle" font-family="'SF Mono', monospace" font-size="14" fill="#627EEF" font-weight="600">&lt;500 tokens</text>
 
-      <div class="p-svg-diagram">
-        <svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <marker id="arrow-headless" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="8" markerHeight="6" orient="auto">
-              <path d="M0,0 L10,3 L0,6" fill="#fbbf24" opacity="0.6"/>
-            </marker>
-          </defs>
-          <!-- CI/CD -->
-          <rect x="12" y="37" width="72" height="26" rx="6" fill="rgba(251,191,36,0.2)" stroke="#fbbf24" stroke-width="1.5"/>
-          <text x="48" y="51" class="svg-node-label" fill="#fbbf24">CI/CD</text>
-          <!-- Process A -->
-          <rect x="128" y="7" width="82" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
-          <text x="169" y="21" class="svg-node-label" fill="#9898b0">Process A</text>
-          <!-- Process B -->
-          <rect x="128" y="37" width="82" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
-          <text x="169" y="51" class="svg-node-label" fill="#9898b0">Process B</text>
-          <!-- Process C -->
-          <rect x="128" y="67" width="82" height="26" rx="6" fill="rgba(26,26,40,0.8)" stroke="rgba(60,60,80,0.5)" stroke-width="1"/>
-          <text x="169" y="81" class="svg-node-label" fill="#9898b0">Process C</text>
-          <!-- Arrows -->
-          <line x1="84" y1="44" x2="128" y2="22" stroke="#fbbf24" stroke-width="1" opacity="0.35" marker-end="url(#arrow-headless)"/>
-          <line x1="84" y1="50" x2="128" y2="50" stroke="#fbbf24" stroke-width="1" opacity="0.35" marker-end="url(#arrow-headless)"/>
-          <line x1="84" y1="56" x2="128" y2="78" stroke="#fbbf24" stroke-width="1" opacity="0.35" marker-end="url(#arrow-headless)"/>
-          <!-- Static dots on arrows -->
-          <circle cx="106" cy="34" r="2.5" fill="#fbbf24" opacity="0.7"/>
-          <circle cx="106" cy="50" r="2.5" fill="#fbbf24" opacity="0.7"/>
-          <circle cx="106" cy="66" r="2.5" fill="#fbbf24" opacity="0.7"/>
-          <!-- Independence pulse indicators -->
-          <circle cx="222" cy="20" r="4" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.3"/>
-          <circle cx="222" cy="50" r="4" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.3"/>
-          <circle cx="222" cy="80" r="4" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.3"/>
-          <circle cx="222" cy="20" r="2" fill="#fbbf24" opacity="0.5"/>
-          <circle cx="222" cy="50" r="2" fill="#fbbf24" opacity="0.5"/>
-          <circle cx="222" cy="80" r="2" fill="#fbbf24" opacity="0.5"/>
-          <!-- No shared context label -->
-          <text x="268" y="52" text-anchor="middle" fill="#fbbf24" opacity="0.35" font-size="7" font-family="system-ui">no shared context</text>
-        </svg>
-      </div>
+        <rect x="268" y="390" width="104" height="24" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
+        <text x="320" y="407" text-anchor="middle" font-family="'SF Mono', monospace" font-size="14" fill="#A78BFA" font-weight="600">&lt;500 tokens</text>
 
-      <div class="p-flow-steps">
-        <span class="p-flow-step hl">Trigger</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step">Parallel Exec</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step">Independent</span>
-        <span class="p-flow-arrow">&#x2192;</span>
-        <span class="p-flow-step hl">Complete</span>
-      </div>
+        <rect x="488" y="390" width="104" height="24" rx="6" fill="rgba(98,212,220,0.1)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+        <text x="540" y="407" text-anchor="middle" font-family="'SF Mono', monospace" font-size="14" fill="#62D4DC" font-weight="600">&lt;500 tokens</text>
 
-      <div class="p-desc">Run multiple Claude instances as independent processes. No shared context &mdash; each operates on its own task. Best for batch operations that don't need coordination.</div>
-      <div class="p-use"><span class="p-use-tag">IaC</span> Migrate multiple modules in parallel, each in its own process</div>
+        <rect x="688" y="390" width="104" height="24" rx="6" fill="rgba(220,71,125,0.1)" stroke="rgba(220,71,125,0.2)" stroke-width="1"/>
+        <text x="740" y="407" text-anchor="middle" font-family="'SF Mono', monospace" font-size="14" fill="#DC477D" font-weight="600">&lt;500 tokens</text>
+
+        <!-- Disk write arrows from each agent -->
+        <line x1="120" y1="420" x2="120" y2="490" stroke="rgba(255,207,37,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <line x1="320" y1="420" x2="320" y2="490" stroke="rgba(255,207,37,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <line x1="540" y1="420" x2="540" y2="490" stroke="rgba(255,207,37,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <line x1="740" y1="420" x2="740" y2="490" stroke="rgba(255,207,37,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
+
+        <!-- Disk artifact boxes per agent -->
+        <rect x="70" y="494" width="100" height="28" rx="6" fill="rgba(255,207,37,0.06)" stroke="rgba(255,207,37,0.2)" stroke-width="1"/>
+        <text x="120" y="513" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#FFCF25" font-weight="600">findings-1</text>
+
+        <rect x="270" y="494" width="100" height="28" rx="6" fill="rgba(255,207,37,0.06)" stroke="rgba(255,207,37,0.2)" stroke-width="1"/>
+        <text x="320" y="513" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#FFCF25" font-weight="600">findings-2</text>
+
+        <rect x="490" y="494" width="100" height="28" rx="6" fill="rgba(255,207,37,0.06)" stroke="rgba(255,207,37,0.2)" stroke-width="1"/>
+        <text x="540" y="513" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#FFCF25" font-weight="600">findings-3</text>
+
+        <rect x="690" y="494" width="100" height="28" rx="6" fill="rgba(255,207,37,0.06)" stroke="rgba(255,207,37,0.2)" stroke-width="1"/>
+        <text x="740" y="513" text-anchor="middle" font-family="'SF Mono', monospace" font-size="11" fill="#FFCF25" font-weight="600">findings-4</text>
+
+        <!-- Shared disk bar -->
+        <rect x="70" y="534" width="720" height="3" rx="1.5" fill="rgba(255,207,37,0.15)"/>
+        <text x="430" y="558" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#FFCF25" font-weight="600">All research agents write to disk — orchestrator verifies via Glob</text>
+
+        <!-- Arrow down -->
+        <line x1="430" y1="570" x2="430" y2="610" stroke="rgba(220,71,125,0.25)" stroke-width="1.5"/>
+        <polygon points="424,606 430,616 436,606" fill="rgba(220,71,125,0.25)"/>
+
+        <!-- Design Agent -->
+        <rect x="290" y="620" width="280" height="70" rx="14" fill="rgba(220,71,125,0.06)" stroke="rgba(220,71,125,0.3)" stroke-width="2"/>
+        <rect x="290" y="620" width="280" height="70" rx="14" fill="none" stroke="rgba(220,71,125,0.12)" stroke-width="2" filter="url(#glow)"/>
+        <text x="430" y="650" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="17" fill="#DC477D" font-weight="700">Design Agent</text>
+        <text x="430" y="672" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#CCCCCC">Reads findings from disk, writes design.md</text>
+
+        <!-- Arrow to output -->
+        <line x1="430" y1="690" x2="430" y2="710" stroke="rgba(96,222,169,0.25)" stroke-width="1.5"/>
+        <polygon points="424,706 430,716 436,706" fill="rgba(96,222,169,0.25)"/>
+
+        <!-- Output -->
+        <rect x="340" y="718" width="180" height="18" rx="4" fill="rgba(96,222,169,0.06)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+        <text x="430" y="731" text-anchor="middle" font-family="'SF Mono', monospace" font-size="10" fill="#60DEA9" font-weight="600">design.md</text>
+
+      </svg>
     </div>
 
   </div>
 
-  <!-- Summary bar at bottom -->
-  <div style="
-    margin-top: 8px;
-    padding: 16px 24px;
-    border-radius: 12px;
-    background: rgba(14,14,22,0.6);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.04);
-  ">
-    <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: #5a5a70; font-weight: 600; margin-bottom: 8px;">Summary</div>
-    <div style="font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; color: #9898b0; line-height: 1.7;">Concurrent Execution Patterns for Agentic IaC: <span style="color:#60a5fa;">Fan-Out Research</span> (parallel investigation) &#x2022; <span style="color:#a78bfa;">Writer/Reviewer</span> (dual-role code quality) &#x2022; <span style="color:#5eead4;">Subagent Chaining</span> (sequential pipeline) &#x2022; <span style="color:#f472b6;">Isolate High-Volume Ops</span> (context protection) &#x2022; <span style="color:#fbbf24;">Headless Mode</span> (process-level parallelism for CI/CD)</div>
-  </div>
 </div>
 
 </body>

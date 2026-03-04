@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Repository Structure</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+
+  /* Section label */
+  .section-label {
+    padding: 48px 80px 0;
+  }
+  .section-label span {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 3px; color: #FFCF25;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 12px 80px 0;
+  }
+  .title-bar h1 {
+    font-size: 36px; font-weight: 600; color: #FFFFFF;
+    letter-spacing: -0.02em;
+  }
+  .title-bar p {
+    font-size: 20px; font-weight: 400; color: #82748C; margin-top: 6px;
+  }
+
+  /* Content area */
+  .content {
+    display: flex; gap: 60px; padding: 40px 80px 0;
+    align-items: flex-start;
+  }
+
+  /* Left: bullets */
+  .bullets {
+    width: 36%; display: flex; flex-direction: column; gap: 28px;
+    padding-top: 24px;
+  }
+  .bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .bullet-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #62D4DC; flex-shrink: 0;
+    margin-top: 8px;
+  }
+  .bullet-text {
+    font-size: 22px; font-weight: 400; color: #CCCCCC; line-height: 1.5;
+  }
+  .bullet-text strong {
+    color: #FFFFFF; font-weight: 600;
+  }
+
+  /* Right: file tree visual */
+  .visual {
+    width: 64%;
+  }
+
+  .tree-panel {
+    border-radius: 12px; overflow: hidden;
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+
+  .tree-titlebar {
+    padding: 14px 22px; display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background: rgba(10,10,18,0.6);
+  }
+  .tree-dots {
+    display: flex; gap: 6px;
+  }
+  .tree-dots span {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .tree-dots span:nth-child(1) { background: #EC585D; }
+  .tree-dots span:nth-child(2) { background: #FFCF25; }
+  .tree-dots span:nth-child(3) { background: #60DEA9; }
+  .tree-title {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 14px; font-weight: 400; color: #82748C;
+  }
+
+  .tree-body {
+    padding: 24px 28px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 16px; line-height: 2.1;
+    background: rgba(6,6,12,0.6);
+  }
+
+  .tree-line {
+    display: flex; align-items: center; gap: 8px;
+    white-space: nowrap;
+  }
+  .tree-prefix { color: #82748C; }
+  .tree-dir { font-weight: 600; }
+  .tree-file { color: #82748C; }
+
+  .tree-badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 10px; border-radius: 4px;
+    font-size: 14px; font-weight: 500;
+    margin-left: 8px;
+  }
+  .tree-comment {
+    color: #82748C; font-style: italic; font-size: 15px;
+    margin-left: 8px;
+  }
+
+  /* Color classes */
+  .c-pink { color: #DC477D; }
+  .c-cyan { color: #62D4DC; }
+  .c-ice { color: #627EEF; }
+  .c-purple { color: #A78BFA; }
+  .c-green { color: #60DEA9; }
+  .c-yellow { color: #FFCF25; }
+  .c-mcp { color: #FFD06C; }
+  .c-dim { color: #82748C; }
+
+  .b-pink { background: rgba(220,71,125,0.1); color: #DC477D; }
+  .b-cyan { background: rgba(98,212,220,0.08); color: #62D4DC; }
+  .b-ice { background: rgba(98,126,239,0.08); color: #627EEF; }
+  .b-purple { background: rgba(167,139,250,0.08); color: #A78BFA; }
+  .b-green { background: rgba(96,222,169,0.08); color: #60DEA9; }
+  .b-yellow { background: rgba(255,207,37,0.08); color: #FFCF25; }
+  .b-mcp { background: rgba(255,208,108,0.08); color: #FFD06C; }
+</style>
+</head>
+<body>
+
+<div class="section-label">
+  <span>WORKFLOWS</span>
+</div>
+
+<div class="title-bar">
+  <h1>Repository Structure</h1>
+  <p>How agents, skills, and workflows are organized -- everything version-controlled</p>
+</div>
+
+<div class="content">
+  <div class="bullets">
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Everything version-controlled</strong> -- agents, skills, and constitutions live alongside code</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Agents and skills co-located</strong> -- both under .agent/ for discoverability</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Constitutions separate from workflow</strong> -- guardrails in .foundations/memory/</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Templates enforce consistency</strong> -- design documents follow canonical structure</div>
+    </div>
+  </div>
+
+  <div class="visual">
+    <div class="tree-panel">
+      <div class="tree-titlebar">
+        <div class="tree-dots"><span></span><span></span><span></span></div>
+        <span class="tree-title">terraform-agentic-workflows/</span>
+      </div>
+      <div class="tree-body">
+        <div class="tree-line">
+          <span class="tree-prefix">&#x251C;&#x2500;&#x2500; </span>
+          <span class="tree-dir c-dim">.agent/</span>
+        </div>
+        <div class="tree-line">
+          <span class="tree-prefix">&#x2502;&nbsp;&nbsp; &#x251C;&#x2500;&#x2500; </span>
+          <span class="tree-dir c-pink">agents/</span>
+          <span class="tree-badge b-pink">15 agents</span>
+          <span class="tree-comment">research, design, test, dev, validate</span>
+        </div>
+        <div class="tree-line">
+          <span class="tree-prefix">&#x2502;&nbsp;&nbsp; &#x2514;&#x2500;&#x2500; </span>
+          <span class="tree-dir c-cyan">skills/</span>
+          <span class="tree-badge b-cyan">25 skills</span>
+          <span class="tree-comment">workflow orchestration + capabilities</span>
+        </div>
+        <div class="tree-line">
+          <span class="tree-prefix">&#x251C;&#x2500;&#x2500; </span>
+          <span class="tree-dir c-dim">.foundations/</span>
+        </div>
+        <div class="tree-line">
+          <span class="tree-prefix">&#x2502;&nbsp;&nbsp; &#x251C;&#x2500;&#x2500; </span>
+          <span class="tree-dir c-ice">memory/</span>
+          <span class="tree-badge b-ice">3 constitutions</span>
+          <span class="tree-comment">guardrails + quality standards</span>
+        </div>
+        <div class="tree-line">
+          <span class="tree-prefix">&#x2502;&nbsp;&nbsp; &#x251C;&#x2500;&#x2500; </span>
+          <span class="tree-dir c-purple">templates/</span>
+          <span class="tree-badge b-purple">3 templates</span>
+          <span class="tree-comment">design document scaffolds</span>
+        </div>
+        <div class="tree-line">
+          <span class="tree-prefix">&#x2502;&nbsp;&nbsp; &#x2514;&#x2500;&#x2500; </span>
+          <span class="tree-dir c-green">scripts/</span>
+          <span class="tree-badge b-green">3 scripts</span>
+          <span class="tree-comment">validate-env, checkpoint, progress</span>
+        </div>
+        <div class="tree-line">
+          <span class="tree-prefix">&#x251C;&#x2500;&#x2500; </span>
+          <span class="tree-dir c-yellow">.devcontainer/</span>
+          <span class="tree-comment">Docker-in-Docker + AI coding agent</span>
+        </div>
+        <div class="tree-line">
+          <span class="tree-prefix">&#x251C;&#x2500;&#x2500; </span>
+          <span class="tree-file c-dim">AGENTS.md</span>
+          <span class="tree-comment">orchestrator rules + workflow phases</span>
+        </div>
+        <div class="tree-line">
+          <span class="tree-prefix">&#x2514;&#x2500;&#x2500; </span>
+          <span class="tree-file c-mcp">.mcp.json</span>
+          <span class="tree-comment">MCP server configuration</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

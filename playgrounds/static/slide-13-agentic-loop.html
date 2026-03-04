@@ -3,506 +3,190 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1920">
-<title>Agentic Loop — Gather, Act, Verify, Repeat</title>
+<title>Agentic Loop &mdash; TDD Cycle</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+}
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: #0a0a12;
-    color: #e0e0e8;
-    width: 1920px;
-    height: 1080px;
-    overflow: hidden;
-    position: relative;
-  }
+.title-bar {
+    padding: 48px 80px 32px;
+    border-bottom: 1px solid rgba(139,92,246,0.15);
+}
+.section-label {
+    font-size: 12px; font-weight: 500; color: #FFCF25;
+    text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px;
+}
+.title-bar h1 {
+    font-size: 36px; font-weight: 600;
+    background: linear-gradient(135deg, #8B5CF6, #A78BFA);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+}
+.title-bar p {
+    font-size: 20px; color: #CCCCCC; font-weight: 400;
+}
 
-  /* Static gradient orbs */
-  body::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background:
-      radial-gradient(ellipse 700px 700px at 10% 20%, rgba(123, 97, 255, 0.07) 0%, transparent 70%),
-      radial-gradient(ellipse 600px 600px at 90% 70%, rgba(94, 234, 212, 0.05) 0%, transparent 70%),
-      radial-gradient(ellipse 500px 500px at 50% 40%, rgba(96, 165, 250, 0.04) 0%, transparent 70%),
-      radial-gradient(ellipse 400px 400px at 70% 15%, rgba(251, 191, 36, 0.03) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
+.content {
+    display: flex; padding: 40px 80px 0; gap: 56px;
+    align-items: flex-start;
+}
 
-  /* Dot grid overlay */
-  body::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-image: radial-gradient(circle, rgba(123, 97, 255, 0.08) 1px, transparent 1px);
-    background-size: 32px 32px;
-    pointer-events: none;
-    z-index: 0;
-  }
+.bullets {
+    width: 42%; display: flex; flex-direction: column; gap: 24px;
+    padding-top: 24px;
+}
+.bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+}
+.bullet-dot {
+    width: 8px; height: 8px; border-radius: 2px;
+    background: #62D4DC; margin-top: 8px; flex-shrink: 0;
+}
+.bullet-text {
+    font-size: 22px; line-height: 1.5; color: #FFFFFF;
+    font-family: 'Inter', Arial, sans-serif;
+}
+.bullet-text span {
+    font-weight: 600; color: #62D4DC;
+}
+.cmd {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 14px; color: #62D4DC;
+    background: rgba(98,212,220,0.06);
+    border: 1px solid rgba(98,212,220,0.12);
+    padding: 2px 8px; border-radius: 4px;
+    display: inline-block; margin-top: 4px;
+}
 
-  /* Title bar */
-  .title-bar {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    text-align: center;
-    padding: 24px 40px 16px;
-    border-bottom: 1px solid rgba(123, 97, 255, 0.15);
-    z-index: 2;
-    background: rgba(10, 10, 18, 0.5);
-  }
-
-  .title-bar h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #7b61ff, #a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 4px;
-    line-height: 1.2;
-  }
-
-  .title-bar p {
-    color: #8888a0;
-    font-size: 0.95rem;
-  }
-
-  /* Main content area */
-  .content {
-    position: absolute;
-    top: 92px;
-    left: 0; right: 0; bottom: 0;
-    z-index: 2;
-    padding: 24px 60px 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  /* ==================== */
-  /* HORIZONTAL STEP FLOW */
-  /* ==================== */
-  .flow-section {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    padding: 36px 40px 44px;
-  }
-
-  /* The return arrow (curved, goes from step 4 back to step 1 above the flow) */
-  .return-arrow-svg {
-    position: absolute;
-    top: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 1260px;
-    height: 52px;
-    z-index: 3;
-  }
-
-  /* Step box */
-  .flow-step {
-    position: relative;
-    z-index: 2;
-    width: 260px;
-    padding: 20px 18px 16px;
-    background: rgba(22, 22, 34, 0.65);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(123, 97, 255, 0.15);
-    border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    text-align: center;
-  }
-
-  .flow-step .color-bar {
-    position: absolute;
-    top: 0; left: 16px; right: 16px;
-    height: 3px;
-    border-radius: 0 0 3px 3px;
-  }
-  .flow-step.s-gather .color-bar { background: #7b61ff; box-shadow: 0 0 12px rgba(123, 97, 255, 0.4); }
-  .flow-step.s-act .color-bar { background: #60a5fa; box-shadow: 0 0 12px rgba(96, 165, 250, 0.4); }
-  .flow-step.s-verify .color-bar { background: #5eead4; box-shadow: 0 0 12px rgba(94, 234, 212, 0.4); }
-  .flow-step.s-repeat .color-bar { background: #fbbf24; box-shadow: 0 0 12px rgba(251, 191, 36, 0.4); }
-
-  .flow-step .step-num-circle {
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    font-weight: 700;
-    margin: 0 auto 8px;
-  }
-  .s-gather .step-num-circle { background: rgba(123, 97, 255, 0.2); color: #c4b5fd; border: 2px solid rgba(123, 97, 255, 0.5); }
-  .s-act .step-num-circle { background: rgba(96, 165, 250, 0.2); color: #93c5fd; border: 2px solid rgba(96, 165, 250, 0.5); }
-  .s-verify .step-num-circle { background: rgba(94, 234, 212, 0.2); color: #99f6e4; border: 2px solid rgba(94, 234, 212, 0.5); }
-  .s-repeat .step-num-circle { background: rgba(251, 191, 36, 0.2); color: #fde68a; border: 2px solid rgba(251, 191, 36, 0.5); }
-
-  .flow-step .step-icon {
-    font-size: 1.5rem;
-    margin-bottom: 4px;
-    display: block;
-  }
-
-  .flow-step .step-label {
-    font-size: 0.95rem;
-    font-weight: 600;
-  }
-  .s-gather .step-label { color: #c4b5fd; }
-  .s-act .step-label { color: #93c5fd; }
-  .s-verify .step-label { color: #99f6e4; }
-  .s-repeat .step-label { color: #fde68a; }
-
-  /* Forward arrows between steps */
-  .flow-arrow {
-    flex-shrink: 0;
-    width: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
-  }
-
-  .flow-arrow svg {
-    display: block;
-  }
-
-  /* ==================== */
-  /* DETAIL CARDS ROW     */
-  /* ==================== */
-  .details-row {
-    display: flex;
-    gap: 18px;
-    flex: 1;
-    min-height: 0;
-  }
-
-  .detail-card {
-    flex: 1;
-    background: rgba(22, 22, 34, 0.65);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(123, 97, 255, 0.15);
-    border-radius: 16px;
-    padding: 16px 16px 14px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    display: flex;
-    flex-direction: column;
-  }
-
-  .detail-card.c-gather { border-color: rgba(123, 97, 255, 0.25); }
-  .detail-card.c-act { border-color: rgba(96, 165, 250, 0.25); }
-  .detail-card.c-verify { border-color: rgba(94, 234, 212, 0.25); }
-  .detail-card.c-repeat { border-color: rgba(251, 191, 36, 0.25); }
-
-  .detail-card-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 10px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  .detail-card-num {
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.7rem;
-    font-weight: 700;
-    flex-shrink: 0;
-    color: #fff;
-  }
-  .c-gather .detail-card-num { background: #7b61ff; box-shadow: 0 0 10px rgba(123, 97, 255, 0.35); }
-  .c-act .detail-card-num { background: #3b82f6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.35); }
-  .c-verify .detail-card-num { background: #14b8a6; box-shadow: 0 0 10px rgba(94, 234, 212, 0.35); }
-  .c-repeat .detail-card-num { background: #f59e0b; box-shadow: 0 0 10px rgba(251, 191, 36, 0.35); }
-
-  .detail-card-title {
-    font-size: 0.82rem;
-    font-weight: 600;
-  }
-  .c-gather .detail-card-title { color: #c4b5fd; }
-  .c-act .detail-card-title { color: #93c5fd; }
-  .c-verify .detail-card-title { color: #99f6e4; }
-  .c-repeat .detail-card-title { color: #fde68a; }
-
-  .detail-card-icon {
-    font-size: 0.95rem;
-  }
-
-  .detail-items {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    flex: 1;
-  }
-
-  .detail-item {
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 13px;
-    color: #c8c8da;
-    line-height: 1.5;
-    background: rgba(18, 18, 26, 0.6);
-  }
-  .c-gather .detail-item { border-left: 3px solid rgba(123, 97, 255, 0.5); }
-  .c-act .detail-item { border-left: 3px solid rgba(96, 165, 250, 0.5); }
-  .c-verify .detail-item { border-left: 3px solid rgba(94, 234, 212, 0.5); }
-  .c-repeat .detail-item { border-left: 3px solid rgba(251, 191, 36, 0.5); }
-
-  .detail-item strong {
-    color: #e0e0e8;
-  }
-
-  /* ==================== */
-  /* IAC TOOLCHAIN BAR    */
-  /* ==================== */
-  .iac-panel {
-    background: rgba(22, 22, 34, 0.55);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(94, 234, 212, 0.15);
-    border-radius: 16px;
-    padding: 14px 24px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
-    display: flex;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .iac-panel h3 {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: #5eead4;
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-shrink: 0;
-  }
-
-  .iac-panel h3::before {
-    content: '';
-    display: inline-block;
-    width: 18px; height: 2px;
-    background: linear-gradient(90deg, #5eead4, transparent);
-  }
-
-  .iac-tools {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-
-  .iac-tool {
-    padding: 8px 14px;
-    border-radius: 12px;
-    background: rgba(15, 32, 26, 0.5);
-    border: 1px solid rgba(94, 234, 212, 0.15);
-    color: #5eead4;
-    font-size: 0.78rem;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-
-  .tool-icon {
-    font-size: 0.95rem;
-    flex-shrink: 0;
-    filter: drop-shadow(0 0 4px rgba(94, 234, 212, 0.3));
-  }
+.visual {
+    width: 58%; display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 0;
+}
 </style>
 </head>
 <body>
 
-<!-- Title bar -->
 <div class="title-bar">
-  <h1>Agentic Loop</h1>
-  <p>Gather &rarr; Act &rarr; Verify &rarr; Repeat</p>
+    <div class="section-label">FOUNDATIONS</div>
+    <h1>Agentic Loop</h1>
+    <p>TDD implementation cycle from the module workflow</p>
 </div>
 
-<!-- Main content -->
 <div class="content">
-
-  <!-- Horizontal 4-step flow -->
-  <div class="flow-section">
-
-    <!-- Return arrow: curved path from Step 4 back to Step 1 above the flow -->
-    <svg class="return-arrow-svg" viewBox="0 0 1260 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="returnGrad" x1="100%" y1="0%" x2="0%" y2="0%">
-          <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.8"/>
-          <stop offset="50%" stop-color="#f472b6" stop-opacity="0.6"/>
-          <stop offset="100%" stop-color="#7b61ff" stop-opacity="0.8"/>
-        </linearGradient>
-        <marker id="returnArrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
-          <path d="M0,0 L10,4 L0,8 Z" fill="#7b61ff" opacity="0.9"/>
-        </marker>
-      </defs>
-      <!-- Curved return path -->
-      <path d="M 1130 48 C 1130 10, 960 4, 630 4 C 300 4, 130 10, 130 48"
-            stroke="url(#returnGrad)" stroke-width="2.5" stroke-linecap="round"
-            stroke-dasharray="8 4" marker-end="url(#returnArrow)" opacity="0.7"/>
-      <!-- Label on the return arrow -->
-      <text x="630" y="20" text-anchor="middle" fill="#f472b6" font-size="11" font-weight="600" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif" opacity="0.85">LOOP BACK</text>
-    </svg>
-
-    <!-- Step 1: Gather -->
-    <div class="flow-step s-gather">
-      <div class="color-bar"></div>
-      <div class="step-num-circle">1</div>
-      <span class="step-icon">&#128270;</span>
-      <div class="step-label">Gather Context</div>
+    <div class="bullets">
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Tests first</span> &mdash; test-writer agent creates .tftest.hcl files with 1:1 assertion mapping from design.md before any module code exists</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>RED baseline</span> &mdash; terraform init + validate confirms tests compile as valid HCL but fail with no implementation yet
+                <br><span class="cmd">terraform init -backend=false</span> <span class="cmd">terraform validate</span>
+            </div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Iterative build</span> &mdash; developer agent is dispatched once per checklist item, each gated by validate + test before continuing
+                <br><span class="cmd">terraform validate</span> <span class="cmd">terraform test</span>
+            </div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Checkpoint commits</span> &mdash; each passing iteration gets committed automatically; progress posted to the GitHub issue via post-issue-progress.sh</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Quality gate</span> &mdash; validator scores output across 6 dimensions; security weighted at 30% can block release
+                <br><span class="cmd">trivy config .</span> <span class="cmd">terraform-docs</span>
+            </div>
+        </div>
     </div>
 
-    <!-- Arrow 1->2 -->
-    <div class="flow-arrow">
-      <svg width="52" height="24" viewBox="0 0 52 24" fill="none">
-        <path d="M0 12 L40 12" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-        <path d="M36 6 L48 12 L36 18" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.7"/>
-      </svg>
+    <div class="visual">
+        <svg width="920" height="760" viewBox="0 0 920 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Title -->
+            <text x="460" y="28" text-anchor="middle" fill="#CCCCCC" font-size="14" font-weight="600" letter-spacing="2" font-family="Inter, Arial, sans-serif">TDD IMPLEMENTATION CYCLE</text>
+
+            <!-- Circular track -->
+            <circle cx="460" cy="380" r="220" fill="none" stroke="rgba(139,92,246,0.06)" stroke-width="50"/>
+            <circle cx="460" cy="380" r="220" fill="none" stroke="rgba(139,92,246,0.08)" stroke-width="1" stroke-dasharray="8 12"/>
+
+            <!-- Arrow arcs connecting steps -->
+            <!-- Top to Right -->
+            <path d="M 580 185 A 220 220 0 0 1 665 290" fill="none" stroke="rgba(167,139,250,0.3)" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="668,290 658,280 662,296" fill="rgba(167,139,250,0.4)"/>
+            <!-- Right to Bottom -->
+            <path d="M 665 470 A 220 220 0 0 1 580 575" fill="none" stroke="rgba(98,212,220,0.3)" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="580,578 588,564 574,568" fill="rgba(98,212,220,0.4)"/>
+            <!-- Bottom to Left -->
+            <path d="M 340 575 A 220 220 0 0 1 255 470" fill="none" stroke="rgba(255,207,37,0.3)" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="252,470 262,480 258,464" fill="rgba(255,207,37,0.4)"/>
+            <!-- Left to Top -->
+            <path d="M 255 290 A 220 220 0 0 1 340 185" fill="none" stroke="rgba(98,126,239,0.3)" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="340,182 332,196 346,192" fill="rgba(98,126,239,0.4)"/>
+
+            <!-- Center label -->
+            <circle cx="460" cy="380" r="60" fill="rgba(139,92,246,0.04)" stroke="rgba(139,92,246,0.15)" stroke-width="1.5"/>
+            <text x="460" y="372" text-anchor="middle" fill="#A78BFA" font-size="28" font-family="Inter, Arial, sans-serif">&#x21BB;</text>
+            <text x="460" y="396" text-anchor="middle" fill="#CCCCCC" font-size="11" font-weight="700" letter-spacing="2" font-family="Inter, Arial, sans-serif">LOOP</text>
+
+            <!-- Step 1: Write Tests (top) -->
+            <rect x="330" y="60" width="260" height="120" rx="12" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.25)" stroke-width="1.5"/>
+            <circle cx="370" cy="100" r="18" fill="rgba(167,139,250,0.15)" stroke="rgba(167,139,250,0.4)" stroke-width="1.5"/>
+            <text x="370" y="106" text-anchor="middle" fill="#C4B5FD" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">1</text>
+            <text x="398" y="106" fill="#C4B5FD" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">Write Tests</text>
+            <text x="350" y="132" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Test-writer agent produces</text>
+            <text x="350" y="150" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">.tftest.hcl from design.md</text>
+            <!-- Label: Agent role -->
+            <rect x="350" y="160" width="90" height="18" rx="4" fill="rgba(167,139,250,0.08)"/>
+            <text x="395" y="173" text-anchor="middle" fill="#A78BFA" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">TEST-WRITER</text>
+
+            <!-- Step 2: RED Baseline (right) -->
+            <rect x="660" y="320" width="240" height="120" rx="12" fill="rgba(220,71,125,0.05)" stroke="rgba(220,71,125,0.2)" stroke-width="1.5"/>
+            <circle cx="700" cy="360" r="18" fill="rgba(220,71,125,0.12)" stroke="rgba(220,71,125,0.35)" stroke-width="1.5"/>
+            <text x="700" y="366" text-anchor="middle" fill="#DC477D" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">2</text>
+            <text x="728" y="366" fill="#DC477D" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">RED Baseline</text>
+            <text x="680" y="392" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">terraform init + validate</text>
+            <text x="680" y="410" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Confirm valid HCL, tests fail</text>
+            <!-- Label -->
+            <rect x="680" y="420" width="80" height="18" rx="4" fill="rgba(220,71,125,0.08)"/>
+            <text x="720" y="433" text-anchor="middle" fill="#DC477D" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">BASELINE</text>
+
+            <!-- Step 3: Implement (bottom) -->
+            <rect x="330" y="580" width="260" height="140" rx="12" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.2)" stroke-width="1.5"/>
+            <circle cx="370" cy="620" r="18" fill="rgba(98,212,220,0.1)" stroke="rgba(98,212,220,0.3)" stroke-width="1.5"/>
+            <text x="370" y="626" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">3</text>
+            <text x="398" y="626" fill="#62D4DC" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">Implement</text>
+            <text x="350" y="652" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Developer agent xN dispatched</text>
+            <text x="350" y="670" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">one per checklist item</text>
+            <text x="350" y="688" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">checkpoint-commit per item</text>
+            <!-- Labels -->
+            <rect x="350" y="698" width="90" height="18" rx="4" fill="rgba(98,212,220,0.06)"/>
+            <text x="395" y="711" text-anchor="middle" fill="#62D4DC" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">DEVELOPER xN</text>
+
+            <!-- Step 4: Validate (left) -->
+            <rect x="20" y="320" width="240" height="120" rx="12" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.18)" stroke-width="1.5"/>
+            <circle cx="60" cy="360" r="18" fill="rgba(255,207,37,0.1)" stroke="rgba(255,207,37,0.3)" stroke-width="1.5"/>
+            <text x="60" y="366" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">4</text>
+            <text x="88" y="366" fill="#FFCF25" font-size="17" font-weight="700" font-family="Inter, Arial, sans-serif">Validate</text>
+            <text x="40" y="392" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">Full pipeline: fmt, validate,</text>
+            <text x="40" y="410" fill="#CCCCCC" font-size="15" font-family="Inter, Arial, sans-serif">test, tflint, trivy, docs</text>
+            <!-- Label -->
+            <rect x="40" y="420" width="80" height="18" rx="4" fill="rgba(255,207,37,0.06)"/>
+            <text x="80" y="433" text-anchor="middle" fill="#FFCF25" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">VALIDATOR</text>
+
+            <!-- Pass/Fail loop indicator -->
+            <rect x="100" y="470" width="130" height="30" rx="8" fill="rgba(220,71,125,0.05)" stroke="rgba(220,71,125,0.15)" stroke-width="1"/>
+            <text x="165" y="490" text-anchor="middle" fill="#DC477D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">FAIL &rarr; re-dispatch</text>
+            <rect x="100" y="508" width="130" height="30" rx="8" fill="rgba(96,222,169,0.05)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+            <text x="165" y="528" text-anchor="middle" fill="#60DEA9" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">PASS &rarr; complete</text>
+        </svg>
     </div>
-
-    <!-- Step 2: Act -->
-    <div class="flow-step s-act">
-      <div class="color-bar"></div>
-      <div class="step-num-circle">2</div>
-      <span class="step-icon">&#9997;&#65039;</span>
-      <div class="step-label">Take Action</div>
-    </div>
-
-    <!-- Arrow 2->3 -->
-    <div class="flow-arrow">
-      <svg width="52" height="24" viewBox="0 0 52 24" fill="none">
-        <path d="M0 12 L40 12" stroke="#5eead4" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-        <path d="M36 6 L48 12 L36 18" stroke="#5eead4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.7"/>
-      </svg>
-    </div>
-
-    <!-- Step 3: Verify -->
-    <div class="flow-step s-verify">
-      <div class="color-bar"></div>
-      <div class="step-num-circle">3</div>
-      <span class="step-icon">&#9989;</span>
-      <div class="step-label">Verify Work</div>
-    </div>
-
-    <!-- Arrow 3->4 -->
-    <div class="flow-arrow">
-      <svg width="52" height="24" viewBox="0 0 52 24" fill="none">
-        <path d="M0 12 L40 12" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
-        <path d="M36 6 L48 12 L36 18" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.7"/>
-      </svg>
-    </div>
-
-    <!-- Step 4: Self-Correct & Repeat -->
-    <div class="flow-step s-repeat">
-      <div class="color-bar"></div>
-      <div class="step-num-circle">4</div>
-      <span class="step-icon">&#128260;</span>
-      <div class="step-label">Self-Correct &amp; Repeat</div>
-    </div>
-
-  </div>
-
-  <!-- 4 Detail cards in a row -->
-  <div class="details-row">
-
-    <!-- Card 1: Gather Context -->
-    <div class="detail-card c-gather">
-      <div class="detail-card-header">
-        <div class="detail-card-num">1</div>
-        <span class="detail-card-icon">&#128270;</span>
-        <div class="detail-card-title">Gather Context</div>
-      </div>
-      <div class="detail-items">
-        <div class="detail-item">Read the specification or task description to understand what needs to be done</div>
-        <div class="detail-item">Load relevant files and understand existing patterns before making changes</div>
-        <div class="detail-item">For IaC: read existing module structure, provider docs, policy constraints</div>
-      </div>
-    </div>
-
-    <!-- Card 2: Take Action -->
-    <div class="detail-card c-act">
-      <div class="detail-card-header">
-        <div class="detail-card-num">2</div>
-        <span class="detail-card-icon">&#9997;&#65039;</span>
-        <div class="detail-card-title">Take Action</div>
-      </div>
-      <div class="detail-items">
-        <div class="detail-item">Generate Terraform resources, variables, outputs following conventions</div>
-        <div class="detail-item">Write test files alongside implementation (TDD for IaC)</div>
-        <div class="detail-item">Keep changes atomic and focused &mdash; one logical change per iteration</div>
-      </div>
-    </div>
-
-    <!-- Card 3: Verify Work -->
-    <div class="detail-card c-verify">
-      <div class="detail-card-header">
-        <div class="detail-card-num">3</div>
-        <span class="detail-card-icon">&#9989;</span>
-        <div class="detail-card-title">Verify Work</div>
-      </div>
-      <div class="detail-items">
-        <div class="detail-item"><strong>Rules-Based Feedback:</strong> Define clear output rules, then explain which ones failed and why</div>
-        <div class="detail-item"><strong>Terraform Validate:</strong> Syntax and configuration correctness</div>
-        <div class="detail-item"><strong>Terraform Plan:</strong> Preview infrastructure changes</div>
-        <div class="detail-item"><strong>TFLint:</strong> Best practice enforcement</div>
-        <div class="detail-item"><strong>Policy Checks:</strong> Security and compliance validation</div>
-      </div>
-    </div>
-
-    <!-- Card 4: Self-Correct & Repeat -->
-    <div class="detail-card c-repeat">
-      <div class="detail-card-header">
-        <div class="detail-card-num">4</div>
-        <span class="detail-card-icon">&#128260;</span>
-        <div class="detail-card-title">Self-Correct &amp; Repeat</div>
-      </div>
-      <div class="detail-items">
-        <div class="detail-item">Agent reads error messages and run outputs to understand what went wrong</div>
-        <div class="detail-item">Makes targeted fixes based on specific feedback &mdash; no random changes</div>
-        <div class="detail-item">Re-runs validation to confirm fix. Loop continues until all checks pass.</div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- IaC Validation Toolchain bar -->
-  <div class="iac-panel">
-    <h3>IaC Validation Toolchain</h3>
-    <div class="iac-tools">
-      <div class="iac-tool">
-        <span class="tool-icon">&#9881;&#65039;</span> terraform validate
-      </div>
-      <div class="iac-tool">
-        <span class="tool-icon">&#128203;</span> terraform plan
-      </div>
-      <div class="iac-tool">
-        <span class="tool-icon">&#128269;</span> TFLint
-      </div>
-      <div class="iac-tool">
-        <span class="tool-icon">&#128274;</span> Policy checks
-      </div>
-      <div class="iac-tool">
-        <span class="tool-icon">&#128279;</span> Pre-commit hooks
-      </div>
-      <div class="iac-tool">
-        <span class="tool-icon">&#129514;</span> Test suites
-      </div>
-    </div>
-  </div>
-
 </div>
 
 </body>

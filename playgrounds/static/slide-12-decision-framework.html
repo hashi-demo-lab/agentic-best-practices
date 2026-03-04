@@ -3,557 +3,171 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1920">
-<title>Decision Framework - When to Use Subagents vs Alternatives</title>
+<title>Decision Framework</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+}
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: #0a0a12;
-    color: #e0e0e8;
-    width: 1920px;
-    height: 1080px;
-    overflow: hidden;
-    position: relative;
-  }
+.title-bar {
+    padding: 48px 80px 32px;
+    border-bottom: 1px solid rgba(98,126,239,0.15);
+}
+.section-label {
+    font-size: 12px; font-weight: 500; color: #FFCF25;
+    text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px;
+}
+.title-bar h1 {
+    font-size: 36px; font-weight: 600;
+    background: linear-gradient(135deg, #627EEF, #C4B5FD);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+}
+.title-bar p {
+    font-size: 18px; color: #CCCCCC; font-weight: 400;
+}
 
-  /* Static gradient orbs via pseudo-elements */
-  body::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    background:
-      radial-gradient(ellipse 700px 700px at 15% 15%, rgba(123,97,255,0.07) 0%, transparent 70%),
-      radial-gradient(ellipse 600px 600px at 85% 75%, rgba(251,191,36,0.05) 0%, transparent 70%),
-      radial-gradient(ellipse 500px 500px at 55% 25%, rgba(96,165,250,0.05) 0%, transparent 70%),
-      radial-gradient(ellipse 450px 450px at 35% 80%, rgba(94,234,212,0.04) 0%, transparent 70%);
-  }
-
-  /* Dot grid overlay */
-  body::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.035;
-    background-image:
-      radial-gradient(circle 1px at center, rgba(123,97,255,0.8) 0%, transparent 100%);
-    background-size: 40px 40px;
-  }
-
-  /* Layout container */
-  .slide {
-    position: relative;
-    z-index: 1;
-    width: 1920px;
-    height: 1080px;
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-  }
-
-  /* --- Title Bar --- */
-  .title-bar {
-    text-align: center;
-    padding: 36px 40px 24px;
-    position: relative;
-    border-bottom: 1px solid rgba(123,97,255,0.15);
-    flex-shrink: 0;
-  }
-  .title-bar::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 240px;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #7b61ff, transparent);
-  }
-  .title-bar h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #7b61ff, #a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 6px;
-  }
-  .title-bar .subtitle {
-    color: #8888a0;
-    font-size: 1rem;
-    font-weight: 500;
-  }
-
-  /* --- Main content area --- */
-  .content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 28px 80px 24px;
-    gap: 22px;
-    min-height: 0;
-  }
-
-  /* --- Decision Flow Bar --- */
-  .decision-flow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    padding: 4px 0;
-    flex-shrink: 0;
-  }
-  .flow-node {
-    padding: 8px 20px;
-    border-radius: 24px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    white-space: nowrap;
-    border: 1px solid rgba(255,255,255,0.08);
-  }
-  .flow-node.fn-purple {
-    background: rgba(123,97,255,0.12);
-    color: #a78bfa;
-    border-color: rgba(123,97,255,0.25);
-  }
-  .flow-node.fn-blue {
-    background: rgba(96,165,250,0.08);
-    color: #93bbfc;
-    border-color: rgba(96,165,250,0.2);
-  }
-  .flow-node.fn-teal {
-    background: rgba(94,234,212,0.08);
-    color: #6ee7b7;
-    border-color: rgba(94,234,212,0.2);
-  }
-  .flow-node.fn-amber {
-    background: rgba(251,191,36,0.08);
-    color: #fcd34d;
-    border-color: rgba(251,191,36,0.2);
-  }
-  .flow-arrow {
-    display: flex;
-    align-items: center;
-    padding: 0 6px;
-  }
-  .flow-arrow svg {
-    width: 36px;
-    height: 14px;
-    stroke: rgba(123,97,255,0.3);
-    stroke-width: 1.5;
-    fill: none;
-  }
-
-  /* --- 2x2 Grid --- */
-  .matrix {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 22px;
-    flex: 1;
-    min-height: 0;
-  }
-
-  /* --- Glass Card --- */
-  .card {
-    background: rgba(22,22,34,0.65);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(123,97,255,0.15);
-    border-radius: 16px;
-    padding: 24px 28px;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* Top accent bar */
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    border-radius: 16px 16px 0 0;
-  }
-  .card.card-purple::before { background: linear-gradient(135deg, #7b61ff, #a78bfa); }
-  .card.card-blue::before { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
-  .card.card-teal::before { background: linear-gradient(135deg, #10b981, #34d399); }
-  .card.card-amber::before { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
-
-  /* Corner glow */
-  .card::after {
-    content: '';
-    position: absolute;
-    top: -60%;
-    left: -40%;
-    width: 80%;
-    height: 80%;
-    border-radius: 50%;
-    pointer-events: none;
-    opacity: 0.35;
-  }
-  .card.card-purple::after { background: radial-gradient(circle, rgba(123,97,255,0.1) 0%, transparent 70%); }
-  .card.card-blue::after { background: radial-gradient(circle, rgba(96,165,250,0.1) 0%, transparent 70%); }
-  .card.card-teal::after { background: radial-gradient(circle, rgba(52,211,153,0.1) 0%, transparent 70%); }
-  .card.card-amber::after { background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%); }
-
-  /* Card header */
-  .card-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 12px;
-    position: relative;
-    z-index: 1;
-  }
-  .card-icon {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-  }
-  .card-icon::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
-  }
-  .card.card-purple .card-icon { background: linear-gradient(135deg, #7b61ff, #a78bfa); }
-  .card.card-blue .card-icon { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
-  .card.card-teal .card-icon { background: linear-gradient(135deg, #10b981, #34d399); }
-  .card.card-amber .card-icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
-
-  .card-icon svg {
-    width: 22px;
-    height: 22px;
-    fill: none;
-    stroke: white;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    position: relative;
-    z-index: 1;
-  }
-
-  .card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #e0e0f0;
-    letter-spacing: -0.01em;
-  }
-
-  .card-badge {
-    display: inline-block;
-    font-size: 0.65rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    padding: 3px 10px;
-    border-radius: 6px;
-    margin-left: auto;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-  .card.card-purple .card-badge { color: #7b61ff; border-color: rgba(123,97,255,0.3); background: rgba(123,97,255,0.1); }
-  .card.card-blue .card-badge { color: #60a5fa; border-color: rgba(96,165,250,0.3); background: rgba(96,165,250,0.1); }
-  .card.card-teal .card-badge { color: #34d399; border-color: rgba(52,211,153,0.3); background: rgba(52,211,153,0.1); }
-  .card.card-amber .card-badge { color: #fbbf24; border-color: rgba(251,191,36,0.3); background: rgba(251,191,36,0.1); }
-
-  /* "When" summary line */
-  .card-when {
-    font-size: 0.85rem;
-    color: #8888a0;
-    line-height: 1.55;
-    margin-bottom: 14px;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* Divider */
-  .card-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-    margin-bottom: 14px;
-  }
-
-  /* Criteria list */
-  .criteria {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    position: relative;
-    z-index: 1;
-    flex: 1;
-  }
-  .criterion {
-    display: flex;
-    gap: 10px;
+.content {
+    display: flex; padding: 48px 80px 0; gap: 64px;
     align-items: flex-start;
-    padding: 9px 14px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid rgba(255,255,255,0.03);
-  }
-  .criterion-check {
-    width: 20px;
-    height: 20px;
-    border-radius: 6px;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1px;
-  }
-  .card.card-purple .criterion-check { background: rgba(123,97,255,0.15); border: 1px solid rgba(123,97,255,0.4); }
-  .card.card-blue .criterion-check { background: rgba(96,165,250,0.15); border: 1px solid rgba(96,165,250,0.4); }
-  .card.card-teal .criterion-check { background: rgba(52,211,153,0.15); border: 1px solid rgba(52,211,153,0.4); }
-  .card.card-amber .criterion-check { background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.4); }
+}
 
-  .criterion-check svg {
-    width: 12px;
-    height: 12px;
-    fill: none;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  .card.card-purple .criterion-check svg { stroke: #7b61ff; }
-  .card.card-blue .criterion-check svg { stroke: #60a5fa; }
-  .card.card-teal .criterion-check svg { stroke: #34d399; }
-  .card.card-amber .criterion-check svg { stroke: #fbbf24; }
+.bullets {
+    width: 40%; display: flex; flex-direction: column; gap: 28px;
+    padding-top: 16px;
+}
+.bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+}
+.bullet-dot {
+    width: 8px; height: 8px; border-radius: 2px;
+    background: #62D4DC; margin-top: 8px; flex-shrink: 0;
+}
+.bullet-text {
+    font-size: 18px; line-height: 1.6; color: #FFFFFF;
+    font-family: 'Inter', Arial, sans-serif;
+}
+.bullet-text span {
+    font-weight: 600; color: #62D4DC;
+}
 
-  .criterion-text {
-    font-size: 0.84rem;
-    color: #b0b0c8;
-    line-height: 1.5;
-  }
-
-  /* --- Key Principle Banner --- */
-  .key-principle {
-    flex-shrink: 0;
-    padding: 22px 36px;
-    border-radius: 14px;
-    position: relative;
-    overflow: hidden;
-    background: linear-gradient(135deg, rgba(123,97,255,0.08) 0%, rgba(96,165,250,0.06) 50%, rgba(52,211,153,0.05) 100%);
-    border: 1px solid rgba(123,97,255,0.2);
-    text-align: center;
-  }
-  /* Top gradient line */
-  .key-principle::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #7b61ff, #60a5fa, #34d399, #fbbf24);
-  }
-  /* Subtle inner glow */
-  .key-principle::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(123,97,255,0.04), transparent 40%, rgba(251,191,36,0.02));
-    pointer-events: none;
-  }
-  .key-principle h4 {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    background: linear-gradient(135deg, #7b61ff, #a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 10px;
-    position: relative;
-    z-index: 1;
-  }
-  .key-principle p {
-    font-size: 0.92rem;
-    color: #b8b8d0;
-    line-height: 1.65;
-    position: relative;
-    z-index: 1;
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-  .key-principle strong {
-    color: #d0d0e8;
-    font-weight: 600;
-  }
+.visual {
+    width: 60%; display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 8px;
+}
 </style>
 </head>
 <body>
-<div class="slide">
 
-  <!-- Title Bar -->
-  <div class="title-bar">
+<div class="title-bar">
+    <div class="section-label">FOUNDATIONS</div>
     <h1>Decision Framework</h1>
-    <div class="subtitle">When to Use Subagents vs Alternatives</div>
-  </div>
-
-  <div class="content">
-
-    <!-- Decision Flow Bar -->
-    <div class="decision-flow">
-      <div class="flow-node fn-purple">New Task</div>
-      <div class="flow-arrow"><svg viewBox="0 0 36 14"><path d="M2 7h28M26 3l4 4-4 4" stroke-dasharray="4 3"/></svg></div>
-      <div class="flow-node fn-blue">Interactive?</div>
-      <div class="flow-arrow"><svg viewBox="0 0 36 14"><path d="M2 7h28M26 3l4 4-4 4" stroke-dasharray="4 3"/></svg></div>
-      <div class="flow-node fn-teal">Reusable?</div>
-      <div class="flow-arrow"><svg viewBox="0 0 36 14"><path d="M2 7h28M26 3l4 4-4 4" stroke-dasharray="4 3"/></svg></div>
-      <div class="flow-node fn-amber">Parallel?</div>
-      <div class="flow-arrow"><svg viewBox="0 0 36 14"><path d="M2 7h28M26 3l4 4-4 4" stroke-dasharray="4 3"/></svg></div>
-      <div class="flow-node fn-purple">Choose Model</div>
-    </div>
-
-    <!-- 2x2 Grid of Glass Cards -->
-    <div class="matrix">
-
-      <!-- Card 1: Subagents -->
-      <div class="card card-purple">
-        <div class="card-header">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M4 6h4v4H4zM10 6h4v4h-4zM16 6h4v4h-4zM7 14h10v4H7z"/><path d="M6 10v4M18 10v4M12 10v4"/></svg>
-          </div>
-          <span class="card-title">Subagents</span>
-          <span class="card-badge">Isolation</span>
-        </div>
-        <div class="card-when">Verbose output, tool restrictions, self-contained work, parallel investigation</div>
-        <div class="card-divider"></div>
-        <div class="criteria">
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Task produces verbose output that would bloat parent context</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Need to restrict tool access for safety or efficiency</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Work is self-contained with clear inputs and outputs</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Parallel investigation is possible across independent areas</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 2: Main Conversation -->
-      <div class="card card-blue">
-        <div class="card-header">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9m-9 9a9 9 0 019-9"/></svg>
-          </div>
-          <span class="card-title">Main Conversation</span>
-          <span class="card-badge">Interactive</span>
-        </div>
-        <div class="card-when">Frequent back-and-forth, shared context, quick changes, latency-sensitive</div>
-        <div class="card-divider"></div>
-        <div class="criteria">
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Task needs frequent back-and-forth with the user</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Multiple phases share context and build on each other</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Making quick, focused changes to a few files</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Response latency matters -- subagent round-trip adds overhead</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 3: Skills -->
-      <div class="card card-teal">
-        <div class="card-header">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2zM22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
-          </div>
-          <span class="card-title">Skills</span>
-          <span class="card-badge">Reusable</span>
-        </div>
-        <div class="card-when">Reusable prompts/workflows, reference knowledge, invoked on trigger</div>
-        <div class="card-divider"></div>
-        <div class="criteria">
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Need reusable prompts or step-by-step workflows</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Reference knowledge like conventions, patterns, style guides</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Invoked by user command or Claude detecting a matching pattern</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Domain knowledge that multiple agents or sessions can share</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 4: Headless Mode -->
-      <div class="card card-amber">
-        <div class="card-header">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
-          </div>
-          <span class="card-title">Headless Mode</span>
-          <span class="card-badge">Automation</span>
-        </div>
-        <div class="card-when">Process-level parallelism, batch processing, CI/CD pipelines</div>
-        <div class="card-divider"></div>
-        <div class="criteria">
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">True process-level parallelism needed (not just subagent concurrency)</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Batch processing like file migrations across many modules</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">CI/CD pipeline integration -- agent runs unattended</span>
-          </div>
-          <div class="criterion">
-            <span class="criterion-check"><svg viewBox="0 0 14 14"><path d="M2.5 7.5l3 3 6-7"/></svg></span>
-            <span class="criterion-text">Tasks are fully independent with no shared state needed</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Key Principle Banner -->
-    <div class="key-principle">
-      <h4>Key Principle</h4>
-      <p><strong>Match the execution model to the task characteristics.</strong> Subagents for isolation and parallelism, main conversation for interactivity, skills for reusable knowledge, headless for batch automation.</p>
-    </div>
-
-  </div>
+    <p>When to use subagents vs direct tools vs headless mode</p>
 </div>
+
+<div class="content">
+    <div class="bullets">
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Task complexity drives dispatch</span> &mdash; simple tasks stay in main, complex tasks get subagents</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Avoid unnecessary overhead</span> &mdash; subagent round-trips add latency, use only when isolated</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Match tool to scope</span> &mdash; skills for reusable knowledge, headless for batch automation</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Fan-out for parallelism</span> &mdash; independent tasks run concurrently across subagents</div>
+        </div>
+    </div>
+
+    <div class="visual">
+        <svg width="940" height="680" viewBox="0 0 940 680" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Title -->
+            <text x="470" y="28" text-anchor="middle" fill="#CCCCCC" font-size="14" font-weight="600" letter-spacing="2" font-family="Inter, Arial, sans-serif">EXECUTION MODEL MATRIX</text>
+
+            <!-- Axis labels -->
+            <text x="470" y="68" text-anchor="middle" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">TASK SCOPE &rarr;</text>
+            <text x="24" y="360" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif" transform="rotate(-90 24 360)">INTERACTIVITY &rarr;</text>
+
+            <!-- Axis lines -->
+            <line x1="60" y1="80" x2="60" y2="640" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+            <line x1="60" y1="360" x2="920" y2="360" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+            <!-- Quadrant labels -->
+            <text x="260" y="100" text-anchor="middle" fill="#82748C" font-size="11" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">FOCUSED SCOPE</text>
+            <text x="710" y="100" text-anchor="middle" fill="#82748C" font-size="11" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">BROAD SCOPE</text>
+            <text x="60" y="210" fill="#82748C" font-size="11" font-weight="600" letter-spacing="1" font-family="Inter, Arial, sans-serif" transform="rotate(-90 46 210)">INTERACTIVE</text>
+            <text x="60" y="520" fill="#82748C" font-size="11" font-weight="600" letter-spacing="1" font-family="Inter, Arial, sans-serif" transform="rotate(-90 46 520)">AUTONOMOUS</text>
+
+            <!-- Q1: Main Conversation (top-left) - Interactive + Focused -->
+            <rect x="80" y="110" width="380" height="230" rx="12" fill="rgba(98,126,239,0.05)" stroke="rgba(98,126,239,0.2)" stroke-width="1.5"/>
+            <circle cx="120" cy="150" r="20" fill="rgba(98,126,239,0.12)" stroke="rgba(98,126,239,0.35)" stroke-width="1.5"/>
+            <text x="120" y="155" text-anchor="middle" fill="#627EEF" font-size="14" font-family="Inter, Arial, sans-serif">&#x1F4AC;</text>
+            <text x="150" y="156" fill="#627EEF" font-size="20" font-weight="700" font-family="Inter, Arial, sans-serif">Main Conversation</text>
+            <text x="100" y="192" fill="#CCCCCC" font-size="14" line-height="1.5" font-family="Inter, Arial, sans-serif">Frequent back-and-forth with user</text>
+            <text x="100" y="216" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Quick, focused edits to a few files</text>
+            <text x="100" y="240" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Shared context between phases</text>
+            <text x="100" y="264" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Latency-sensitive responses</text>
+            <!-- Badge -->
+            <rect x="100" y="290" width="100" height="28" rx="6" fill="rgba(98,126,239,0.1)" stroke="rgba(98,126,239,0.25)" stroke-width="1"/>
+            <text x="150" y="309" text-anchor="middle" fill="#627EEF" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">INTERACTIVE</text>
+
+            <!-- Q2: Subagents (top-right) - Interactive + Broad -->
+            <rect x="480" y="110" width="420" height="230" rx="12" fill="rgba(167,139,250,0.05)" stroke="rgba(167,139,250,0.2)" stroke-width="1.5"/>
+            <circle cx="520" cy="150" r="20" fill="rgba(167,139,250,0.12)" stroke="rgba(167,139,250,0.35)" stroke-width="1.5"/>
+            <text x="520" y="155" text-anchor="middle" fill="#A78BFA" font-size="14" font-family="Inter, Arial, sans-serif">&#x1F916;</text>
+            <text x="550" y="156" fill="#C4B5FD" font-size="20" font-weight="700" font-family="Inter, Arial, sans-serif">Subagents</text>
+            <text x="500" y="192" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Verbose output that would bloat parent</text>
+            <text x="500" y="216" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Self-contained with clear inputs/outputs</text>
+            <text x="500" y="240" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Parallel investigation across areas</text>
+            <text x="500" y="264" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Need tool access restrictions</text>
+            <!-- Badge -->
+            <rect x="500" y="290" width="100" height="28" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.25)" stroke-width="1"/>
+            <text x="550" y="309" text-anchor="middle" fill="#A78BFA" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">ISOLATION</text>
+
+            <!-- Q3: Skills (bottom-left) - Autonomous + Focused -->
+            <rect x="80" y="380" width="380" height="230" rx="12" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.18)" stroke-width="1.5"/>
+            <circle cx="120" cy="420" r="20" fill="rgba(98,212,220,0.1)" stroke="rgba(98,212,220,0.3)" stroke-width="1.5"/>
+            <text x="120" y="425" text-anchor="middle" fill="#62D4DC" font-size="14" font-family="Inter, Arial, sans-serif">&#x1F4D6;</text>
+            <text x="150" y="426" fill="#62D4DC" font-size="20" font-weight="700" font-family="Inter, Arial, sans-serif">Skills</text>
+            <text x="100" y="462" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Reusable prompts and workflows</text>
+            <text x="100" y="486" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Reference knowledge and conventions</text>
+            <text x="100" y="510" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Triggered by command or pattern match</text>
+            <text x="100" y="534" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Shared across agents and sessions</text>
+            <!-- Badge -->
+            <rect x="100" y="560" width="100" height="28" rx="6" fill="rgba(98,212,220,0.08)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+            <text x="150" y="579" text-anchor="middle" fill="#62D4DC" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">REUSABLE</text>
+
+            <!-- Q4: Headless Mode (bottom-right) - Autonomous + Broad -->
+            <rect x="480" y="380" width="420" height="230" rx="12" fill="rgba(255,207,37,0.03)" stroke="rgba(255,207,37,0.15)" stroke-width="1.5"/>
+            <circle cx="520" cy="420" r="20" fill="rgba(255,207,37,0.08)" stroke="rgba(255,207,37,0.25)" stroke-width="1.5"/>
+            <text x="520" y="425" text-anchor="middle" fill="#FFCF25" font-size="14" font-family="Inter, Arial, sans-serif">&#x26A1;</text>
+            <text x="550" y="426" fill="#FFCF25" font-size="20" font-weight="700" font-family="Inter, Arial, sans-serif">Headless Mode</text>
+            <text x="500" y="462" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">True process-level parallelism</text>
+            <text x="500" y="486" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Batch processing across modules</text>
+            <text x="500" y="510" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">CI/CD pipeline integration</text>
+            <text x="500" y="534" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">Fully independent, no shared state</text>
+            <!-- Badge -->
+            <rect x="500" y="560" width="120" height="28" rx="6" fill="rgba(255,207,37,0.06)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
+            <text x="560" y="579" text-anchor="middle" fill="#FFCF25" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">AUTOMATION</text>
+
+            <!-- Key principle bar -->
+            <rect x="80" y="636" width="820" height="36" rx="8" fill="rgba(98,126,239,0.04)" stroke="rgba(98,126,239,0.12)" stroke-width="1"/>
+            <text x="470" y="659" text-anchor="middle" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">
+                <tspan font-weight="600" fill="#627EEF">Key Principle:</tspan> Match the execution model to task characteristics
+            </text>
+        </svg>
+    </div>
+</div>
+
 </body>
 </html>

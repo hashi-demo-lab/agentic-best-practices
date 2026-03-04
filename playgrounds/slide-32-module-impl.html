@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Module: /tf-module-implement</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.03;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .title-bar {
+    padding: 32px 80px 12px;
+    position: relative; z-index: 1;
+  }
+  .section-label {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 3px; color: #FFCF25; margin-bottom: 8px;
+  }
+  .title-bar h1 {
+    font-size: 36px; font-weight: 600; letter-spacing: -0.02em;
+    color: #A78BFA;
+  }
+  .title-bar h1 code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: #A78BFA;
+  }
+  .title-bar p {
+    font-size: 20px; color: #82748C; margin-top: 4px; font-weight: 400;
+  }
+
+  .flow-area {
+    padding: 6px 60px 0;
+    position: relative; z-index: 1;
+  }
+  .flow-svg { width: 100%; }
+
+  .bullets-area {
+    display: flex; gap: 60px;
+    padding: 20px 80px 0;
+    position: relative; z-index: 1;
+  }
+  .bullet-col {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .bullet-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 22px; color: #CCCCCC; line-height: 1.5; font-weight: 400;
+  }
+  .bullet-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 8px;
+    background: #A78BFA;
+  }
+  .bullet-item strong { color: #FFFFFF; font-weight: 600; }
+  .bullet-item code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 18px; color: #A78BFA;
+    background: rgba(167,139,250,0.08); padding: 2px 6px; border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="title-bar">
+  <div class="section-label">WORKFLOWS</div>
+  <h1>Module: <code>/tf-module-implement</code></h1>
+  <p>Phases 3 &amp; 4 &mdash; Build + Test (TDD) + Validate</p>
+</div>
+
+<!-- Flow diagram showing the TDD cycle -->
+<div class="flow-area">
+  <svg class="flow-svg" viewBox="0 0 1800 530" xmlns="http://www.w3.org/2000/svg">
+    <!-- Setup box (narrow left) -->
+    <rect x="0" y="0" width="220" height="260" rx="14" fill="rgba(14,14,22,0.5)" stroke="rgba(98,126,239,0.15)" stroke-width="1"/>
+    <text x="18" y="26" fill="#627EEF" font-size="13" font-weight="700" letter-spacing="2">SETUP</text>
+    <rect x="16" y="40" width="188" height="120" rx="8" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <rect x="28" y="56" width="100" height="22" rx="4" fill="rgba(96,222,169,0.06)" stroke="rgba(96,222,169,0.2)" stroke-width="1"/>
+    <text x="78" y="71" text-anchor="middle" fill="#60DEA9" font-family="'SF Mono', monospace" font-size="9">validate-env.sh</text>
+    <rect x="28" y="84" width="150" height="22" rx="4" fill="rgba(96,222,169,0.06)" stroke="rgba(96,222,169,0.15)" stroke-width="1" stroke-dasharray="4 2"/>
+    <text x="103" y="99" text-anchor="middle" fill="#60DEA9" font-family="'SF Mono', monospace" font-size="8">post-issue-progress.sh</text>
+    <rect x="28" y="112" width="140" height="22" rx="4" fill="rgba(96,222,169,0.06)" stroke="rgba(96,222,169,0.15)" stroke-width="1" stroke-dasharray="4 2"/>
+    <text x="98" y="127" text-anchor="middle" fill="#60DEA9" font-family="'SF Mono', monospace" font-size="8">checkpoint-commit.sh</text>
+
+    <!-- Reads -->
+    <rect x="16" y="172" width="188" height="30" rx="6" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+    <text x="28" y="192" fill="#FFCF25" font-size="9" font-weight="700" letter-spacing="1">READS</text>
+    <text x="80" y="192" fill="#FFCF25" font-family="'SF Mono', monospace" font-size="10">design.md</text>
+
+    <!-- Arrow Setup -> Phase 3 -->
+    <line x1="220" y1="130" x2="260" y2="130" stroke="rgba(167,139,250,0.25)" stroke-width="2" stroke-dasharray="6 4"/>
+    <polygon points="256,124 266,130 256,136" fill="rgba(167,139,250,0.35)"/>
+
+    <!-- Phase 3 box (large center) -->
+    <rect x="270" y="0" width="1060" height="510" rx="16" fill="rgba(14,14,22,0.5)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+    <text x="294" y="28" fill="#60DEA9" font-size="14" font-weight="700" letter-spacing="2">PHASE 3: BUILD + TEST (TDD)</text>
+
+    <!-- ===== Write Tests First ===== -->
+    <rect x="290" y="44" width="310" height="140" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <text x="306" y="66" fill="#82748C" font-size="13" font-weight="700" letter-spacing="1">WRITE TESTS FIRST</text>
+    <rect x="306" y="78" width="160" height="24" rx="5" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.25)" stroke-width="1"/>
+    <text x="386" y="94" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="10" font-weight="600">tf-module-test-writer</text>
+    <rect x="306" y="108" width="100" height="24" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="356" y="124" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="10">terraform-test</text>
+
+    <!-- 4 test file pills -->
+    <text x="306" y="158" fill="#82748C" font-size="9">4 test files:</text>
+    <text x="370" y="158" fill="#FFCF25" font-family="'SF Mono', monospace" font-size="9">basic  complete  edge_cases  validation</text>
+
+    <!-- Arrow -> RED Baseline -->
+    <line x1="600" y1="114" x2="630" y2="114" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polygon points="626,110 634,114 626,118" fill="rgba(255,255,255,0.15)"/>
+
+    <!-- ===== RED Baseline ===== -->
+    <rect x="630" y="44" width="260" height="140" rx="10" fill="rgba(236,88,93,0.03)" stroke="rgba(236,88,93,0.12)" stroke-width="1"/>
+    <text x="646" y="66" fill="#EC585D" font-size="13" font-weight="700" letter-spacing="1">RED BASELINE</text>
+    <rect x="646" y="78" width="160" height="24" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="726" y="94" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="10">terraform init -backend=false</text>
+    <rect x="646" y="108" width="130" height="24" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="711" y="124" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="10">terraform validate</text>
+    <text x="646" y="158" fill="#82748C" font-size="9" font-style="italic">Confirms HCL parses. Do NOT run</text>
+    <text x="646" y="170" fill="#82748C" font-size="9" font-style="italic">terraform test here.</text>
+
+    <!-- Arrow -> Implementation Loop -->
+    <line x1="890" y1="114" x2="920" y2="114" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <polygon points="916,110 924,114 916,118" fill="rgba(255,255,255,0.15)"/>
+
+    <!-- ===== Implementation Loop ===== -->
+    <rect x="920" y="44" width="390" height="220" rx="10" fill="rgba(96,222,169,0.02)" stroke="rgba(96,222,169,0.1)" stroke-width="1"/>
+    <text x="936" y="66" fill="#60DEA9" font-size="13" font-weight="700" letter-spacing="1">IMPLEMENTATION LOOP</text>
+
+    <rect x="936" y="78" width="180" height="24" rx="5" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.25)" stroke-width="1"/>
+    <text x="1026" y="94" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="10" font-weight="600">tf-module-developer xN</text>
+
+    <rect x="936" y="108" width="140" height="24" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="1006" y="124" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="10">terraform-style-guide</text>
+    <rect x="1084" y="108" width="165" height="24" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="1166" y="124" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="10">tf-implementation-patterns</text>
+
+    <rect x="936" y="142" width="110" height="24" rx="5" fill="rgba(255,208,108,0.06)" stroke="rgba(255,208,108,0.2)" stroke-width="1"/>
+    <text x="991" y="158" text-anchor="middle" fill="#FFD06C" font-family="'SF Mono', monospace" font-size="10">terraform-mcp</text>
+    <rect x="1054" y="142" width="140" height="24" rx="5" fill="rgba(255,208,108,0.06)" stroke="rgba(255,208,108,0.2)" stroke-width="1"/>
+    <text x="1124" y="158" text-anchor="middle" fill="#FFD06C" font-family="'SF Mono', monospace" font-size="10">aws-knowledge-mcp</text>
+
+    <!-- Validate + test gate -->
+    <rect x="936" y="180" width="130" height="24" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="1001" y="196" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="10">terraform validate</text>
+    <rect x="1074" y="180" width="110" height="24" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="1129" y="196" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="10">terraform test</text>
+
+    <!-- Loop indicator -->
+    <path d="M 1290 140 C 1315 140, 1315 80, 1290 80" stroke="rgba(96,222,169,0.25)" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
+    <polygon points="1292,84 1286,78 1296,78" fill="rgba(96,222,169,0.3)"/>
+    <text x="1300" y="104" fill="#82748C" font-size="9" font-style="italic">per checklist</text>
+    <text x="1300" y="116" fill="#82748C" font-size="9" font-style="italic">item +</text>
+    <text x="1300" y="128" fill="#82748C" font-size="9" font-style="italic">checkpoint</text>
+
+    <text x="936" y="232" fill="#82748C" font-size="9" font-style="italic">Trust-but-verify: orchestrator runs validate + test as gate</text>
+
+    <!-- ===== Final Verification ===== -->
+    <rect x="290" y="280" width="500" height="100" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <text x="306" y="302" fill="#82748C" font-size="13" font-weight="700" letter-spacing="1">FINAL VERIFICATION</text>
+    <rect x="306" y="314" width="140" height="24" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="376" y="330" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="10">terraform test (final)</text>
+    <text x="460" y="330" fill="#82748C" font-size="10">If failures: re-launch test-writer with error output</text>
+    <text x="306" y="360" fill="#82748C" font-size="9" font-style="italic">Verify all checklist items marked [x]</text>
+
+    <!-- Phase 3 Outputs -->
+    <rect x="290" y="400" width="1020" height="36" rx="8" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+    <text x="306" y="423" fill="#FFCF25" font-size="13" font-weight="700" letter-spacing="1.5">OUTPUT</text>
+    <text x="390" y="423" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="14">versions.tf + variables.tf  |  tests/*.tftest.hcl  |  *.tf module files</text>
+
+    <!-- Arrow Phase 3 -> Phase 4 -->
+    <line x1="1330" y1="255" x2="1360" y2="255" stroke="rgba(167,139,250,0.25)" stroke-width="2" stroke-dasharray="6 4"/>
+    <polygon points="1356,249 1366,255 1356,261" fill="rgba(167,139,250,0.35)"/>
+
+    <!-- ===== Phase 4 box ===== -->
+    <rect x="1370" y="0" width="430" height="510" rx="16" fill="rgba(14,14,22,0.5)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
+    <text x="1394" y="28" fill="#FFCF25" font-size="14" font-weight="700" letter-spacing="2">PHASE 4: VALIDATE</text>
+
+    <!-- Validation -->
+    <rect x="1390" y="44" width="390" height="220" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <text x="1406" y="66" fill="#82748C" font-size="13" font-weight="700" letter-spacing="1">VALIDATION PIPELINE</text>
+    <rect x="1406" y="78" width="140" height="24" rx="5" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.25)" stroke-width="1"/>
+    <text x="1476" y="94" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="10" font-weight="600">tf-module-validator</text>
+    <rect x="1406" y="108" width="110" height="24" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="1461" y="124" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="10">tf-judge-criteria</text>
+
+    <!-- Command pills -->
+    <rect x="1406" y="146" width="100" height="22" rx="4" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.15)" stroke-width="1"/>
+    <text x="1456" y="161" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="9">terraform fmt</text>
+    <rect x="1514" y="146" width="110" height="22" rx="4" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.15)" stroke-width="1"/>
+    <text x="1569" y="161" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="9">terraform validate</text>
+    <rect x="1632" y="146" width="105" height="22" rx="4" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.15)" stroke-width="1"/>
+    <text x="1684" y="161" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="9">terraform test</text>
+    <rect x="1406" y="174" width="60" height="22" rx="4" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.15)" stroke-width="1"/>
+    <text x="1436" y="189" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="9">tflint</text>
+    <rect x="1474" y="174" width="90" height="22" rx="4" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.15)" stroke-width="1"/>
+    <text x="1519" y="189" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="9">trivy config .</text>
+    <rect x="1572" y="174" width="110" height="22" rx="4" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.15)" stroke-width="1"/>
+    <text x="1627" y="189" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="9">terraform-docs</text>
+
+    <!-- Quality scoring callout -->
+    <rect x="1406" y="210" width="354" height="40" rx="6" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.12)" stroke-width="1"/>
+    <text x="1422" y="228" fill="#A78BFA" font-size="10" font-weight="600">Quality scoring: 6 dimensions</text>
+    <text x="1422" y="242" fill="#EC585D" font-size="10" font-weight="600">security@30% hard block &lt;5.0</text>
+
+    <!-- Ship -->
+    <rect x="1390" y="280" width="390" height="80" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <text x="1406" y="302" fill="#82748C" font-size="13" font-weight="700" letter-spacing="1">SHIP</text>
+    <rect x="1406" y="314" width="100" height="24" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="1456" y="330" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="10">gh pr create</text>
+    <text x="1520" y="330" fill="#82748C" font-size="10" font-style="italic">Links to $ISSUE_NUMBER</text>
+    <text x="1406" y="350" fill="#82748C" font-size="9" font-style="italic">Fix iteratively (max 3 rounds)</text>
+
+    <!-- Phase 4 Outputs -->
+    <rect x="1390" y="400" width="390" height="36" rx="8" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+    <text x="1406" y="423" fill="#FFCF25" font-size="13" font-weight="700" letter-spacing="1.5">OUTPUT</text>
+    <text x="1490" y="423" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="13">README + report + PR + Issue</text>
+
+    <!-- TDD Cycle callout bar at bottom -->
+    <rect x="290" y="460" width="1060" height="44" rx="10" fill="rgba(167,139,250,0.05)" stroke="rgba(167,139,250,0.15)" stroke-width="1.5"/>
+    <text x="320" y="487" fill="#A78BFA" font-size="15" font-weight="700" letter-spacing="1">TDD CYCLE:</text>
+    <text x="460" y="487" fill="#DC477D" font-size="15">Write Tests</text>
+    <text x="558" y="487" fill="#82748C" font-size="16">&rarr;</text>
+    <text x="580" y="487" fill="#EC585D" font-size="15" font-weight="600">RED Baseline</text>
+    <text x="700" y="487" fill="#82748C" font-size="16">&rarr;</text>
+    <text x="720" y="487" fill="#60DEA9" font-size="15">Implement (validate+test gate)</text>
+    <text x="960" y="487" fill="#82748C" font-size="16">&rarr;</text>
+    <text x="982" y="487" fill="#60DEA9" font-size="15">Final Verify</text>
+    <text x="1088" y="487" fill="#82748C" font-size="16">&rarr;</text>
+    <text x="1110" y="487" fill="#FFCF25" font-size="15">Validate + Score + PR</text>
+
+    <!-- Legend -->
+    <circle cx="20" cy="520" r="4" fill="#DC477D"/>
+    <text x="30" y="524" fill="#82748C" font-size="14">Agent</text>
+    <circle cx="85" cy="520" r="4" fill="#62D4DC"/>
+    <text x="95" y="524" fill="#82748C" font-size="14">Skill</text>
+    <circle cx="145" cy="520" r="4" fill="#60DEA9"/>
+    <text x="155" y="524" fill="#82748C" font-size="14">Script</text>
+    <circle cx="210" cy="520" r="4" fill="#FFD06C"/>
+    <text x="220" y="524" fill="#82748C" font-size="14">MCP</text>
+    <circle cx="260" cy="520" r="4" fill="#EC585D"/>
+    <text x="270" y="524" fill="#82748C" font-size="14">Command</text>
+    <circle cx="340" cy="520" r="4" fill="#FFCF25"/>
+    <text x="350" y="524" fill="#82748C" font-size="14">Artifact</text>
+  </svg>
+</div>
+
+<!-- Key bullets -->
+<div class="bullets-area">
+  <div class="bullet-col">
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>Tests written first</strong> &mdash; 4 test files map 1:1 from design assertions to HCL assert blocks</div>
+    </div>
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>RED baseline confirms compilation</strong> &mdash; validates scaffolding parses before implementation</div>
+    </div>
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>Checkpoint commits</strong> &mdash; git commit after each checklist item for granular rollback</div>
+    </div>
+  </div>
+  <div class="bullet-col">
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>Developer iterates per checklist</strong> &mdash; orchestrator runs validate + test as trust-but-verify gate</div>
+    </div>
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>Quality scoring gates PR</strong> &mdash; 6 dimensions, security@30% hard block, max 3 fix rounds</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

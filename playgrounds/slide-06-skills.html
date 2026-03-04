@@ -2,703 +2,209 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Claude Skills Explorer</title>
+<meta name="viewport" content="width=1920">
+<title>Skills: Domain Knowledge for Agents</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: #0a0a10; color: #e0e0e8; min-height: 100vh; display: flex; flex-direction: column;
-    overflow-x: hidden;
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
   }
 
-  /* ========== Animated Grid Background ========== */
-  .bg-grid {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  body::before {
+    content: '';
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-image:
-      linear-gradient(rgba(123,97,255,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(123,97,255,0.04) 1px, transparent 1px);
-    background-size: 48px 48px;
-    animation: gridShift 25s linear infinite;
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none; z-index: 0;
   }
-  @keyframes gridShift {
-    0% { background-position: 0 0; }
-    100% { background-position: 48px 48px; }
-  }
-
-  /* Floating orbs for ambient depth */
-  .bg-orb {
-    position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
-    filter: blur(80px); opacity: 0.15;
-  }
-  .bg-orb-1 { width: 400px; height: 400px; background: #7b61ff; top: -100px; right: -80px; animation: orbFloat1 18s ease-in-out infinite; }
-  .bg-orb-2 { width: 300px; height: 300px; background: #a78bfa; bottom: -60px; left: -60px; animation: orbFloat2 22s ease-in-out infinite; }
-  .bg-orb-3 { width: 200px; height: 200px; background: #5eead4; top: 50%; left: 50%; animation: orbFloat3 15s ease-in-out infinite; }
-  @keyframes orbFloat1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-40px, 30px); } }
-  @keyframes orbFloat2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(30px, -40px); } }
-  @keyframes orbFloat3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-20px, 20px) scale(1.1); } }
-
-  /* ========== Header ========== */
-  header {
-    text-align: center; padding: 28px 20px 12px;
-    border-bottom: 1px solid rgba(123,97,255,0.12);
-    position: relative; z-index: 1;
-    animation: fadeSlideDown 0.6s ease-out both;
-  }
-  @keyframes fadeSlideDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  header h1 {
-    font-size: 1.6rem; font-weight: 700;
-    background: linear-gradient(135deg, #7b61ff, #a78bfa, #5eead4);
-    background-size: 200% 200%;
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 6px;
-    animation: gradientShift 4s ease-in-out infinite;
-  }
-  @keyframes gradientShift {
-    0%,100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-  header p { color: #8888a0; font-size: 0.85rem; }
-
-  .main { flex: 1; display: flex; flex-direction: column; padding: 24px 32px; gap: 20px; position: relative; z-index: 1; }
-
-  /* ========== Controls ========== */
-  .controls {
-    display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-    animation: fadeSlideUp 0.6s 0.15s ease-out both;
-  }
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .preset-btn {
-    padding: 7px 16px; border-radius: 8px; border: 1px solid rgba(123,97,255,0.15);
-    background: rgba(26,26,38,0.6); color: #b0b0c8; cursor: pointer; font-size: 0.8rem;
-    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    position: relative; overflow: hidden;
-  }
-  .preset-btn::before {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(123,97,255,0.1), transparent);
-    opacity: 0; transition: opacity 0.3s;
-  }
-  .preset-btn:hover::before, .preset-btn.active::before { opacity: 1; }
-  .preset-btn:hover { border-color: #7b61ff; color: #d4c8ff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(123,97,255,0.15); }
-  .preset-btn.active { background: rgba(42,37,72,0.8); border-color: #7b61ff; color: #d4c8ff; box-shadow: 0 4px 16px rgba(123,97,255,0.2); }
-
-  .content-area {
-    flex: 1; display: flex; gap: 24px; min-height: 0;
-    animation: fadeSlideUp 0.6s 0.3s ease-out both;
-    position: relative;
-  }
-
-  /* ========== SVG Connecting Lines ========== */
-  .connections-svg {
-    position: absolute; inset: 0; z-index: 0; pointer-events: none;
-    overflow: visible;
-  }
-  .connection-line {
-    stroke: url(#lineGradient);
-    stroke-width: 1.5;
-    fill: none;
-    stroke-dasharray: 6 4;
-    animation: dashFlow 2s linear infinite;
-    opacity: 0.35;
-    transition: opacity 0.4s;
-  }
-  .connection-line.highlight { opacity: 0.8; stroke-width: 2; }
-  @keyframes dashFlow {
-    to { stroke-dashoffset: -20; }
-  }
-
-  /* ========== Concept Cards — Glassmorphism ========== */
-  .diagram-panel { flex: 2; display: flex; flex-direction: column; gap: 16px; position: relative; z-index: 1; }
-
-  .concept-card {
-    border: 1px solid rgba(123,97,255,0.1);
-    border-radius: 16px;
-    background: rgba(22,22,31,0.55);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    padding: 20px; cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
-    position: relative; overflow: hidden;
-    opacity: 0; transform: translateX(-30px);
-    animation: cardSlideIn 0.5s ease-out forwards;
-  }
-  .concept-card:nth-child(1) { animation-delay: 0.35s; }
-  .concept-card:nth-child(2) { animation-delay: 0.45s; }
-  .concept-card:nth-child(3) { animation-delay: 0.55s; }
-  .concept-card:nth-child(4) { animation-delay: 0.65s; }
-
-  @keyframes cardSlideIn {
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  /* Card sheen effect */
-  .concept-card::before {
-    content: ''; position: absolute; top: 0; left: -150%; width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(123,97,255,0.04), transparent);
-    transition: left 0.6s ease;
-  }
-  .concept-card:hover::before { left: 150%; }
-
-  /* Card glow ring */
-  .concept-card::after {
-    content: ''; position: absolute; inset: -1px; border-radius: 16px;
-    background: linear-gradient(135deg, rgba(123,97,255,0.2), transparent 40%, transparent 60%, rgba(94,234,212,0.15));
-    z-index: -1; opacity: 0; transition: opacity 0.4s;
-  }
-  .concept-card:hover::after { opacity: 1; }
-
-  .concept-card:hover {
-    border-color: rgba(123,97,255,0.3);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(123,97,255,0.08), 0 2px 8px rgba(0,0,0,0.3);
-  }
-  .concept-card.active {
-    border-color: rgba(123,97,255,0.45);
-    box-shadow: 0 8px 40px rgba(123,97,255,0.15), 0 0 0 1px rgba(123,97,255,0.1), 0 2px 8px rgba(0,0,0,0.3);
-    background: rgba(26,22,40,0.7);
-  }
-  .concept-card.active::after { opacity: 1; }
-
-  .concept-card .card-icon {
-    width: 36px; height: 36px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.1rem; margin-bottom: 10px;
-    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
-    position: relative;
-  }
-  .concept-card .card-icon::after {
-    content: ''; position: absolute; inset: -3px; border-radius: 12px;
-    background: inherit; opacity: 0; filter: blur(8px);
-    transition: opacity 0.4s; z-index: -1;
-  }
-  .concept-card:hover .card-icon {
-    transform: scale(1.1);
-  }
-  .concept-card:hover .card-icon::after { opacity: 0.5; }
-  .concept-card.active .card-icon {
-    animation: iconPulse 2s ease-in-out infinite;
-  }
-  @keyframes iconPulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-  }
-
-  .icon-what { background: linear-gradient(135deg, rgba(123,97,255,0.2), rgba(123,97,255,0.05)); }
-  .icon-progressive { background: linear-gradient(135deg, rgba(96,165,250,0.2), rgba(96,165,250,0.05)); }
-  .icon-types { background: linear-gradient(135deg, rgba(167,139,250,0.2), rgba(167,139,250,0.05)); }
-  .icon-storage { background: linear-gradient(135deg, rgba(94,234,212,0.2), rgba(94,234,212,0.05)); }
-
-  .concept-card h3 { font-size: 0.95rem; color: #c8c8e0; margin-bottom: 6px; font-weight: 600; }
-  .concept-card p { font-size: 0.8rem; color: #8888a0; line-height: 1.5; }
-  .concept-card .tag {
-    display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 0.65rem;
-    text-transform: uppercase; letter-spacing: 1px; margin-right: 6px; margin-top: 10px;
-    transition: all 0.3s; cursor: default;
-    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-  }
-  .tag-reference { background: rgba(26,41,64,0.7); color: #60a5fa; border: 1px solid rgba(96,165,250,0.15); }
-  .tag-task { background: rgba(42,26,64,0.7); color: #a78bfa; border: 1px solid rgba(167,139,250,0.15); }
-  .tag-hybrid { background: rgba(26,48,48,0.7); color: #5eead4; border: 1px solid rgba(94,234,212,0.15); }
-  .tag-reference:hover { background: rgba(26,41,64,0.9); box-shadow: 0 0 12px rgba(96,165,250,0.2); transform: translateY(-1px); }
-  .tag-task:hover { background: rgba(42,26,64,0.9); box-shadow: 0 0 12px rgba(167,139,250,0.2); transform: translateY(-1px); }
-  .tag-hybrid:hover { background: rgba(26,48,48,0.9); box-shadow: 0 0 12px rgba(94,234,212,0.2); transform: translateY(-1px); }
-
-  /* ========== Detail Panel — Glassmorphism ========== */
-  .detail-panel {
-    flex: 1;
-    border: 1px solid rgba(123,97,255,0.1);
-    border-radius: 16px;
-    background: rgba(22,22,31,0.55);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    padding: 20px; overflow-y: auto; min-width: 280px;
-    position: relative; z-index: 1;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    opacity: 0; transform: translateX(30px);
-    animation: detailSlideIn 0.5s 0.5s ease-out forwards;
-  }
-  @keyframes detailSlideIn {
-    to { opacity: 1; transform: translateX(0); }
-  }
-  .detail-panel h3 {
-    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px;
-    color: #7b61ff; margin-bottom: 16px; position: relative; padding-bottom: 10px;
-  }
-  .detail-panel h3::after {
-    content: ''; position: absolute; bottom: 0; left: 0; width: 32px; height: 2px;
-    background: linear-gradient(90deg, #7b61ff, transparent);
-    border-radius: 1px;
-  }
-
-  .detail-item {
-    margin-bottom: 16px; padding: 12px; border-radius: 10px;
-    background: rgba(18,18,26,0.5); border: 1px solid rgba(123,97,255,0.06);
-    transition: all 0.3s; opacity: 0; transform: translateY(10px);
-    animation: detailItemIn 0.35s ease-out forwards;
-  }
-  .detail-item:nth-child(1) { animation-delay: 0.05s; }
-  .detail-item:nth-child(2) { animation-delay: 0.12s; }
-  .detail-item:nth-child(3) { animation-delay: 0.19s; }
-  .detail-item:nth-child(4) { animation-delay: 0.26s; }
-  @keyframes detailItemIn {
-    to { opacity: 1; transform: translateY(0); }
-  }
-  .detail-item:hover { background: rgba(22,22,34,0.7); border-color: rgba(123,97,255,0.12); }
-  .detail-item label {
-    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;
-    color: #7b61ff; display: block; margin-bottom: 5px; font-weight: 600;
-  }
-  .detail-item .val { font-size: 0.82rem; color: #c0c0d0; line-height: 1.6; }
-
-  /* ========== Storage Visualization ========== */
-  .storage-visual {
-    display: flex; flex-direction: column; gap: 8px; margin-top: 14px;
-  }
-  .storage-bar {
-    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
-    border-radius: 10px; font-size: 0.75rem; cursor: pointer;
-    transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
-    position: relative; overflow: hidden;
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  }
-  .storage-bar::before {
-    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-    width: 0; border-radius: 10px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
-    z-index: 0;
-  }
-  .storage-bar > * { position: relative; z-index: 1; }
-
-  .storage-bar:hover { transform: translateX(6px); box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
-  .storage-bar.s-project {
-    background: rgba(26,32,64,0.5); color: #818cf8;
-    border: 1px solid rgba(99,102,241,0.15);
-    border-left: 3px solid #6366f1;
-  }
-  .storage-bar.s-project::before { background: rgba(99,102,241,0.08); }
-
-  .storage-bar.s-personal {
-    background: rgba(32,26,64,0.5); color: #a78bfa;
-    border: 1px solid rgba(139,92,246,0.15);
-    border-left: 3px solid #8b5cf6;
-  }
-  .storage-bar.s-personal::before { background: rgba(139,92,246,0.08); }
-
-  .storage-bar.s-enterprise {
-    background: rgba(42,26,48,0.5); color: #c084fc;
-    border: 1px solid rgba(168,85,247,0.15);
-    border-left: 3px solid #a855f7;
-  }
-  .storage-bar.s-enterprise::before { background: rgba(168,85,247,0.08); }
-
-  .storage-bar .priority {
-    margin-left: auto; font-size: 0.65rem; opacity: 0.6;
-    padding: 2px 8px; border-radius: 4px; background: rgba(255,255,255,0.04);
-  }
-  .storage-bar .priority-bar {
-    height: 4px; border-radius: 2px; margin-left: auto; transition: width 1s cubic-bezier(0.4,0,0.2,1);
-    width: 0;
-  }
-  .s-project .priority-bar { background: linear-gradient(90deg, #6366f1, rgba(99,102,241,0.3)); }
-  .s-personal .priority-bar { background: linear-gradient(90deg, #8b5cf6, rgba(139,92,246,0.3)); }
-  .s-enterprise .priority-bar { background: linear-gradient(90deg, #a855f7, rgba(168,85,247,0.3)); }
-
-  /* ========== Flow Diagram ========== */
-  .flow-diagram {
-    display: flex; align-items: center; gap: 0; margin: 16px 0;
-    flex-wrap: wrap; justify-content: center;
-  }
-  .flow-step {
-    padding: 8px 14px; border-radius: 10px; font-size: 0.72rem;
-    background: rgba(26,26,42,0.6); border: 1px solid rgba(51,51,74,0.5);
-    color: #a0a0b8; transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
-    cursor: pointer; position: relative;
-    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-  }
-  .flow-step::after {
-    content: ''; position: absolute; inset: -1px; border-radius: 10px;
-    background: linear-gradient(135deg, rgba(123,97,255,0.3), rgba(94,234,212,0.2));
-    z-index: -1; opacity: 0; transition: opacity 0.4s;
-  }
-  .flow-step.active {
-    border-color: rgba(123,97,255,0.5); color: #d4c8ff;
-    background: rgba(34,34,56,0.8);
-    box-shadow: 0 0 20px rgba(123,97,255,0.12);
-    transform: translateY(-2px);
-  }
-  .flow-step.active::after { opacity: 1; }
-  .flow-step.glow {
-    animation: stepGlow 1.5s ease-in-out infinite;
-  }
-  @keyframes stepGlow {
-    0%, 100% { box-shadow: 0 0 8px rgba(123,97,255,0.1); }
-    50% { box-shadow: 0 0 20px rgba(123,97,255,0.25); }
-  }
-
-  .flow-arrow {
-    color: #44446a; font-size: 0.8rem; padding: 0 6px;
-    transition: all 0.4s; position: relative;
-  }
-  .flow-arrow.active {
-    color: #7b61ff;
-    animation: arrowPulse 1s ease-in-out infinite;
-  }
-  @keyframes arrowPulse {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 1; }
-  }
-
-  /* ========== Prompt Section ========== */
-  .prompt-section {
-    border-top: 1px solid rgba(123,97,255,0.1); padding: 16px 0 0;
-    animation: fadeSlideUp 0.6s 0.7s ease-out both;
-  }
-  .prompt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .prompt-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: #6a6a80; }
-  .copy-btn {
-    padding: 5px 14px; border-radius: 8px; border: 1px solid rgba(123,97,255,0.15);
-    background: rgba(26,26,38,0.6); color: #b0b0c8; cursor: pointer; font-size: 0.75rem;
-    transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    position: relative; overflow: hidden;
-  }
-  .copy-btn:hover { border-color: #7b61ff; color: #d4c8ff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(123,97,255,0.15); }
-  .copy-btn.copied { border-color: #5eead4; color: #5eead4; background: rgba(26,48,48,0.5); }
-  .prompt-text {
-    font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.78rem;
-    color: #a0a0b8; line-height: 1.6;
-    background: rgba(18,18,26,0.5);
-    border: 1px solid rgba(123,97,255,0.06);
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    border-radius: 12px; padding: 16px; min-height: 48px; white-space: pre-wrap;
-    transition: border-color 0.3s;
-  }
-  .prompt-text:hover { border-color: rgba(123,97,255,0.15); }
-
-  /* ========== Scrollbar ========== */
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(123,97,255,0.2); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(123,97,255,0.35); }
 </style>
 </head>
 <body>
 
-<!-- Animated background layers -->
-<div class="bg-grid"></div>
-<div class="bg-orb bg-orb-1"></div>
-<div class="bg-orb bg-orb-2"></div>
-<div class="bg-orb bg-orb-3"></div>
+<div class="slide" style="width:1920px;height:1080px;padding:60px 80px;display:flex;flex-direction:column;position:relative;z-index:1;">
 
-<header>
-  <h1>Skills</h1>
-  <p>Extending Claude with Domain Knowledge and Workflows</p>
-</header>
-
-<div class="main">
-  <div class="controls">
-    <button class="preset-btn active" data-preset="overview" onclick="setView('overview')">Overview</button>
-    <button class="preset-btn" data-preset="progressive" onclick="setView('progressive')">Progressive Disclosure</button>
-    <button class="preset-btn" data-preset="types" onclick="setView('types')">Skill Types</button>
-    <button class="preset-btn" data-preset="storage" onclick="setView('storage')">Storage &amp; Priority</button>
+  <div class="header" style="margin-bottom:40px;">
+    <div style="font-size:12px;font-weight:500;color:#FFCF25;text-transform:uppercase;letter-spacing:3px;margin-bottom:12px;font-family:'Inter Medium','Inter',Arial,sans-serif;">FOUNDATIONS</div>
+    <h1 style="font-size:34px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Skills: Domain Knowledge for Agents</h1>
+    <div style="font-size:20px;color:#CCCCCC;">SKILL.MD files package reusable expertise that the agent selects by matching name and description</div>
   </div>
 
-  <div class="content-area" id="contentArea">
-    <!-- SVG Connecting Lines -->
-    <svg class="connections-svg" id="connectionsSvg">
-      <defs>
-        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#7b61ff" stop-opacity="0.6"/>
-          <stop offset="100%" stop-color="#5eead4" stop-opacity="0.3"/>
-        </linearGradient>
-      </defs>
-    </svg>
+  <div class="content" style="flex:1;display:flex;gap:60px;align-items:center;">
 
-    <div class="diagram-panel" id="diagramPanel">
-      <div class="concept-card" data-concept="what" onclick="selectConcept('what')">
-        <div class="card-icon icon-what">&#x2728;</div>
-        <h3>What are Skills?</h3>
-        <p>Directories containing SKILL.md files with instructions, scripts, and resources that extend Claude's capabilities</p>
+    <!-- Bullets -->
+    <div class="bullets" style="flex:0 0 42%;display:flex;flex-direction:column;gap:32px;">
+
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#62D4DC;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#62D4DC;font-size:22px;">Name and description</span> — each SKILL.md declares a name and description in its frontmatter; the agent reads the description to decide when to use the skill</div>
       </div>
 
-      <div class="concept-card" data-concept="progressive" onclick="selectConcept('progressive')">
-        <div class="card-icon icon-progressive">&#x26A1;</div>
-        <h3>Progressive Disclosure</h3>
-        <p>Claude loads skill content on-demand — only metadata in context until triggered, enabling unbounded context bundling</p>
-        <div class="flow-diagram" id="flowDiagram">
-          <span class="flow-step" data-step="meta">Metadata loaded</span>
-          <span class="flow-arrow">&rarr;</span>
-          <span class="flow-step" data-step="trigger">Trigger detected</span>
-          <span class="flow-arrow">&rarr;</span>
-          <span class="flow-step" data-step="inject">Full content injected</span>
-          <span class="flow-arrow">&rarr;</span>
-          <span class="flow-step" data-step="execute">Skill executes</span>
-        </div>
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#A78BFA;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#A78BFA;font-size:22px;">Domain injection</span> — encode security baselines, coding patterns, workflow steps, and instructions as markdown files</div>
       </div>
 
-      <div class="concept-card" data-concept="types" onclick="selectConcept('types')">
-        <div class="card-icon icon-types">&#x1F3AF;</div>
-        <h3>Skill Types</h3>
-        <p>Three categories of skills, each serving a different purpose</p>
-        <span class="tag tag-reference">Reference</span>
-        <span class="tag tag-task">Task</span>
-        <span class="tag tag-hybrid">Hybrid</span>
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#DC477D;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#DC477D;font-size:22px;">Version-controlled</span> — stored in .agent/skills/, shared via git, reusable across agents and projects</div>
       </div>
 
-      <div class="concept-card" data-concept="storage" onclick="selectConcept('storage')">
-        <div class="card-icon icon-storage">&#x1F4E6;</div>
-        <h3>Storage Locations</h3>
-        <p>Skills can be stored at project, personal, or enterprise level with priority ordering</p>
-        <div class="storage-visual" id="storageVisual">
-          <div class="storage-bar s-enterprise">
-            <span>Enterprise</span>
-            <div class="priority-bar" data-width="100%"></div>
-            <span class="priority">Highest priority</span>
-          </div>
-          <div class="storage-bar s-personal">
-            <span>Personal ~/.claude/skills/</span>
-            <div class="priority-bar" data-width="65%"></div>
-            <span class="priority">Mid</span>
-          </div>
-          <div class="storage-bar s-project">
-            <span>Project .claude/skills/</span>
-            <div class="priority-bar" data-width="35%"></div>
-            <span class="priority">Base</span>
-          </div>
-        </div>
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#FFCF25;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:22px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#FFCF25;font-size:22px;">User-invocable option</span> — skills can declare user-invocable: true so users launch them directly as slash commands</div>
       </div>
+
     </div>
 
-    <div class="detail-panel" id="detailPanel">
-      <h3>Details</h3>
-      <div id="detailContent">
-        <p style="color:#6a6a80;font-size:0.82rem;">Click a concept card to explore details</p>
-      </div>
+    <!-- Visual: SKILL.md file structure + skill list -->
+    <div class="visual" style="flex:1;display:flex;align-items:center;justify-content:center;">
+      <svg width="840" height="720" viewBox="0 0 840 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- File structure panel -->
+        <defs>
+          <linearGradient id="cardGrad1" x1="0" y1="10" x2="0" y2="430" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#121212"/>
+            <stop offset="100%" stop-color="#000000"/>
+          </linearGradient>
+          <linearGradient id="cardGrad2" x1="0" y1="10" x2="0" y2="430" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#121212"/>
+            <stop offset="100%" stop-color="#000000"/>
+          </linearGradient>
+        </defs>
+        <rect x="20" y="10" width="420" height="420" rx="12" fill="url(#cardGrad1)"/>
+        <text x="40" y="42" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="12" fill="#62D4DC" font-weight="500" letter-spacing="3">SKILL.MD STRUCTURE</text>
+
+        <!-- File icon -->
+        <rect x="40" y="60" width="380" height="350" rx="8" fill="rgba(18,18,18,0.9)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
+
+        <!-- Frontmatter section -->
+        <text x="60" y="88" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#82748C">---</text>
+        <text x="60" y="112" font-family="'SF Mono', 'Fira Code', monospace" font-size="13">
+          <tspan fill="#A78BFA">name</tspan><tspan fill="#82748C">: </tspan><tspan fill="#62D4DC">tf-module-plan</tspan>
+        </text>
+        <text x="60" y="136" font-family="'SF Mono', 'Fira Code', monospace" font-size="13">
+          <tspan fill="#A78BFA">description</tspan><tspan fill="#82748C">: </tspan><tspan fill="#62D4DC">SDD Phases 1-2.</tspan>
+        </text>
+        <text x="60" y="154" font-family="'SF Mono', 'Fira Code', monospace" font-size="13">
+          <tspan fill="#62D4DC">  Clarify, research, design.</tspan>
+        </text>
+        <text x="60" y="178" font-family="'SF Mono', 'Fira Code', monospace" font-size="13">
+          <tspan fill="#A78BFA">user-invocable</tspan><tspan fill="#82748C">: </tspan><tspan fill="#62D4DC">true</tspan>
+        </text>
+        <text x="60" y="202" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#82748C">---</text>
+
+        <!-- Divider -->
+        <line x1="60" y1="218" x2="400" y2="218" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
+
+        <!-- Body content -->
+        <text x="60" y="246" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#CCCCCC"># SDD -- Plan</text>
+        <text x="60" y="270" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" fill="#82748C">Produces design.md from requirements.</text>
+        <text x="60" y="298" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#CCCCCC">## Phase 1: Requirements</text>
+        <text x="60" y="320" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" fill="#82748C">- Gather requirements</text>
+        <text x="60" y="340" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" fill="#82748C">- Research provider docs</text>
+        <text x="60" y="368" font-family="'SF Mono', 'Fira Code', monospace" font-size="13" fill="#CCCCCC">## Phase 2: Design</text>
+        <text x="60" y="390" font-family="'SF Mono', 'Fira Code', monospace" font-size="12" fill="#82748C">- Produce design.md</text>
+
+        <!-- Frontmatter annotation -->
+        <rect x="300" y="88" width="108" height="24" rx="4" fill="rgba(167,139,250,0.12)" stroke="rgba(167,139,250,0.3)" stroke-width="1"/>
+        <text x="354" y="105" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="11" fill="#A78BFA" font-weight="600">frontmatter</text>
+
+        <!-- Content annotation -->
+        <rect x="300" y="240" width="108" height="24" rx="4" fill="rgba(98,212,220,0.12)" stroke="rgba(98,212,220,0.3)" stroke-width="1"/>
+        <text x="354" y="257" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="11" fill="#62D4DC" font-weight="600">skill content</text>
+
+        <!-- Skills list panel -->
+        <rect x="460" y="10" width="360" height="420" rx="12" fill="url(#cardGrad2)"/>
+        <text x="480" y="42" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="12" fill="#A78BFA" font-weight="500" letter-spacing="3">REPO SKILLS</text>
+
+        <!-- Skill 1 -->
+        <rect x="480" y="60" width="320" height="60" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
+        <circle cx="502" cy="90" r="6" fill="#62D4DC" opacity="0.6"/>
+        <text x="520" y="82" font-family="'SF Mono', monospace" font-size="14" fill="#62D4DC" font-weight="600">tf-module-plan</text>
+        <text x="520" y="102" font-family="'Inter',Arial,sans-serif" font-size="12" fill="#82748C">SDD Phases 1-2: clarify, research, design</text>
+
+        <!-- Skill 2 -->
+        <rect x="480" y="130" width="320" height="60" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(220,71,125,0.15)" stroke-width="1"/>
+        <circle cx="502" cy="160" r="6" fill="#DC477D" opacity="0.6"/>
+        <text x="520" y="152" font-family="'SF Mono', monospace" font-size="14" fill="#DC477D" font-weight="600">tf-research</text>
+        <text x="520" y="172" font-family="'Inter',Arial,sans-serif" font-size="12" fill="#82748C">AWS docs, provider docs, registry patterns</text>
+
+        <!-- Skill 3 -->
+        <rect x="480" y="200" width="320" height="60" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
+        <circle cx="502" cy="230" r="6" fill="#FFCF25" opacity="0.6"/>
+        <text x="520" y="222" font-family="'SF Mono', monospace" font-size="14" fill="#FFCF25" font-weight="600">tf-judge-criteria</text>
+        <text x="520" y="242" font-family="'Inter',Arial,sans-serif" font-size="12" fill="#82748C">Scoring rubrics, evaluation methodology</text>
+
+        <!-- Skill 4 -->
+        <rect x="480" y="270" width="320" height="60" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(167,139,250,0.15)" stroke-width="1"/>
+        <circle cx="502" cy="300" r="6" fill="#A78BFA" opacity="0.6"/>
+        <text x="520" y="292" font-family="'SF Mono', monospace" font-size="14" fill="#A78BFA" font-weight="600">terraform-test</text>
+        <text x="520" y="312" font-family="'Inter',Arial,sans-serif" font-size="12" fill="#82748C">Guide for .tftest.hcl: run, assert, mock</text>
+
+        <!-- Skill 5 -->
+        <rect x="480" y="340" width="320" height="60" rx="8" fill="rgba(18,18,18,0.8)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+        <circle cx="502" cy="370" r="6" fill="#60DEA9" opacity="0.6"/>
+        <text x="520" y="362" font-family="'SF Mono', monospace" font-size="14" fill="#60DEA9" font-weight="600">tf-security-baselines</text>
+        <text x="520" y="382" font-family="'Inter',Arial,sans-serif" font-size="12" fill="#82748C">AWS security domains, CIS/NIST baselines</text>
+
+        <!-- How the agent selects skills -->
+        <rect x="20" y="460" width="800" height="100" rx="12" fill="rgba(167,139,250,0.04)" stroke="none"/>
+        <text x="40" y="490" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="12" fill="#A78BFA" font-weight="500" letter-spacing="3">HOW THE AGENT SELECTS SKILLS</text>
+
+        <!-- Flow steps -->
+        <rect x="40" y="508" width="160" height="36" rx="8" fill="rgba(98,212,220,0.1)" stroke="rgba(98,212,220,0.25)" stroke-width="1"/>
+        <text x="120" y="531" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#62D4DC" font-weight="600">Reads description</text>
+
+        <!-- Arrow -->
+        <line x1="210" y1="526" x2="244" y2="526" stroke="rgba(167,139,250,0.3)" stroke-width="1.5"/>
+        <polygon points="240,521 250,526 240,531" fill="rgba(167,139,250,0.3)"/>
+
+        <rect x="256" y="508" width="160" height="36" rx="8" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.25)" stroke-width="1"/>
+        <text x="336" y="531" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#A78BFA" font-weight="600">Matches to task</text>
+
+        <!-- Arrow -->
+        <line x1="426" y1="526" x2="460" y2="526" stroke="rgba(167,139,250,0.3)" stroke-width="1.5"/>
+        <polygon points="456,521 466,526 456,531" fill="rgba(167,139,250,0.3)"/>
+
+        <rect x="472" y="508" width="160" height="36" rx="8" fill="rgba(220,71,125,0.1)" stroke="rgba(220,71,125,0.25)" stroke-width="1"/>
+        <text x="552" y="531" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#DC477D" font-weight="600">Loads full content</text>
+
+        <!-- Arrow -->
+        <line x1="642" y1="526" x2="676" y2="526" stroke="rgba(220,71,125,0.3)" stroke-width="1.5"/>
+        <polygon points="672,521 682,526 672,531" fill="rgba(220,71,125,0.3)"/>
+
+        <rect x="688" y="508" width="120" height="36" rx="8" fill="rgba(255,207,37,0.1)" stroke="rgba(255,207,37,0.25)" stroke-width="1"/>
+        <text x="748" y="531" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="13" fill="#FFCF25" font-weight="600">Executes skill</text>
+
+        <!-- Storage tiers at bottom -->
+        <rect x="20" y="590" width="800" height="120" rx="12" fill="rgba(255,207,37,0.03)" stroke="none"/>
+        <text x="40" y="622" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="12" fill="#FFCF25" font-weight="500" letter-spacing="3">STORAGE LOCATIONS</text>
+
+        <!-- Three tier bars -->
+        <rect x="40" y="640" width="240" height="32" rx="6" fill="rgba(255,207,37,0.1)" stroke="rgba(255,207,37,0.2)" stroke-width="1"/>
+        <text x="160" y="661" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#FFCF25" font-weight="600">Enterprise (highest)</text>
+
+        <rect x="300" y="640" width="240" height="32" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
+        <text x="420" y="661" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#A78BFA" font-weight="600">Personal ~/.agent/</text>
+
+        <rect x="560" y="640" width="240" height="32" rx="6" fill="rgba(98,212,220,0.1)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+        <text x="680" y="661" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#62D4DC" font-weight="600">Project .agent/</text>
+
+        <!-- Priority arrows -->
+        <text x="275" y="661" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">&#8250;</text>
+        <text x="545" y="661" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">&#8250;</text>
+
+      </svg>
     </div>
+
   </div>
 
-  <div class="prompt-section">
-    <div class="prompt-header">
-      <span class="prompt-label">Prompt Output</span>
-      <button class="copy-btn" onclick="copyPrompt()">Copy</button>
-    </div>
-    <div class="prompt-text" id="promptText"></div>
-  </div>
 </div>
 
-<script>
-const state = { view: 'overview', concept: null, flowStep: null };
-
-const DETAILS = {
-  what: {
-    items: [
-      { label: 'Definition', val: 'A directory containing a SKILL.md file that defines instructions, scripts, and resources' },
-      { label: 'Purpose', val: 'Extend Claude\'s capabilities with domain-specific knowledge and workflows' },
-      { label: 'Key Feature', val: 'On-demand loading means skills don\'t consume context until needed — allowing unlimited skill bundling' },
-      { label: 'Analogy', val: 'Like plugins for an IDE — installed but only activated when relevant' },
-    ]
-  },
-  progressive: {
-    items: [
-      { label: 'How It Works', val: 'Only skill metadata (name, description, triggers) is loaded into context at startup' },
-      { label: 'Trigger', val: 'When Claude detects a matching pattern (keyword, file type, user command), the full SKILL.md content is injected' },
-      { label: 'Benefit', val: 'Unbounded context bundling — dozens of skills can be registered without exhausting the context window' },
-      { label: 'Trade-off', val: 'Slight latency on first trigger as content loads, but dramatically better context efficiency' },
-    ]
-  },
-  types: {
-    items: [
-      { label: 'Reference Skills', val: 'Conventions, coding patterns, style guides — passive knowledge Claude consults when relevant' },
-      { label: 'Task Skills', val: 'Step-by-step workflows with specific actions — like a runbook Claude follows to complete a task' },
-      { label: 'Hybrid Skills', val: 'Combine reference knowledge with task workflows — e.g., a Terraform module skill that knows conventions AND has a creation workflow' },
-      { label: 'Best Fit for IaC', val: 'Hybrid skills excel for Terraform — they encode naming conventions, compliance rules, AND module generation steps' },
-    ]
-  },
-  storage: {
-    items: [
-      { label: 'Project Level', val: '.claude/skills/ — Shared via git, team-wide conventions and workflows' },
-      { label: 'Personal Level', val: '~/.claude/skills/ — Individual preferences and personal workflows' },
-      { label: 'Enterprise Level', val: 'Managed centrally — organization-wide policies, security rules, compliance requirements' },
-      { label: 'Priority Order', val: 'Enterprise > Personal > Project — higher priority skills override lower when they conflict' },
-    ]
-  }
-};
-
-// Card connection relationships
-const CONNECTIONS = [
-  { from: 'what', to: 'progressive', label: 'loads via' },
-  { from: 'progressive', to: 'types', label: 'triggers' },
-  { from: 'types', to: 'storage', label: 'stored in' },
-  { from: 'what', to: 'storage', label: 'organized by' },
-];
-
-function selectConcept(name) {
-  state.concept = state.concept === name ? null : name;
-  render();
-}
-
-function setView(view) {
-  state.view = view;
-  if (view === 'progressive') state.concept = 'progressive';
-  else if (view === 'types') state.concept = 'types';
-  else if (view === 'storage') state.concept = 'storage';
-  else state.concept = null;
-  render();
-}
-
-function render() {
-  document.querySelectorAll('.concept-card').forEach(c => {
-    c.classList.toggle('active', c.dataset.concept === state.concept);
-  });
-  document.querySelectorAll('.preset-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.preset === state.view);
-  });
-
-  // Animate flow steps sequentially
-  document.querySelectorAll('.flow-step').forEach(s => {
-    s.classList.remove('active');
-    s.classList.remove('glow');
-  });
-  document.querySelectorAll('.flow-arrow').forEach(a => a.classList.remove('active'));
-
-  if (state.concept === 'progressive') {
-    const steps = document.querySelectorAll('.flow-step');
-    const arrows = document.querySelectorAll('.flow-arrow');
-    steps.forEach((s, i) => {
-      setTimeout(() => {
-        s.classList.add('active');
-        // Light up the arrow before this step (except the first)
-        if (i > 0 && arrows[i - 1]) {
-          arrows[i - 1].classList.add('active');
-        }
-        // Add persistent glow to the last activated step
-        if (i === steps.length - 1) {
-          setTimeout(() => s.classList.add('glow'), 300);
-        }
-      }, i * 350);
-    });
-  }
-
-  // Animate storage bars
-  const storageBars = document.querySelectorAll('.storage-bar .priority-bar');
-  if (state.concept === 'storage') {
-    storageBars.forEach((bar, i) => {
-      setTimeout(() => {
-        bar.style.width = bar.dataset.width;
-      }, 200 + i * 150);
-    });
-    // Animate fill backgrounds on storage bars
-    document.querySelectorAll('.storage-bar').forEach((bar, i) => {
-      setTimeout(() => {
-        bar.style.boxShadow = 'inset 0 0 20px rgba(123,97,255,0.05)';
-      }, 100 + i * 150);
-    });
-  } else {
-    storageBars.forEach(bar => { bar.style.width = '0'; });
-  }
-
-  // Detail panel
-  const panel = document.getElementById('detailContent');
-  if (!state.concept || !DETAILS[state.concept]) {
-    panel.innerHTML = '<p style="color:#6a6a80;font-size:0.82rem;">Click a concept card to explore details</p>';
-  } else {
-    const d = DETAILS[state.concept];
-    panel.innerHTML = d.items.map((item, i) => `
-      <div class="detail-item" style="animation-delay: ${i * 0.08}s">
-        <label>${item.label}</label>
-        <div class="val">${item.val}</div>
-      </div>
-    `).join('');
-  }
-
-  updatePrompt();
-  requestAnimationFrame(drawConnections);
-}
-
-function drawConnections() {
-  const svg = document.getElementById('connectionsSvg');
-  const container = document.getElementById('contentArea');
-  if (!svg || !container) return;
-
-  const rect = container.getBoundingClientRect();
-  svg.setAttribute('width', rect.width);
-  svg.setAttribute('height', rect.height);
-
-  // Remove old lines
-  svg.querySelectorAll('.connection-line').forEach(l => l.remove());
-
-  const cards = {};
-  document.querySelectorAll('.concept-card').forEach(c => {
-    const cr = c.getBoundingClientRect();
-    cards[c.dataset.concept] = {
-      x: cr.left - rect.left + cr.width,
-      y: cr.top - rect.top + cr.height / 2,
-      right: cr.right - rect.left,
-      cx: cr.left - rect.left + cr.width / 2,
-      cy: cr.top - rect.top + cr.height / 2,
-      top: cr.top - rect.top,
-      bottom: cr.bottom - rect.top,
-    };
-  });
-
-  CONNECTIONS.forEach(conn => {
-    const from = cards[conn.from];
-    const to = cards[conn.to];
-    if (!from || !to) return;
-
-    const isActive = state.concept === conn.from || state.concept === conn.to;
-
-    // Draw a curved path from right side of 'from' card to left side of 'to' card
-    const x1 = from.right + 2;
-    const y1 = from.cy;
-    const x2 = from.right + 2;
-    const y2 = to.cy;
-
-    // Curve out to the right then come back
-    const curveOut = 28;
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    const d = `M ${x1} ${y1} C ${x1 + curveOut} ${y1}, ${x2 + curveOut} ${y2}, ${x2} ${y2}`;
-    path.setAttribute('d', d);
-    path.classList.add('connection-line');
-    if (isActive) path.classList.add('highlight');
-    svg.appendChild(path);
-  });
-}
-
-function updatePrompt() {
-  const el = document.getElementById('promptText');
-  if (!state.concept) {
-    el.textContent = 'Claude Skills are directories containing SKILL.md files that extend Claude\'s capabilities with domain knowledge and workflows. They use progressive disclosure (metadata-only until triggered) for unlimited bundling. Three types: Reference (conventions/patterns), Task (step-by-step workflows), and Hybrid. Stored at Project, Personal, or Enterprise level with enterprise taking highest priority.';
-  } else {
-    const d = DETAILS[state.concept];
-    const title = { what: 'Skill Definition', progressive: 'Progressive Disclosure', types: 'Skill Types', storage: 'Storage Locations' }[state.concept];
-    el.textContent = `${title}:\n\n` + d.items.map(i => `${i.label}: ${i.val}`).join('\n\n');
-  }
-}
-
-function copyPrompt() {
-  navigator.clipboard.writeText(document.getElementById('promptText').textContent).then(() => {
-    const btn = document.querySelector('.copy-btn');
-    btn.textContent = 'Copied!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
-  });
-}
-
-// Redraw connections on resize
-window.addEventListener('resize', () => requestAnimationFrame(drawConnections));
-
-// Initial render
-render();
-
-// Redraw connections once cards have animated in
-setTimeout(() => requestAnimationFrame(drawConnections), 900);
-</script>
 </body>
 </html>

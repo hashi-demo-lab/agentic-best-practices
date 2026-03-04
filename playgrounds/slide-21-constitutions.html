@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Constitutions: Non-Negotiable Rules</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+    display: flex; flex-direction: column;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 48px 80px 28px;
+    border-bottom: 1px solid #1a1a2e;
+  }
+  .section-label {
+    font-size: 12px; font-weight: 500; color: #FFCF25;
+    text-transform: uppercase; letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+  .title-bar h1 {
+    font-size: 34px; font-weight: 600; color: #FFFFFF;
+    margin-bottom: 8px;
+  }
+  .title-bar .subtitle {
+    font-size: 20px; font-weight: 400; color: #82748C;
+  }
+
+  /* Content area */
+  .content {
+    flex: 1; display: flex; padding: 40px 80px 48px; gap: 56px;
+  }
+
+  /* Left: Bullets */
+  .bullets {
+    flex: 0 0 34%; display: flex; flex-direction: column; justify-content: center; gap: 28px;
+  }
+  .bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .bullet-dot {
+    width: 8px; height: 8px; border-radius: 50%; margin-top: 9px; flex-shrink: 0;
+    background: #60DEA9;
+    box-shadow: 0 0 8px rgba(96,222,169,0.4);
+  }
+  .bullet-text {
+    font-size: 22px; font-weight: 400; line-height: 1.5; color: #CCCCCC;
+  }
+  .bullet-text strong {
+    color: #FFFFFF; font-weight: 600;
+  }
+
+  /* Right: 3 constitution cards */
+  .cards {
+    flex: 1; display: flex; gap: 20px;
+  }
+
+  .card {
+    flex: 1; border-radius: 12px; padding: 24px 20px;
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    display: flex; flex-direction: column; gap: 10px;
+    position: relative;
+  }
+
+  /* Top accent border */
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 20px; right: 20px; height: 2px;
+    background: var(--accent);
+    border-radius: 0 0 2px 2px;
+    opacity: 0.6;
+  }
+
+  .card[data-c="module"]   { --accent: #60DEA9; }
+  .card[data-c="consumer"] { --accent: #02A8EF; }
+  .card[data-c="provider"] { --accent: #DC477D; }
+
+  .card-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 6px;
+  }
+  .card-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card-title {
+    font-size: 18px; font-weight: 600; color: var(--accent);
+  }
+  .card-version {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 14px; font-weight: 400; color: #82748C;
+  }
+
+  /* Rule level sections */
+  .rule-group {
+    display: flex; align-items: flex-start; gap: 8px;
+    margin-bottom: 4px;
+  }
+
+  .level-badge {
+    flex-shrink: 0; padding: 3px 8px; border-radius: 4px;
+    font-size: 12px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 1.5px; min-width: 52px; text-align: center;
+    margin-top: 2px;
+  }
+  .level-must {
+    background: rgba(236,88,93,0.12); color: #EC585D;
+    border: 1px solid rgba(236,88,93,0.2);
+  }
+  .level-should {
+    background: rgba(255,208,108,0.08); color: #FFD06C;
+    border: 1px solid rgba(255,208,108,0.15);
+  }
+  .level-may {
+    background: rgba(98,126,239,0.08); color: #627EEF;
+    border: 1px solid rgba(98,126,239,0.15);
+  }
+
+  .rule-items {
+    display: flex; flex-direction: column; gap: 4px; flex: 1;
+  }
+  .rule-item {
+    font-size: 16px; font-weight: 400; color: #CCCCCC; line-height: 1.4;
+    padding: 5px 10px; border-radius: 6px;
+    background: rgba(255,255,255,0.015);
+  }
+
+  .rule-divider {
+    height: 1px; background: rgba(255,255,255,0.04); margin: 4px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="title-bar">
+  <div class="section-label">SPEC-DRIVEN DEVELOPMENT</div>
+  <h1>Constitutions: Non-Negotiable Rules</h1>
+  <div class="subtitle">Machine-readable guardrails that govern every line of agent-generated code</div>
+</div>
+
+<div class="content">
+  <div class="bullets">
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Per-workflow guardrails</strong> -- each workflow has its own constitution with rules specific to its scope and risk profile</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>MUST/SHOULD/MAY severity</strong> -- structured RFC 2119 levels so agents know which rules are non-negotiable vs advisory</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Deviation protocol</strong> -- weakening a security default requires a [SECURITY OVERRIDE] comment with documented justification</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Version-controlled</strong> -- stored in .foundations/memory/, amendments require a pull request with human review</div>
+    </div>
+  </div>
+
+  <div class="cards">
+    <!-- Module Constitution -->
+    <div class="card" data-c="module">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60DEA9" stroke-width="2" stroke-linecap="round"><rect x="2" y="3" width="20" height="18" rx="3"/><line x1="8" y1="3" x2="8" y2="21"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Module</div>
+          <div class="card-version">module-constitution.md</div>
+        </div>
+      </div>
+
+      <div class="rule-group">
+        <span class="level-badge level-must">MUST</span>
+        <div class="rule-items">
+          <div class="rule-item">encryption_enabled = true, public_access = false as defaults</div>
+          <div class="rule-item">.tftest.hcl written before module code (TDD)</div>
+          <div class="rule-item">No provider {} blocks -- modules inherit from consumers</div>
+          <div class="rule-item">Tags via merge() -- consumer tags take precedence</div>
+          <div class="rule-item">No static credentials (AWS_ACCESS_KEY_ID prohibited)</div>
+        </div>
+      </div>
+      <div class="rule-divider"></div>
+      <div class="rule-group">
+        <span class="level-badge level-should">SHOULD</span>
+        <div class="rule-items">
+          <div class="rule-item">Mock-based tests for fast iteration</div>
+          <div class="rule-item">Cost-effective defaults -- consumers override for prod</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consumer Constitution -->
+    <div class="card" data-c="consumer">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#02A8EF" stroke-width="2" stroke-linecap="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Consumer</div>
+          <div class="card-version">consumer-constitution.md</div>
+        </div>
+      </div>
+
+      <div class="rule-group">
+        <span class="level-badge level-must">MUST</span>
+        <div class="rule-items">
+          <div class="rule-item">Private registry only -- raw resource blocks PROHIBITED</div>
+          <div class="rule-item">Version pin with ~> X.Y -- no latest or unconstrained</div>
+          <div class="rule-item">MUST NOT override module encryption/access defaults</div>
+          <div class="rule-item">HCP Terraform dynamic credentials -- no static keys</div>
+          <div class="rule-item">default_tags: ManagedBy, Environment, Project, Owner</div>
+        </div>
+      </div>
+      <div class="rule-divider"></div>
+      <div class="rule-group">
+        <span class="level-badge level-should">SHOULD</span>
+        <div class="rule-items">
+          <div class="rule-item">Review CHANGELOG before version bumps</div>
+          <div class="rule-item">Avoid depends_on -- prefer explicit data flow</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Provider Constitution -->
+    <div class="card" data-c="provider">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC477D" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div>
+          <div class="card-title">Provider</div>
+          <div class="card-version">provider-constitution.md</div>
+        </div>
+      </div>
+
+      <div class="rule-group">
+        <span class="level-badge level-must">MUST</span>
+        <div class="rule-items">
+          <div class="rule-item">Plugin Framework -- not SDKv2</div>
+          <div class="rule-item">types.String, types.Int64 -- never raw Go types</div>
+          <div class="rule-item">Test stubs compile before CRUD implementation</div>
+          <div class="rule-item">Delete silently succeeds on NotFound</div>
+          <div class="rule-item">Error messages never include credentials or tokens</div>
+        </div>
+      </div>
+      <div class="rule-divider"></div>
+      <div class="rule-group">
+        <span class="level-badge level-should">SHOULD</span>
+        <div class="rule-items">
+          <div class="rule-item">stringvalidator.OneOf() for enum attributes</div>
+          <div class="rule-item">RequiresReplace() for ForceNew attributes</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -3,369 +3,221 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1920">
-<title>Git Integration — Validated Pattern</title>
+<title>Git Integration</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+}
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: #0a0a12;
-    color: #e0e0e8;
-    width: 1920px;
-    height: 1080px;
-    overflow: hidden;
-    position: relative;
-  }
+.title-bar {
+    padding: 48px 80px 32px;
+    border-bottom: 1px solid rgba(255,207,37,0.15);
+}
+.section-label {
+    font-size: 12px; font-weight: 500; color: #FFCF25;
+    text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px;
+}
+.title-bar h1 {
+    font-size: 36px; font-weight: 600;
+    background: linear-gradient(135deg, #FFCF25, #FFD06C);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+}
+.title-bar p {
+    font-size: 18px; color: #CCCCCC; font-weight: 400;
+}
 
-  /* --- Static gradient orbs via pseudo-elements --- */
-  body::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background:
-      radial-gradient(ellipse 700px 500px at 15% 20%, rgba(123,97,255,0.08) 0%, transparent 70%),
-      radial-gradient(ellipse 600px 450px at 85% 75%, rgba(96,165,250,0.06) 0%, transparent 70%),
-      radial-gradient(ellipse 500px 400px at 50% 50%, rgba(94,234,212,0.05) 0%, transparent 70%),
-      radial-gradient(ellipse 400px 300px at 75% 15%, rgba(244,114,182,0.04) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* --- Dot grid overlay --- */
-  body::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
-    background-size: 32px 32px;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* --- Header --- */
-  header {
-    text-align: center;
-    padding: 28px 20px 14px;
-    position: relative;
-    z-index: 1;
-  }
-
-  header h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #7b61ff, #a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 6px;
-  }
-
-  header p {
-    color: #8888a0;
-    font-size: 0.95rem;
-    letter-spacing: 0.3px;
-  }
-
-  /* --- 2x2 Grid layout --- */
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 20px;
-    padding: 16px 64px 14px;
-    position: relative;
-    z-index: 1;
-    height: 830px;
-  }
-
-  /* --- Stage card --- */
-  .stage-card {
-    background: rgba(22,22,34,0.65);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(123,97,255,0.15);
-    border-radius: 16px;
-    padding: 20px 24px 18px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .stage-card .card-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 14px;
-  }
-
-  .stage-card .stage-badge {
-    width: 38px;
-    height: 38px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--accent);
-    background: rgba(26,26,40,0.7);
-    border: 1px solid var(--accent);
-    flex-shrink: 0;
-    box-shadow: 0 0 14px var(--accent-glow);
-  }
-
-  .stage-card .stage-title {
-    font-size: 1.1rem;
-    font-weight: 650;
-    color: var(--accent);
-  }
-
-  .stage-card .stage-num {
-    position: absolute;
-    right: 20px;
-    top: 18px;
-    font-size: 2.4rem;
-    font-weight: 800;
-    color: rgba(123,97,255,0.06);
-    line-height: 1;
-    pointer-events: none;
-  }
-
-  .stage-card .bullets {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .stage-card .bullet-item {
-    padding: 9px 13px;
-    background: rgba(14,14,22,0.7);
-    border-radius: 8px;
-    font-size: 0.87rem;
-    color: #b8b8d0;
-    line-height: 1.5;
-    border-left: 3px solid var(--accent);
-    display: flex;
+.content {
+    display: flex; padding: 40px 80px 0; gap: 56px;
     align-items: flex-start;
-    gap: 10px;
-  }
+}
 
-  .stage-card .bullet-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    flex-shrink: 0;
-    margin-top: 7px;
-  }
+.bullets {
+    width: 40%; display: flex; flex-direction: column; gap: 24px;
+    padding-top: 16px;
+}
+.bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+}
+.bullet-dot {
+    width: 8px; height: 8px; border-radius: 2px;
+    background: #62D4DC; margin-top: 8px; flex-shrink: 0;
+}
+.bullet-text {
+    font-size: 18px; line-height: 1.6; color: #FFFFFF;
+    font-family: 'Inter', Arial, sans-serif;
+}
+.bullet-text span {
+    font-weight: 600; color: #62D4DC;
+}
+.cmd {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 13px; color: #62D4DC;
+    background: rgba(98,212,220,0.06);
+    border: 1px solid rgba(98,212,220,0.12);
+    padding: 2px 8px; border-radius: 4px;
+    display: inline-block; margin-top: 4px;
+}
 
-  /* Accent color variants */
-  .stage-card.pink  { --accent: #f472b6; --accent-dim: rgba(244,114,182,0.3); --accent-glow: rgba(244,114,182,0.1); border-top: 3px solid #f472b6; }
-  .stage-card.amber { --accent: #fbbf24; --accent-dim: rgba(251,191,36,0.3); --accent-glow: rgba(251,191,36,0.1); border-top: 3px solid #fbbf24; }
-  .stage-card.teal  { --accent: #5eead4; --accent-dim: rgba(94,234,212,0.3); --accent-glow: rgba(94,234,212,0.1); border-top: 3px solid #5eead4; }
-  .stage-card.blue  { --accent: #60a5fa; --accent-dim: rgba(96,165,250,0.3); --accent-glow: rgba(96,165,250,0.1); border-top: 3px solid #60a5fa; }
-
-  /* --- Flow connectors between grid cells --- */
-  .grid-connectors {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 2;
-  }
-
-  /* --- Bottom flow bar --- */
-  .flow-bar {
-    position: relative;
-    z-index: 1;
-    margin: 0 64px;
-    padding: 14px 28px;
-    background: rgba(22,22,34,0.5);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(123,97,255,0.12);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
-
-  .flow-bar .flow-label-text {
-    font-size: 0.78rem;
-    color: #8888a0;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    font-weight: 600;
-    margin-right: 16px;
-  }
-
-  .flow-bar .flow-step {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 16px;
-    background: rgba(14,14,22,0.6);
-    border-radius: 8px;
-    border: 1px solid var(--step-color);
-  }
-
-  .flow-bar .flow-step .step-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--step-color);
-  }
-
-  .flow-bar .flow-step .step-text {
-    font-size: 0.82rem;
-    color: #a0a0bc;
-    font-weight: 500;
-  }
-
-  .flow-bar .flow-arrow {
-    color: #555570;
-    font-size: 1.1rem;
-    font-weight: 300;
-  }
+.visual {
+    width: 60%; display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 0;
+}
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Git Integration</h1>
-  <p>Validated pattern for secure agent-driven Git workflows</p>
-</header>
-
-<!-- 2x2 Grid of stage cards -->
-<div class="grid">
-
-  <!-- Stage 1: Role-Based Access (top-left) -->
-  <div class="stage-card pink">
-    <span class="stage-num">01</span>
-    <div class="card-header">
-      <div class="stage-badge">01</div>
-      <div class="stage-title">Role-Based Access</div>
-    </div>
-    <div class="bullets">
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Agent Git access locked down with fine-grained personal access tokens</span>
-      </div>
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Branch protection rules critical to protect and gate release process</span>
-      </div>
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Release pipeline: AI-driven PRs &rarr; Platform team review &rarr; Governance &rarr; Automated deployment</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stage 2: Pre-commit Hooks (top-right) -->
-  <div class="stage-card amber">
-    <span class="stage-num">02</span>
-    <div class="card-header">
-      <div class="stage-badge">02</div>
-      <div class="stage-title">Pre-commit Hooks</div>
-    </div>
-    <div class="bullets">
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Block secret commits via Vault Radar pre-commit hooks</span>
-      </div>
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Additional hooks for linting, validation, security checks</span>
-      </div>
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Enforced consistently via devcontainer &mdash; agent cannot bypass</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stage 3: PR Review Process (bottom-left) -->
-  <div class="stage-card teal">
-    <span class="stage-num">03</span>
-    <div class="card-header">
-      <div class="stage-badge">03</div>
-      <div class="stage-title">PR Review Process</div>
-    </div>
-    <div class="bullets">
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Agent generates PR when tests pass</span>
-      </div>
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Separate LLM-as-a-judge performs initial code review and comments on PR</span>
-      </div>
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Human developer validates tests and performs final code review</span>
-      </div>
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Developer approves or advises changes for agent to update PR</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stage 4: Release Pipeline (bottom-right) -->
-  <div class="stage-card blue">
-    <span class="stage-num">04</span>
-    <div class="card-header">
-      <div class="stage-badge">04</div>
-      <div class="stage-title">Release Pipeline</div>
-    </div>
-    <div class="bullets">
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Platform team governance on merge to main</span>
-      </div>
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Automated deployment via CI/CD pipeline</span>
-      </div>
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Environment promotion: dev &rarr; staging &rarr; production</span>
-      </div>
-      <div class="bullet-item">
-        <span class="bullet-dot"></span>
-        <span>Audit trail: every change traced from issue &rarr; PR &rarr; deployment</span>
-      </div>
-    </div>
-  </div>
-
+<div class="title-bar">
+    <div class="section-label">PLATFORM GUARDRAILS</div>
+    <h1>Git Integration</h1>
+    <p>Pre-commit hooks and automation for validated agent workflows</p>
 </div>
 
-<!-- Bottom end-to-end flow bar -->
-<div class="flow-bar">
-  <span class="flow-label-text">End-to-End Flow</span>
-  <div class="flow-step" style="--step-color: #f472b6;">
-    <span class="step-dot"></span>
-    <span class="step-text">AI PRs</span>
-  </div>
-  <span class="flow-arrow">&#8594;</span>
-  <div class="flow-step" style="--step-color: #fbbf24;">
-    <span class="step-dot"></span>
-    <span class="step-text">Pre-commit</span>
-  </div>
-  <span class="flow-arrow">&#8594;</span>
-  <div class="flow-step" style="--step-color: #5eead4;">
-    <span class="step-dot"></span>
-    <span class="step-text">Review</span>
-  </div>
-  <span class="flow-arrow">&#8594;</span>
-  <div class="flow-step" style="--step-color: #60a5fa;">
-    <span class="step-dot"></span>
-    <span class="step-text">Deploy</span>
-  </div>
+<div class="content">
+    <div class="bullets">
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>6 Terraform hooks</span> &mdash; fmt, validate, docs, tflint, trivy security scan, vault-radar secrets</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>5 general hooks</span> &mdash; end-of-file-fixer, check-yaml, large files (500KB), merge conflicts, private keys</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Vault Radar secret scanning</span> &mdash; HashiCorp Vault Radar scans for secrets and sensitive data on every commit</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Checkpoint automation</span> &mdash; checkpoint-commit.sh creates recovery points per checklist item
+                <br><span class="cmd">checkpoint-commit.sh</span> <span class="cmd">post-issue-progress.sh</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="visual">
+        <svg width="940" height="760" viewBox="0 0 940 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Title -->
+            <text x="470" y="28" text-anchor="middle" fill="#CCCCCC" font-size="14" font-weight="600" letter-spacing="2" font-family="Inter, Arial, sans-serif">PRE-COMMIT PIPELINE</text>
+
+            <!-- Pipeline flow: git commit -> Pre-commit Hooks -> Tools -> Pass/Fail -->
+
+            <!-- Step 1: git commit -->
+            <rect x="40" y="60" width="160" height="80" rx="12" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.25)" stroke-width="1.5"/>
+            <text x="120" y="95" text-anchor="middle" fill="#A78BFA" font-size="18" font-weight="700" font-family="Inter, Arial, sans-serif">git commit</text>
+            <text x="120" y="118" text-anchor="middle" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">triggers hooks</text>
+
+            <!-- Arrow -->
+            <line x1="200" y1="100" x2="260" y2="100" stroke="rgba(255,207,37,0.3)" stroke-width="2"/>
+            <polygon points="260,100 250,94 250,106" fill="rgba(255,207,37,0.4)"/>
+
+            <!-- Step 2: Pre-commit Hooks -->
+            <rect x="260" y="50" width="200" height="100" rx="12" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.2)" stroke-width="1.5"/>
+            <text x="360" y="85" text-anchor="middle" fill="#FFCF25" font-size="18" font-weight="700" font-family="Inter, Arial, sans-serif">Pre-commit</text>
+            <text x="360" y="108" text-anchor="middle" fill="#FFCF25" font-size="14" font-family="Inter, Arial, sans-serif">Hooks</text>
+            <text x="360" y="132" text-anchor="middle" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">11 total hooks</text>
+
+            <!-- Arrow to hooks column -->
+            <line x1="460" y1="100" x2="530" y2="100" stroke="rgba(255,207,37,0.3)" stroke-width="2"/>
+            <polygon points="530,100 520,94 520,106" fill="rgba(255,207,37,0.4)"/>
+
+            <!-- Hooks column (right side) -->
+            <!-- Terraform Hooks Section -->
+            <rect x="530" y="50" width="380" height="310" rx="12" fill="rgba(98,212,220,0.02)" stroke="rgba(98,212,220,0.12)" stroke-width="1"/>
+            <text x="560" y="78" fill="#62D4DC" font-size="13" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">TERRAFORM HOOKS</text>
+            <text x="800" y="78" fill="#82748C" font-size="11" font-family="SF Mono, Fira Code, monospace">pre-commit-terraform v1.103.0</text>
+
+            <!-- Individual hooks -->
+            <rect x="550" y="92" width="340" height="34" rx="8" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
+            <circle cx="572" cy="109" r="6" fill="rgba(98,212,220,0.2)" stroke="rgba(98,212,220,0.4)" stroke-width="1"/>
+            <text x="590" y="114" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_fmt</text>
+            <text x="740" y="114" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">Canonical format</text>
+
+            <rect x="550" y="132" width="340" height="34" rx="8" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
+            <circle cx="572" cy="149" r="6" fill="rgba(98,212,220,0.2)" stroke="rgba(98,212,220,0.4)" stroke-width="1"/>
+            <text x="590" y="154" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_validate</text>
+            <text x="770" y="154" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">Config check</text>
+
+            <rect x="550" y="172" width="340" height="34" rx="8" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
+            <circle cx="572" cy="189" r="6" fill="rgba(98,212,220,0.2)" stroke="rgba(98,212,220,0.4)" stroke-width="1"/>
+            <text x="590" y="194" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_docs</text>
+            <text x="740" y="194" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">Update README</text>
+
+            <rect x="550" y="212" width="340" height="34" rx="8" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
+            <circle cx="572" cy="229" r="6" fill="rgba(98,212,220,0.2)" stroke="rgba(98,212,220,0.4)" stroke-width="1"/>
+            <text x="590" y="234" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_tflint</text>
+            <text x="760" y="234" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">Best practices</text>
+
+            <rect x="550" y="252" width="340" height="34" rx="8" fill="rgba(220,71,125,0.03)" stroke="rgba(220,71,125,0.12)" stroke-width="1"/>
+            <circle cx="572" cy="269" r="6" fill="rgba(220,71,125,0.15)" stroke="rgba(220,71,125,0.35)" stroke-width="1"/>
+            <text x="590" y="274" fill="#DC477D" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">terraform_trivy</text>
+            <text x="740" y="274" fill="#DC477D" font-size="12" font-family="Inter, Arial, sans-serif">CRIT/HIGH/MED</text>
+
+            <rect x="550" y="292" width="340" height="50" rx="8" fill="rgba(236,88,93,0.03)" stroke="rgba(236,88,93,0.12)" stroke-width="1"/>
+            <circle cx="572" cy="309" r="6" fill="rgba(236,88,93,0.15)" stroke="rgba(236,88,93,0.35)" stroke-width="1"/>
+            <text x="590" y="314" fill="#EC585D" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">vault-radar-scan</text>
+            <text x="745" y="314" fill="#EC585D" font-size="12" font-family="Inter, Arial, sans-serif">Secret scanning</text>
+            <text x="590" y="332" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">HashiCorp Vault Radar  |  requires VAULT_RADAR_LICENSE</text>
+
+            <!-- General Hooks Section -->
+            <rect x="530" y="378" width="380" height="230" rx="12" fill="rgba(98,126,239,0.02)" stroke="rgba(98,126,239,0.1)" stroke-width="1"/>
+            <text x="560" y="406" fill="#627EEF" font-size="13" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">GENERAL HOOKS</text>
+            <text x="800" y="406" fill="#82748C" font-size="11" font-family="SF Mono, Fira Code, monospace">pre-commit-hooks v6.0.0</text>
+
+            <rect x="550" y="420" width="340" height="34" rx="8" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.08)" stroke-width="1"/>
+            <circle cx="572" cy="437" r="6" fill="rgba(98,126,239,0.15)" stroke="rgba(98,126,239,0.3)" stroke-width="1"/>
+            <text x="590" y="442" fill="#627EEF" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">end-of-file-fixer</text>
+            <text x="770" y="442" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">Trailing newline</text>
+
+            <rect x="550" y="460" width="340" height="34" rx="8" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.08)" stroke-width="1"/>
+            <circle cx="572" cy="477" r="6" fill="rgba(98,126,239,0.15)" stroke="rgba(98,126,239,0.3)" stroke-width="1"/>
+            <text x="590" y="482" fill="#627EEF" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">check-yaml</text>
+            <text x="730" y="482" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">YAML syntax</text>
+
+            <rect x="550" y="500" width="340" height="34" rx="8" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.08)" stroke-width="1"/>
+            <circle cx="572" cy="517" r="6" fill="rgba(98,126,239,0.15)" stroke="rgba(98,126,239,0.3)" stroke-width="1"/>
+            <text x="590" y="522" fill="#627EEF" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">check-added-large-files</text>
+            <text x="810" y="522" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">500KB</text>
+
+            <rect x="550" y="540" width="340" height="34" rx="8" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.08)" stroke-width="1"/>
+            <circle cx="572" cy="557" r="6" fill="rgba(98,126,239,0.15)" stroke="rgba(98,126,239,0.3)" stroke-width="1"/>
+            <text x="590" y="562" fill="#627EEF" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">detect-private-key</text>
+            <text x="775" y="562" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">Key detection</text>
+
+            <rect x="550" y="580" width="340" height="18" rx="4"/>
+            <text x="590" y="594" fill="#82748C" font-size="11" font-family="SF Mono, Fira Code, monospace">+ check-merge-conflict</text>
+
+            <!-- Pass/Fail outcome -->
+            <rect x="40" y="170" width="160" height="60" rx="10" fill="rgba(96,222,169,0.04)" stroke="rgba(96,222,169,0.2)" stroke-width="1.5"/>
+            <text x="120" y="205" text-anchor="middle" fill="#60DEA9" font-size="16" font-weight="700" font-family="Inter, Arial, sans-serif">PASS</text>
+            <text x="120" y="222" text-anchor="middle" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">commit succeeds</text>
+
+            <rect x="40" y="250" width="160" height="60" rx="10" fill="rgba(236,88,93,0.04)" stroke="rgba(236,88,93,0.18)" stroke-width="1.5"/>
+            <text x="120" y="285" text-anchor="middle" fill="#EC585D" font-size="16" font-weight="700" font-family="Inter, Arial, sans-serif">FAIL</text>
+            <text x="120" y="302" text-anchor="middle" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">commit blocked</text>
+
+            <!-- Arrow from hooks back to pass/fail -->
+            <path d="M 530 200 L 500 200 L 500 400 L 280 400 L 280 200 L 200 200" fill="none" stroke="rgba(255,207,37,0.15)" stroke-width="1.5" stroke-dasharray="6 4"/>
+
+            <!-- Scripts Section -->
+            <rect x="40" y="640" width="870" height="100" rx="12" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+            <text x="70" y="670" fill="#CCCCCC" font-size="13" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">GIT AUTOMATION SCRIPTS</text>
+
+            <!-- checkpoint-commit.sh -->
+            <rect x="70" y="685" width="250" height="36" rx="8" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.12)" stroke-width="1"/>
+            <text x="195" y="708" text-anchor="middle" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">checkpoint-commit.sh</text>
+            <text x="340" y="708" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">Automated git add + commit per checklist item</text>
+
+            <!-- post-issue-progress.sh -->
+            <rect x="70" y="725" width="280" height="0" rx="8"/>
+            <text x="70" y="730" fill="#FFCF25" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">post-issue-progress.sh</text>
+            <text x="340" y="730" fill="#82748C" font-size="12" font-family="Inter, Arial, sans-serif">Posts completion status updates to GitHub issue</text>
+        </svg>
+    </div>
 </div>
 
 </body>

@@ -2,966 +2,145 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agentic IaC Workflows Explorer</title>
+<meta name="viewport" content="width=1920">
+<title>Agentic IaC Workflows</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: #0a0a12;
-    color: #e0e0e8;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
   }
 
-  /* ── Animated grid background ── */
-  .bg-grid {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
+  body::before {
+    content: '';
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-image:
-      linear-gradient(rgba(123, 97, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(123, 97, 255, 0.03) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 100%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 100%);
-  }
-
-  /* ── Floating particles ── */
-  .particles {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-  .particle {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: rgba(123, 97, 255, 0.25);
-    animation: particleFloat linear infinite;
-    opacity: 0;
-  }
-  @keyframes particleFloat {
-    0% { transform: translateY(100vh) scale(0); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
-  }
-
-  /* ── Ambient glow orbs ── */
-  .glow-orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.12;
-    pointer-events: none;
-    z-index: 0;
-    animation: orbPulse 8s ease-in-out infinite alternate;
-  }
-  .glow-orb.orb-1 {
-    width: 400px; height: 400px;
-    background: #7b61ff;
-    top: -100px; left: -100px;
-    animation-delay: 0s;
-  }
-  .glow-orb.orb-2 {
-    width: 350px; height: 350px;
-    background: #6366f1;
-    bottom: -80px; right: 10%;
-    animation-delay: 3s;
-  }
-  .glow-orb.orb-3 {
-    width: 300px; height: 300px;
-    background: #8b5cf6;
-    top: 40%; right: -80px;
-    animation-delay: 5s;
-  }
-  @keyframes orbPulse {
-    0% { opacity: 0.08; transform: scale(1); }
-    100% { opacity: 0.18; transform: scale(1.15); }
-  }
-
-  /* ── Entrance animations ── */
-  @keyframes fadeSlideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeSlideDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.92) translateY(20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-
-  header {
-    text-align: center;
-    padding: 32px 20px 16px;
-    border-bottom: 1px solid rgba(123, 97, 255, 0.1);
-    position: relative;
-    z-index: 1;
-    animation: fadeSlideDown 0.8s ease-out both;
-    background: linear-gradient(180deg, rgba(123, 97, 255, 0.04) 0%, transparent 100%);
-  }
-  header h1 {
-    font-size: 1.7rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #7b61ff 0%, #a78bfa 40%, #c4b5fd 70%, #7b61ff 100%);
-    background-size: 200% 200%;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 8px;
-    animation: shimmerText 4s ease-in-out infinite;
-    letter-spacing: -0.02em;
-  }
-  @keyframes shimmerText {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-  header p {
-    color: #7878a0;
-    font-size: 0.85rem;
-    letter-spacing: 0.02em;
-  }
-
-  .main {
-    flex: 1; display: flex; flex-direction: column;
-    padding: 24px 32px; gap: 24px;
-    position: relative; z-index: 1;
-  }
-
-  /* ── Controls bar ── */
-  .controls {
-    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-    animation: fadeSlideDown 0.8s ease-out 0.2s both;
-  }
-  .preset-btn {
-    padding: 8px 18px; border-radius: 8px; border: 1px solid rgba(123, 97, 255, 0.15);
-    background: rgba(26, 26, 40, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    color: #9090b0; cursor: pointer; font-size: 0.8rem;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    font-weight: 500;
-    position: relative;
-    overflow: hidden;
-  }
-  .preset-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(123, 97, 255, 0.1), rgba(139, 92, 246, 0.05));
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .preset-btn:hover {
-    border-color: rgba(123, 97, 255, 0.4);
-    color: #c8c0f0;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(123, 97, 255, 0.1);
-  }
-  .preset-btn:hover::before { opacity: 1; }
-  .preset-btn.active {
-    border-color: rgba(123, 97, 255, 0.5);
-    color: #d4c8ff;
-    background: rgba(42, 37, 72, 0.7);
-    box-shadow: 0 0 20px rgba(123, 97, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  }
-  .preset-btn.active::before { opacity: 1; }
-
-  /* ── Canvas area ── */
-  .canvas-area {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    position: relative; min-height: 420px;
-    animation: fadeIn 0.6s ease-out 0.3s both;
-  }
-
-  /* ── Flow arrows (SVG behind cards) ── */
-  .flow-svg {
-    position: absolute; inset: 0; width: 100%; height: 100%;
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
     pointer-events: none; z-index: 0;
-  }
-
-  /* ── Workflow cards ── */
-  .cards { display: flex; gap: 28px; z-index: 1; width: 100%; max-width: 1100px; }
-
-  .card {
-    flex: 1;
-    border: 1px solid rgba(123, 97, 255, 0.08);
-    border-radius: 16px;
-    background: linear-gradient(165deg, rgba(22, 22, 34, 0.85) 0%, rgba(18, 18, 28, 0.95) 100%);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    padding: 28px 22px;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    animation: scaleIn 0.7s ease-out both;
-  }
-  .card:nth-child(1) { animation-delay: 0.4s; }
-  .card:nth-child(2) { animation-delay: 0.55s; }
-  .card:nth-child(3) { animation-delay: 0.7s; }
-
-  /* Top accent bar */
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--accent), var(--accent-light), var(--accent));
-    background-size: 200% 100%;
-    opacity: 0;
-    transition: opacity 0.4s;
-    animation: shimmerBar 3s ease-in-out infinite;
-  }
-  @keyframes shimmerBar {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  /* Glassmorphism inner glow */
-  .card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    background: radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 60%);
-    pointer-events: none;
-    transition: opacity 0.4s;
-    opacity: 0;
-  }
-
-  /* Hover shimmer overlay */
-  .card .shimmer-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      105deg,
-      transparent 40%,
-      rgba(255, 255, 255, 0.02) 45%,
-      rgba(255, 255, 255, 0.04) 50%,
-      rgba(255, 255, 255, 0.02) 55%,
-      transparent 60%
-    );
-    background-size: 250% 100%;
-    background-position: 200% 0;
-    transition: background-position 0.8s ease;
-    pointer-events: none;
-    border-radius: 16px;
-  }
-
-  .card:hover {
-    border-color: rgba(123, 97, 255, 0.2);
-    transform: translateY(-4px);
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.3),
-      0 0 40px color-mix(in srgb, var(--accent) 8%, transparent);
-  }
-  .card:hover::before { opacity: 0.6; }
-  .card:hover::after { opacity: 1; }
-  .card:hover .shimmer-overlay { background-position: -50% 0; }
-
-  .card.expanded {
-    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-    transform: translateY(-6px);
-    box-shadow:
-      0 12px 48px rgba(0, 0, 0, 0.4),
-      0 0 60px color-mix(in srgb, var(--accent) 12%, transparent),
-      inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  }
-  .card.expanded::before { opacity: 1; }
-  .card.expanded::after { opacity: 1; }
-
-  .card[data-workflow="producer"] { --accent: #7b61ff; --accent-light: #a78bfa; --accent-glow: rgba(123, 97, 255, 0.3); }
-  .card[data-workflow="consumer"] { --accent: #6366f1; --accent-light: #818cf8; --accent-glow: rgba(99, 102, 241, 0.3); }
-  .card[data-workflow="provider"] { --accent: #8b5cf6; --accent-light: #c4b5fd; --accent-glow: rgba(139, 92, 246, 0.3); }
-
-  /* ── Card icon with glow ── */
-  .card-icon-wrap {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 52px;
-    height: 52px;
-    margin-bottom: 14px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 15%, transparent), color-mix(in srgb, var(--accent) 5%, transparent));
-    border: 1px solid color-mix(in srgb, var(--accent) 15%, transparent);
-    transition: all 0.4s;
-  }
-  .card:hover .card-icon-wrap,
-  .card.expanded .card-icon-wrap {
-    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, transparent), color-mix(in srgb, var(--accent) 10%, transparent));
-    box-shadow: 0 4px 20px color-mix(in srgb, var(--accent) 20%, transparent);
-  }
-
-  .card-icon {
-    font-size: 1.5rem;
-    line-height: 1;
-    filter: drop-shadow(0 0 6px var(--accent-glow));
-  }
-
-  .card-team {
-    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 2px;
-    color: var(--accent-light); margin-bottom: 5px; font-weight: 600;
-    opacity: 0.8;
-  }
-
-  .card-title {
-    font-size: 1.05rem; font-weight: 700; color: #ebebf5; margin-bottom: 10px;
-    letter-spacing: -0.01em;
-  }
-
-  .card-desc {
-    font-size: 0.82rem; color: #8888a8; line-height: 1.55; margin-bottom: 0;
-    transition: margin 0.3s;
-  }
-
-  /* ── Expanded details ── */
-  .card-details {
-    max-height: 0; overflow: hidden; opacity: 0;
-    transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s 0.1s;
-  }
-  .card.expanded .card-details { max-height: 500px; opacity: 1; }
-  .card.expanded .card-desc { margin-bottom: 18px; }
-
-  /* ── Visual separator ── */
-  .detail-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 25%, transparent), transparent);
-    margin: 4px 0 16px;
-    border: none;
-  }
-
-  .benefits-label {
-    font-size: 0.62rem; text-transform: uppercase; letter-spacing: 2px;
-    color: var(--accent-light); margin-bottom: 10px; font-weight: 600;
-    display: flex; align-items: center; gap: 8px;
-    opacity: 0.7;
-  }
-  .benefits-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 20%, transparent), transparent);
-  }
-
-  .benefit {
-    display: flex; align-items: flex-start; gap: 10px;
-    margin-bottom: 10px; font-size: 0.8rem; color: #b0b0cc; line-height: 1.5;
-    transition: transform 0.2s, color 0.2s;
-  }
-  .benefit:hover {
-    color: #d0d0e8;
-    transform: translateX(3px);
-  }
-  .benefit-icon {
-    width: 22px; height: 22px; border-radius: 6px;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--accent) 8%, transparent));
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    font-size: 0.7rem;
-    margin-top: 1px;
-    border: 1px solid color-mix(in srgb, var(--accent) 12%, transparent);
-  }
-
-  /* ── Metric badge with counter animation ── */
-  .metric-badge {
-    margin-top: 18px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 18px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--accent) 4%, transparent));
-    border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
-    position: relative;
-    overflow: hidden;
-  }
-  .metric-badge::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 6%, transparent), transparent);
-    background-size: 200% 100%;
-    animation: metricShimmer 3s ease-in-out infinite;
-  }
-  @keyframes metricShimmer {
-    0%, 100% { background-position: -100% 0; }
-    50% { background-position: 200% 0; }
-  }
-
-  .metric-icon {
-    font-size: 1.3rem;
-    filter: drop-shadow(0 0 8px var(--accent-glow));
-    position: relative;
-    z-index: 1;
-  }
-
-  .metric-content {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .metric-label {
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: color-mix(in srgb, var(--accent-light) 60%, #888);
-    font-weight: 600;
-  }
-  .metric-value {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .metric-from {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #9090a8;
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    text-decoration: line-through;
-    text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
-    opacity: 0.7;
-  }
-  .metric-arrow {
-    font-size: 0.9rem;
-    color: var(--accent-light);
-    animation: arrowPulse 1.5s ease-in-out infinite;
-  }
-  @keyframes arrowPulse {
-    0%, 100% { opacity: 0.5; transform: translateX(0); }
-    50% { opacity: 1; transform: translateX(2px); }
-  }
-  .metric-to {
-    font-size: 0.95rem;
-    font-weight: 800;
-    color: var(--accent-light);
-    font-family: 'SF Mono', 'Fira Code', monospace;
-  }
-  .metric-counter {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 0.95rem;
-    font-weight: 800;
-    color: var(--accent-light);
-    min-width: 2.5em;
-    text-align: right;
-  }
-
-  /* ── Prompt output ── */
-  .prompt-section {
-    border-top: 1px solid rgba(123, 97, 255, 0.08);
-    padding: 16px 0 0;
-    animation: fadeSlideUp 0.8s ease-out 0.85s both;
-  }
-  .prompt-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 8px;
-  }
-  .prompt-label {
-    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 2px;
-    color: #5a5a78; font-weight: 600;
-  }
-  .copy-btn {
-    padding: 6px 16px; border-radius: 8px;
-    border: 1px solid rgba(123, 97, 255, 0.15);
-    background: rgba(26, 26, 40, 0.6);
-    backdrop-filter: blur(10px);
-    color: #9090b0; cursor: pointer; font-size: 0.75rem;
-    transition: all 0.3s;
-    font-weight: 500;
-  }
-  .copy-btn:hover {
-    border-color: rgba(123, 97, 255, 0.4);
-    color: #d4c8ff;
-    box-shadow: 0 2px 12px rgba(123, 97, 255, 0.1);
-  }
-  .prompt-text {
-    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-    font-size: 0.78rem; color: #9090b0; line-height: 1.65;
-    background: linear-gradient(165deg, rgba(16, 16, 24, 0.8), rgba(12, 12, 20, 0.9));
-    border: 1px solid rgba(123, 97, 255, 0.06);
-    border-radius: 12px;
-    padding: 16px 18px;
-    min-height: 48px;
-    white-space: pre-wrap;
-    backdrop-filter: blur(10px);
-  }
-
-  /* ── Expand hint ── */
-  .hint {
-    text-align: center; font-size: 0.72rem; color: #4a4a68;
-    margin-top: -8px;
-    animation: fadeIn 1s ease-out 1s both;
   }
 </style>
 </head>
 <body>
 
-<!-- Background layers -->
-<div class="bg-grid"></div>
-<div class="particles" id="particles"></div>
-<div class="glow-orb orb-1"></div>
-<div class="glow-orb orb-2"></div>
-<div class="glow-orb orb-3"></div>
+<div class="slide" style="width:1920px;height:1080px;padding:60px 80px;display:flex;flex-direction:column;position:relative;z-index:1;">
 
-<header>
-  <h1>Agentic IaC Workflows</h1>
-  <p>Click each workflow to explore details, benefits, and acceleration metrics</p>
-</header>
-
-<div class="main">
-  <div class="controls">
-    <button class="preset-btn" data-preset="overview">Overview</button>
-    <button class="preset-btn" data-preset="producer">Producer Deep Dive</button>
-    <button class="preset-btn" data-preset="consumer">Consumer Deep Dive</button>
-    <button class="preset-btn" data-preset="provider">Provider Deep Dive</button>
-    <button class="preset-btn" data-preset="all">Expand All</button>
+  <div class="header" style="margin-bottom:40px;">
+    <div style="font-size:12px;font-weight:500;color:#FFCF25;text-transform:uppercase;letter-spacing:3px;margin-bottom:12px;font-family:'Inter Medium','Inter',Arial,sans-serif;">AGENTIC IAC WORKFLOWS</div>
+    <h1 style="font-size:34px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Agentic IaC Workflows</h1>
+    <div style="font-size:20px;color:#CCCCCC;">Three workflow tiers scaling from simple consumption to provider development</div>
   </div>
 
-  <p class="hint">Click a card or use presets above</p>
+  <div class="content" style="flex:1;display:flex;gap:40px;align-items:stretch;">
 
-  <div class="canvas-area">
-    <svg class="flow-svg" id="flowSvg"></svg>
+    <!-- Column 1: Consumer -->
+    <div style="flex:1;display:flex;flex-direction:column;border-radius:12px;background:linear-gradient(180deg,#121212 0%,#000000 100%);padding:36px 32px;box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(96,222,169,0.15);">
 
-    <div class="cards" id="cards">
-      <div class="card" data-workflow="producer" onclick="toggleCard(this)">
-        <div class="shimmer-overlay"></div>
-        <div class="card-icon-wrap"><div class="card-icon">&#x1F3D7;&#xFE0F;</div></div>
-        <div class="card-team">Platform Team</div>
-        <div class="card-title">Producer Workflow</div>
-        <div class="card-desc">Generate compliant, tested modules for Private Module Registry</div>
-        <div class="card-details">
-          <hr class="detail-divider">
-          <div class="benefits-label">Benefits</div>
-          <div class="benefit"><span class="benefit-icon">&#x2713;</span><span>Reduce module delivery from weeks to hours</span></div>
-          <div class="benefit"><span class="benefit-icon">&#x2713;</span><span>Eliminate misconfigurations that cause downtime</span></div>
-          <div class="metric-badge">
-            <span class="metric-icon">&#x26A1;</span>
-            <div class="metric-content">
-              <span class="metric-label">Acceleration</span>
-              <div class="metric-value">
-                <span class="metric-from">Weeks</span>
-                <span class="metric-arrow">&#x2192;</span>
-                <span class="metric-counter" data-from="336" data-to="4" data-suffix="hrs">--</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- Header area -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div style="font-size:12px;font-weight:500;color:#60DEA9;text-transform:uppercase;letter-spacing:3px;font-family:'Inter Medium','Inter',Arial,sans-serif;">Consumer</div>
       </div>
 
-      <div class="card" data-workflow="consumer" onclick="toggleCard(this)">
-        <div class="shimmer-overlay"></div>
-        <div class="card-icon-wrap"><div class="card-icon">&#x1F680;</div></div>
-        <div class="card-team">Application Team</div>
-        <div class="card-title">Consumer Workflow</div>
-        <div class="card-desc">Deploy and manage complex architectures using natural language</div>
-        <div class="card-details">
-          <hr class="detail-divider">
-          <div class="benefits-label">Benefits</div>
-          <div class="benefit"><span class="benefit-icon">&#x2713;</span><span>Minimize service risk through validated modules</span></div>
-          <div class="benefit"><span class="benefit-icon">&#x2713;</span><span>Auto-align infrastructure to security policies</span></div>
-          <div class="metric-badge">
-            <span class="metric-icon">&#x1F6E1;&#xFE0F;</span>
-            <div class="metric-content">
-              <span class="metric-label">Compliance</span>
-              <div class="metric-value">
-                <span class="metric-from">Risk</span>
-                <span class="metric-arrow">&#x2192;</span>
-                <span class="metric-counter" data-from="0" data-to="100" data-suffix="%">--</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div style="font-size:20px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Module Consumption</div>
+      <div style="font-size:20px;color:#CCCCCC;margin-bottom:28px;">Application teams deploy infrastructure from private registry modules</div>
+
+      <!-- Agent roles -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:500;color:#60DEA9;padding:6px 14px;border-radius:6px;background:rgba(96,222,169,0.10);border:1px solid rgba(96,222,169,0.25);">Research</div>
+        <div style="font-size:14px;font-weight:500;color:#60DEA9;padding:6px 14px;border-radius:6px;background:rgba(96,222,169,0.10);border:1px solid rgba(96,222,169,0.25);">Design</div>
+        <div style="font-size:14px;font-weight:500;color:#60DEA9;padding:6px 14px;border-radius:6px;background:rgba(96,222,169,0.10);border:1px solid rgba(96,222,169,0.25);">Developer</div>
+        <div style="font-size:14px;font-weight:500;color:#60DEA9;padding:6px 14px;border-radius:6px;background:rgba(96,222,169,0.10);border:1px solid rgba(96,222,169,0.25);">Validator</div>
+        <div style="font-size:16px;color:#82748C;padding:6px 0 6px 6px;">4 agents</div>
       </div>
 
-      <div class="card" data-workflow="provider" onclick="toggleCard(this)">
-        <div class="shimmer-overlay"></div>
-        <div class="card-icon-wrap"><div class="card-icon">&#x1F310;</div></div>
-        <div class="card-team">Ecosystem</div>
-        <div class="card-title">Provider Lifecycle</div>
-        <div class="card-desc">Accelerate Terraform Provider development and release cycles</div>
-        <div class="card-details">
-          <hr class="detail-divider">
-          <div class="benefits-label">Benefits</div>
-          <div class="benefit"><span class="benefit-icon">&#x2713;</span><span>Deliver quality providers in days, not months</span></div>
-          <div class="benefit"><span class="benefit-icon">&#x2713;</span><span>Comprehensive test coverage minimizes UX issues</span></div>
-          <div class="metric-badge">
-            <span class="metric-icon">&#x1F4A8;</span>
-            <div class="metric-content">
-              <span class="metric-label">Acceleration</span>
-              <div class="metric-value">
-                <span class="metric-from">Months</span>
-                <span class="metric-arrow">&#x2192;</span>
-                <span class="metric-counter" data-from="120" data-to="5" data-suffix="days">--</span>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- Bullets -->
+      <div style="display:flex;flex-direction:column;gap:16px;flex:1;">
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#60DEA9;">Compose</span> — from private registry modules with secure defaults</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#60DEA9;">Deploy</span> — infrastructure via natural language prompts</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#60DEA9;">Validate</span> — automatic compliance and security checks</div>
+      </div>
+
+      <!-- Metric -->
+      <div style="margin-top:24px;padding:14px 18px;border-radius:10px;background:rgba(96,222,169,0.06);box-shadow:0 2px 12px rgba(0,0,0,0.4);display:flex;align-items:center;gap:12px;">
+        <div style="font-size:11px;color:#82748C;text-transform:uppercase;letter-spacing:3px;font-weight:500;font-family:'Inter Medium','Inter',Arial,sans-serif;">Compliance</div>
+        <div style="margin-left:auto;font-size:18px;font-weight:600;color:#60DEA9;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Risk &#8594; 100%</div>
       </div>
     </div>
+
+    <!-- Column 2: Module -->
+    <div style="flex:1;display:flex;flex-direction:column;border-radius:12px;background:linear-gradient(180deg,#121212 0%,#000000 100%);padding:36px 32px;box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(167,139,250,0.15);">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div style="font-size:12px;font-weight:500;color:#A78BFA;text-transform:uppercase;letter-spacing:3px;font-family:'Inter Medium','Inter',Arial,sans-serif;">Module</div>
+      </div>
+
+      <div style="font-size:20px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Module Authoring</div>
+      <div style="font-size:20px;color:#CCCCCC;margin-bottom:28px;">Platform teams build reusable Terraform modules with TDD</div>
+
+      <!-- Agent roles -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:500;color:#A78BFA;padding:6px 14px;border-radius:6px;background:rgba(167,139,250,0.10);border:1px solid rgba(167,139,250,0.25);">Research</div>
+        <div style="font-size:14px;font-weight:500;color:#A78BFA;padding:6px 14px;border-radius:6px;background:rgba(167,139,250,0.10);border:1px solid rgba(167,139,250,0.25);">Design</div>
+        <div style="font-size:14px;font-weight:500;color:#A78BFA;padding:6px 14px;border-radius:6px;background:rgba(167,139,250,0.10);border:1px solid rgba(167,139,250,0.25);">Test Writer</div>
+        <div style="font-size:14px;font-weight:500;color:#A78BFA;padding:6px 14px;border-radius:6px;background:rgba(167,139,250,0.10);border:1px solid rgba(167,139,250,0.25);">Developer</div>
+        <div style="font-size:14px;font-weight:500;color:#A78BFA;padding:6px 14px;border-radius:6px;background:rgba(167,139,250,0.10);border:1px solid rgba(167,139,250,0.25);">Validator</div>
+        <div style="font-size:16px;color:#82748C;padding:6px 0 6px 6px;">5 agents</div>
+      </div>
+
+      <!-- Bullets -->
+      <div style="display:flex;flex-direction:column;gap:16px;flex:1;">
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#A78BFA;">Research</span> — provider docs, registry patterns, security baselines</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#A78BFA;">TDD</span> — terraform test ensures security defaults from day one</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#A78BFA;">Output</span> — production-ready module with docs and examples</div>
+      </div>
+
+      <!-- Metric -->
+      <div style="margin-top:24px;padding:14px 18px;border-radius:10px;background:rgba(167,139,250,0.06);box-shadow:0 2px 12px rgba(0,0,0,0.4);display:flex;align-items:center;gap:12px;">
+        <div style="font-size:11px;color:#82748C;text-transform:uppercase;letter-spacing:3px;font-weight:500;font-family:'Inter Medium','Inter',Arial,sans-serif;">Acceleration</div>
+        <div style="margin-left:auto;font-size:18px;font-weight:600;color:#A78BFA;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Weeks &#8594; Hours</div>
+      </div>
+    </div>
+
+    <!-- Column 3: Provider -->
+    <div style="flex:1;display:flex;flex-direction:column;border-radius:12px;background:linear-gradient(180deg,#121212 0%,#000000 100%);padding:36px 32px;box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(220,71,125,0.15);">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div style="font-size:12px;font-weight:500;color:#DC477D;text-transform:uppercase;letter-spacing:3px;font-family:'Inter Medium','Inter',Arial,sans-serif;">Provider</div>
+      </div>
+
+      <div style="font-size:20px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Provider Lifecycle</div>
+      <div style="font-size:20px;color:#CCCCCC;margin-bottom:28px;">Ecosystem teams develop custom Terraform providers with Go TDD</div>
+
+      <!-- Agent roles -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:500;color:#DC477D;padding:6px 14px;border-radius:6px;background:rgba(220,71,125,0.10);border:1px solid rgba(220,71,125,0.25);">Research</div>
+        <div style="font-size:14px;font-weight:500;color:#DC477D;padding:6px 14px;border-radius:6px;background:rgba(220,71,125,0.10);border:1px solid rgba(220,71,125,0.25);">Design</div>
+        <div style="font-size:14px;font-weight:500;color:#DC477D;padding:6px 14px;border-radius:6px;background:rgba(220,71,125,0.10);border:1px solid rgba(220,71,125,0.25);">Test Writer</div>
+        <div style="font-size:14px;font-weight:500;color:#DC477D;padding:6px 14px;border-radius:6px;background:rgba(220,71,125,0.10);border:1px solid rgba(220,71,125,0.25);">Developer</div>
+        <div style="font-size:14px;font-weight:500;color:#DC477D;padding:6px 14px;border-radius:6px;background:rgba(220,71,125,0.10);border:1px solid rgba(220,71,125,0.25);">Validator</div>
+        <div style="font-size:16px;color:#82748C;padding:6px 0 6px 6px;">5 agents</div>
+      </div>
+
+      <!-- Bullets -->
+      <div style="display:flex;flex-direction:column;gap:16px;flex:1;">
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#DC477D;">Go TDD</span> — acceptance tests validate real cloud API interactions</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#DC477D;">Schema</span> — resource and data source schemas auto-generated</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#DC477D;">Lifecycle</span> — CRUD operations with proper error handling</div>
+      </div>
+
+      <!-- Metric -->
+      <div style="margin-top:24px;padding:14px 18px;border-radius:10px;background:rgba(220,71,125,0.06);box-shadow:0 2px 12px rgba(0,0,0,0.4);display:flex;align-items:center;gap:12px;">
+        <div style="font-size:11px;color:#82748C;text-transform:uppercase;letter-spacing:3px;font-weight:500;font-family:'Inter Medium','Inter',Arial,sans-serif;">Acceleration</div>
+        <div style="margin-left:auto;font-size:18px;font-weight:600;color:#DC477D;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Months &#8594; Days</div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="prompt-section">
-    <div class="prompt-header">
-      <span class="prompt-label">Prompt Output</span>
-      <button class="copy-btn" onclick="copyPrompt()">Copy</button>
-    </div>
-    <div class="prompt-text" id="promptText"></div>
-  </div>
 </div>
 
-<script>
-// ── Particle system ──
-(function initParticles() {
-  const container = document.getElementById('particles');
-  const count = 30;
-  for (let i = 0; i < count; i++) {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.style.left = Math.random() * 100 + '%';
-    p.style.animationDuration = (12 + Math.random() * 18) + 's';
-    p.style.animationDelay = (Math.random() * 15) + 's';
-    p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
-    const hues = ['rgba(123, 97, 255, 0.3)', 'rgba(99, 102, 241, 0.25)', 'rgba(139, 92, 246, 0.25)', 'rgba(167, 139, 250, 0.2)'];
-    p.style.background = hues[Math.floor(Math.random() * hues.length)];
-    container.appendChild(p);
-  }
-})();
-
-// ── State ──
-const state = { expanded: new Set() };
-
-const WORKFLOWS = {
-  producer: {
-    team: 'Platform Team',
-    title: 'Producer Workflow',
-    desc: 'Generate compliant, tested modules for Private Module Registry',
-    benefits: ['Reduce module delivery from weeks to hours', 'Eliminate misconfigurations that cause downtime'],
-    metric: 'Weeks to Hours',
-  },
-  consumer: {
-    team: 'Application Team',
-    title: 'Consumer Workflow',
-    desc: 'Deploy and manage complex architectures using natural language',
-    benefits: ['Minimize service risk through validated modules', 'Auto-align infrastructure to security policies'],
-    metric: 'Risk to Compliance',
-  },
-  provider: {
-    team: 'Ecosystem',
-    title: 'Provider Lifecycle',
-    desc: 'Accelerate Terraform Provider development and release cycles',
-    benefits: ['Deliver quality providers in days not months', 'Comprehensive test coverage minimizes UX issues'],
-    metric: 'Months to Days',
-  },
-};
-
-// ── Animated counter ──
-function animateCounter(el) {
-  const from = parseInt(el.dataset.from);
-  const to = parseInt(el.dataset.to);
-  const suffix = el.dataset.suffix || '';
-  const duration = 1200;
-  const startTime = performance.now();
-
-  function update(now) {
-    const elapsed = now - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    // Ease out cubic
-    const eased = 1 - Math.pow(1 - progress, 3);
-    const current = Math.round(from + (to - from) * eased);
-    el.textContent = current + ' ' + suffix;
-    if (progress < 1) requestAnimationFrame(update);
-  }
-  requestAnimationFrame(update);
-}
-
-function resetCounter(el) {
-  el.textContent = '--';
-}
-
-// ── Card toggle ──
-function toggleCard(el) {
-  const wf = el.dataset.workflow;
-  if (state.expanded.has(wf)) {
-    state.expanded.delete(wf);
-    el.classList.remove('expanded');
-    el.querySelectorAll('.metric-counter').forEach(resetCounter);
-  } else {
-    state.expanded.add(wf);
-    el.classList.add('expanded');
-    // Delay counter animation to sync with expand
-    setTimeout(() => {
-      el.querySelectorAll('.metric-counter').forEach(animateCounter);
-    }, 200);
-  }
-  updatePresetButtons();
-  drawArrows();
-  updatePrompt();
-}
-
-function setExpanded(list) {
-  state.expanded = new Set(list);
-  document.querySelectorAll('.card').forEach(c => {
-    const shouldExpand = state.expanded.has(c.dataset.workflow);
-    const wasExpanded = c.classList.contains('expanded');
-    c.classList.toggle('expanded', shouldExpand);
-
-    if (shouldExpand && !wasExpanded) {
-      setTimeout(() => {
-        c.querySelectorAll('.metric-counter').forEach(animateCounter);
-      }, 200);
-    } else if (!shouldExpand) {
-      c.querySelectorAll('.metric-counter').forEach(resetCounter);
-    }
-  });
-  updatePresetButtons();
-  drawArrows();
-  updatePrompt();
-}
-
-function updatePresetButtons() {
-  document.querySelectorAll('.preset-btn').forEach(b => {
-    const p = b.dataset.preset;
-    let active = false;
-    if (p === 'overview') active = state.expanded.size === 0;
-    else if (p === 'all') active = state.expanded.size === 3;
-    else active = state.expanded.size === 1 && state.expanded.has(p);
-    b.classList.toggle('active', active);
-  });
-}
-
-document.querySelectorAll('.preset-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const p = btn.dataset.preset;
-    if (p === 'overview') setExpanded([]);
-    else if (p === 'all') setExpanded(['producer', 'consumer', 'provider']);
-    else setExpanded([p]);
-  });
-});
-
-// ── Animated SVG flow arrows ──
-let arrowAnimationId = null;
-
-function drawArrows() {
-  const svg = document.getElementById('flowSvg');
-  const cards = document.querySelectorAll('.card');
-  const rect = svg.getBoundingClientRect();
-
-  // Cancel previous arrow animation
-  if (arrowAnimationId) cancelAnimationFrame(arrowAnimationId);
-
-  svg.innerHTML = '';
-  if (cards.length < 2) return;
-
-  const ns = 'http://www.w3.org/2000/svg';
-  const anyExpanded = state.expanded.size > 0;
-
-  // Define gradients and markers
-  const defs = document.createElementNS(ns, 'defs');
-
-  // Animated gradient for the flow lines
-  const grad = document.createElementNS(ns, 'linearGradient');
-  grad.setAttribute('id', 'flowGrad');
-  grad.setAttribute('gradientUnits', 'userSpaceOnUse');
-
-  const stop1 = document.createElementNS(ns, 'stop');
-  stop1.setAttribute('offset', '0%');
-  stop1.setAttribute('stop-color', anyExpanded ? '#7b61ff' : '#7b61ff44');
-
-  const stop2 = document.createElementNS(ns, 'stop');
-  stop2.setAttribute('offset', '50%');
-  stop2.setAttribute('stop-color', anyExpanded ? '#a78bfa' : '#a78bfa44');
-
-  const stop3 = document.createElementNS(ns, 'stop');
-  stop3.setAttribute('offset', '100%');
-  stop3.setAttribute('stop-color', anyExpanded ? '#6366f1' : '#6366f144');
-
-  grad.appendChild(stop1);
-  grad.appendChild(stop2);
-  grad.appendChild(stop3);
-  defs.appendChild(grad);
-
-  // Glow filter
-  const filter = document.createElementNS(ns, 'filter');
-  filter.setAttribute('id', 'glow');
-  filter.setAttribute('x', '-50%');
-  filter.setAttribute('y', '-50%');
-  filter.setAttribute('width', '200%');
-  filter.setAttribute('height', '200%');
-  const feGaussian = document.createElementNS(ns, 'feGaussianBlur');
-  feGaussian.setAttribute('stdDeviation', anyExpanded ? '4' : '2');
-  feGaussian.setAttribute('result', 'coloredBlur');
-  const feMerge = document.createElementNS(ns, 'feMerge');
-  const feMergeNode1 = document.createElementNS(ns, 'feMergeNode');
-  feMergeNode1.setAttribute('in', 'coloredBlur');
-  const feMergeNode2 = document.createElementNS(ns, 'feMergeNode');
-  feMergeNode2.setAttribute('in', 'SourceGraphic');
-  feMerge.appendChild(feMergeNode1);
-  feMerge.appendChild(feMergeNode2);
-  filter.appendChild(feGaussian);
-  filter.appendChild(feMerge);
-  defs.appendChild(filter);
-
-  // Arrowhead marker
-  const marker = document.createElementNS(ns, 'marker');
-  marker.setAttribute('id', 'arrowhead');
-  marker.setAttribute('markerWidth', '12');
-  marker.setAttribute('markerHeight', '8');
-  marker.setAttribute('refX', '11');
-  marker.setAttribute('refY', '4');
-  marker.setAttribute('orient', 'auto');
-  const poly = document.createElementNS(ns, 'polygon');
-  poly.setAttribute('points', '0 0, 12 4, 0 8');
-  poly.setAttribute('fill', anyExpanded ? '#a78bfa' : '#7b61ff44');
-  marker.appendChild(poly);
-  defs.appendChild(marker);
-  svg.appendChild(defs);
-
-  const pairs = [[0, 1], [1, 2]];
-  pairs.forEach(([i, j], idx) => {
-    const a = cards[i].getBoundingClientRect();
-    const b = cards[j].getBoundingClientRect();
-    const x1 = a.right - rect.left;
-    const y1 = a.top + a.height / 2 - rect.top;
-    const x2 = b.left - rect.left;
-    const y2 = b.top + b.height / 2 - rect.top;
-
-    // Curved path instead of straight line
-    const midX = (x1 + x2) / 2;
-    const curveOffset = 0;
-    const pathD = `M ${x1} ${y1} C ${midX} ${y1 + curveOffset}, ${midX} ${y2 + curveOffset}, ${x2} ${y2}`;
-
-    // Glow path (thicker, blurred)
-    const glowPath = document.createElementNS(ns, 'path');
-    glowPath.setAttribute('d', pathD);
-    glowPath.setAttribute('fill', 'none');
-    glowPath.setAttribute('stroke', anyExpanded ? 'rgba(123, 97, 255, 0.15)' : 'rgba(123, 97, 255, 0.05)');
-    glowPath.setAttribute('stroke-width', anyExpanded ? '8' : '4');
-    glowPath.setAttribute('filter', 'url(#glow)');
-    svg.appendChild(glowPath);
-
-    // Main dashed path
-    const mainPath = document.createElementNS(ns, 'path');
-    mainPath.setAttribute('d', pathD);
-    mainPath.setAttribute('fill', 'none');
-    mainPath.setAttribute('stroke', 'url(#flowGrad)');
-    mainPath.setAttribute('stroke-width', anyExpanded ? '2.5' : '1.5');
-    mainPath.setAttribute('stroke-dasharray', anyExpanded ? '12 6' : '8 6');
-    mainPath.setAttribute('marker-end', 'url(#arrowhead)');
-    mainPath.setAttribute('stroke-linecap', 'round');
-    svg.appendChild(mainPath);
-
-    // Animated pulse dot travelling along the path
-    if (anyExpanded) {
-      const pathLength = mainPath.getTotalLength ? mainPath.getTotalLength() : 200;
-
-      const circle = document.createElementNS(ns, 'circle');
-      circle.setAttribute('r', '4');
-      circle.setAttribute('fill', '#a78bfa');
-      circle.setAttribute('filter', 'url(#glow)');
-      circle.setAttribute('opacity', '0.9');
-
-      // Use SMIL animation for the pulse dot along the path
-      const animMotion = document.createElementNS(ns, 'animateMotion');
-      animMotion.setAttribute('dur', '2.5s');
-      animMotion.setAttribute('repeatCount', 'indefinite');
-      animMotion.setAttribute('begin', (idx * 0.8) + 's');
-
-      const mpath = document.createElementNS(ns, 'mpath');
-      mainPath.setAttribute('id', 'flowPath' + idx);
-      mpath.setAttributeNS('http://www.w3.org/1999/xlink', 'href', '#flowPath' + idx);
-      animMotion.appendChild(mpath);
-      circle.appendChild(animMotion);
-
-      // Pulse the opacity
-      const animOpacity = document.createElementNS(ns, 'animate');
-      animOpacity.setAttribute('attributeName', 'opacity');
-      animOpacity.setAttribute('values', '0;0.9;0.9;0');
-      animOpacity.setAttribute('dur', '2.5s');
-      animOpacity.setAttribute('repeatCount', 'indefinite');
-      animOpacity.setAttribute('begin', (idx * 0.8) + 's');
-      circle.appendChild(animOpacity);
-
-      // Pulse the size
-      const animR = document.createElementNS(ns, 'animate');
-      animR.setAttribute('attributeName', 'r');
-      animR.setAttribute('values', '2;4;4;2');
-      animR.setAttribute('dur', '2.5s');
-      animR.setAttribute('repeatCount', 'indefinite');
-      animR.setAttribute('begin', (idx * 0.8) + 's');
-      circle.appendChild(animR);
-
-      svg.appendChild(circle);
-    }
-  });
-
-  // Animate dash offset for flow effect
-  if (anyExpanded) {
-    let offset = 0;
-    function animateDash() {
-      offset -= 0.5;
-      svg.querySelectorAll('path[stroke-dasharray]').forEach(p => {
-        p.setAttribute('stroke-dashoffset', offset);
-      });
-      arrowAnimationId = requestAnimationFrame(animateDash);
-    }
-    arrowAnimationId = requestAnimationFrame(animateDash);
-  }
-}
-
-function updatePrompt() {
-  const el = document.getElementById('promptText');
-  if (state.expanded.size === 0) {
-    el.textContent = 'Agentic IaC Workflows overview: Three interconnected workflows \u2014 Producer (Platform Team), Consumer (Application Team), and Provider (Ecosystem) \u2014 that use AI-driven agents to accelerate Terraform infrastructure delivery, reduce risk, and compress development timelines.';
-    return;
-  }
-
-  const parts = [];
-  for (const key of ['producer', 'consumer', 'provider']) {
-    if (!state.expanded.has(key)) continue;
-    const w = WORKFLOWS[key];
-    parts.push(`${w.title} (${w.team}): ${w.desc}. Key benefits: ${w.benefits.join('; ')}. Acceleration: ${w.metric}.`);
-  }
-
-  const focused = state.expanded.size < 3
-    ? `Focusing on ${state.expanded.size === 1 ? 'the' : 'these'} workflow${state.expanded.size > 1 ? 's' : ''}:\n\n`
-    : 'All three Agentic IaC Workflows:\n\n';
-
-  el.textContent = focused + parts.join('\n\n');
-}
-
-function copyPrompt() {
-  const text = document.getElementById('promptText').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.querySelector('.copy-btn');
-    btn.textContent = 'Copied!';
-    setTimeout(() => btn.textContent = 'Copy', 1500);
-  });
-}
-
-// Initial state
-updatePrompt();
-updatePresetButtons();
-window.addEventListener('resize', drawArrows);
-requestAnimationFrame(drawArrows);
-</script>
 </body>
 </html>

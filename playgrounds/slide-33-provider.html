@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Provider Workflow Overview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+
+  /* Section label */
+  .section-label {
+    padding: 48px 80px 0;
+  }
+  .section-label span {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 3px; color: #FFCF25;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 12px 80px 0;
+  }
+  .title-bar h1 {
+    font-size: 36px; font-weight: 600; color: #DC477D;
+    letter-spacing: -0.02em;
+  }
+  .title-bar p {
+    font-size: 20px; font-weight: 400; color: #82748C; margin-top: 6px;
+  }
+
+  /* Content area */
+  .content {
+    display: flex; gap: 60px; padding: 48px 80px 0;
+    align-items: flex-start;
+  }
+
+  /* Left: bullets */
+  .bullets {
+    width: 42%; display: flex; flex-direction: column; gap: 28px;
+    padding-top: 16px;
+  }
+  .bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .bullet-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #DC477D; flex-shrink: 0;
+    margin-top: 8px;
+  }
+  .bullet-text {
+    font-size: 22px; font-weight: 400; color: #CCCCCC; line-height: 1.5;
+  }
+  .bullet-text strong {
+    color: #FFFFFF; font-weight: 600;
+  }
+  .bullet-text code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 18px; color: #DC477D;
+    background: rgba(220,71,125,0.08); padding: 2px 8px; border-radius: 4px;
+  }
+
+  /* Right: visual */
+  .visual {
+    width: 58%;
+  }
+
+  /* Agent flow diagram */
+  .flow-label {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 1.5px; color: #82748C; margin-bottom: 20px;
+  }
+
+  .agent-flow {
+    display: flex; flex-direction: column; gap: 0;
+    align-items: center;
+  }
+
+  .agent-node {
+    width: 340px; padding: 18px 24px; border-radius: 12px;
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .agent-num {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(220,71,125,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 600; color: #DC477D;
+    flex-shrink: 0;
+  }
+  .agent-info {
+    display: flex; flex-direction: column; gap: 2px;
+  }
+  .agent-name {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 16px; font-weight: 600; color: #DC477D;
+  }
+  .agent-role {
+    font-size: 14px; font-weight: 400; color: #82748C;
+  }
+
+  .flow-connector {
+    width: 2px; height: 20px;
+    background: rgba(220,71,125,0.25);
+    position: relative;
+  }
+  .flow-connector::after {
+    content: '';
+    position: absolute; bottom: -4px; left: -3px;
+    width: 0; height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid rgba(220,71,125,0.4);
+  }
+
+  /* Phase bar */
+  .phase-bar {
+    display: flex; gap: 2px; margin-top: 32px;
+    width: 340px;
+  }
+  .phase-segment {
+    flex: 1; padding: 10px 0; text-align: center;
+    font-size: 14px; font-weight: 500; letter-spacing: 0.5px;
+    border-radius: 6px;
+  }
+  .phase-segment.p1 { background: rgba(220,71,125,0.1); color: #DC477D; }
+  .phase-segment.p2 { background: rgba(167,139,250,0.1); color: #A78BFA; }
+  .phase-segment.p3 { background: rgba(96,222,169,0.1); color: #60DEA9; }
+  .phase-segment.p4 { background: rgba(255,207,37,0.1); color: #FFCF25; }
+
+  /* Complexity badge */
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 18px; border-radius: 20px;
+    background: rgba(220,71,125,0.08);
+    border: 1px solid rgba(220,71,125,0.2);
+    font-size: 16px; font-weight: 500; color: #DC477D;
+    margin-top: 24px;
+  }
+  .badge-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #DC477D;
+  }
+
+  /* Footer */
+  .footer {
+    position: absolute; bottom: 48px; left: 80px; right: 80px;
+    text-align: center;
+  }
+  .footer p {
+    font-size: 20px; font-weight: 400; color: #82748C;
+  }
+  .footer .pink { color: #DC477D; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="section-label">
+  <span>WORKFLOWS</span>
+</div>
+
+<div class="title-bar">
+  <h1>Provider Workflow Overview</h1>
+  <p>Most complex workflow -- build Terraform providers with Go and the Plugin Framework</p>
+</div>
+
+<div class="content">
+  <div class="bullets">
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Go Plugin Framework</strong> -- modern provider development, not SDKv2</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Per-resource design docs</strong> -- <code>provider-design-{resource}.md</code> covers schema, CRUD, and state</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Acceptance tests with real APIs</strong> -- <code>go test -run TestAcc</code> validates against live cloud infrastructure</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Test stubs before code</strong> -- Go test stubs compile from day one via <code>t.Skip</code></div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Constitution-governed</strong> -- <code>provider-constitution.md</code> governs all generated code</div>
+    </div>
+  </div>
+
+  <div class="visual">
+    <div class="flow-label">5 Agents -- Sequential Pipeline</div>
+    <div class="agent-flow">
+      <div class="agent-node">
+        <div class="agent-num">1</div>
+        <div class="agent-info">
+          <div class="agent-name">tf-provider-research</div>
+          <div class="agent-role">API docs, framework patterns (x3-4 concurrent)</div>
+        </div>
+      </div>
+      <div class="flow-connector"></div>
+      <div class="agent-node">
+        <div class="agent-num">2</div>
+        <div class="agent-info">
+          <div class="agent-name">tf-provider-design</div>
+          <div class="agent-role">Schema, CRUD, state mapping, test strategy</div>
+        </div>
+      </div>
+      <div class="flow-connector"></div>
+      <div class="agent-node">
+        <div class="agent-num">3</div>
+        <div class="agent-info">
+          <div class="agent-name">tf-provider-test-writer</div>
+          <div class="agent-role">Go test stubs with t.Skip placeholders</div>
+        </div>
+      </div>
+      <div class="flow-connector"></div>
+      <div class="agent-node">
+        <div class="agent-num">4</div>
+        <div class="agent-info">
+          <div class="agent-name">tf-provider-developer</div>
+          <div class="agent-role">CRUD implementation, iterates per method</div>
+        </div>
+      </div>
+      <div class="flow-connector"></div>
+      <div class="agent-node">
+        <div class="agent-num">5</div>
+        <div class="agent-info">
+          <div class="agent-name">tf-provider-validator</div>
+          <div class="agent-role">Acceptance tests, code review, PR creation</div>
+        </div>
+      </div>
+
+      <div class="phase-bar">
+        <div class="phase-segment p1">P1 Clarify</div>
+        <div class="phase-segment p2">P2 Design</div>
+        <div class="phase-segment p3">P3 Build</div>
+        <div class="phase-segment p4">P4 Validate</div>
+      </div>
+
+      <div class="badge">
+        <div class="badge-dot"></div>
+        Advanced -- 5 agents, 4 phases, TDD
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p><span class="pink">Most complex workflow</span> -- 5 specialized agents orchestrate the full lifecycle from API research to validated pull request</p>
+</div>
+
+</body>
+</html>

@@ -2,725 +2,144 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Slide 04 - Agentic IaC Workflows</title>
+<meta name="viewport" content="width=1920">
+<title>Agentic IaC Workflows</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: #0a0a12;
-    color: #e0e0e8;
-    width: 1920px;
-    height: 1080px;
-    overflow: hidden;
-    position: relative;
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
   }
 
-  /* -- Dot grid overlay -- */
   body::before {
     content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background-image:
-      radial-gradient(rgba(123, 97, 255, 0.07) 1px, transparent 1px);
-    background-size: 32px 32px;
-    mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 100%);
-    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, black 30%, transparent 100%);
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none; z-index: 0;
   }
-
-  /* -- Static gradient orbs -- */
-  .orb {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .orb-1 {
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(123, 97, 255, 0.13) 0%, transparent 70%);
-    top: -150px; left: -120px;
-  }
-  .orb-2 {
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(96, 165, 250, 0.11) 0%, transparent 70%);
-    bottom: -120px; right: 6%;
-  }
-  .orb-3 {
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(94, 234, 212, 0.08) 0%, transparent 70%);
-    top: 30%; right: -80px;
-  }
-  .orb-4 {
-    width: 350px; height: 350px;
-    background: radial-gradient(circle, rgba(139, 92, 246, 0.07) 0%, transparent 70%);
-    bottom: 15%; left: 20%;
-  }
-
-  /* -- Header -- */
-  .header {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-    padding: 28px 40px 14px;
-    border-bottom: 1px solid rgba(123, 97, 255, 0.1);
-    background: linear-gradient(180deg, rgba(123, 97, 255, 0.04) 0%, transparent 100%);
-  }
-  .header h1 {
-    font-size: 2.2rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #7b61ff, #a78bfa);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 5px;
-    letter-spacing: -0.02em;
-  }
-  .header p {
-    color: #8888a0;
-    font-size: 0.9rem;
-    letter-spacing: 0.02em;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  /* -- Phase flow bar -- */
-  .phase-bar {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    padding: 16px 64px 10px;
-  }
-  .phase-item {
-    display: flex;
-    align-items: center;
-    gap: 0;
-  }
-  .phase-pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 22px;
-    border-radius: 10px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-  }
-  .phase-num {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 0.7rem;
-    font-weight: 700;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-  }
-  .phase-arrow {
-    color: #4a4a64;
-    font-size: 1.2rem;
-    margin: 0 6px;
-    flex-shrink: 0;
-  }
-  .phase-clarify .phase-pill {
-    background: rgba(123, 97, 255, 0.12);
-    border: 1px solid rgba(123, 97, 255, 0.25);
-    color: #a78bfa;
-  }
-  .phase-clarify .phase-num {
-    background: rgba(123, 97, 255, 0.3);
-    color: #d4c4ff;
-  }
-  .phase-design .phase-pill {
-    background: rgba(96, 165, 250, 0.12);
-    border: 1px solid rgba(96, 165, 250, 0.25);
-    color: #60a5fa;
-  }
-  .phase-design .phase-num {
-    background: rgba(96, 165, 250, 0.3);
-    color: #bfdbfe;
-  }
-  .phase-implement .phase-pill {
-    background: rgba(94, 234, 212, 0.10);
-    border: 1px solid rgba(94, 234, 212, 0.22);
-    color: #5eead4;
-  }
-  .phase-implement .phase-num {
-    background: rgba(94, 234, 212, 0.25);
-    color: #ccfbf1;
-  }
-  .phase-validate .phase-pill {
-    background: rgba(251, 191, 36, 0.10);
-    border: 1px solid rgba(251, 191, 36, 0.22);
-    color: #fbbf24;
-  }
-  .phase-validate .phase-num {
-    background: rgba(251, 191, 36, 0.25);
-    color: #fef3c7;
-  }
-  .phase-desc {
-    font-size: 0.68rem;
-    font-weight: 400;
-    opacity: 0.7;
-    margin-left: 2px;
-  }
-
-  /* -- Main layout -- */
-  .main {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 10px 48px 0;
-  }
-
-  /* -- Cards container -- */
-  .cards {
-    display: flex;
-    gap: 24px;
-    width: 100%;
-  }
-
-  /* -- Glass card -- */
-  .card {
-    flex: 1;
-    background: rgba(22, 22, 34, 0.65);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(123, 97, 255, 0.15);
-    border-radius: 16px;
-    padding: 18px 20px 16px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* -- Top accent bar -- */
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-  }
-  .card-module::before {
-    background: linear-gradient(90deg, #7b61ff, #a78bfa, #7b61ff);
-  }
-  .card-consumer::before {
-    background: linear-gradient(90deg, #60a5fa, #93c5fd, #60a5fa);
-  }
-  .card-provider::before {
-    background: linear-gradient(90deg, #5eead4, #99f6e4, #5eead4);
-  }
-
-  /* -- Inner glow -- */
-  .card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    pointer-events: none;
-  }
-  .card-module::after {
-    background: radial-gradient(ellipse at 50% 0%, rgba(123, 97, 255, 0.06), transparent 60%);
-  }
-  .card-consumer::after {
-    background: radial-gradient(ellipse at 50% 0%, rgba(96, 165, 250, 0.06), transparent 60%);
-  }
-  .card-provider::after {
-    background: radial-gradient(ellipse at 50% 0%, rgba(94, 234, 212, 0.06), transparent 60%);
-  }
-
-  .card-inner {
-    position: relative;
-    z-index: 1;
-  }
-
-  /* -- Card header row -- */
-  .card-header-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
-  }
-  .card-icon-wrap {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    flex-shrink: 0;
-  }
-  .card-module .card-icon-wrap {
-    background: linear-gradient(135deg, rgba(123, 97, 255, 0.22), rgba(123, 97, 255, 0.08));
-    border: 1px solid rgba(123, 97, 255, 0.20);
-  }
-  .card-consumer .card-icon-wrap {
-    background: linear-gradient(135deg, rgba(96, 165, 250, 0.22), rgba(96, 165, 250, 0.08));
-    border: 1px solid rgba(96, 165, 250, 0.20);
-  }
-  .card-provider .card-icon-wrap {
-    background: linear-gradient(135deg, rgba(94, 234, 212, 0.22), rgba(94, 234, 212, 0.08));
-    border: 1px solid rgba(94, 234, 212, 0.20);
-  }
-  .card-icon {
-    font-size: 1.2rem;
-    line-height: 1;
-  }
-  .card-header-text {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-  .card-team {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 1.8px;
-    font-weight: 600;
-  }
-  .card-module .card-team { color: #a78bfa; }
-  .card-consumer .card-team { color: #60a5fa; }
-  .card-provider .card-team { color: #5eead4; }
-
-  .card-title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #ebebf5;
-    letter-spacing: -0.01em;
-  }
-
-  .card-desc {
-    font-size: 0.78rem;
-    color: #8888a0;
-    line-height: 1.45;
-    margin-bottom: 10px;
-  }
-
-  /* -- Divider -- */
-  .detail-divider {
-    height: 1px;
-    border: none;
-    margin: 0 0 10px;
-  }
-  .card-module .detail-divider {
-    background: linear-gradient(90deg, transparent, rgba(123, 97, 255, 0.25), transparent);
-  }
-  .card-consumer .detail-divider {
-    background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.25), transparent);
-  }
-  .card-provider .detail-divider {
-    background: linear-gradient(90deg, transparent, rgba(94, 234, 212, 0.25), transparent);
-  }
-
-  /* -- Section labels -- */
-  .section-label {
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    letter-spacing: 1.8px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    opacity: 0.75;
-  }
-  .card-module .section-label { color: #a78bfa; }
-  .card-consumer .section-label { color: #60a5fa; }
-  .card-provider .section-label { color: #5eead4; }
-
-  .section-label::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-  }
-  .card-module .section-label::after {
-    background: linear-gradient(90deg, rgba(123, 97, 255, 0.20), transparent);
-  }
-  .card-consumer .section-label::after {
-    background: linear-gradient(90deg, rgba(96, 165, 250, 0.20), transparent);
-  }
-  .card-provider .section-label::after {
-    background: linear-gradient(90deg, rgba(94, 234, 212, 0.20), transparent);
-  }
-
-  /* -- Skill tags -- */
-  .skill-row {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-  }
-  .skill-tag {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 0.68rem;
-    padding: 3px 9px;
-    border-radius: 6px;
-    font-weight: 500;
-  }
-  .card-module .skill-tag {
-    background: rgba(123, 97, 255, 0.12);
-    border: 1px solid rgba(123, 97, 255, 0.2);
-    color: #c4b5fd;
-  }
-  .card-consumer .skill-tag {
-    background: rgba(96, 165, 250, 0.12);
-    border: 1px solid rgba(96, 165, 250, 0.2);
-    color: #93c5fd;
-  }
-  .card-provider .skill-tag {
-    background: rgba(94, 234, 212, 0.12);
-    border: 1px solid rgba(94, 234, 212, 0.2);
-    color: #99f6e4;
-  }
-  .skill-phase {
-    font-size: 0.58rem;
-    color: #6a6a84;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    margin-left: 2px;
-  }
-
-  /* -- Agent list -- */
-  .agent-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 8px;
-    margin-bottom: 10px;
-  }
-  .agent-tag {
-    font-family: 'SF Mono', 'Fira Code', monospace;
-    font-size: 0.62rem;
-    color: #8888a0;
-    padding: 2px 7px;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  /* -- Key differentiator -- */
-  .key-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 6px;
-    font-size: 0.76rem;
-    color: #b0b0cc;
-    line-height: 1.4;
-  }
-  .key-icon {
-    width: 18px;
-    height: 18px;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 0.6rem;
-    margin-top: 1px;
-    color: #e0e0e8;
-  }
-  .card-module .key-icon {
-    background: linear-gradient(135deg, rgba(123, 97, 255, 0.22), rgba(123, 97, 255, 0.08));
-    border: 1px solid rgba(123, 97, 255, 0.15);
-  }
-  .card-consumer .key-icon {
-    background: linear-gradient(135deg, rgba(96, 165, 250, 0.22), rgba(96, 165, 250, 0.08));
-    border: 1px solid rgba(96, 165, 250, 0.15);
-  }
-  .card-provider .key-icon {
-    background: linear-gradient(135deg, rgba(94, 234, 212, 0.22), rgba(94, 234, 212, 0.08));
-    border: 1px solid rgba(94, 234, 212, 0.15);
-  }
-
-  /* -- Output badge -- */
-  .output-badge {
-    margin-top: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 9px 14px;
-    border-radius: 10px;
-  }
-  .card-module .output-badge {
-    background: linear-gradient(135deg, rgba(123, 97, 255, 0.10), rgba(123, 97, 255, 0.03));
-    border: 1px solid rgba(123, 97, 255, 0.18);
-  }
-  .card-consumer .output-badge {
-    background: linear-gradient(135deg, rgba(96, 165, 250, 0.10), rgba(96, 165, 250, 0.03));
-    border: 1px solid rgba(96, 165, 250, 0.18);
-  }
-  .card-provider .output-badge {
-    background: linear-gradient(135deg, rgba(94, 234, 212, 0.10), rgba(94, 234, 212, 0.03));
-    border: 1px solid rgba(94, 234, 212, 0.18);
-  }
-  .output-icon {
-    font-size: 1rem;
-    flex-shrink: 0;
-  }
-  .output-content {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-  }
-  .output-label {
-    font-size: 0.56rem;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    font-weight: 600;
-  }
-  .card-module .output-label { color: rgba(167, 139, 250, 0.7); }
-  .card-consumer .output-label { color: rgba(96, 165, 250, 0.7); }
-  .card-provider .output-label { color: rgba(94, 234, 212, 0.7); }
-
-  .output-text {
-    font-size: 0.76rem;
-    font-weight: 600;
-  }
-  .card-module .output-text { color: #a78bfa; }
-  .card-consumer .output-text { color: #60a5fa; }
-  .card-provider .output-text { color: #5eead4; }
-
-  /* -- Bottom summary bar -- */
-  .summary-bar {
-    position: relative;
-    z-index: 1;
-    padding: 14px 48px 0;
-  }
-  .summary-text {
-    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
-    font-size: 0.8rem;
-    color: #8888a0;
-    line-height: 1.5;
-    background: linear-gradient(165deg, rgba(16, 16, 24, 0.8), rgba(12, 12, 20, 0.9));
-    border: 1px solid rgba(123, 97, 255, 0.08);
-    border-radius: 12px;
-    padding: 12px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 32px;
-  }
-  .summary-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .summary-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .summary-dot-purple { background: #7b61ff; }
-  .summary-dot-blue { background: #60a5fa; }
-  .summary-dot-teal { background: #5eead4; }
 </style>
 </head>
 <body>
 
-<!-- Static gradient orbs -->
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
-<div class="orb orb-4"></div>
+<div class="slide" style="width:1920px;height:1080px;padding:60px 80px;display:flex;flex-direction:column;position:relative;z-index:1;">
 
-<!-- Header -->
-<div class="header">
-  <h1>Agentic IaC Workflows</h1>
-  <p>Three parallel workflows &mdash; each following Clarify &rarr; Design &rarr; Implement &rarr; Validate</p>
-</div>
-
-<!-- Phase flow bar -->
-<div class="phase-bar">
-  <div class="phase-item phase-clarify">
-    <div class="phase-pill">
-      <span class="phase-num">1</span>
-      Clarify
-      <span class="phase-desc">Env validation, research, questions</span>
-    </div>
+  <div class="header" style="margin-bottom:40px;">
+    <div style="font-size:12px;font-weight:500;color:#FFCF25;text-transform:uppercase;letter-spacing:3px;margin-bottom:12px;font-family:'Inter Medium','Inter',Arial,sans-serif;">AGENTIC IAC WORKFLOWS</div>
+    <h1 style="font-size:34px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Agentic IaC Workflows</h1>
+    <div style="font-size:20px;color:#CCCCCC;">Three workflow tiers scaling from simple consumption to provider development</div>
   </div>
-  <span class="phase-arrow">&rarr;</span>
-  <div class="phase-item phase-design">
-    <div class="phase-pill">
-      <span class="phase-num">2</span>
-      Design
-      <span class="phase-desc">design.md, user approval gate</span>
-    </div>
-  </div>
-  <span class="phase-arrow">&rarr;</span>
-  <div class="phase-item phase-implement">
-    <div class="phase-pill">
-      <span class="phase-num">3</span>
-      Implement
-      <span class="phase-desc">TDD, developer agents, validation</span>
-    </div>
-  </div>
-  <span class="phase-arrow">&rarr;</span>
-  <div class="phase-item phase-validate">
-    <div class="phase-pill">
-      <span class="phase-num">4</span>
-      Validate
-      <span class="phase-desc">fmt, test, tflint, trivy, PR</span>
-    </div>
-  </div>
-</div>
 
-<!-- Main content -->
-<div class="main">
-  <div class="cards">
+  <div class="content" style="flex:1;display:flex;gap:40px;align-items:stretch;">
 
-    <!-- Module Authoring Card -->
-    <div class="card card-module">
-      <div class="card-inner">
-        <div class="card-header-row">
-          <div class="card-icon-wrap"><span class="card-icon">&#x1F3D7;&#xFE0F;</span></div>
-          <div class="card-header-text">
-            <div class="card-team">Platform Team</div>
-            <div class="card-title">Module Authoring</div>
-          </div>
-        </div>
-        <div class="card-desc">Creating raw Terraform modules with secure defaults, published to Private Module Registry</div>
-        <hr class="detail-divider">
+    <!-- Column 1: Consumer -->
+    <div style="flex:1;display:flex;flex-direction:column;border-radius:12px;background:linear-gradient(180deg,#121212 0%,#000000 100%);padding:36px 32px;box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(96,222,169,0.15);">
 
-        <div class="section-label">Orchestrator Skills</div>
-        <div class="skill-row">
-          <span class="skill-tag">/tf-module-plan <span class="skill-phase">(Clarify + Design)</span></span>
-          <span class="skill-tag">/tf-module-implement <span class="skill-phase">(Build + Validate)</span></span>
-        </div>
+      <!-- Header area -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div style="font-size:12px;font-weight:500;color:#60DEA9;text-transform:uppercase;letter-spacing:3px;font-family:'Inter Medium','Inter',Arial,sans-serif;">Consumer</div>
+      </div>
 
-        <div class="section-label">Agents</div>
-        <div class="agent-list">
-          <span class="agent-tag">tf-module-research</span>
-          <span class="agent-tag">tf-module-design</span>
-          <span class="agent-tag">tf-module-test-writer</span>
-          <span class="agent-tag">tf-module-developer</span>
-        </div>
+      <div style="font-size:20px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Module Consumption</div>
+      <div style="font-size:20px;color:#CCCCCC;margin-bottom:28px;">Application teams deploy infrastructure from private registry modules</div>
 
-        <div class="section-label">Key Differentiator</div>
-        <div class="key-item">
-          <span class="key-icon">&#x2713;</span>
-          <span>TDD with <code style="font-family:'SF Mono','Fira Code',monospace;font-size:0.72rem;background:rgba(123,97,255,0.1);padding:1px 5px;border-radius:3px;color:#c4b5fd;">.tftest.hcl</code>, security baselines from line 1</span>
-        </div>
+      <!-- Agent roles -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:500;color:#60DEA9;padding:6px 14px;border-radius:6px;background:rgba(96,222,169,0.10);border:1px solid rgba(96,222,169,0.25);">Research</div>
+        <div style="font-size:14px;font-weight:500;color:#60DEA9;padding:6px 14px;border-radius:6px;background:rgba(96,222,169,0.10);border:1px solid rgba(96,222,169,0.25);">Design</div>
+        <div style="font-size:14px;font-weight:500;color:#60DEA9;padding:6px 14px;border-radius:6px;background:rgba(96,222,169,0.10);border:1px solid rgba(96,222,169,0.25);">Developer</div>
+        <div style="font-size:14px;font-weight:500;color:#60DEA9;padding:6px 14px;border-radius:6px;background:rgba(96,222,169,0.10);border:1px solid rgba(96,222,169,0.25);">Validator</div>
+        <div style="font-size:16px;color:#82748C;padding:6px 0 6px 6px;">4 agents</div>
+      </div>
 
-        <div class="output-badge">
-          <span class="output-icon">&#x1F4E6;</span>
-          <div class="output-content">
-            <span class="output-label">Output</span>
-            <span class="output-text">Reusable modules &rarr; Private Module Registry</span>
-          </div>
-        </div>
+      <!-- Bullets -->
+      <div style="display:flex;flex-direction:column;gap:16px;flex:1;">
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#60DEA9;">Compose</span> — from private registry modules with secure defaults</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#60DEA9;">Deploy</span> — infrastructure via natural language prompts</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#60DEA9;">Validate</span> — automatic compliance and security checks</div>
+      </div>
+
+      <!-- Metric -->
+      <div style="margin-top:24px;padding:14px 18px;border-radius:10px;background:rgba(96,222,169,0.06);box-shadow:0 2px 12px rgba(0,0,0,0.4);display:flex;align-items:center;gap:12px;">
+        <div style="font-size:11px;color:#82748C;text-transform:uppercase;letter-spacing:3px;font-weight:500;font-family:'Inter Medium','Inter',Arial,sans-serif;">Compliance</div>
+        <div style="margin-left:auto;font-size:18px;font-weight:600;color:#60DEA9;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Risk &#8594; 100%</div>
       </div>
     </div>
 
-    <!-- Consumer Provisioning Card -->
-    <div class="card card-consumer">
-      <div class="card-inner">
-        <div class="card-header-row">
-          <div class="card-icon-wrap"><span class="card-icon">&#x1F680;</span></div>
-          <div class="card-header-text">
-            <div class="card-team">Application Team</div>
-            <div class="card-title">Consumer Provisioning</div>
-          </div>
-        </div>
-        <div class="card-desc">Composing infrastructure from private registry modules, deployed via HCP Terraform</div>
-        <hr class="detail-divider">
+    <!-- Column 2: Module -->
+    <div style="flex:1;display:flex;flex-direction:column;border-radius:12px;background:linear-gradient(180deg,#121212 0%,#000000 100%);padding:36px 32px;box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(167,139,250,0.15);">
 
-        <div class="section-label">Orchestrator Skills</div>
-        <div class="skill-row">
-          <span class="skill-tag">/tf-consumer-plan <span class="skill-phase">(Clarify + Design)</span></span>
-          <span class="skill-tag">/tf-consumer-implement <span class="skill-phase">(Build + Validate)</span></span>
-        </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div style="font-size:12px;font-weight:500;color:#A78BFA;text-transform:uppercase;letter-spacing:3px;font-family:'Inter Medium','Inter',Arial,sans-serif;">Module</div>
+      </div>
 
-        <div class="section-label">Agents</div>
-        <div class="agent-list">
-          <span class="agent-tag">tf-consumer-research</span>
-          <span class="agent-tag">tf-consumer-design</span>
-          <span class="agent-tag">tf-consumer-developer</span>
-        </div>
+      <div style="font-size:20px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Module Authoring</div>
+      <div style="font-size:20px;color:#CCCCCC;margin-bottom:28px;">Platform teams build reusable Terraform modules with TDD</div>
 
-        <div class="section-label">Key Differentiator</div>
-        <div class="key-item">
-          <span class="key-icon">&#x2713;</span>
-          <span>Module-first (NO raw resources), sandbox deployment validation</span>
-        </div>
+      <!-- Agent roles -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:500;color:#A78BFA;padding:6px 14px;border-radius:6px;background:rgba(167,139,250,0.10);border:1px solid rgba(167,139,250,0.25);">Research</div>
+        <div style="font-size:14px;font-weight:500;color:#A78BFA;padding:6px 14px;border-radius:6px;background:rgba(167,139,250,0.10);border:1px solid rgba(167,139,250,0.25);">Design</div>
+        <div style="font-size:14px;font-weight:500;color:#A78BFA;padding:6px 14px;border-radius:6px;background:rgba(167,139,250,0.10);border:1px solid rgba(167,139,250,0.25);">Test Writer</div>
+        <div style="font-size:14px;font-weight:500;color:#A78BFA;padding:6px 14px;border-radius:6px;background:rgba(167,139,250,0.10);border:1px solid rgba(167,139,250,0.25);">Developer</div>
+        <div style="font-size:14px;font-weight:500;color:#A78BFA;padding:6px 14px;border-radius:6px;background:rgba(167,139,250,0.10);border:1px solid rgba(167,139,250,0.25);">Validator</div>
+        <div style="font-size:16px;color:#82748C;padding:6px 0 6px 6px;">5 agents</div>
+      </div>
 
-        <div class="output-badge">
-          <span class="output-icon">&#x2601;&#xFE0F;</span>
-          <div class="output-content">
-            <span class="output-label">Output</span>
-            <span class="output-text">Workspace configs &rarr; HCP Terraform</span>
-          </div>
-        </div>
+      <!-- Bullets -->
+      <div style="display:flex;flex-direction:column;gap:16px;flex:1;">
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#A78BFA;">Research</span> — provider docs, registry patterns, security baselines</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#A78BFA;">TDD</span> — terraform test ensures security defaults from day one</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#A78BFA;">Output</span> — production-ready module with docs and examples</div>
+      </div>
+
+      <!-- Metric -->
+      <div style="margin-top:24px;padding:14px 18px;border-radius:10px;background:rgba(167,139,250,0.06);box-shadow:0 2px 12px rgba(0,0,0,0.4);display:flex;align-items:center;gap:12px;">
+        <div style="font-size:11px;color:#82748C;text-transform:uppercase;letter-spacing:3px;font-weight:500;font-family:'Inter Medium','Inter',Arial,sans-serif;">Acceleration</div>
+        <div style="margin-left:auto;font-size:18px;font-weight:600;color:#A78BFA;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Weeks &#8594; Hours</div>
       </div>
     </div>
 
-    <!-- Provider Development Card -->
-    <div class="card card-provider">
-      <div class="card-inner">
-        <div class="card-header-row">
-          <div class="card-icon-wrap"><span class="card-icon">&#x1F310;</span></div>
-          <div class="card-header-text">
-            <div class="card-team">Ecosystem</div>
-            <div class="card-title">Provider Development</div>
-          </div>
-        </div>
-        <div class="card-desc">Building Terraform provider resources using Plugin Framework (Go) with CRUD operations</div>
-        <hr class="detail-divider">
+    <!-- Column 3: Provider -->
+    <div style="flex:1;display:flex;flex-direction:column;border-radius:12px;background:linear-gradient(180deg,#121212 0%,#000000 100%);padding:36px 32px;box-shadow:0 2px 12px rgba(0,0,0,0.4),inset 0 1px 0 rgba(220,71,125,0.15);">
 
-        <div class="section-label">Orchestrator Skills</div>
-        <div class="skill-row">
-          <span class="skill-tag">/tf-provider-plan <span class="skill-phase">(Clarify + Design)</span></span>
-          <span class="skill-tag">/tf-provider-implement <span class="skill-phase">(Build + Validate)</span></span>
-        </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div style="font-size:12px;font-weight:500;color:#DC477D;text-transform:uppercase;letter-spacing:3px;font-family:'Inter Medium','Inter',Arial,sans-serif;">Provider</div>
+      </div>
 
-        <div class="section-label">Agents</div>
-        <div class="agent-list">
-          <span class="agent-tag">tf-provider-research</span>
-          <span class="agent-tag">tf-provider-design</span>
-          <span class="agent-tag">tf-provider-test-writer</span>
-          <span class="agent-tag">tf-provider-developer</span>
-          <span class="agent-tag">tf-provider-validator</span>
-        </div>
+      <div style="font-size:20px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Provider Lifecycle</div>
+      <div style="font-size:20px;color:#CCCCCC;margin-bottom:28px;">Ecosystem teams develop custom Terraform providers with Go TDD</div>
 
-        <div class="section-label">Key Differentiator</div>
-        <div class="key-item">
-          <span class="key-icon">&#x2713;</span>
-          <span>Go Plugin Framework, acceptance tests, full CRUD lifecycle</span>
-        </div>
+      <!-- Agent roles -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;">
+        <div style="font-size:14px;font-weight:500;color:#DC477D;padding:6px 14px;border-radius:6px;background:rgba(220,71,125,0.10);border:1px solid rgba(220,71,125,0.25);">Research</div>
+        <div style="font-size:14px;font-weight:500;color:#DC477D;padding:6px 14px;border-radius:6px;background:rgba(220,71,125,0.10);border:1px solid rgba(220,71,125,0.25);">Design</div>
+        <div style="font-size:14px;font-weight:500;color:#DC477D;padding:6px 14px;border-radius:6px;background:rgba(220,71,125,0.10);border:1px solid rgba(220,71,125,0.25);">Test Writer</div>
+        <div style="font-size:14px;font-weight:500;color:#DC477D;padding:6px 14px;border-radius:6px;background:rgba(220,71,125,0.10);border:1px solid rgba(220,71,125,0.25);">Developer</div>
+        <div style="font-size:14px;font-weight:500;color:#DC477D;padding:6px 14px;border-radius:6px;background:rgba(220,71,125,0.10);border:1px solid rgba(220,71,125,0.25);">Validator</div>
+        <div style="font-size:16px;color:#82748C;padding:6px 0 6px 6px;">5 agents</div>
+      </div>
 
-        <div class="output-badge">
-          <span class="output-icon">&#x1F50C;</span>
-          <div class="output-content">
-            <span class="output-label">Output</span>
-            <span class="output-text">Provider resources with CRUD operations</span>
-          </div>
-        </div>
+      <!-- Bullets -->
+      <div style="display:flex;flex-direction:column;gap:16px;flex:1;">
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#DC477D;">Go TDD</span> — acceptance tests validate real cloud API interactions</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#DC477D;">Schema</span> — resource and data source schemas auto-generated</div>
+        <div style="font-size:20px;line-height:1.5;color:#CCCCCC;"><span style="font-weight:600;color:#DC477D;">Lifecycle</span> — CRUD operations with proper error handling</div>
+      </div>
+
+      <!-- Metric -->
+      <div style="margin-top:24px;padding:14px 18px;border-radius:10px;background:rgba(220,71,125,0.06);box-shadow:0 2px 12px rgba(0,0,0,0.4);display:flex;align-items:center;gap:12px;">
+        <div style="font-size:11px;color:#82748C;text-transform:uppercase;letter-spacing:3px;font-weight:500;font-family:'Inter Medium','Inter',Arial,sans-serif;">Acceleration</div>
+        <div style="margin-left:auto;font-size:18px;font-weight:600;color:#DC477D;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">Months &#8594; Days</div>
       </div>
     </div>
 
   </div>
-</div>
 
-<!-- Bottom summary -->
-<div class="summary-bar">
-  <div class="summary-text">
-    <span class="summary-item">
-      <span class="summary-dot summary-dot-purple"></span>
-      ~36 min per workflow end-to-end
-    </span>
-    <span class="summary-item">
-      <span class="summary-dot summary-dot-blue"></span>
-      Single design.md is sole source of truth
-    </span>
-    <span class="summary-item">
-      <span class="summary-dot summary-dot-teal"></span>
-      TDD from line 1
-    </span>
-  </div>
 </div>
 
 </body>

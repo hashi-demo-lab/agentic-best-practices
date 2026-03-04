@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Consumer: /tf-consumer-implement</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.03;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .title-bar {
+    padding: 36px 80px 16px;
+    position: relative; z-index: 1;
+  }
+  .section-label {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 3px; color: #FFCF25; margin-bottom: 8px;
+  }
+  .title-bar h1 {
+    font-size: 36px; font-weight: 600; letter-spacing: -0.02em;
+    color: #60DEA9;
+  }
+  .title-bar h1 code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: #60DEA9;
+  }
+  .title-bar p {
+    font-size: 20px; color: #82748C; margin-top: 4px; font-weight: 400;
+  }
+
+  /* Flow diagram */
+  .flow-area {
+    padding: 10px 80px 0;
+    position: relative; z-index: 1;
+  }
+  .flow-svg { width: 100%; }
+
+  /* Bullets */
+  .bullets-area {
+    display: flex; gap: 60px;
+    padding: 30px 80px 0;
+    position: relative; z-index: 1;
+  }
+  .bullet-col {
+    flex: 1;
+    display: flex; flex-direction: column; gap: 18px;
+  }
+  .bullet-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 20px; color: #CCCCCC; line-height: 1.45; font-weight: 400;
+  }
+  .bullet-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 8px;
+    background: #60DEA9;
+  }
+  .bullet-item strong { color: #FFFFFF; font-weight: 600; }
+  .bullet-item code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 16px; color: #60DEA9;
+    background: rgba(96,222,169,0.08); padding: 2px 6px; border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<div class="title-bar">
+  <div class="section-label">WORKFLOWS</div>
+  <h1>Consumer: <code>/tf-consumer-implement</code></h1>
+  <p>Phases 3 &amp; 4 &mdash; Build + Validate + Deploy</p>
+</div>
+
+<!-- Flow diagram -->
+<div class="flow-area">
+  <svg class="flow-svg" viewBox="0 0 1760 430" xmlns="http://www.w3.org/2000/svg">
+    <!-- Setup box -->
+    <rect x="0" y="0" width="300" height="360" rx="16" fill="rgba(14,14,22,0.5)" stroke="rgba(98,126,239,0.15)" stroke-width="1"/>
+    <text x="24" y="32" fill="#627EEF" font-size="12" font-weight="700" letter-spacing="2">SETUP</text>
+
+    <rect x="20" y="50" width="260" height="160" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <rect x="36" y="68" width="110" height="26" rx="5" fill="rgba(96,222,169,0.06)" stroke="rgba(96,222,169,0.2)" stroke-width="1"/>
+    <text x="91" y="85" text-anchor="middle" fill="#60DEA9" font-family="'SF Mono', monospace" font-size="10">validate-env.sh</text>
+    <rect x="36" y="102" width="160" height="26" rx="5" fill="rgba(96,222,169,0.06)" stroke="rgba(96,222,169,0.15)" stroke-width="1" stroke-dasharray="4 2"/>
+    <text x="116" y="119" text-anchor="middle" fill="#60DEA9" font-family="'SF Mono', monospace" font-size="9">post-issue-progress.sh</text>
+    <rect x="36" y="136" width="150" height="26" rx="5" fill="rgba(96,222,169,0.06)" stroke="rgba(96,222,169,0.15)" stroke-width="1" stroke-dasharray="4 2"/>
+    <text x="111" y="153" text-anchor="middle" fill="#60DEA9" font-family="'SF Mono', monospace" font-size="9">checkpoint-commit.sh</text>
+    <text x="36" y="190" fill="#82748C" font-size="10" font-style="italic">Verify consumer-design.md exists</text>
+
+    <!-- Reads label -->
+    <rect x="20" y="230" width="260" height="36" rx="6" fill="rgba(98,126,239,0.04)" stroke="rgba(98,126,239,0.12)" stroke-width="1"/>
+    <text x="36" y="253" fill="#627EEF" font-size="10" font-weight="700" letter-spacing="1">READS</text>
+    <text x="90" y="253" fill="#627EEF" font-family="'SF Mono', monospace" font-size="12">consumer-design.md</text>
+
+    <!-- Arrow Setup -> Phase 3 -->
+    <line x1="300" y1="180" x2="360" y2="180" stroke="rgba(96,222,169,0.25)" stroke-width="2" stroke-dasharray="6 4"/>
+    <polygon points="356,174 366,180 356,186" fill="rgba(96,222,169,0.35)"/>
+
+    <!-- Phase 3 box -->
+    <rect x="370" y="0" width="700" height="360" rx="16" fill="rgba(14,14,22,0.5)" stroke="rgba(96,222,169,0.15)" stroke-width="1"/>
+    <text x="394" y="32" fill="#60DEA9" font-size="12" font-weight="700" letter-spacing="2">PHASE 3: BUILD (MODULE COMPOSITION)</text>
+
+    <!-- Implementation Loop -->
+    <rect x="390" y="50" width="660" height="170" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <text x="406" y="72" fill="#82748C" font-size="11" font-weight="700" letter-spacing="1">IMPLEMENTATION LOOP</text>
+
+    <rect x="406" y="84" width="200" height="26" rx="5" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.25)" stroke-width="1"/>
+    <text x="506" y="101" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="10" font-weight="600">tf-consumer-developer xN</text>
+
+    <rect x="406" y="118" width="140" height="26" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="476" y="135" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="10">terraform-style-guide</text>
+    <rect x="554" y="118" width="165" height="26" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="636" y="135" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="10">tf-implementation-patterns</text>
+
+    <rect x="406" y="156" width="140" height="26" rx="5" fill="rgba(255,208,108,0.06)" stroke="rgba(255,208,108,0.2)" stroke-width="1"/>
+    <text x="476" y="173" text-anchor="middle" fill="#FFD06C" font-family="'SF Mono', monospace" font-size="10">terraform-mcp (private)</text>
+    <rect x="554" y="156" width="140" height="26" rx="5" fill="rgba(255,208,108,0.06)" stroke="rgba(255,208,108,0.2)" stroke-width="1"/>
+    <text x="624" y="173" text-anchor="middle" fill="#FFD06C" font-family="'SF Mono', monospace" font-size="10">aws-knowledge-mcp</text>
+
+    <!-- Validation commands -->
+    <rect x="750" y="84" width="110" height="26" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="805" y="101" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="10">terraform init</text>
+    <rect x="750" y="118" width="130" height="26" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="815" y="135" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="10">terraform validate</text>
+    <rect x="750" y="152" width="120" height="26" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="810" y="169" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="10">terraform plan</text>
+
+    <!-- Loop arrow indicator -->
+    <path d="M 1030 130 C 1060 130, 1060 80, 1030 80" stroke="rgba(96,222,169,0.2)" stroke-width="1.5" fill="none" stroke-dasharray="4 3"/>
+    <polygon points="1032,84 1026,78 1036,78" fill="rgba(96,222,169,0.25)"/>
+    <text x="1048" y="108" fill="#82748C" font-size="9" font-style="italic">repeat per</text>
+    <text x="1048" y="120" fill="#82748C" font-size="9" font-style="italic">checklist item</text>
+
+    <!-- Phase 3 output -->
+    <rect x="390" y="240" width="660" height="36" rx="8" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+    <text x="406" y="263" fill="#FFCF25" font-size="11" font-weight="700" letter-spacing="1.5">OUTPUT</text>
+    <text x="490" y="263" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="12">*.tf consumer files</text>
+
+    <!-- Arrow Phase 3 -> Phase 4 -->
+    <line x1="1070" y1="180" x2="1130" y2="180" stroke="rgba(96,222,169,0.25)" stroke-width="2" stroke-dasharray="6 4"/>
+    <polygon points="1126,174 1136,180 1126,186" fill="rgba(96,222,169,0.35)"/>
+
+    <!-- Phase 4 box -->
+    <rect x="1140" y="0" width="620" height="360" rx="16" fill="rgba(14,14,22,0.5)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
+    <text x="1164" y="32" fill="#FFCF25" font-size="12" font-weight="700" letter-spacing="2">PHASE 4: VALIDATE + DEPLOY</text>
+
+    <!-- Quality Assessment -->
+    <rect x="1160" y="50" width="300" height="130" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <text x="1176" y="72" fill="#82748C" font-size="11" font-weight="700" letter-spacing="1">QUALITY ASSESSMENT</text>
+    <rect x="1176" y="84" width="160" height="26" rx="5" fill="rgba(220,71,125,0.08)" stroke="rgba(220,71,125,0.25)" stroke-width="1"/>
+    <text x="1256" y="101" text-anchor="middle" fill="#DC477D" font-family="'SF Mono', monospace" font-size="10" font-weight="600">tf-consumer-validator</text>
+    <rect x="1176" y="118" width="110" height="26" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="1231" y="135" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="10">tf-judge-criteria</text>
+    <rect x="1294" y="118" width="130" height="26" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="1359" y="135" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="10">terraform validate</text>
+
+    <!-- Ship -->
+    <rect x="1480" y="50" width="260" height="130" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+    <text x="1496" y="72" fill="#82748C" font-size="11" font-weight="700" letter-spacing="1">REPORT &amp; SHIP</text>
+    <rect x="1496" y="84" width="130" height="26" rx="5" fill="rgba(98,212,220,0.06)" stroke="rgba(98,212,220,0.2)" stroke-width="1"/>
+    <text x="1561" y="101" text-anchor="middle" fill="#62D4DC" font-family="'SF Mono', monospace" font-size="10">tf-report-template</text>
+    <rect x="1496" y="118" width="100" height="26" rx="5" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+    <text x="1546" y="135" text-anchor="middle" fill="#EC585D" font-family="'SF Mono', monospace" font-size="10">gh pr create</text>
+    <text x="1496" y="165" fill="#82748C" font-size="10" font-style="italic">Optional sandbox deploy</text>
+
+    <!-- Phase 4 output -->
+    <rect x="1160" y="240" width="580" height="36" rx="8" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+    <text x="1176" y="263" fill="#FFCF25" font-size="11" font-weight="700" letter-spacing="1.5">OUTPUT</text>
+    <text x="1260" y="263" fill="#CCCCCC" font-family="'SF Mono', monospace" font-size="12">validation report + quality score + PR + GH Issue</text>
+
+    <!-- Legend -->
+    <circle cx="30" cy="396" r="4" fill="#DC477D"/>
+    <text x="40" y="400" fill="#82748C" font-size="10">Agent</text>
+    <circle cx="100" cy="396" r="4" fill="#62D4DC"/>
+    <text x="110" y="400" fill="#82748C" font-size="10">Skill</text>
+    <circle cx="165" cy="396" r="4" fill="#60DEA9"/>
+    <text x="175" y="400" fill="#82748C" font-size="10">Script</text>
+    <circle cx="235" cy="396" r="4" fill="#FFD06C"/>
+    <text x="245" y="400" fill="#82748C" font-size="10">MCP</text>
+    <circle cx="285" cy="396" r="4" fill="#EC585D"/>
+    <text x="295" y="400" fill="#82748C" font-size="10">Command</text>
+    <circle cx="370" cy="396" r="4" fill="#FFCF25"/>
+    <text x="380" y="400" fill="#82748C" font-size="10">Artifact</text>
+  </svg>
+</div>
+
+<!-- Key bullets -->
+<div class="bullets-area">
+  <div class="bullet-col">
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>Developer iterates per checklist</strong> &mdash; one agent launch per design checklist item</div>
+    </div>
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>terraform validate gates each step</strong> &mdash; init + validate + plan after every iteration</div>
+    </div>
+  </div>
+  <div class="bullet-col">
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>Sandbox deploy to HCP TF</strong> &mdash; optional real deployment with orchestrator-controlled destroy</div>
+    </div>
+    <div class="bullet-item">
+      <span class="bullet-dot"></span>
+      <div><strong>Automatic PR creation</strong> &mdash; quality score threshold 7.0, links to tracking issue</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

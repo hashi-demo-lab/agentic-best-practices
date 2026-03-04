@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>The Problem: Manual IaC Doesn't Scale</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none; z-index: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="slide" style="width:1920px;height:1080px;padding:60px 80px;display:flex;flex-direction:column;position:relative;z-index:1;">
+
+  <div class="header" style="margin-bottom:40px;">
+    <div style="font-size:12px;font-weight:500;color:#FFCF25;text-transform:uppercase;letter-spacing:3px;margin-bottom:12px;font-family:'Inter Medium','Inter',Arial,sans-serif;">ENTERPRISE CHALLENGES</div>
+    <h1 style="font-size:34px;font-weight:600;color:#FFFFFF;margin-bottom:8px;font-family:'Inter SemiBold','Inter',Arial,sans-serif;">The Problem: Manual IaC Doesn't Scale</h1>
+    <div style="font-size:20px;color:#CCCCCC;">Four bottlenecks limiting infrastructure delivery speed and quality</div>
+  </div>
+
+  <div class="content" style="flex:1;display:flex;gap:60px;align-items:center;">
+
+    <!-- Bullets -->
+    <div class="bullets" style="flex:0 0 45%;display:flex;flex-direction:column;gap:32px;">
+
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#EC585D;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:24px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#EC585D;font-size:24px;">Review Bottlenecks</span> — PRs wait days for review, security findings discovered late</div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#FFD06C;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:24px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#FFD06C;font-size:24px;">Inconsistent Security</span> — every team implements encryption and IAM differently</div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#FFCF25;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:24px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#FFCF25;font-size:24px;">Slow Delivery</span> — module authoring and testing takes weeks, not hours</div>
+      </div>
+
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div style="width:8px;height:8px;border-radius:2px;background:#DC477D;margin-top:8px;flex-shrink:0;"></div>
+        <div style="font-size:24px;line-height:1.5;font-family:'Inter',Arial,sans-serif;color:#FFFFFF;"><span style="font-weight:600;color:#DC477D;font-size:24px;">Tribal Knowledge</span> — best practices live in people's heads, not in code</div>
+      </div>
+
+    </div>
+
+    <!-- Visual: Bar chart showing bottleneck time costs -->
+    <div class="visual" style="flex:1;display:flex;align-items:center;justify-content:center;">
+      <svg width="820" height="620" viewBox="0 0 820 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+        <!-- Title -->
+        <text x="410" y="30" text-anchor="middle" font-family="'Inter Medium','Inter',Arial,sans-serif" font-size="13" fill="#82748C" font-weight="500" letter-spacing="3">TIME LOST PER MODULE DELIVERY</text>
+
+        <!-- Y-axis -->
+        <line x1="120" y1="60" x2="120" y2="480" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+        <!-- Y-axis labels -->
+        <text x="108" y="480" text-anchor="end" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">0</text>
+        <text x="108" y="375" text-anchor="end" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">1 wk</text>
+        <text x="108" y="270" text-anchor="end" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">2 wk</text>
+        <text x="108" y="165" text-anchor="end" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">3 wk</text>
+        <text x="108" y="85" text-anchor="end" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">4 wk</text>
+
+        <!-- Grid lines -->
+        <line x1="120" y1="375" x2="740" y2="375" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="120" y1="270" x2="740" y2="270" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <line x1="120" y1="165" x2="740" y2="165" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+
+        <!-- X-axis -->
+        <line x1="120" y1="480" x2="740" y2="480" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+
+        <!-- Bar 1: Review Bottlenecks - 2.5 weeks -->
+        <rect x="160" y="165" width="100" height="315" rx="6" fill="rgba(236,88,93,0.15)" stroke="rgba(236,88,93,0.4)" stroke-width="1.5"/>
+        <rect x="160" y="165" width="100" height="315" rx="6" fill="rgba(236,88,93,0.08)"/>
+        <!-- Glow -->
+        <rect x="170" y="170" width="80" height="6" rx="3" fill="#EC585D" opacity="0.4"/>
+        <text x="210" y="510" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="15" fill="#EC585D" font-weight="600">Review</text>
+        <text x="210" y="528" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">~3 weeks</text>
+
+        <!-- Bar 2: Inconsistent Security - 1.5 weeks -->
+        <rect x="310" y="270" width="100" height="210" rx="6" fill="rgba(255,208,108,0.15)" stroke="rgba(255,208,108,0.4)" stroke-width="1.5"/>
+        <rect x="310" y="270" width="100" height="210" rx="6" fill="rgba(255,208,108,0.08)"/>
+        <rect x="320" y="275" width="80" height="6" rx="3" fill="#FFD06C" opacity="0.4"/>
+        <text x="360" y="510" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="15" fill="#FFD06C" font-weight="600">Security</text>
+        <text x="360" y="528" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">~2 weeks</text>
+
+        <!-- Bar 3: Slow Delivery - 3 weeks -->
+        <rect x="460" y="135" width="100" height="345" rx="6" fill="rgba(255,207,37,0.15)" stroke="rgba(255,207,37,0.4)" stroke-width="1.5"/>
+        <rect x="460" y="135" width="100" height="345" rx="6" fill="rgba(255,207,37,0.08)"/>
+        <rect x="470" y="140" width="80" height="6" rx="3" fill="#FFCF25" opacity="0.4"/>
+        <text x="510" y="510" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="15" fill="#FFCF25" font-weight="600">Delivery</text>
+        <text x="510" y="528" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">~3.5 weeks</text>
+
+        <!-- Bar 4: Tribal Knowledge - 2 weeks -->
+        <rect x="610" y="270" width="100" height="210" rx="6" fill="rgba(220,71,125,0.15)" stroke="rgba(220,71,125,0.4)" stroke-width="1.5"/>
+        <rect x="610" y="270" width="100" height="210" rx="6" fill="rgba(220,71,125,0.08)"/>
+        <rect x="620" y="275" width="80" height="6" rx="3" fill="#DC477D" opacity="0.4"/>
+        <text x="660" y="510" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="15" fill="#DC477D" font-weight="600">Knowledge</text>
+        <text x="660" y="528" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="14" fill="#82748C">~2 weeks</text>
+
+        <!-- Bottom summary -->
+        <rect x="160" y="560" width="550" height="44" rx="10" fill="rgba(236,88,93,0.06)" stroke="rgba(236,88,93,0.15)" stroke-width="1"/>
+        <text x="435" y="587" text-anchor="middle" font-family="'Inter',Arial,sans-serif" font-size="16" fill="#CCCCCC">
+          These bottlenecks <tspan font-weight="700" fill="#EC585D">compound exponentially</tspan> as teams and modules scale
+        </text>
+
+      </svg>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -2,784 +2,204 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Maximizing Throughput — Best Practices &amp; Anti-Patterns</title>
+<meta name="viewport" content="width=1920">
+<title>Maximizing Throughput</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+}
 
-  :root {
-    --green-primary: #34d399;
-    --green-dim: #065f46;
-    --green-glow: rgba(52, 211, 153, 0.25);
-    --green-bg: rgba(6, 95, 70, 0.12);
-    --red-primary: #f472b6;
-    --red-dim: #831843;
-    --red-glow: rgba(244, 114, 182, 0.25);
-    --red-bg: rgba(131, 24, 67, 0.12);
-    --glass-bg: rgba(255, 255, 255, 0.04);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-highlight: rgba(255, 255, 255, 0.06);
-    --surface: #0f0f14;
-    --surface-raised: #16161e;
-    --text-primary: #e8e8f0;
-    --text-secondary: #9090a8;
-    --text-muted: #6a6a80;
-    --purple-accent: #8b5cf6;
-  }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    background: var(--surface); color: var(--text-primary);
-    min-height: 100vh; display: flex; flex-direction: column;
-    overflow-x: hidden;
-  }
-
-  /* --- Animated background pattern --- */
-  .bg-pattern {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
-    pointer-events: none; overflow: hidden;
-  }
-  .bg-pattern::before {
-    content: '';
-    position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-    background:
-      radial-gradient(ellipse 600px 600px at 20% 20%, rgba(52, 211, 153, 0.03) 0%, transparent 60%),
-      radial-gradient(ellipse 500px 500px at 80% 80%, rgba(244, 114, 182, 0.03) 0%, transparent 60%),
-      radial-gradient(ellipse 400px 400px at 50% 50%, rgba(139, 92, 246, 0.02) 0%, transparent 60%);
-    animation: bgDrift 20s ease-in-out infinite alternate;
-  }
-  .bg-pattern::after {
-    content: '';
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background-image:
-      radial-gradient(circle 1px at 10% 15%, rgba(255,255,255,0.03) 0%, transparent 100%),
-      radial-gradient(circle 1px at 30% 45%, rgba(255,255,255,0.02) 0%, transparent 100%),
-      radial-gradient(circle 1px at 55% 25%, rgba(255,255,255,0.03) 0%, transparent 100%),
-      radial-gradient(circle 1px at 70% 65%, rgba(255,255,255,0.02) 0%, transparent 100%),
-      radial-gradient(circle 1px at 85% 35%, rgba(255,255,255,0.03) 0%, transparent 100%),
-      radial-gradient(circle 1px at 45% 80%, rgba(255,255,255,0.02) 0%, transparent 100%);
-    animation: bgTwinkle 8s ease-in-out infinite alternate;
-  }
-  @keyframes bgDrift {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    100% { transform: translate(30px, 20px) rotate(2deg); }
-  }
-  @keyframes bgTwinkle {
-    0% { opacity: 0.4; }
-    100% { opacity: 1; }
-  }
-
-  /* --- Grid overlay --- */
-  .grid-overlay {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
-    pointer-events: none;
-    background-image:
-      linear-gradient(rgba(255,255,255,0.012) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.012) 1px, transparent 1px);
-    background-size: 60px 60px;
-  }
-
-  /* --- Header --- */
-  header {
-    text-align: center; padding: 32px 20px 16px;
-    position: relative; z-index: 1;
-  }
-  header::after {
-    content: '';
-    position: absolute; bottom: 0; left: 10%; width: 80%; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(139,92,246,0.3), transparent);
-  }
-  header h1 {
-    font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #7b61ff 0%, #a78bfa 40%, #c4b5fd 100%);
+/* Title bar */
+.title-bar {
+    padding: 48px 80px 32px;
+    border-bottom: 1px solid rgba(167,139,250,0.15);
+}
+.section-label {
+    font-size: 12px; font-weight: 500; color: #FFCF25;
+    text-transform: uppercase; letter-spacing: 3px; margin-bottom: 12px;
+}
+.title-bar h1 {
+    font-size: 36px; font-weight: 600;
+    background: linear-gradient(135deg, #A78BFA, #C4B5FD);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     margin-bottom: 8px;
-    animation: headerGlow 3s ease-in-out infinite alternate;
-  }
-  @keyframes headerGlow {
-    0% { filter: drop-shadow(0 0 8px rgba(123, 97, 255, 0.2)); }
-    100% { filter: drop-shadow(0 0 16px rgba(123, 97, 255, 0.4)); }
-  }
-  header p { color: var(--text-secondary); font-size: 0.88rem; font-weight: 400; }
+}
+.title-bar p {
+    font-size: 20px; color: #CCCCCC; font-weight: 400;
+}
 
-  .main { flex: 1; display: flex; flex-direction: column; padding: 28px 32px; gap: 24px; position: relative; z-index: 1; }
+/* Content area */
+.content {
+    display: flex; padding: 48px 80px 0; gap: 64px;
+    align-items: flex-start;
+}
 
-  /* --- Two column layout with divider --- */
-  .columns-wrapper { position: relative; max-width: 1100px; margin: 0 auto; width: 100%; }
-  .columns { display: flex; gap: 32px; width: 100%; }
+/* Left bullets */
+.bullets {
+    width: 45%; display: flex; flex-direction: column; gap: 28px;
+    padding-top: 16px;
+}
+.bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+}
+.bullet-dot {
+    width: 8px; height: 8px; border-radius: 2px;
+    background: #62D4DC; margin-top: 8px; flex-shrink: 0;
+}
+.bullet-text {
+    font-size: 22px; line-height: 1.5; color: #FFFFFF;
+    font-family: 'Inter', Arial, sans-serif;
+}
+.bullet-text span {
+    font-weight: 600; color: #62D4DC;
+}
 
-  /* Gradient divider between columns */
-  .column-divider {
-    position: absolute; top: 0; left: 50%; width: 2px; height: 100%;
-    transform: translateX(-50%);
-    background: linear-gradient(
-      180deg,
-      transparent 0%,
-      rgba(139, 92, 246, 0.15) 10%,
-      rgba(139, 92, 246, 0.4) 30%,
-      rgba(139, 92, 246, 0.4) 70%,
-      rgba(139, 92, 246, 0.15) 90%,
-      transparent 100%
-    );
-    z-index: 2;
-  }
-  .column-divider::before {
-    content: '';
-    position: absolute; top: 50%; left: 50%; width: 8px; height: 8px;
-    transform: translate(-50%, -50%) rotate(45deg);
-    background: var(--purple-accent);
-    box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
-    border-radius: 2px;
-  }
-
-  .col { flex: 1; }
-
-  /* --- Glassmorphism column headers --- */
-  .col-header {
-    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 2px;
-    padding: 12px 18px; border-radius: 12px 12px 0 0; font-weight: 700; text-align: center;
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    position: relative; overflow: hidden;
-  }
-  .col-header::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--glass-highlight), transparent);
-  }
-  .col-do .col-header {
-    background: linear-gradient(135deg, rgba(6, 95, 70, 0.25), rgba(6, 95, 70, 0.1));
-    color: var(--green-primary);
-    border: 1px solid rgba(52, 211, 153, 0.15); border-bottom: none;
-    text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
-  }
-  .col-dont .col-header {
-    background: linear-gradient(135deg, rgba(131, 24, 67, 0.25), rgba(131, 24, 67, 0.1));
-    color: var(--red-primary);
-    border: 1px solid rgba(244, 114, 182, 0.15); border-bottom: none;
-    text-shadow: 0 0 20px rgba(244, 114, 182, 0.3);
-  }
-
-  /* --- Glassmorphism items container --- */
-  .items {
-    border-radius: 0 0 12px 12px; overflow: hidden;
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-top: none;
-  }
-  .col-do .items {
-    border-color: rgba(52, 211, 153, 0.1);
-    box-shadow: 0 8px 32px rgba(52, 211, 153, 0.04);
-  }
-  .col-dont .items {
-    border-color: rgba(244, 114, 182, 0.1);
-    box-shadow: 0 8px 32px rgba(244, 114, 182, 0.04);
-  }
-
-  /* --- Item rows --- */
-  .item {
-    padding: 16px 18px; border-bottom: 1px solid rgba(255,255,255,0.04);
-    cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: flex; gap: 12px; align-items: flex-start;
-    position: relative; overflow: hidden;
-    /* Staggered entrance animation */
-    opacity: 0; transform: translateY(12px);
-    animation: itemEnter 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-  }
-  .item:last-child { border-bottom: none; }
-
-  /* Staggered delays per item */
-  .col-do .item:nth-child(1) { animation-delay: 0.1s; }
-  .col-do .item:nth-child(2) { animation-delay: 0.2s; }
-  .col-do .item:nth-child(3) { animation-delay: 0.3s; }
-  .col-do .item:nth-child(4) { animation-delay: 0.4s; }
-  .col-do .item:nth-child(5) { animation-delay: 0.5s; }
-  .col-dont .item:nth-child(1) { animation-delay: 0.15s; }
-  .col-dont .item:nth-child(2) { animation-delay: 0.25s; }
-  .col-dont .item:nth-child(3) { animation-delay: 0.35s; }
-  .col-dont .item:nth-child(4) { animation-delay: 0.45s; }
-  .col-dont .item:nth-child(5) { animation-delay: 0.55s; }
-
-  @keyframes itemEnter {
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Hover glow effects */
-  .item::before {
-    content: '';
-    position: absolute; top: 0; left: 0; width: 3px; height: 100%;
-    opacity: 0; transition: opacity 0.3s;
-  }
-  .col-do .item::before { background: var(--green-primary); box-shadow: 0 0 12px var(--green-glow); }
-  .col-dont .item::before { background: var(--red-primary); box-shadow: 0 0 12px var(--red-glow); }
-  .item:hover::before, .item.active::before { opacity: 1; }
-
-  .col-do .item:hover { background: rgba(52, 211, 153, 0.04); }
-  .col-dont .item:hover { background: rgba(244, 114, 182, 0.04); }
-  .col-do .item.active {
-    background: rgba(52, 211, 153, 0.06);
-    box-shadow: inset 0 0 30px rgba(52, 211, 153, 0.03), 0 0 20px rgba(52, 211, 153, 0.05);
-  }
-  .col-dont .item.active {
-    background: rgba(244, 114, 182, 0.06);
-    box-shadow: inset 0 0 30px rgba(244, 114, 182, 0.03), 0 0 20px rgba(244, 114, 182, 0.05);
-  }
-
-  /* --- Animated icon container --- */
-  .item-icon {
-    width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 0.8rem; flex-shrink: 0; margin-top: 1px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-  }
-  .col-do .item-icon {
-    background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2);
-  }
-  .col-dont .item-icon {
-    background: rgba(244, 114, 182, 0.1); border: 1px solid rgba(244, 114, 182, 0.2);
-  }
-
-  /* Pulse animation on active */
-  .item.active .item-icon {
-    transform: scale(1.1);
-  }
-  .col-do .item.active .item-icon {
-    background: rgba(52, 211, 153, 0.2); border-color: rgba(52, 211, 153, 0.5);
-    box-shadow: 0 0 16px rgba(52, 211, 153, 0.3);
-    animation: pulseGreen 2s ease-in-out infinite;
-  }
-  .col-dont .item.active .item-icon {
-    background: rgba(244, 114, 182, 0.2); border-color: rgba(244, 114, 182, 0.5);
-    box-shadow: 0 0 16px rgba(244, 114, 182, 0.3);
-    animation: pulseRed 2s ease-in-out infinite;
-  }
-  @keyframes pulseGreen {
-    0%, 100% { box-shadow: 0 0 12px rgba(52, 211, 153, 0.2); }
-    50% { box-shadow: 0 0 24px rgba(52, 211, 153, 0.45); }
-  }
-  @keyframes pulseRed {
-    0%, 100% { box-shadow: 0 0 12px rgba(244, 114, 182, 0.2); }
-    50% { box-shadow: 0 0 24px rgba(244, 114, 182, 0.45); }
-  }
-
-  /* SVG icons inside icon containers */
-  .item-icon svg { width: 14px; height: 14px; }
-  .col-do .item-icon svg { stroke: var(--green-primary); }
-  .col-dont .item-icon svg { stroke: var(--red-primary); }
-
-  .item-content { flex: 1; min-width: 0; }
-  .item-title {
-    font-size: 0.84rem; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;
-    transition: color 0.3s;
-  }
-  .col-do .item.active .item-title { color: var(--green-primary); }
-  .col-dont .item.active .item-title { color: var(--red-primary); }
-
-  /* --- Pair indicator --- */
-  .pair-indicator {
-    position: absolute; top: 50%; right: 10px; transform: translateY(-50%);
-    opacity: 0; transition: opacity 0.3s;
-    font-size: 0.6rem; color: var(--text-muted);
-    display: flex; align-items: center; gap: 4px;
-  }
-  .pair-indicator svg { width: 10px; height: 10px; stroke: var(--purple-accent); opacity: 0.5; }
-  .item.paired .pair-indicator { opacity: 1; }
-
-  /* --- Enhanced descriptions --- */
-  .item-desc {
-    font-size: 0.78rem; color: var(--text-secondary); line-height: 1.65;
-    max-height: 0; overflow: hidden; opacity: 0;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    padding-left: 0;
-  }
-  .item.active .item-desc { max-height: 300px; opacity: 1; margin-top: 8px; }
-
-  .desc-text { margin-bottom: 8px; }
-
-  .desc-metrics {
-    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;
-  }
-  .metric-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 10px; border-radius: 20px; font-size: 0.68rem; font-weight: 600;
-    letter-spacing: 0.3px;
-  }
-  .metric-badge svg { width: 11px; height: 11px; flex-shrink: 0; }
-  .col-do .metric-badge {
-    background: rgba(52, 211, 153, 0.08); border: 1px solid rgba(52, 211, 153, 0.15);
-    color: var(--green-primary);
-  }
-  .col-do .metric-badge svg { stroke: var(--green-primary); }
-  .col-dont .metric-badge {
-    background: rgba(244, 114, 182, 0.08); border: 1px solid rgba(244, 114, 182, 0.15);
-    color: var(--red-primary);
-  }
-  .col-dont .metric-badge svg { stroke: var(--red-primary); }
-
-  /* --- Connection lines for paired items --- */
-  .connection-lines {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 3;
-  }
-  .connection-lines svg { width: 100%; height: 100%; }
-  .connection-line {
-    stroke: var(--purple-accent); stroke-width: 1.5; fill: none;
-    stroke-dasharray: 6 4; opacity: 0; transition: opacity 0.4s;
-    filter: drop-shadow(0 0 3px rgba(139, 92, 246, 0.3));
-  }
-  .connection-line.visible { opacity: 0.35; stroke-dashoffset: 0; animation: dashFlow 12s linear infinite; }
-  @keyframes dashFlow {
-    to { stroke-dashoffset: -100; }
-  }
-
-  /* --- Prompt section --- */
-  .prompt-section {
-    padding: 18px 0 0; margin-top: auto; position: relative;
-  }
-  .prompt-section::before {
-    content: '';
-    position: absolute; top: 0; left: 5%; width: 90%; height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(139,92,246,0.25), transparent);
-  }
-  .prompt-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .prompt-label {
-    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted);
-    font-weight: 600;
-  }
-  .copy-btn {
-    padding: 6px 18px; border-radius: 8px; border: 1px solid rgba(139,92,246,0.2);
-    background: rgba(139,92,246,0.08); color: #c4b5fd; cursor: pointer;
-    font-size: 0.75rem; font-weight: 600; transition: all 0.3s;
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  }
-  .copy-btn:hover {
-    border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.15);
-    box-shadow: 0 0 16px rgba(139,92,246,0.15);
-    color: #ddd6fe;
-  }
-  .copy-btn.copied {
-    border-color: var(--green-primary); background: rgba(52,211,153,0.1);
-    color: var(--green-primary);
-  }
-  .prompt-text {
-    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 0.78rem;
-    color: var(--text-secondary); line-height: 1.7;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px; padding: 16px 18px; min-height: 52px; white-space: pre-wrap;
-    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-    transition: border-color 0.3s;
-  }
-  .prompt-text:hover { border-color: rgba(139,92,246,0.2); }
-
-  /* --- Responsive --- */
-  @media (max-width: 768px) {
-    .columns { flex-direction: column; gap: 20px; }
-    .column-divider { display: none; }
-    .main { padding: 16px; }
-    header h1 { font-size: 1.3rem; }
-  }
+/* Right visual */
+.visual {
+    width: 55%; display: flex; align-items: center; justify-content: center;
+}
 </style>
 </head>
 <body>
-<div class="bg-pattern"></div>
-<div class="grid-overlay"></div>
 
-<header>
-  <h1>Maximizing Throughput</h1>
-  <p>Best Practices and Anti-Patterns for Subagent Performance</p>
-</header>
-
-<div class="main">
-  <div class="columns-wrapper">
-    <div class="column-divider"></div>
-    <div class="connection-lines" id="connectionLines">
-      <svg preserveAspectRatio="none"></svg>
-    </div>
-    <div class="columns">
-      <div class="col col-do">
-        <div class="col-header">
-          <svg style="display:inline-block;vertical-align:middle;margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
-          Best Practices
-        </div>
-        <div class="items" id="doItems">
-          <div class="item" data-id="rightsize" data-pair="oversize" onclick="toggleItem(this)">
-            <span class="item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg>
-            </span>
-            <div class="item-content">
-              <div class="item-title">Right-size the model</div>
-              <div class="item-desc">
-                <div class="desc-text">Haiku for fast read-only exploration, Sonnet for balanced analysis, Opus only for complex reasoning. Match cost to task complexity.</div>
-                <div class="desc-metrics">
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    3x faster
-                  </span>
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 100 4h4a2 2 0 110 4H8"/><path d="M12 18V6"/></svg>
-                    10x cheaper
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="pair-indicator">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-          <div class="item" data-id="minimize" data-pair="rawdata" onclick="toggleItem(this)">
-            <span class="item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg>
-            </span>
-            <div class="item-content">
-              <div class="item-title">Minimize return payload</div>
-              <div class="item-desc">
-                <div class="desc-text">Instruct subagents to return summaries, not raw data. Large returns exhaust parent context and trigger compaction.</div>
-                <div class="desc-metrics">
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    90% less tokens
-                  </span>
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    Longer sessions
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="pair-indicator">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-          <div class="item" data-id="scope" data-pair="unbounded" onclick="toggleItem(this)">
-            <span class="item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg>
-            </span>
-            <div class="item-content">
-              <div class="item-title">Scope narrowly</div>
-              <div class="item-desc">
-                <div class="desc-text">Specify files, directories, or patterns. Unbounded exploration is the most common anti-pattern that wastes tokens and time.</div>
-                <div class="desc-metrics">
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    Targeted results
-                  </span>
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    Fewer iterations
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="pair-indicator">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-          <div class="item" data-id="preload" data-pair="noskills" onclick="toggleItem(this)">
-            <span class="item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg>
-            </span>
-            <div class="item-content">
-              <div class="item-title">Preload skills for domain knowledge</div>
-              <div class="item-desc">
-                <div class="desc-text">Use the skills field to inject conventions without runtime discovery overhead. Agent starts with the right context immediately.</div>
-                <div class="desc-metrics">
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-                    Zero warmup
-                  </span>
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                    Consistent output
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="pair-indicator">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-          <div class="item" data-id="resume" data-pair="restart" onclick="toggleItem(this)">
-            <span class="item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m20 6-11 11-5-5"/></svg>
-            </span>
-            <div class="item-content">
-              <div class="item-title">Resume, don't restart</div>
-              <div class="item-desc">
-                <div class="desc-text">Subagents can be resumed by ID -- preserve context from previous work instead of starting fresh and re-discovering everything.</div>
-                <div class="desc-metrics">
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-                    Context preserved
-                  </span>
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    50% faster
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="pair-indicator">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col col-dont">
-        <div class="col-header">
-          <svg style="display:inline-block;vertical-align:middle;margin-right:6px;" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          Anti-Patterns
-        </div>
-        <div class="items" id="dontItems">
-          <div class="item" data-id="oversize" data-pair="rightsize" onclick="toggleItem(this)">
-            <span class="item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </span>
-            <div class="item-content">
-              <div class="item-title">Using Opus for everything</div>
-              <div class="item-desc">
-                <div class="desc-text">Opus is powerful but slow and expensive. Most exploration and analysis tasks work fine with Haiku or Sonnet at a fraction of the cost.</div>
-                <div class="desc-metrics">
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    10x cost overhead
-                  </span>
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    Slower response
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="pair-indicator">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-          <div class="item" data-id="rawdata" data-pair="minimize" onclick="toggleItem(this)">
-            <span class="item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </span>
-            <div class="item-content">
-              <div class="item-title">Returning raw output to parent</div>
-              <div class="item-desc">
-                <div class="desc-text">Dumping full test logs, plan output, or file contents into parent context. This accelerates context exhaustion and compaction.</div>
-                <div class="desc-metrics">
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Context overflow
-                  </span>
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Forced compaction
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="pair-indicator">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-          <div class="item" data-id="unbounded" data-pair="scope" onclick="toggleItem(this)">
-            <span class="item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </span>
-            <div class="item-content">
-              <div class="item-title">Unbounded exploration</div>
-              <div class="item-desc">
-                <div class="desc-text">Telling an agent to "investigate the codebase" with no scope. Agent wanders, burns tokens, and returns unfocused results.</div>
-                <div class="desc-metrics">
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Wasted tokens
-                  </span>
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Unfocused output
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="pair-indicator">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-          <div class="item" data-id="noskills" data-pair="preload" onclick="toggleItem(this)">
-            <span class="item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </span>
-            <div class="item-content">
-              <div class="item-title">Runtime convention discovery</div>
-              <div class="item-desc">
-                <div class="desc-text">Agent spends tokens reading files to learn patterns that could have been preloaded as skills. Wastes time on every invocation.</div>
-                <div class="desc-metrics">
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Repeated waste
-                  </span>
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    Slow start
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="pair-indicator">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-          <div class="item" data-id="restart" data-pair="resume" onclick="toggleItem(this)">
-            <span class="item-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </span>
-            <div class="item-content">
-              <div class="item-title">Restarting from scratch</div>
-              <div class="item-desc">
-                <div class="desc-text">Creating a new subagent when you could resume an existing one. All previous context and progress is lost unnecessarily.</div>
-                <div class="desc-metrics">
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Context lost
-                  </span>
-                  <span class="metric-badge">
-                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    Duplicate work
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="pair-indicator">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="prompt-section">
-    <div class="prompt-header">
-      <span class="prompt-label">Prompt Output</span>
-      <button class="copy-btn" id="copyBtn" onclick="copyPrompt()">Copy</button>
-    </div>
-    <div class="prompt-text" id="promptText"></div>
-  </div>
+<div class="title-bar">
+    <div class="section-label">FOUNDATIONS</div>
+    <h1>Maximizing Throughput</h1>
+    <p>Right-size models and manage context for agent performance</p>
 </div>
 
-<script>
-const state = { active: new Set() };
+<div class="content">
+    <div class="bullets">
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Right-size model per role</span> &mdash; Opus for design and research, Sonnet for implementation tasks</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Research returns &lt;500 tokens</span> &mdash; in-memory findings only, never write to disk</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Disk-based artifact passing</span> &mdash; write outputs to files, return status summary to parent</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Scope narrowly</span> &mdash; specify files, directories, and patterns to avoid wasted tokens</div>
+        </div>
+        <div class="bullet">
+            <div class="bullet-dot"></div>
+            <div class="bullet-text"><span>Resume, don't restart</span> &mdash; reuse subagent context instead of rediscovering everything</div>
+        </div>
+    </div>
 
-// Pair mappings: do <-> don't
-const pairs = {
-  rightsize: 'oversize', oversize: 'rightsize',
-  minimize: 'rawdata', rawdata: 'minimize',
-  scope: 'unbounded', unbounded: 'scope',
-  preload: 'noskills', noskills: 'preload',
-  resume: 'restart', restart: 'resume'
-};
+    <div class="visual">
+        <svg width="860" height="620" viewBox="0 0 860 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Title -->
+            <text x="430" y="32" text-anchor="middle" fill="#CCCCCC" font-size="14" font-weight="600" letter-spacing="2" font-family="Inter, Arial, sans-serif">MODEL SELECTION TIERS</text>
 
-function toggleItem(el) {
-  const id = el.dataset.id;
-  if (state.active.has(id)) {
-    state.active.delete(id);
-    el.classList.remove('active');
-    highlightPair(id, false);
-  } else {
-    state.active.add(id);
-    el.classList.add('active');
-    highlightPair(id, true);
-  }
-  updatePrompt();
-  updateConnections();
-}
+            <!-- Tier 1: Opus -->
+            <rect x="40" y="60" width="780" height="130" rx="12" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.25)" stroke-width="1.5"/>
+            <rect x="40" y="60" width="780" height="130" rx="12" fill="url(#opusGrad)" opacity="0.08"/>
+            <!-- Opus icon circle -->
+            <circle cx="110" cy="125" r="32" fill="rgba(167,139,250,0.12)" stroke="rgba(167,139,250,0.4)" stroke-width="1.5"/>
+            <text x="110" y="132" text-anchor="middle" fill="#A78BFA" font-size="22" font-weight="700" font-family="Inter, Arial, sans-serif">O</text>
+            <!-- Opus text -->
+            <text x="164" y="105" fill="#C4B5FD" font-size="24" font-weight="700" font-family="Inter, Arial, sans-serif">Opus</text>
+            <text x="164" y="132" fill="#CCCCCC" font-size="18" font-family="Inter, Arial, sans-serif">Highest quality  |  Deep reasoning  |  Complex decisions</text>
+            <!-- Role badges -->
+            <rect x="164" y="148" width="90" height="26" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
+            <text x="209" y="165" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Research</text>
+            <rect x="264" y="148" width="80" height="26" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
+            <text x="304" y="165" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Design</text>
+            <rect x="354" y="148" width="110" height="26" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
+            <text x="409" y="165" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Test-Writer</text>
+            <rect x="474" y="148" width="95" height="26" rx="6" fill="rgba(167,139,250,0.1)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
+            <text x="521" y="165" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Validator</text>
+            <!-- Quality bar -->
+            <rect x="640" y="95" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
+            <rect x="640" y="95" width="150" height="8" rx="4" fill="rgba(167,139,250,0.5)"/>
+            <text x="640" y="85" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">QUALITY</text>
+            <text x="790" y="85" text-anchor="end" fill="#A78BFA" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">HIGHEST</text>
+            <rect x="640" y="135" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
+            <rect x="640" y="135" width="45" height="8" rx="4" fill="rgba(220,71,125,0.5)"/>
+            <text x="640" y="125" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">SPEED</text>
+            <text x="790" y="125" text-anchor="end" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">SLOWER</text>
 
-function highlightPair(id, show) {
-  const pairId = pairs[id];
-  if (!pairId) return;
-  const pairEl = document.querySelector(`.item[data-id="${pairId}"]`);
-  const currentEl = document.querySelector(`.item[data-id="${id}"]`);
-  if (show) {
-    pairEl.classList.add('paired');
-    currentEl.classList.add('paired');
-  } else {
-    pairEl.classList.remove('paired');
-    currentEl.classList.remove('paired');
-  }
-}
+            <!-- Tier 2: Sonnet -->
+            <rect x="40" y="220" width="780" height="130" rx="12" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.2)" stroke-width="1.5"/>
+            <!-- Sonnet icon circle -->
+            <circle cx="110" cy="285" r="32" fill="rgba(98,212,220,0.1)" stroke="rgba(98,212,220,0.35)" stroke-width="1.5"/>
+            <text x="110" y="292" text-anchor="middle" fill="#62D4DC" font-size="22" font-weight="700" font-family="Inter, Arial, sans-serif">S</text>
+            <!-- Sonnet text -->
+            <text x="164" y="265" fill="#62D4DC" font-size="24" font-weight="700" font-family="Inter, Arial, sans-serif">Sonnet</text>
+            <text x="164" y="292" fill="#CCCCCC" font-size="18" font-family="Inter, Arial, sans-serif">Balanced  |  Fast  |  Most agent workloads</text>
+            <!-- Role badges -->
+            <rect x="164" y="308" width="100" height="26" rx="6" fill="rgba(98,212,220,0.08)" stroke="rgba(98,212,220,0.18)" stroke-width="1"/>
+            <text x="214" y="325" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Developer</text>
+            <rect x="274" y="308" width="140" height="26" rx="6" fill="rgba(98,212,220,0.08)" stroke="rgba(98,212,220,0.18)" stroke-width="1"/>
+            <text x="344" y="325" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Implementation</text>
+            <!-- Quality bar -->
+            <rect x="640" y="255" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
+            <rect x="640" y="255" width="105" height="8" rx="4" fill="rgba(98,212,220,0.45)"/>
+            <text x="640" y="245" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">QUALITY</text>
+            <text x="790" y="245" text-anchor="end" fill="#62D4DC" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">HIGH</text>
+            <rect x="640" y="295" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
+            <rect x="640" y="295" width="120" height="8" rx="4" fill="rgba(96,222,169,0.5)"/>
+            <text x="640" y="285" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">SPEED</text>
+            <text x="790" y="285" text-anchor="end" fill="#60DEA9" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">FAST</text>
 
-function updateConnections() {
-  const wrapper = document.querySelector('.columns-wrapper');
-  const svgContainer = document.getElementById('connectionLines');
-  const svg = svgContainer.querySelector('svg');
-  const wrapperRect = wrapper.getBoundingClientRect();
+            <!-- Tier 3: Haiku -->
+            <rect x="40" y="380" width="780" height="130" rx="12" fill="rgba(255,207,37,0.03)" stroke="rgba(255,207,37,0.18)" stroke-width="1.5"/>
+            <!-- Haiku icon circle -->
+            <circle cx="110" cy="445" r="32" fill="rgba(255,207,37,0.08)" stroke="rgba(255,207,37,0.3)" stroke-width="1.5"/>
+            <text x="110" y="452" text-anchor="middle" fill="#FFCF25" font-size="22" font-weight="700" font-family="Inter, Arial, sans-serif">H</text>
+            <!-- Haiku text -->
+            <text x="164" y="425" fill="#FFCF25" font-size="24" font-weight="700" font-family="Inter, Arial, sans-serif">Haiku</text>
+            <text x="164" y="452" fill="#CCCCCC" font-size="18" font-family="Inter, Arial, sans-serif">Fastest  |  Cheapest  |  Simple structured tasks</text>
+            <!-- Role badges -->
+            <rect x="164" y="468" width="130" height="26" rx="6" fill="rgba(255,207,37,0.06)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
+            <text x="229" y="485" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Research Parsing</text>
+            <rect x="304" y="468" width="120" height="26" rx="6" fill="rgba(255,207,37,0.06)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
+            <text x="364" y="485" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Classification</text>
+            <!-- Quality bar -->
+            <rect x="640" y="415" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
+            <rect x="640" y="415" width="60" height="8" rx="4" fill="rgba(255,207,37,0.45)"/>
+            <text x="640" y="405" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">QUALITY</text>
+            <text x="790" y="405" text-anchor="end" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">GOOD</text>
+            <rect x="640" y="455" width="150" height="8" rx="4" fill="rgba(255,255,255,0.06)"/>
+            <rect x="640" y="455" width="150" height="8" rx="4" fill="rgba(255,207,37,0.5)"/>
+            <text x="640" y="445" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">SPEED</text>
+            <text x="790" y="445" text-anchor="end" fill="#FFCF25" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">FASTEST</text>
 
-  // Remove existing lines
-  svg.innerHTML = '';
-  svg.setAttribute('viewBox', `0 0 ${wrapperRect.width} ${wrapperRect.height}`);
+            <!-- Cost indicator -->
+            <rect x="40" y="540" width="780" height="60" rx="12" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+            <text x="80" y="575" fill="#CCCCCC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">COST RATIO</text>
+            <!-- Cost circles -->
+            <circle cx="280" cy="570" r="8" fill="rgba(167,139,250,0.3)" stroke="#A78BFA" stroke-width="1"/>
+            <circle cx="302" cy="570" r="8" fill="rgba(167,139,250,0.3)" stroke="#A78BFA" stroke-width="1"/>
+            <circle cx="324" cy="570" r="8" fill="rgba(167,139,250,0.3)" stroke="#A78BFA" stroke-width="1"/>
+            <text x="346" y="575" fill="#A78BFA" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">Opus $$$</text>
 
-  state.active.forEach(id => {
-    const pairId = pairs[id];
-    if (!pairId) return;
-    // Only draw from do -> don't to avoid duplicates
-    const doEl = document.querySelector(`.col-do .item[data-id="${id}"]`) ||
-                 document.querySelector(`.col-do .item[data-id="${pairId}"]`);
-    const dontEl = document.querySelector(`.col-dont .item[data-id="${id}"]`) ||
-                   document.querySelector(`.col-dont .item[data-id="${pairId}"]`);
+            <circle cx="490" cy="570" r="8" fill="rgba(98,212,220,0.25)" stroke="#62D4DC" stroke-width="1"/>
+            <circle cx="512" cy="570" r="8" fill="rgba(98,212,220,0.25)" stroke="#62D4DC" stroke-width="1"/>
+            <text x="534" y="575" fill="#62D4DC" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">Sonnet $$</text>
 
-    if (!doEl || !dontEl) return;
+            <circle cx="670" cy="570" r="8" fill="rgba(255,207,37,0.2)" stroke="#FFCF25" stroke-width="1"/>
+            <text x="692" y="575" fill="#FFCF25" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">Haiku $</text>
 
-    // Only draw once per pair
-    const doId = doEl.dataset.id;
-    const dontId = dontEl.dataset.id;
-    if (id !== doId) return; // skip if this is the don't side
+            <defs>
+                <linearGradient id="opusGrad" x1="0" y1="0" x2="820" y2="0">
+                    <stop offset="0%" stop-color="#A78BFA" stop-opacity="0.1"/>
+                    <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+                </linearGradient>
+            </defs>
+        </svg>
+    </div>
+</div>
 
-    const doRect = doEl.getBoundingClientRect();
-    const dontRect = dontEl.getBoundingClientRect();
-
-    const x1 = doRect.right - wrapperRect.left;
-    const y1 = doRect.top + doRect.height / 2 - wrapperRect.top;
-    const x2 = dontRect.left - wrapperRect.left;
-    const y2 = dontRect.top + dontRect.height / 2 - wrapperRect.top;
-    const cx1 = x1 + (x2 - x1) * 0.4;
-    const cx2 = x1 + (x2 - x1) * 0.6;
-
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${y1}, ${cx2} ${y2}, ${x2} ${y2}`);
-    path.setAttribute('class', 'connection-line visible');
-    svg.appendChild(path);
-  });
-}
-
-function updatePrompt() {
-  const el = document.getElementById('promptText');
-  if (state.active.size === 0) {
-    el.textContent = 'Maximizing Subagent Throughput: Right-size models (Haiku/Sonnet/Opus per task), minimize return payloads (summaries not raw data), scope narrowly (specify files/dirs), preload skills for domain knowledge, and resume subagents instead of restarting. Avoid: Opus for everything, raw output returns, unbounded exploration, runtime convention discovery, and unnecessary restarts.';
-    return;
-  }
-  const items = document.querySelectorAll('.item.active');
-  const parts = [];
-  items.forEach(i => {
-    const title = i.querySelector('.item-title').textContent;
-    const desc = i.querySelector('.desc-text').textContent;
-    const isDo = i.closest('.col-do');
-    parts.push(`${isDo ? 'DO' : 'AVOID'}: ${title} \u2014 ${desc}`);
-  });
-  el.textContent = parts.join('\n\n');
-}
-
-function copyPrompt() {
-  navigator.clipboard.writeText(document.getElementById('promptText').textContent).then(() => {
-    const btn = document.getElementById('copyBtn');
-    btn.textContent = 'Copied!';
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
-  });
-}
-
-// Redraw connections on resize
-window.addEventListener('resize', () => { updateConnections(); });
-
-updatePrompt();
-</script>
 </body>
 </html>

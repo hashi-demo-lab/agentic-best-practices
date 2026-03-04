@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Workflow Comparison Matrix</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+
+  /* Subtle grid */
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.03;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 44px 80px 20px;
+    position: relative; z-index: 1;
+  }
+  .section-label {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 3px; color: #FFCF25; margin-bottom: 8px;
+  }
+  .title-bar h1 {
+    font-size: 36px; font-weight: 600; letter-spacing: -0.02em;
+    color: #FFFFFF;
+  }
+  .title-bar p {
+    font-size: 20px; color: #82748C; margin-top: 4px; font-weight: 400;
+  }
+
+  /* Main layout */
+  .content {
+    display: flex; gap: 28px;
+    padding: 10px 80px 0;
+    position: relative; z-index: 1;
+  }
+
+  /* Workflow columns */
+  .col {
+    flex: 1; border-radius: 12px;
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    border: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+    overflow: hidden;
+  }
+
+  /* Column header */
+  .col-header {
+    padding: 22px 28px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    text-align: center;
+  }
+  .col-header h2 {
+    font-size: 28px; font-weight: 600; color: #FFFFFF; margin-bottom: 8px;
+  }
+  .badge {
+    display: inline-block; padding: 5px 18px; border-radius: 20px;
+    font-size: 14px; font-weight: 500; letter-spacing: 0.5px;
+  }
+  .col:nth-child(1) .badge {
+    background: rgba(96,222,169,0.1); color: #60DEA9;
+    border: 1px solid rgba(96,222,169,0.25);
+  }
+  .col:nth-child(2) .badge {
+    background: rgba(167,139,250,0.1); color: #A78BFA;
+    border: 1px solid rgba(167,139,250,0.25);
+  }
+  .col:nth-child(3) .badge {
+    background: rgba(220,71,125,0.1); color: #DC477D;
+    border: 1px solid rgba(220,71,125,0.25);
+  }
+
+  /* Accent bar */
+  .col:nth-child(1) .col-header { border-top: 3px solid #60DEA9; }
+  .col:nth-child(2) .col-header { border-top: 3px solid #A78BFA; }
+  .col:nth-child(3) .col-header { border-top: 3px solid #DC477D; }
+
+  /* Rows */
+  .row {
+    display: flex; flex-direction: column; gap: 3px;
+    padding: 14px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .row:last-child { border-bottom: none; }
+  .row-label {
+    font-size: 12px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 1.5px; color: #82748C;
+  }
+  .row-value {
+    font-size: 20px; color: #CCCCCC; line-height: 1.5; font-weight: 400;
+  }
+  .row-value code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 16px; padding: 2px 6px; border-radius: 4px;
+    background: rgba(255,255,255,0.04);
+  }
+  .col:nth-child(1) .row-value code { color: #60DEA9; }
+  .col:nth-child(2) .row-value code { color: #A78BFA; }
+  .col:nth-child(3) .row-value code { color: #DC477D; }
+
+  /* Agent tags */
+  .agent-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+  .agent-tag {
+    display: inline-block; padding: 3px 10px; border-radius: 6px;
+    font-size: 14px; font-weight: 500;
+    background: rgba(220,71,125,0.08); color: #DC477D;
+    border: 1px solid rgba(220,71,125,0.15);
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 24px 80px 0;
+    text-align: center;
+    position: relative; z-index: 1;
+  }
+  .footer p {
+    font-size: 20px; color: #82748C; line-height: 1.6; font-weight: 400;
+  }
+  .footer strong { color: #CCCCCC; }
+  .accent-green { color: #60DEA9; }
+  .accent-purple { color: #A78BFA; }
+  .accent-pink { color: #DC477D; }
+</style>
+</head>
+<body>
+
+<div class="title-bar">
+  <div class="section-label">WORKFLOWS</div>
+  <h1>Workflow Comparison Matrix</h1>
+  <p>Three workflows, increasing complexity, shared methodology</p>
+</div>
+
+<div class="content">
+  <!-- Consumer -->
+  <div class="col">
+    <div class="col-header">
+      <h2>Consumer</h2>
+      <span class="badge">Easy</span>
+    </div>
+    <div class="row">
+      <span class="row-label">Agents</span>
+      <div class="row-value">
+        <div class="agent-tags">
+          <span class="agent-tag">research</span>
+          <span class="agent-tag">design</span>
+          <span class="agent-tag">developer</span>
+          <span class="agent-tag">validator</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <span class="row-label">Design Doc</span>
+      <div class="row-value">6-section <code>consumer-design.md</code></div>
+    </div>
+    <div class="row">
+      <span class="row-label">Testing</span>
+      <div class="row-value"><code>terraform validate</code></div>
+    </div>
+    <div class="row">
+      <span class="row-label">Validation</span>
+      <div class="row-value">Quality score + sandbox deploy</div>
+    </div>
+    <div class="row">
+      <span class="row-label">Output</span>
+      <div class="row-value">Deployed infrastructure (module composition)</div>
+    </div>
+  </div>
+
+  <!-- Module -->
+  <div class="col">
+    <div class="col-header">
+      <h2>Module</h2>
+      <span class="badge">Medium</span>
+    </div>
+    <div class="row">
+      <span class="row-label">Agents</span>
+      <div class="row-value">
+        <div class="agent-tags">
+          <span class="agent-tag">research</span>
+          <span class="agent-tag">design</span>
+          <span class="agent-tag">test-writer</span>
+          <span class="agent-tag">developer</span>
+          <span class="agent-tag">validator</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <span class="row-label">Design Doc</span>
+      <div class="row-value">7-section <code>design.md</code></div>
+    </div>
+    <div class="row">
+      <span class="row-label">Testing</span>
+      <div class="row-value">TDD with <code>.tftest.hcl</code></div>
+    </div>
+    <div class="row">
+      <span class="row-label">Validation</span>
+      <div class="row-value">Quality scoring (security@30%)</div>
+    </div>
+    <div class="row">
+      <span class="row-label">Output</span>
+      <div class="row-value">Reusable Terraform module</div>
+    </div>
+  </div>
+
+  <!-- Provider -->
+  <div class="col">
+    <div class="col-header">
+      <h2>Provider</h2>
+      <span class="badge">Advanced</span>
+    </div>
+    <div class="row">
+      <span class="row-label">Agents</span>
+      <div class="row-value">
+        <div class="agent-tags">
+          <span class="agent-tag">research</span>
+          <span class="agent-tag">design</span>
+          <span class="agent-tag">test-writer</span>
+          <span class="agent-tag">developer</span>
+          <span class="agent-tag">validator</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <span class="row-label">Design Doc</span>
+      <div class="row-value">7-section <code>provider-design-{resource}.md</code></div>
+    </div>
+    <div class="row">
+      <span class="row-label">Testing</span>
+      <div class="row-value">Go acceptance tests</div>
+    </div>
+    <div class="row">
+      <span class="row-label">Validation</span>
+      <div class="row-value"><code>go build</code> / <code>vet</code> / <code>test</code> + acceptance</div>
+    </div>
+    <div class="row">
+      <span class="row-label">Output</span>
+      <div class="row-value">Provider resource (Plugin Framework)</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p><strong>Shared methodology:</strong> every workflow follows <span class="accent-green">Clarify</span> &rarr; <span class="accent-purple">Design</span> &rarr; <span class="accent-pink">Build + Test</span> &rarr; <span class="accent-green">Validate</span> &mdash; the difference is what gets built and how it gets tested.</p>
+</div>
+
+</body>
+</html>

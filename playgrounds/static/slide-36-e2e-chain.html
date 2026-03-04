@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>End-to-End Workflow Chain</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+  }
+
+  /* Section label */
+  .section-label {
+    padding: 48px 80px 0;
+  }
+  .section-label span {
+    font-size: 13px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 3px; color: #FFCF25;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 12px 80px 0;
+  }
+  .title-bar h1 {
+    font-size: 36px; font-weight: 600; color: #FFFFFF;
+    letter-spacing: -0.02em;
+  }
+  .title-bar p {
+    font-size: 19px; font-weight: 400; color: #82748C; margin-top: 6px;
+  }
+
+  /* Content area */
+  .content {
+    display: flex; gap: 60px; padding: 40px 80px 0;
+    align-items: flex-start;
+  }
+
+  /* Left: bullets */
+  .bullets {
+    width: 38%; display: flex; flex-direction: column; gap: 28px;
+    padding-top: 40px;
+  }
+  .bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .bullet-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 8px;
+  }
+  .bullet-text {
+    font-size: 19px; font-weight: 400; color: #CCCCCC; line-height: 1.55;
+  }
+  .bullet-text strong {
+    color: #FFFFFF; font-weight: 600;
+  }
+  .bullet-text .pink { color: #DC477D; font-weight: 600; }
+  .bullet-text .purple { color: #A78BFA; font-weight: 600; }
+  .bullet-text .green { color: #60DEA9; font-weight: 600; }
+
+  /* Right: chain visual */
+  .visual {
+    width: 62%; padding-top: 20px;
+  }
+
+  .chain {
+    display: flex; align-items: stretch; gap: 0;
+  }
+
+  /* Stage cards */
+  .stage {
+    flex: 1; border-radius: 12px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+
+  .stage-accent {
+    height: 3px; width: 100%;
+  }
+  .stage.provider .stage-accent { background: #DC477D; }
+  .stage.module .stage-accent { background: #A78BFA; }
+  .stage.consumer .stage-accent { background: #60DEA9; }
+
+  .stage-header {
+    padding: 24px 22px 16px; text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .stage-icon {
+    width: 52px; height: 52px; border-radius: 12px; margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .stage.provider .stage-icon {
+    background: rgba(220,71,125,0.1); border: 1px solid rgba(220,71,125,0.2);
+  }
+  .stage.module .stage-icon {
+    background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.2);
+  }
+  .stage.consumer .stage-icon {
+    background: rgba(96,222,169,0.1); border: 1px solid rgba(96,222,169,0.2);
+  }
+
+  .stage-name {
+    font-size: 22px; font-weight: 600; margin-bottom: 4px;
+  }
+  .stage.provider .stage-name { color: #DC477D; }
+  .stage.module .stage-name { color: #A78BFA; }
+  .stage.consumer .stage-name { color: #60DEA9; }
+
+  .stage-subtitle {
+    font-size: 14px; font-weight: 400; color: #82748C;
+  }
+
+  .stage-body {
+    padding: 18px 22px 22px;
+    display: flex; flex-direction: column; gap: 10px;
+    flex: 1;
+  }
+  .stage-item {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 14px; font-weight: 400; color: #CCCCCC; line-height: 1.4;
+  }
+  .stage-item-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 6px; opacity: 0.6;
+  }
+  .stage.provider .stage-item-dot { background: #DC477D; }
+  .stage.module .stage-item-dot { background: #A78BFA; }
+  .stage.consumer .stage-item-dot { background: #60DEA9; }
+
+  .stage-output {
+    margin-top: auto; padding: 10px 14px; border-radius: 8px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .stage-output-label {
+    font-size: 11px; font-weight: 500; text-transform: uppercase;
+    letter-spacing: 1.5px; color: #82748C; margin-bottom: 6px;
+  }
+  .stage-output-text {
+    font-size: 13px; font-weight: 400; color: #CCCCCC;
+  }
+
+  /* Chain arrows */
+  .chain-arrow {
+    width: 60px; flex-shrink: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .chain-arrow svg {
+    width: 60px; height: 40px;
+  }
+  .chain-arrow-label {
+    font-size: 12px; font-weight: 400; color: #82748C; text-align: center;
+    line-height: 1.3; margin-top: 6px; max-width: 70px;
+  }
+
+  /* Pipeline metaphor label */
+  .pipeline-label {
+    text-align: center; margin-top: 28px;
+    padding: 12px 24px; border-radius: 12px;
+    background: linear-gradient(180deg, #121212 0%, #000000 100%);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .pipeline-label p {
+    font-size: 15px; font-weight: 400; color: #82748C;
+  }
+  .pipeline-label .pink { color: #DC477D; font-weight: 600; }
+  .pipeline-label .purple { color: #A78BFA; font-weight: 600; }
+  .pipeline-label .green { color: #60DEA9; font-weight: 600; }
+
+  /* SVG icons in stage headers */
+  .icon-svg {
+    width: 26px; height: 26px;
+  }
+</style>
+</head>
+<body>
+
+<div class="section-label">
+  <span>WORKFLOWS</span>
+</div>
+
+<div class="title-bar">
+  <h1>End-to-End: How Workflows Feed Each Other</h1>
+  <p>The manufacturing pipeline -- each layer adds value and validation</p>
+</div>
+
+<div class="content">
+  <div class="bullets">
+    <div class="bullet">
+      <div class="bullet-dot" style="background: #DC477D;"></div>
+      <div class="bullet-text"><strong>Providers create raw resources</strong> -- Go Plugin Framework interfaces for cloud APIs</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot" style="background: #A78BFA;"></div>
+      <div class="bullet-text"><strong>Modules add security defaults</strong> -- wrap resources with best practices and TDD testing</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot" style="background: #60DEA9;"></div>
+      <div class="bullet-text"><strong>Consumers compose deployments</strong> -- assemble modules into production-ready infrastructure</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot" style="background: #82748C;"></div>
+      <div class="bullet-text"><strong>Each layer validates</strong> -- own constitution, design template, and quality criteria at every stage</div>
+    </div>
+  </div>
+
+  <div class="visual">
+    <div class="chain">
+      <!-- Provider -->
+      <div class="stage provider">
+        <div class="stage-accent"></div>
+        <div class="stage-header">
+          <div class="stage-icon">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#DC477D" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4M4.22 4.22l2.83 2.83m9.9 9.9l2.83 2.83M1 12h4m14 0h4M4.22 19.78l2.83-2.83m9.9-9.9l2.83-2.83"/>
+            </svg>
+          </div>
+          <div class="stage-name">Provider</div>
+          <div class="stage-subtitle">Creates building blocks</div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-item"><div class="stage-item-dot"></div><span>Raw resource interfaces</span></div>
+          <div class="stage-item"><div class="stage-item-dot"></div><span>Go + Plugin Framework</span></div>
+          <div class="stage-item"><div class="stage-item-dot"></div><span>Acceptance tests</span></div>
+          <div class="stage-output">
+            <div class="stage-output-label">Outputs</div>
+            <div class="stage-output-text">Provider resources, data sources</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow 1 -->
+      <div class="chain-arrow">
+        <svg viewBox="0 0 60 40">
+          <line x1="4" y1="20" x2="44" y2="20" stroke="#A78BFA" stroke-width="2" opacity="0.35"/>
+          <polygon points="42,14 56,20 42,26" fill="#A78BFA" opacity="0.45"/>
+        </svg>
+        <div class="chain-arrow-label">Resources feed modules</div>
+      </div>
+
+      <!-- Module -->
+      <div class="stage module">
+        <div class="stage-accent"></div>
+        <div class="stage-header">
+          <div class="stage-icon">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2">
+              <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/>
+            </svg>
+          </div>
+          <div class="stage-name">Module</div>
+          <div class="stage-subtitle">Packages with defaults</div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-item"><div class="stage-item-dot"></div><span>Secure defaults + best practices</span></div>
+          <div class="stage-item"><div class="stage-item-dot"></div><span>TDD with .tftest.hcl</span></div>
+          <div class="stage-item"><div class="stage-item-dot"></div><span>Quality scoring</span></div>
+          <div class="stage-output">
+            <div class="stage-output-label">Outputs</div>
+            <div class="stage-output-text">Registry modules, test suites</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arrow 2 -->
+      <div class="chain-arrow">
+        <svg viewBox="0 0 60 40">
+          <line x1="4" y1="20" x2="44" y2="20" stroke="#60DEA9" stroke-width="2" opacity="0.35"/>
+          <polygon points="42,14 56,20 42,26" fill="#60DEA9" opacity="0.45"/>
+        </svg>
+        <div class="chain-arrow-label">Modules compose deployments</div>
+      </div>
+
+      <!-- Consumer -->
+      <div class="stage consumer">
+        <div class="stage-accent"></div>
+        <div class="stage-header">
+          <div class="stage-icon">
+            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="#60DEA9" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/>
+            </svg>
+          </div>
+          <div class="stage-name">Consumer</div>
+          <div class="stage-subtitle">Composes into deployments</div>
+        </div>
+        <div class="stage-body">
+          <div class="stage-item"><div class="stage-item-dot"></div><span>Production infrastructure</span></div>
+          <div class="stage-item"><div class="stage-item-dot"></div><span>Sandbox-validated</span></div>
+          <div class="stage-item"><div class="stage-item-dot"></div><span>Quality-scored</span></div>
+          <div class="stage-output">
+            <div class="stage-output-label">Outputs</div>
+            <div class="stage-output-text">Production-ready infra, validated</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pipeline-label">
+      <p><span class="pink">Raw cloud APIs</span> become <span class="purple">tested modules</span> become <span class="green">production infrastructure</span> -- each stage validates independently</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
