@@ -107,102 +107,89 @@ body {
     </div>
 
     <div class="visual">
-        <svg width="940" height="760" viewBox="0 0 940 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="860" height="720" viewBox="0 0 860 720" fill="none" xmlns="http://www.w3.org/2000/svg">
             <!-- Title -->
-            <text x="470" y="28" text-anchor="middle" fill="#CCCCCC" font-size="14" font-weight="600" letter-spacing="2" font-family="Inter, Arial, sans-serif">DEVCONTAINER ARCHITECTURE</text>
+            <text x="430" y="28" text-anchor="middle" fill="#CCCCCC" font-size="14" font-weight="600" letter-spacing="2" font-family="Inter, Arial, sans-serif">DEVCONTAINER ARCHITECTURE</text>
 
             <!-- Host System (outer box) -->
-            <rect x="20" y="50" width="900" height="700" rx="20" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" stroke-dasharray="8 6"/>
-            <text x="50" y="42" fill="#82748C" font-size="14" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">HOST SYSTEM (INACCESSIBLE)</text>
+            <rect x="20" y="50" width="820" height="660" rx="16" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" stroke-dasharray="8 6"/>
+            <text x="45" y="44" fill="#82748C" font-size="12" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">HOST (INACCESSIBLE)</text>
 
             <!-- DevContainer (inner box) -->
-            <rect x="50" y="80" width="860" height="650" rx="12" fill="rgba(167,139,250,0.02)" stroke="rgba(167,139,250,0.2)" stroke-width="1.5"/>
-            <rect x="50" y="80" width="860" height="4" rx="2" fill="rgba(167,139,250,0.3)"/>
-            <text x="80" y="110" fill="#A78BFA" font-size="16" font-weight="700" font-family="Inter, Arial, sans-serif">devcontainer</text>
-            <text x="230" y="110" fill="#82748C" font-size="14" font-family="SF Mono, Fira Code, monospace">devcontainer.json</text>
-
-            <!-- Feature: Docker-in-Docker -->
-            <rect x="80" y="130" width="380" height="60" rx="12" fill="rgba(220,71,125,0.04)" stroke="rgba(220,71,125,0.18)" stroke-width="1"/>
-            <circle cx="110" cy="160" r="14" fill="rgba(220,71,125,0.1)" stroke="rgba(220,71,125,0.3)" stroke-width="1"/>
-            <text x="110" y="164" text-anchor="middle" fill="#DC477D" font-size="13" font-family="Inter, Arial, sans-serif">&#x1F433;</text>
-            <text x="136" y="155" fill="#DC477D" font-size="15" font-weight="600" font-family="Inter, Arial, sans-serif">Docker-in-Docker</text>
-            <text x="136" y="174" fill="#82748C" font-size="14" font-family="SF Mono, Fira Code, monospace">ghcr.io/devcontainers/features/docker-in-docker:2.12.4</text>
+            <rect x="45" y="75" width="770" height="615" rx="12" fill="rgba(167,139,250,0.02)" stroke="rgba(167,139,250,0.18)" stroke-width="1.5"/>
+            <rect x="45" y="75" width="770" height="3" rx="1.5" fill="rgba(167,139,250,0.3)"/>
+            <text x="70" y="102" fill="#A78BFA" font-size="15" font-weight="700" font-family="Inter, Arial, sans-serif">devcontainer.json</text>
 
             <!-- Tools Row -->
-            <text x="80" y="222" fill="#CCCCCC" font-size="14" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">INSTALLED TOOLS</text>
+            <text x="70" y="136" fill="#82748C" font-size="12" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">TOOLCHAIN</text>
+            <rect x="70" y="148" width="100" height="36" rx="6" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
+            <text x="120" y="171" text-anchor="middle" fill="#62D4DC" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">Terraform</text>
+            <rect x="180" y="148" width="72" height="36" rx="6" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
+            <text x="216" y="171" text-anchor="middle" fill="#62D4DC" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">tflint</text>
+            <rect x="262" y="148" width="66" height="36" rx="6" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
+            <text x="295" y="171" text-anchor="middle" fill="#62D4DC" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">trivy</text>
+            <rect x="338" y="148" width="100" height="36" rx="6" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.15)" stroke-width="1"/>
+            <text x="388" y="171" text-anchor="middle" fill="#A78BFA" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">Claude Code</text>
+            <rect x="448" y="148" width="100" height="36" rx="6" fill="rgba(255,207,37,0.03)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+            <text x="498" y="171" text-anchor="middle" fill="#FFCF25" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">vault-radar</text>
+            <rect x="558" y="148" width="100" height="36" rx="6" fill="rgba(98,126,239,0.04)" stroke="rgba(98,126,239,0.12)" stroke-width="1"/>
+            <text x="608" y="171" text-anchor="middle" fill="#627EEF" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">pre-commit</text>
+            <rect x="668" y="148" width="120" height="36" rx="6" fill="rgba(220,71,125,0.04)" stroke="rgba(220,71,125,0.12)" stroke-width="1"/>
+            <text x="728" y="171" text-anchor="middle" fill="#DC477D" font-size="13" font-weight="600" font-family="Inter, Arial, sans-serif">docker-in-docker</text>
 
-            <!-- Tool boxes in a grid -->
-            <rect x="80" y="240" width="140" height="50" rx="8" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
-            <text x="150" y="270" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">Terraform</text>
+            <!-- Agent Configuration -->
+            <text x="70" y="218" fill="#82748C" font-size="12" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">AGENT CONFIGURATION</text>
+            <rect x="70" y="232" width="720" height="220" rx="10" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
 
-            <rect x="230" y="240" width="100" height="50" rx="8" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
-            <text x="280" y="270" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">tflint</text>
+            <text x="90" y="260" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">CLAUDE_CODE_ENABLE_TASKS</text>
+            <text x="390" y="260" fill="#82748C" font-size="13" font-family="SF Mono, Fira Code, monospace">=</text>
+            <text x="410" y="260" fill="#60DEA9" font-size="13" font-family="SF Mono, Fira Code, monospace">"true"</text>
 
-            <rect x="340" y="240" width="90" height="50" rx="8" fill="rgba(98,212,220,0.04)" stroke="rgba(98,212,220,0.15)" stroke-width="1"/>
-            <text x="385" y="270" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">trivy</text>
+            <text x="90" y="288" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">CLAUDE_CODE_AGENT_TEAMS</text>
+            <text x="390" y="288" fill="#82748C" font-size="13" font-family="SF Mono, Fira Code, monospace">=</text>
+            <text x="410" y="288" fill="#60DEA9" font-size="13" font-family="SF Mono, Fira Code, monospace">"1"</text>
 
-            <rect x="440" y="240" width="130" height="50" rx="8" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.15)" stroke-width="1"/>
-            <text x="505" y="270" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">AI Agent</text>
+            <text x="90" y="316" fill="#62D4DC" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">CLAUDE_CODE_TEAM_NAME</text>
+            <text x="390" y="316" fill="#82748C" font-size="13" font-family="SF Mono, Fira Code, monospace">=</text>
+            <text x="410" y="316" fill="#CCCCCC" font-size="13" font-family="SF Mono, Fira Code, monospace">${localEnv:CLAUDE_CODE_TEAM_NAME}</text>
 
-            <rect x="580" y="240" width="130" height="50" rx="8" fill="rgba(255,207,37,0.03)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
-            <text x="645" y="270" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">vault-radar</text>
+            <text x="90" y="348" fill="#FFD06C" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">TFE_TOKEN</text>
+            <text x="390" y="348" fill="#82748C" font-size="13" font-family="SF Mono, Fira Code, monospace">=</text>
+            <text x="410" y="348" fill="#CCCCCC" font-size="13" font-family="SF Mono, Fira Code, monospace">${localEnv:TEAM_TFE_TOKEN}</text>
 
-            <rect x="720" y="240" width="130" height="50" rx="8" fill="rgba(98,126,239,0.04)" stroke="rgba(98,126,239,0.12)" stroke-width="1"/>
-            <text x="785" y="270" text-anchor="middle" fill="#627EEF" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">pre-commit</text>
+            <text x="90" y="376" fill="#FFD06C" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">GH_ENTERPRISE_TOKEN</text>
+            <text x="390" y="376" fill="#82748C" font-size="13" font-family="SF Mono, Fira Code, monospace">=</text>
+            <text x="410" y="376" fill="#CCCCCC" font-size="13" font-family="SF Mono, Fira Code, monospace">${localEnv:GH_ENTERPRISE_TOKEN}</text>
+
+            <text x="90" y="408" fill="#627EEF" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">CLAUDE_CODE_ENABLE_TELEMETRY</text>
+            <text x="390" y="408" fill="#82748C" font-size="13" font-family="SF Mono, Fira Code, monospace">=</text>
+            <text x="410" y="408" fill="#CCCCCC" font-size="13" font-family="SF Mono, Fira Code, monospace">${localEnv:CLAUDE_CODE_ENABLE_TELEMETRY}</text>
+
+            <text x="90" y="436" fill="#627EEF" font-size="13" font-weight="600" font-family="SF Mono, Fira Code, monospace">OTEL_RESOURCE_ATTRIBUTES</text>
+            <text x="390" y="436" fill="#82748C" font-size="13" font-family="SF Mono, Fira Code, monospace">=</text>
+            <text x="410" y="436" fill="#CCCCCC" font-size="13" font-family="SF Mono, Fira Code, monospace">session.id=...,job.name=terraform-eval</text>
 
             <!-- VS Code Extensions -->
-            <text x="80" y="328" fill="#CCCCCC" font-size="14" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">VS CODE EXTENSIONS</text>
-            <rect x="80" y="344" width="160" height="30" rx="6" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.1)" stroke-width="1"/>
-            <text x="160" y="364" text-anchor="middle" fill="#A78BFA" font-size="14" font-family="SF Mono, Fira Code, monospace">Anthropic.claude-code</text>
-            <rect x="250" y="344" width="160" height="30" rx="6" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
-            <text x="330" y="364" text-anchor="middle" fill="#62D4DC" font-size="14" font-family="SF Mono, Fira Code, monospace">hashicorp.terraform</text>
-            <rect x="420" y="344" width="120" height="30" rx="6" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.1)" stroke-width="1"/>
-            <text x="480" y="364" text-anchor="middle" fill="#627EEF" font-size="14" font-family="SF Mono, Fira Code, monospace">HashiCorp.HCL</text>
-            <rect x="550" y="344" width="140" height="30" rx="6" fill="rgba(255,207,37,0.03)" stroke="rgba(255,207,37,0.1)" stroke-width="1"/>
-            <text x="620" y="364" text-anchor="middle" fill="#FFCF25" font-size="14" font-family="SF Mono, Fira Code, monospace">redhat.vscode-yaml</text>
-
-            <!-- Agent Configuration Section -->
-            <text x="80" y="414" fill="#CCCCCC" font-size="14" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">AGENT CONFIGURATION (remoteEnv)</text>
-
-            <!-- Env var rows -->
-            <rect x="80" y="430" width="780" height="200" rx="12" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-
-            <text x="100" y="458" fill="#62D4DC" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">CLAUDE_CODE_ENABLE_TASKS</text>
-            <text x="420" y="458" fill="#82748C" font-size="14" font-family="SF Mono, Fira Code, monospace">=</text>
-            <text x="440" y="458" fill="#60DEA9" font-size="14" font-family="SF Mono, Fira Code, monospace">"true"</text>
-
-            <text x="100" y="484" fill="#62D4DC" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS</text>
-            <text x="500" y="484" fill="#82748C" font-size="14" font-family="SF Mono, Fira Code, monospace">=</text>
-            <text x="520" y="484" fill="#60DEA9" font-size="14" font-family="SF Mono, Fira Code, monospace">"1"</text>
-
-            <text x="100" y="510" fill="#62D4DC" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">CLAUDE_CODE_TEAM_NAME</text>
-            <text x="380" y="510" fill="#82748C" font-size="14" font-family="SF Mono, Fira Code, monospace">=</text>
-            <text x="400" y="510" fill="#CCCCCC" font-size="14" font-family="SF Mono, Fira Code, monospace">${localEnv:CLAUDE_CODE_TEAM_NAME}</text>
-
-            <text x="100" y="540" fill="#FFD06C" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">TFE_TOKEN</text>
-            <text x="240" y="540" fill="#82748C" font-size="14" font-family="SF Mono, Fira Code, monospace">=</text>
-            <text x="260" y="540" fill="#CCCCCC" font-size="14" font-family="SF Mono, Fira Code, monospace">${localEnv:TEAM_TFE_TOKEN}</text>
-
-            <text x="500" y="540" fill="#FFD06C" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">GH_ENTERPRISE_TOKEN</text>
-            <text x="700" y="540" fill="#82748C" font-size="14" font-family="SF Mono, Fira Code, monospace">=</text>
-            <text x="720" y="540" fill="#CCCCCC" font-size="14" font-family="SF Mono, Fira Code, monospace">${localEnv:...}</text>
-
-            <text x="100" y="566" fill="#627EEF" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">CLAUDE_CODE_ENABLE_TELEMETRY</text>
-            <text x="460" y="566" fill="#82748C" font-size="14" font-family="SF Mono, Fira Code, monospace">=</text>
-            <text x="480" y="566" fill="#CCCCCC" font-size="14" font-family="SF Mono, Fira Code, monospace">${localEnv:CLAUDE_CODE_ENABLE_TELEMETRY}</text>
-
-            <text x="100" y="592" fill="#627EEF" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">OTEL_EXPORTER_OTLP_ENDPOINT</text>
-            <text x="460" y="592" fill="#82748C" font-size="14" font-family="SF Mono, Fira Code, monospace">=</text>
-            <text x="480" y="592" fill="#CCCCCC" font-size="14" font-family="SF Mono, Fira Code, monospace">${localEnv:OTEL_EXPORTER_OTLP_ENDPOINT}</text>
-
-            <text x="100" y="618" fill="#627EEF" font-size="14" font-weight="600" font-family="SF Mono, Fira Code, monospace">OTEL_RESOURCE_ATTRIBUTES</text>
-            <text x="420" y="618" fill="#82748C" font-size="14" font-family="SF Mono, Fira Code, monospace">=</text>
-            <text x="440" y="618" fill="#CCCCCC" font-size="14" font-family="SF Mono, Fira Code, monospace">session.id=...,job.name=terraform-eval</text>
+            <text x="70" y="484" fill="#82748C" font-size="12" font-weight="600" letter-spacing="1.5" font-family="Inter, Arial, sans-serif">VS CODE EXTENSIONS</text>
+            <rect x="70" y="498" width="185" height="30" rx="6" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.1)" stroke-width="1"/>
+            <text x="162" y="518" text-anchor="middle" fill="#A78BFA" font-size="12" font-family="SF Mono, Fira Code, monospace">Anthropic.claude-code</text>
+            <rect x="265" y="498" width="175" height="30" rx="6" fill="rgba(98,212,220,0.03)" stroke="rgba(98,212,220,0.1)" stroke-width="1"/>
+            <text x="352" y="518" text-anchor="middle" fill="#62D4DC" font-size="12" font-family="SF Mono, Fira Code, monospace">hashicorp.terraform</text>
+            <rect x="450" y="498" width="120" height="30" rx="6" fill="rgba(98,126,239,0.03)" stroke="rgba(98,126,239,0.1)" stroke-width="1"/>
+            <text x="510" y="518" text-anchor="middle" fill="#627EEF" font-size="12" font-family="SF Mono, Fira Code, monospace">HashiCorp.HCL</text>
+            <rect x="580" y="498" width="155" height="30" rx="6" fill="rgba(255,207,37,0.03)" stroke="rgba(255,207,37,0.1)" stroke-width="1"/>
+            <text x="657" y="518" text-anchor="middle" fill="#FFCF25" font-size="12" font-family="SF Mono, Fira Code, monospace">redhat.vscode-yaml</text>
 
             <!-- Security callout -->
-            <rect x="80" y="660" width="780" height="50" rx="10" fill="rgba(220,71,125,0.03)" stroke="rgba(220,71,125,0.12)" stroke-width="1"/>
-            <text x="470" y="690" text-anchor="middle" fill="#CCCCCC" font-size="16" font-family="Inter, Arial, sans-serif">
-                <tspan font-weight="600" fill="#DC477D">Security:</tspan>  Host inaccessible  |  NET_ADMIN + NET_RAW caps  |  Firewall-controlled network  |  Agent permissions enforced
+            <rect x="70" y="555" width="720" height="46" rx="10" fill="rgba(220,71,125,0.03)" stroke="rgba(220,71,125,0.12)" stroke-width="1"/>
+            <text x="430" y="583" text-anchor="middle" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">
+                <tspan font-weight="600" fill="#DC477D">Security:</tspan>  Host inaccessible  |  NET_ADMIN + NET_RAW caps  |  Firewall-controlled network
+            </text>
+
+            <!-- Network isolation label -->
+            <rect x="70" y="618" width="720" height="46" rx="10" fill="rgba(96,222,169,0.03)" stroke="rgba(96,222,169,0.1)" stroke-width="1"/>
+            <text x="430" y="646" text-anchor="middle" fill="#CCCCCC" font-size="14" font-family="Inter, Arial, sans-serif">
+                <tspan font-weight="600" fill="#60DEA9">Portable:</tspan>  Version-controlled  |  New developer onboarding in minutes  |  Consistent across team
             </text>
         </svg>
     </div>
