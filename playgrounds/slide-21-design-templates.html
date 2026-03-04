@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Design Templates</title>
+<style>
+  @font-face {
+    font-family: 'Outfit';
+    src: url('fonts/outfit.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: block;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+    display: flex; flex-direction: column;
+  }
+
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.03;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 48px 80px 28px;
+    border-bottom: 1px solid #1a1a2e;
+    position: relative; z-index: 1;
+  }
+  .section-label {
+    font-size: 12px; font-weight: 500; color: #FFCF25;
+    text-transform: uppercase; letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+  .title-bar h1 {
+    font-size: 34px; font-weight: 600; color: #FFFFFF;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 8px;
+  }
+  .title-bar .subtitle {
+    font-size: 20px; font-weight: 400; color: #82748C;
+  }
+
+  /* Content area */
+  .content {
+    flex: 1; display: flex; padding: 32px 80px 48px; gap: 56px;
+    position: relative; z-index: 1;
+  }
+
+  /* Left: Bullets */
+  .bullets {
+    flex: 0 0 34%; display: flex; flex-direction: column; justify-content: center; gap: 28px;
+  }
+  .bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .bullet-dot {
+    width: 8px; height: 8px; border-radius: 50%; margin-top: 9px; flex-shrink: 0;
+    background: #62D4DC;
+    box-shadow: 0 0 8px rgba(98,212,220,0.4);
+  }
+  .bullet-text {
+    font-size: 22px; font-weight: 400; line-height: 1.5; color: #CCCCCC;
+  }
+  .bullet-text strong {
+    color: #FFFFFF; font-weight: 600;
+  }
+  .bullet-text code {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 18px; color: #62D4DC;
+    background: rgba(98,212,220,0.06); padding: 2px 6px; border-radius: 4px;
+  }
+
+  /* Right: Visual */
+  .visual {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="title-bar">
+  <div class="section-label">SPEC-DRIVEN DEVELOPMENT</div>
+  <h1>Design Templates</h1>
+  <div class="subtitle">Canonical markdown templates that structure every design document agents produce</div>
+</div>
+
+<div class="content">
+  <div class="bullets">
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Agents don't start from scratch</strong> -- every design document is generated from a workflow-specific template</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Per-workflow sections</strong> -- module has 7 sections, consumer 6, provider 7, each tailored to the workflow's needs</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Shared foundations</strong> -- Purpose, Security Controls, and Implementation Checklist appear in all three templates</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Issue body template</strong> -- structures GitHub issues so Phase 1 agents receive consistent, parseable requirements</div>
+    </div>
+    <div class="bullet">
+      <div class="bullet-dot"></div>
+      <div class="bullet-text"><strong>Stored in</strong> <code>.foundations/templates/</code> -- version-controlled alongside constitutions and skills</div>
+    </div>
+  </div>
+
+  <div class="visual">
+    <svg width="940" height="780" viewBox="0 0 940 780" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Path label -->
+      <text x="470" y="20" text-anchor="middle" fill="#82748C" font-size="13" font-weight="500" letter-spacing="2" font-family="Inter, Arial, sans-serif">.FOUNDATIONS/TEMPLATES/</text>
+
+      <!-- ===== Module Design Template ===== -->
+      <rect x="0" y="40" width="290" height="560" rx="12" fill="rgba(96,222,169,0.015)" stroke="rgba(96,222,169,0.18)" stroke-width="1.5"/>
+      <rect x="0" y="40" width="290" height="3" rx="1.5" fill="rgba(96,222,169,0.4)"/>
+      <text x="20" y="72" fill="#60DEA9" font-size="14" font-weight="700" letter-spacing="1" font-family="Inter, Arial, sans-serif">MODULE</text>
+      <text x="20" y="92" fill="#82748C" font-size="12" font-family="SF Mono, Fira Code, monospace">module-design-template.md</text>
+      <text x="248" y="72" fill="#82748C" font-size="12" font-weight="500" font-family="Inter, Arial, sans-serif">7 sections</text>
+
+      <!-- Section pills -->
+      <rect x="16" y="112" width="258" height="34" rx="6" fill="rgba(98,126,239,0.04)" stroke="rgba(98,126,239,0.12)" stroke-width="1"/>
+      <text x="30" y="133" fill="#627EEF" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">1</text>
+      <text x="48" y="133" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Purpose &amp; Requirements</text>
+
+      <rect x="16" y="152" width="258" height="34" rx="6" fill="rgba(98,126,239,0.04)" stroke="rgba(98,126,239,0.12)" stroke-width="1"/>
+      <text x="30" y="173" fill="#627EEF" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">2</text>
+      <text x="48" y="173" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Resources &amp; Architecture</text>
+
+      <rect x="16" y="192" width="258" height="34" rx="6" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.12)" stroke-width="1"/>
+      <text x="30" y="213" fill="#A78BFA" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">3</text>
+      <text x="48" y="213" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Interface Contract</text>
+
+      <rect x="16" y="232" width="258" height="34" rx="6" fill="rgba(236,88,93,0.04)" stroke="rgba(236,88,93,0.12)" stroke-width="1"/>
+      <text x="30" y="253" fill="#EC585D" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">4</text>
+      <text x="48" y="253" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Security Controls</text>
+      <rect x="200" y="238" width="64" height="20" rx="4" fill="rgba(236,88,93,0.08)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+      <text x="232" y="252" text-anchor="middle" fill="#EC585D" font-size="9" font-weight="600" font-family="Inter, Arial, sans-serif">SHARED</text>
+
+      <rect x="16" y="272" width="258" height="34" rx="6" fill="rgba(96,222,169,0.04)" stroke="rgba(96,222,169,0.12)" stroke-width="1"/>
+      <text x="30" y="293" fill="#60DEA9" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">5</text>
+      <text x="48" y="293" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Test Scenarios</text>
+      <text x="158" y="293" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">(5 groups, HCL assert)</text>
+
+      <rect x="16" y="312" width="258" height="34" rx="6" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+      <text x="30" y="333" fill="#FFCF25" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">6</text>
+      <text x="48" y="333" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Implementation Checklist</text>
+      <rect x="210" y="318" width="54" height="20" rx="4" fill="rgba(255,207,37,0.08)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
+      <text x="237" y="332" text-anchor="middle" fill="#FFCF25" font-size="9" font-weight="600" font-family="Inter, Arial, sans-serif">SHARED</text>
+
+      <rect x="16" y="352" width="258" height="34" rx="6" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.08)" stroke-width="1"/>
+      <text x="30" y="373" fill="#A78BFA" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">7</text>
+      <text x="48" y="373" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Open Questions</text>
+
+      <!-- Unique callout -->
+      <rect x="16" y="404" width="258" height="44" rx="8" fill="rgba(96,222,169,0.03)" stroke="rgba(96,222,169,0.1)" stroke-width="1"/>
+      <text x="30" y="422" fill="#60DEA9" font-size="11" font-weight="600" letter-spacing="0.5" font-family="Inter, Arial, sans-serif">UNIQUE</text>
+      <text x="30" y="438" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">TDD test scenarios with HCL assert paths</text>
+
+      <!-- ===== Consumer Design Template ===== -->
+      <rect x="320" y="40" width="290" height="560" rx="12" fill="rgba(2,168,239,0.015)" stroke="rgba(2,168,239,0.18)" stroke-width="1.5"/>
+      <rect x="320" y="40" width="290" height="3" rx="1.5" fill="rgba(2,168,239,0.4)"/>
+      <text x="340" y="72" fill="#02A8EF" font-size="14" font-weight="700" letter-spacing="1" font-family="Inter, Arial, sans-serif">CONSUMER</text>
+      <text x="340" y="92" fill="#82748C" font-size="12" font-family="SF Mono, Fira Code, monospace">consumer-design-template.md</text>
+      <text x="568" y="72" fill="#82748C" font-size="12" font-weight="500" font-family="Inter, Arial, sans-serif">6 sections</text>
+
+      <!-- Section pills -->
+      <rect x="336" y="112" width="258" height="34" rx="6" fill="rgba(98,126,239,0.04)" stroke="rgba(98,126,239,0.12)" stroke-width="1"/>
+      <text x="350" y="133" fill="#627EEF" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">1</text>
+      <text x="368" y="133" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Purpose &amp; Requirements</text>
+
+      <rect x="336" y="152" width="258" height="34" rx="6" fill="rgba(2,168,239,0.04)" stroke="rgba(2,168,239,0.12)" stroke-width="1"/>
+      <text x="350" y="173" fill="#02A8EF" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">2</text>
+      <text x="368" y="173" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Module Selection &amp; Architecture</text>
+
+      <rect x="336" y="192" width="258" height="34" rx="6" fill="rgba(2,168,239,0.04)" stroke="rgba(2,168,239,0.12)" stroke-width="1"/>
+      <text x="350" y="213" fill="#02A8EF" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">3</text>
+      <text x="368" y="213" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Module Wiring</text>
+      <text x="458" y="213" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">(outputs &#x2192; inputs)</text>
+
+      <rect x="336" y="232" width="258" height="34" rx="6" fill="rgba(236,88,93,0.04)" stroke="rgba(236,88,93,0.12)" stroke-width="1"/>
+      <text x="350" y="253" fill="#EC585D" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">4</text>
+      <text x="368" y="253" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Security Controls</text>
+      <rect x="520" y="238" width="64" height="20" rx="4" fill="rgba(236,88,93,0.08)" stroke="rgba(236,88,93,0.2)" stroke-width="1"/>
+      <text x="552" y="252" text-anchor="middle" fill="#EC585D" font-size="9" font-weight="600" font-family="Inter, Arial, sans-serif">SHARED</text>
+
+      <rect x="336" y="272" width="258" height="34" rx="6" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+      <text x="350" y="293" fill="#FFCF25" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">5</text>
+      <text x="368" y="293" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Implementation Checklist</text>
+      <rect x="530" y="278" width="54" height="20" rx="4" fill="rgba(255,207,37,0.08)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
+      <text x="557" y="292" text-anchor="middle" fill="#FFCF25" font-size="9" font-weight="600" font-family="Inter, Arial, sans-serif">SHARED</text>
+
+      <rect x="336" y="312" width="258" height="34" rx="6" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.08)" stroke-width="1"/>
+      <text x="350" y="333" fill="#A78BFA" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">6</text>
+      <text x="368" y="333" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Open Questions</text>
+
+      <!-- No test scenarios callout -->
+      <rect x="336" y="364" width="258" height="44" rx="8" fill="rgba(2,168,239,0.03)" stroke="rgba(2,168,239,0.1)" stroke-width="1"/>
+      <text x="350" y="382" fill="#02A8EF" font-size="11" font-weight="600" letter-spacing="0.5" font-family="Inter, Arial, sans-serif">UNIQUE</text>
+      <text x="350" y="398" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">Module wiring table + workspace config</text>
+
+      <!-- ===== Provider Design Template ===== -->
+      <rect x="640" y="40" width="290" height="560" rx="12" fill="rgba(220,71,125,0.015)" stroke="rgba(220,71,125,0.18)" stroke-width="1.5"/>
+      <rect x="640" y="40" width="290" height="3" rx="1.5" fill="rgba(220,71,125,0.4)"/>
+      <text x="660" y="72" fill="#DC477D" font-size="14" font-weight="700" letter-spacing="1" font-family="Inter, Arial, sans-serif">PROVIDER</text>
+      <text x="660" y="92" fill="#82748C" font-size="12" font-family="SF Mono, Fira Code, monospace">provider-design-template.md</text>
+      <text x="888" y="72" fill="#82748C" font-size="12" font-weight="500" font-family="Inter, Arial, sans-serif">7 sections</text>
+
+      <!-- Section pills -->
+      <rect x="656" y="112" width="258" height="34" rx="6" fill="rgba(98,126,239,0.04)" stroke="rgba(98,126,239,0.12)" stroke-width="1"/>
+      <text x="670" y="133" fill="#627EEF" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">1</text>
+      <text x="688" y="133" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Purpose &amp; Requirements</text>
+
+      <rect x="656" y="152" width="258" height="34" rx="6" fill="rgba(220,71,125,0.04)" stroke="rgba(220,71,125,0.12)" stroke-width="1"/>
+      <text x="670" y="173" fill="#DC477D" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">2</text>
+      <text x="688" y="173" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Schema Design</text>
+      <text x="786" y="173" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">(Go types)</text>
+
+      <rect x="656" y="192" width="258" height="34" rx="6" fill="rgba(220,71,125,0.04)" stroke="rgba(220,71,125,0.12)" stroke-width="1"/>
+      <text x="670" y="213" fill="#DC477D" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">3</text>
+      <text x="688" y="213" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">CRUD Operations</text>
+
+      <rect x="656" y="232" width="258" height="34" rx="6" fill="rgba(220,71,125,0.04)" stroke="rgba(220,71,125,0.12)" stroke-width="1"/>
+      <text x="670" y="253" fill="#DC477D" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">4</text>
+      <text x="688" y="253" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">State &amp; Error Handling</text>
+
+      <rect x="656" y="272" width="258" height="34" rx="6" fill="rgba(96,222,169,0.04)" stroke="rgba(96,222,169,0.12)" stroke-width="1"/>
+      <text x="670" y="293" fill="#60DEA9" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">5</text>
+      <text x="688" y="293" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Test Scenarios</text>
+      <text x="788" y="293" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">(6 groups, Go)</text>
+
+      <rect x="656" y="312" width="258" height="34" rx="6" fill="rgba(255,207,37,0.04)" stroke="rgba(255,207,37,0.12)" stroke-width="1"/>
+      <text x="670" y="333" fill="#FFCF25" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">6</text>
+      <text x="688" y="333" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Implementation Checklist</text>
+      <rect x="850" y="318" width="54" height="20" rx="4" fill="rgba(255,207,37,0.08)" stroke="rgba(255,207,37,0.15)" stroke-width="1"/>
+      <text x="877" y="332" text-anchor="middle" fill="#FFCF25" font-size="9" font-weight="600" font-family="Inter, Arial, sans-serif">SHARED</text>
+
+      <rect x="656" y="352" width="258" height="34" rx="6" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.08)" stroke-width="1"/>
+      <text x="670" y="373" fill="#A78BFA" font-size="12" font-weight="600" font-family="Inter, Arial, sans-serif">7</text>
+      <text x="688" y="373" fill="#CCCCCC" font-size="13" font-family="Inter, Arial, sans-serif">Open Questions</text>
+
+      <!-- Unique callout -->
+      <rect x="656" y="404" width="258" height="44" rx="8" fill="rgba(220,71,125,0.03)" stroke="rgba(220,71,125,0.1)" stroke-width="1"/>
+      <text x="670" y="422" fill="#DC477D" font-size="11" font-weight="600" letter-spacing="0.5" font-family="Inter, Arial, sans-serif">UNIQUE</text>
+      <text x="670" y="438" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">CRUD ops, state mgmt, Go acceptance tests</text>
+
+      <!-- ===== Issue Body Template ===== -->
+      <rect x="0" y="628" width="930" height="86" rx="12" fill="rgba(255,207,37,0.02)" stroke="rgba(255,207,37,0.15)" stroke-width="1.5"/>
+      <rect x="0" y="628" width="930" height="3" rx="1.5" fill="rgba(255,207,37,0.3)"/>
+
+      <text x="24" y="660" fill="#FFCF25" font-size="14" font-weight="700" letter-spacing="1" font-family="Inter, Arial, sans-serif">ISSUE BODY</text>
+      <text x="160" y="660" fill="#82748C" font-size="12" font-family="SF Mono, Fira Code, monospace">issue-body-template.md</text>
+      <text x="24" y="684" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">Structures GitHub issues for Phase 1 agents:</text>
+      <text x="345" y="684" fill="#CCCCCC" font-size="13" font-weight="500" font-family="Inter, Arial, sans-serif">Description</text>
+      <text x="440" y="684" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">&#x2192;</text>
+      <text x="460" y="684" fill="#CCCCCC" font-size="13" font-weight="500" font-family="Inter, Arial, sans-serif">Resources</text>
+      <text x="540" y="684" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">&#x2192;</text>
+      <text x="560" y="684" fill="#CCCCCC" font-size="13" font-weight="500" font-family="Inter, Arial, sans-serif">Features</text>
+      <text x="630" y="684" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">&#x2192;</text>
+      <text x="650" y="684" fill="#EC585D" font-size="13" font-weight="500" font-family="Inter, Arial, sans-serif">Security</text>
+      <text x="720" y="684" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">&#x2192;</text>
+      <text x="740" y="684" fill="#CCCCCC" font-size="13" font-weight="500" font-family="Inter, Arial, sans-serif">Scope Boundary</text>
+      <text x="860" y="684" fill="#82748C" font-size="13" font-family="Inter, Arial, sans-serif">&#x2192;</text>
+      <text x="880" y="684" fill="#CCCCCC" font-size="13" font-weight="500" font-family="Inter, Arial, sans-serif">Status</text>
+
+      <!-- Connection lines from issue to design templates -->
+      <text x="470" y="748" text-anchor="middle" fill="#82748C" font-size="13" font-style="italic" font-family="Inter, Arial, sans-serif">Issue feeds Phase 1 &#x2192; Design template structures Phase 2 output &#x2192; Agents consume in Phases 3 &amp; 4</text>
+    </svg>
+  </div>
+</div>
+
+</body>
+</html>

@@ -163,7 +163,10 @@ addImageSlide("slide-20-sdd-overview.png");
 // Slide 21: Constitutions
 addImageSlide("slide-21-constitutions.png");
 
-// Slide 22: The Design Document
+// Slide 22: Design Templates
+addImageSlide("slide-21-design-templates.png");
+
+// Slide 23: The Design Document
 addImageSlide("slide-22-design-doc.png");
 
 // Slide 23: Quality Scoring
