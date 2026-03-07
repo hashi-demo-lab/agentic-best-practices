@@ -69,6 +69,17 @@ node playgrounds/build-pptx.mjs
 - Filter chain: deepglow (stdDeviation=45), softglow (22), glow (8), crisp (no filter)
 - Dividers use 7 arcs; title uses 11 arcs for more dramatic effect
 
+### Website / Editorial Sync
+
+The learning pathway editorial HTML is also published to the submodule:
+
+```bash
+# After editing playgrounds/learning-pathway-editorial.html:
+cp playgrounds/learning-pathway-editorial.html terraform-agentic-workflows/.foundations/design/sdd-workflow-playground.html
+```
+
+Always copy the latest editorial HTML to the submodule before committing.
+
 ### Quick Verification
 
 ```bash
