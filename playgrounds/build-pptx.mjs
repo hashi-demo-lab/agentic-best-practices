@@ -146,7 +146,10 @@ addImageSlide("slide-21-git-integration.png");
 // Slide 17: HCP Terraform Identity
 addImageSlide("slide-22-agent-identity.png");
 
-// Slide 18: MCP Tools
+// Slide 18: HCP Terraform RBAC & Isolation
+addImageSlide("slide-23-hcp-rbac.png");
+
+// Slide 19: MCP Tools
 addImageSlide("slide-18-mcp-tools.png");
 
 // Slide 19: Deny Permissions

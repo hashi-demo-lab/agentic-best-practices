@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1920">
+<title>Agent Identity & Role-Based Access Controls</title>
+<style>
+  @font-face {
+    font-family: 'Outfit';
+    src: url('fonts/outfit.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: block;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    background: #000000;
+    font-family: 'Inter', Arial, sans-serif;
+    color: #FFFFFF;
+    display: flex; flex-direction: column;
+  }
+
+  /* Title bar */
+  .title-bar {
+    padding: 48px 80px 32px;
+    border-bottom: 1px solid #1a1a2e;
+  }
+  .section-label {
+    font-size: 12px; font-weight: 500; color: #FFCF25;
+    text-transform: uppercase; letter-spacing: 3px;
+    margin-bottom: 10px;
+  }
+  .title-bar h1 {
+    font-size: 34px; font-weight: 600; color: #FFFFFF;
+    font-family: 'Outfit', sans-serif;
+    margin-bottom: 8px;
+  }
+  .title-bar .subtitle {
+    font-size: 20px; font-weight: 400; color: #82748C;
+  }
+
+  /* Content area */
+  .content {
+    flex: 1; display: flex; padding: 48px 80px 56px; gap: 64px;
+  }
+
+  /* Left: Bullets */
+  .left-col {
+    flex: 0 0 38%; display: flex; flex-direction: column; padding-top: 16px; gap: 24px;
+  }
+  .group-label {
+    font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .bullet {
+    display: flex; align-items: flex-start; gap: 14px;
+  }
+  .bullet-dot {
+    width: 8px; height: 8px; border-radius: 50%; margin-top: 9px; flex-shrink: 0;
+    box-shadow: 0 0 8px rgba(220,71,125,0.4);
+  }
+  .bullet-text {
+    font-size: 20px; font-weight: 400; line-height: 1.5; color: #CCCCCC;
+  }
+  .bullet-text strong {
+    color: #FFFFFF; font-weight: 600;
+  }
+
+  .divider {
+    height: 1px; background: #1a1a2e; margin: 4px 0;
+  }
+
+  /* Callout box */
+  .callout {
+    margin-top: 8px; padding: 16px 20px; border-radius: 12px;
+    background: linear-gradient(180deg, rgba(96,222,169,0.06) 0%, rgba(0,0,0,0.4) 100%);
+    border: 1px solid rgba(96,222,169,0.15);
+  }
+  .callout-title {
+    font-size: 13px; font-weight: 600; color: #60DEA9; text-transform: uppercase;
+    letter-spacing: 2px; margin-bottom: 8px;
+  }
+  .callout-text {
+    font-size: 18px; font-weight: 400; color: #CCCCCC; line-height: 1.5;
+  }
+  .callout-text strong { color: #60DEA9; font-weight: 600; }
+
+  /* Right: Visual */
+  .visual {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="title-bar">
+  <div class="section-label">PLATFORM GUARDRAILS</div>
+  <h1>Agent Identity &amp; Role-Based Access Controls</h1>
+  <div class="subtitle">Branch protection + project-scoped RBAC map every agent to a sandbox account boundary</div>
+</div>
+
+<div class="content">
+  <div class="left-col">
+
+    <div>
+      <div class="group-label" style="color:#62D4DC;">How It Works</div>
+      <div style="display:flex;flex-direction:column;gap:18px;margin-top:10px;">
+        <div class="bullet">
+          <div class="bullet-dot" style="background:#62D4DC;box-shadow:0 0 8px rgba(98,212,220,0.4);"></div>
+          <div class="bullet-text"><strong>Dedicated team + token per agent</strong> — each agent identity is isolated with its own HCP Terraform team and API token</div>
+        </div>
+        <div class="bullet">
+          <div class="bullet-dot" style="background:#62D4DC;box-shadow:0 0 8px rgba(98,212,220,0.4);"></div>
+          <div class="bullet-text"><strong>Agent team scoped to sandbox project</strong> — the team grants access only to the Agent Sandbox Project, never Prod/UAT/Dev</div>
+        </div>
+        <div class="bullet">
+          <div class="bullet-dot" style="background:#62D4DC;box-shadow:0 0 8px rgba(98,212,220,0.4);"></div>
+          <div class="bullet-text"><strong>Branch protection enforces PR review</strong> — agent pushes to feature branches only, rulesets require human approval before merge</div>
+        </div>
+        <div class="bullet">
+          <div class="bullet-dot" style="background:#62D4DC;box-shadow:0 0 8px rgba(98,212,220,0.4);"></div>
+          <div class="bullet-text"><strong>Dynamic credentials per project</strong> — project-level dynamic credentials map to an isolated cloud sub-account via OIDC</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div>
+      <div class="group-label" style="color:#DC477D;">Why It Matters</div>
+      <div style="display:flex;flex-direction:column;gap:14px;margin-top:10px;">
+        <div class="bullet">
+          <div class="bullet-dot" style="background:#DC477D;box-shadow:0 0 8px rgba(220,71,125,0.4);border-radius:2px;"></div>
+          <div class="bullet-text"><strong>No static secrets</strong> — credentials are short-lived and never exposed to the agent</div>
+        </div>
+        <div class="bullet">
+          <div class="bullet-dot" style="background:#DC477D;box-shadow:0 0 8px rgba(220,71,125,0.4);border-radius:2px;"></div>
+          <div class="bullet-text"><strong>Blast radius contained</strong> — scoped to sandbox project + sandbox cloud account only</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-title">Goal</div>
+      <div class="callout-text"><strong>Enable more agent autonomy</strong> by leveraging enterprise controls — workflow shifts to developer plan review, agent executes, developer code review</div>
+    </div>
+
+  </div>
+
+  <div class="visual">
+    <svg style="width:100%;max-width:1100px;" viewBox="0 0 1100 740" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+      <!-- ===== COLUMN HEADERS ===== -->
+      <!-- Git header -->
+      <rect x="10" y="10" width="130" height="26" rx="6" fill="rgba(96,222,169,0.06)"/>
+      <text x="75" y="28" text-anchor="middle" fill="#60DEA9" font-size="11" font-weight="700" font-family="Inter, Arial, sans-serif" letter-spacing="1.2">GIT (GITHUB)</text>
+
+      <!-- Enterprise HCP TF header -->
+      <rect x="158" y="10" width="264" height="26" rx="6" fill="rgba(98,126,239,0.06)"/>
+      <text x="290" y="28" text-anchor="middle" fill="#627EEF" font-size="11" font-weight="700" font-family="Inter, Arial, sans-serif" letter-spacing="1.2">ENTERPRISE — HUMAN / CI MANAGED</text>
+
+      <!-- Cloud header -->
+      <rect x="700" y="10" width="230" height="26" rx="6" fill="rgba(98,126,239,0.06)"/>
+      <text x="815" y="28" text-anchor="middle" fill="#627EEF" font-size="11" font-weight="700" font-family="Inter, Arial, sans-serif" letter-spacing="1.2">CLOUD SUB ACCOUNTS</text>
+
+      <!-- ===== GIT COLUMN — PROTECTED BRANCHES ===== -->
+      <!-- Branch Protection label -->
+      <rect x="14" y="50" width="122" height="18" rx="4" fill="rgba(96,222,169,0.04)" stroke="rgba(96,222,169,0.15)" stroke-width="0.5"/>
+      <text x="75" y="62" text-anchor="middle" fill="#60DEA9" font-size="8" font-weight="600" font-family="Inter, Arial, sans-serif" letter-spacing="1">BRANCH RULESETS</text>
+
+      <!-- PROD branch -->
+      <rect x="14" y="140" width="122" height="44" rx="10" fill="#121212" stroke="#60DEA9" stroke-width="1.5"/>
+      <g transform="translate(26,156)">
+        <rect x="0" y="5" width="9" height="7" rx="1.5" fill="none" stroke="#60DEA9" stroke-width="1.2"/>
+        <path d="M1.5,5 V2.5 A3,3 0 0 1 7.5,2.5 V5" fill="none" stroke="#60DEA9" stroke-width="1.2"/>
+      </g>
+      <text x="44" y="168" fill="#60DEA9" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">PROD</text>
+
+      <!-- UAT branch -->
+      <rect x="14" y="196" width="122" height="44" rx="10" fill="#121212" stroke="#60DEA9" stroke-width="1.5"/>
+      <g transform="translate(26,212)">
+        <rect x="0" y="5" width="9" height="7" rx="1.5" fill="none" stroke="#60DEA9" stroke-width="1.2"/>
+        <path d="M1.5,5 V2.5 A3,3 0 0 1 7.5,2.5 V5" fill="none" stroke="#60DEA9" stroke-width="1.2"/>
+      </g>
+      <text x="44" y="224" fill="#60DEA9" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">UAT</text>
+
+      <!-- DEV branch -->
+      <rect x="14" y="252" width="122" height="44" rx="10" fill="#121212" stroke="#60DEA9" stroke-width="1.5"/>
+      <g transform="translate(26,268)">
+        <rect x="0" y="5" width="9" height="7" rx="1.5" fill="none" stroke="#60DEA9" stroke-width="1.2"/>
+        <path d="M1.5,5 V2.5 A3,3 0 0 1 7.5,2.5 V5" fill="none" stroke="#60DEA9" stroke-width="1.2"/>
+      </g>
+      <text x="44" y="280" fill="#60DEA9" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">DEV</text>
+
+      <!-- ===== PR REVIEW GATE ===== -->
+      <rect x="18" y="316" width="114" height="38" rx="8" fill="#121212" stroke="#EC585D" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="75" y="333" text-anchor="middle" fill="#EC585D" font-size="12" font-weight="700" font-family="Inter, Arial, sans-serif">PR REVIEW</text>
+      <text x="75" y="348" text-anchor="middle" fill="#82748C" font-size="9" font-family="Inter, Arial, sans-serif">Human approval</text>
+
+      <!-- Dashed line: PR gate up to branches -->
+      <line x1="75" y1="316" x2="75" y2="296" stroke="rgba(236,88,93,0.25)" stroke-width="1" stroke-dasharray="3 3"/>
+
+      <!-- ===== FEATURE BRANCH (inside agent zone, next to agent) ===== -->
+
+      <!-- ===== ARROWS: Branches -> Workspaces (merge triggers) ===== -->
+      <!-- PROD -->
+      <line x1="136" y1="162" x2="172" y2="162" stroke="rgba(96,222,169,0.35)" stroke-width="1.5"/>
+      <polygon points="168,158 176,162 168,166" fill="#60DEA9" opacity="0.5"/>
+      <!-- UAT -->
+      <line x1="136" y1="218" x2="172" y2="218" stroke="rgba(96,222,169,0.35)" stroke-width="1.5"/>
+      <polygon points="168,214 176,218 168,222" fill="#60DEA9" opacity="0.5"/>
+      <!-- DEV -->
+      <line x1="136" y1="274" x2="172" y2="274" stroke="rgba(96,222,169,0.35)" stroke-width="1.5"/>
+      <polygon points="168,270 176,274 168,278" fill="#60DEA9" opacity="0.5"/>
+
+      <!-- "merge" label between git and HCP columns -->
+      <text x="154" y="146" text-anchor="middle" fill="#82748C" font-size="8" font-weight="500" font-family="Inter, Arial, sans-serif" letter-spacing="0.5">VCS</text>
+      <text x="154" y="155" text-anchor="middle" fill="#82748C" font-size="8" font-weight="500" font-family="Inter, Arial, sans-serif" letter-spacing="0.5">trigger</text>
+
+      <!-- ===== HCP TERRAFORM PROJECT BOX ===== -->
+      <rect x="158" y="46" width="264" height="300" rx="14" fill="rgba(98,126,239,0.02)" stroke="#627EEF" stroke-width="1.5"/>
+      <rect x="158" y="46" width="264" height="38" rx="14" fill="rgba(98,126,239,0.06)"/>
+      <text x="178" y="70" fill="#627EEF" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">HCP TERRAFORM PROJECT</text>
+
+      <!-- Dynamic Credentials bar -->
+      <rect x="172" y="96" width="236" height="28" rx="6" fill="rgba(167,139,250,0.06)" stroke="rgba(167,139,250,0.2)" stroke-width="1"/>
+      <text x="290" y="115" text-anchor="middle" fill="#A78BFA" font-size="11" font-weight="600" font-family="Inter, Arial, sans-serif">DYNAMIC CREDENTIALS (OIDC)</text>
+
+      <!-- Workspaces -->
+      <rect x="178" y="140" width="230" height="44" rx="10" fill="#121212" stroke="#A78BFA" stroke-width="1.5"/>
+      <text x="293" y="162" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">PROD WORKSPACE</text>
+      <text x="293" y="176" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Policy enforced, approval gates</text>
+
+      <rect x="178" y="196" width="230" height="44" rx="10" fill="#121212" stroke="#A78BFA" stroke-width="1.5"/>
+      <text x="293" y="218" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">UAT WORKSPACE</text>
+      <text x="293" y="232" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Integration testing</text>
+
+      <rect x="178" y="252" width="230" height="44" rx="10" fill="#121212" stroke="#A78BFA" stroke-width="1.5"/>
+      <text x="293" y="274" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">DEV WORKSPACE</text>
+      <text x="293" y="288" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Rapid iteration</text>
+
+      <!-- Arrows: Enterprise workspaces -> Run Pipeline -->
+      <line x1="408" y1="162" x2="448" y2="214" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <line x1="408" y1="218" x2="448" y2="270" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <line x1="408" y1="274" x2="448" y2="326" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+
+      <!-- ===== SEPARATION LINE (Agent Boundary) ===== -->
+      <line x1="10" y1="394" x2="960" y2="394" stroke="#EC585D" stroke-width="2" stroke-dasharray="8 4" opacity="0.5"/>
+      <rect x="700" y="380" width="220" height="28" rx="8" fill="#121212" stroke="#EC585D" stroke-width="1.5" stroke-dasharray="6 3"/>
+      <text x="810" y="399" text-anchor="middle" fill="#EC585D" font-size="12" font-weight="700" font-family="Inter, Arial, sans-serif" letter-spacing="2">AGENT BOUNDARY</text>
+
+      <!-- ===== FEATURE + AGENT (side by side in agent zone) ===== -->
+      <!-- Subtle grouping background -->
+      <rect x="8" y="416" width="270" height="68" rx="12" fill="rgba(220,71,125,0.03)" stroke="rgba(220,71,125,0.08)" stroke-width="1"/>
+
+      <!-- FEATURE BRANCH (left, near git column) -->
+      <rect x="14" y="424" width="116" height="52" rx="10" fill="#121212" stroke="#DC477D" stroke-width="2"/>
+      <text x="72" y="448" text-anchor="middle" fill="#DC477D" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">FEATURE</text>
+      <text x="72" y="466" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Agent branch</text>
+
+      <!-- Arrow: Feature -> PR gate (up, crossing boundary — git pr) -->
+      <line x1="72" y1="424" x2="72" y2="354" stroke="rgba(220,71,125,0.35)" stroke-width="1.5" stroke-dasharray="6 3"/>
+      <polygon points="66,358 72,350 78,358" fill="#DC477D" opacity="0.6"/>
+      <text x="90" y="385" fill="#DC477D" font-size="10" font-weight="600" font-family="Inter, Arial, sans-serif">git pr</text>
+
+      <!-- Arrow: Agent -> Feature branch (left) -->
+      <line x1="148" y1="450" x2="134" y2="450" stroke="rgba(220,71,125,0.4)" stroke-width="2"/>
+      <polygon points="138,446 130,450 138,454" fill="#DC477D" opacity="0.6"/>
+      <text x="143" y="442" text-anchor="middle" fill="#82748C" font-size="8" font-weight="500" font-family="Inter, Arial, sans-serif">git push</text>
+
+      <!-- AI AGENT (right, closer to sandbox) -->
+      <rect x="150" y="424" width="120" height="52" rx="12" fill="#121212" stroke="#DC477D" stroke-width="2"/>
+      <text x="210" y="448" text-anchor="middle" fill="#DC477D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">AI AGENT</text>
+      <text x="210" y="466" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Dedicated team + token</text>
+
+      <!-- Arrow: Agent -> Sandbox Project (down-right) -->
+      <line x1="210" y1="476" x2="220" y2="548" stroke="rgba(220,71,125,0.3)" stroke-width="2"/>
+      <polygon points="214,544 224,552 220,542" fill="#DC477D" opacity="0.6"/>
+      <text x="228" y="518" fill="#82748C" font-size="9" font-weight="500" font-family="Inter, Arial, sans-serif">TFE API</text>
+
+      <!-- ===== AGENT SANDBOX PROJECT BOX ===== -->
+      <rect x="158" y="530" width="264" height="150" rx="14" fill="rgba(236,88,93,0.02)" stroke="#EC585D" stroke-width="2" stroke-dasharray="6 4"/>
+      <rect x="158" y="530" width="264" height="38" rx="14" fill="rgba(236,88,93,0.05)"/>
+      <text x="178" y="554" fill="#EC585D" font-size="13" font-weight="700" font-family="Inter, Arial, sans-serif">HCP TERRAFORM — AGENT PROJECT</text>
+
+      <!-- Dynamic Credentials bar (sandbox) -->
+      <rect x="172" y="580" width="236" height="28" rx="6" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.15)" stroke-width="1"/>
+      <text x="290" y="599" text-anchor="middle" fill="#A78BFA" font-size="11" font-weight="600" font-family="Inter, Arial, sans-serif">DYNAMIC CREDENTIALS (OIDC)</text>
+
+      <!-- Sandbox Workspace -->
+      <rect x="178" y="622" width="230" height="44" rx="10" fill="#121212" stroke="#EC585D" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="293" y="644" text-anchor="middle" fill="#EC585D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">SANDBOX WORKSPACE</text>
+      <text x="293" y="658" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Ephemeral, auto-cleanup</text>
+
+      <!-- Arrow: Sandbox workspace -> Run Pipeline -->
+      <line x1="408" y1="644" x2="448" y2="448" stroke="rgba(236,88,93,0.15)" stroke-width="1.5"/>
+
+      <!-- ===== COMMON RUN PIPELINE (center, spans both zones) ===== -->
+      <rect x="450" y="140" width="208" height="370" rx="14" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+      <rect x="450" y="140" width="208" height="38" rx="14" fill="rgba(255,255,255,0.03)"/>
+      <text x="554" y="158" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="700" font-family="Inter, Arial, sans-serif">HCP TERRAFORM</text>
+      <text x="554" y="174" text-anchor="middle" fill="#FFFFFF" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">RUN PIPELINE</text>
+      <text x="554" y="188" text-anchor="middle" fill="#82748C" font-size="9" font-family="Inter, Arial, sans-serif">Common to all workspaces</text>
+
+      <rect x="468" y="206" width="172" height="34" rx="7" fill="rgba(98,212,220,0.08)" stroke="rgba(98,212,220,0.25)" stroke-width="1"/>
+      <text x="554" y="228" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">PLAN</text>
+
+      <line x1="554" y1="240" x2="554" y2="252" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+      <polygon points="550,248 554,256 558,248" fill="rgba(255,255,255,0.15)"/>
+
+      <rect x="468" y="260" width="172" height="34" rx="7" fill="rgba(255,207,37,0.08)" stroke="rgba(255,207,37,0.25)" stroke-width="1"/>
+      <text x="554" y="282" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">COST ESTIMATION</text>
+
+      <line x1="554" y1="294" x2="554" y2="306" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+      <polygon points="550,302 554,310 558,302" fill="rgba(255,255,255,0.15)"/>
+
+      <rect x="468" y="314" width="172" height="34" rx="7" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.25)" stroke-width="1"/>
+      <text x="554" y="336" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">POLICY CHECK</text>
+
+      <line x1="554" y1="348" x2="554" y2="360" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+      <polygon points="550,356 554,364 558,356" fill="rgba(255,255,255,0.15)"/>
+
+      <rect x="468" y="368" width="172" height="34" rx="7" fill="rgba(236,88,93,0.08)" stroke="#EC585D" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="554" y="390" text-anchor="middle" fill="#EC585D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">APPLY</text>
+
+      <!-- Separation line crossing through pipeline -->
+      <line x1="450" y1="394" x2="658" y2="394" stroke="rgba(236,88,93,0.15)" stroke-width="1" stroke-dasharray="4 3"/>
+
+      <!-- ===== CLOUD ACCOUNTS (right side) ===== -->
+      <!-- Prod Account -->
+      <rect x="710" y="184" width="220" height="48" rx="10" fill="#121212" stroke="#627EEF" stroke-width="1.5"/>
+      <text x="820" y="206" text-anchor="middle" fill="#627EEF" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">PROD ACCOUNT</text>
+      <text x="820" y="222" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Strict policy, approval required</text>
+
+      <!-- Non-Prod Account -->
+      <rect x="710" y="252" width="220" height="48" rx="10" fill="#121212" stroke="#627EEF" stroke-width="1.5"/>
+      <text x="820" y="274" text-anchor="middle" fill="#627EEF" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">NON-PROD ACCOUNT</text>
+      <text x="820" y="290" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">UAT + Dev workloads</text>
+
+      <!-- Sandbox Account -->
+      <rect x="710" y="580" width="220" height="48" rx="10" fill="#121212" stroke="#EC585D" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="820" y="602" text-anchor="middle" fill="#EC585D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">SANDBOX ACCOUNT</text>
+      <text x="820" y="618" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Ephemeral, auto-cleanup</text>
+
+      <!-- ===== ARROWS: Pipeline -> Cloud Accounts ===== -->
+      <!-- Pipeline -> Prod Account -->
+      <line x1="658" y1="234" x2="708" y2="208" stroke="rgba(98,126,239,0.3)" stroke-width="2"/>
+      <polygon points="702,204 712,208 704,214" fill="#627EEF" opacity="0.5"/>
+
+      <!-- Pipeline -> Non-Prod Account -->
+      <line x1="658" y1="296" x2="708" y2="276" stroke="rgba(98,126,239,0.3)" stroke-width="2"/>
+      <polygon points="702,272 712,276 704,282" fill="#627EEF" opacity="0.5"/>
+
+      <!-- Pipeline -> Sandbox Account -->
+      <line x1="658" y1="448" x2="708" y2="604" stroke="rgba(236,88,93,0.25)" stroke-width="2"/>
+      <polygon points="702,600 712,604 704,610" fill="#EC585D" opacity="0.5"/>
+
+      <!-- ===== LEGEND ===== -->
+      <rect x="80" y="700" width="860" height="34" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <circle cx="120" cy="717" r="5" fill="#60DEA9"/>
+      <text x="132" y="721" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">Git Branches</text>
+      <circle cx="240" cy="717" r="5" fill="#627EEF"/>
+      <text x="252" y="721" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">Human / CI</text>
+      <circle cx="340" cy="717" r="5" fill="#A78BFA"/>
+      <text x="352" y="721" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">OIDC Creds</text>
+      <rect x="438" y="712" width="16" height="10" rx="3" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+      <text x="461" y="721" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">Run Pipeline</text>
+      <circle cx="570" cy="717" r="5" fill="#627EEF"/>
+      <text x="582" y="721" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">Cloud Accounts</text>
+      <circle cx="700" cy="717" r="5" fill="#EC585D"/>
+      <text x="712" y="721" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">Agent Sandbox</text>
+      <rect x="820" y="712" width="16" height="10" rx="3" fill="none" stroke="#EC585D" stroke-width="1" stroke-dasharray="3 2"/>
+      <text x="843" y="721" fill="#82748C" font-size="11" font-family="Inter, Arial, sans-serif">PR Gate</text>
+
+    </svg>
+  </div>
+</div>
+
+</body>
+</html>
