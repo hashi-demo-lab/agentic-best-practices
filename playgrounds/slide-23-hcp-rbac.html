@@ -239,10 +239,10 @@
       <text x="293" y="274" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">DEV WORKSPACE</text>
       <text x="293" y="288" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Rapid iteration</text>
 
-      <!-- Arrows: Enterprise workspaces -> Run Pipeline -->
-      <line x1="408" y1="162" x2="448" y2="214" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
-      <line x1="408" y1="218" x2="448" y2="270" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
-      <line x1="408" y1="274" x2="448" y2="326" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <!-- Arrows: Enterprise workspaces -> Run Pipeline (horizontal) -->
+      <line x1="408" y1="162" x2="448" y2="162" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <line x1="408" y1="218" x2="448" y2="218" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+      <line x1="408" y1="274" x2="448" y2="274" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
 
       <!-- ===== SEPARATION LINE (Agent Boundary) ===== -->
       <line x1="10" y1="394" x2="960" y2="394" stroke="#EC585D" stroke-width="2" stroke-dasharray="8 4" opacity="0.5"/>
@@ -276,7 +276,7 @@
       <!-- Arrow: Agent -> Sandbox Project (down-right) -->
       <line x1="210" y1="476" x2="220" y2="548" stroke="rgba(220,71,125,0.3)" stroke-width="2"/>
       <polygon points="214,544 224,552 220,542" fill="#DC477D" opacity="0.6"/>
-      <text x="228" y="518" fill="#82748C" font-size="9" font-weight="500" font-family="Inter, Arial, sans-serif">TFE API</text>
+      <text x="228" y="518" fill="#82748C" font-size="9" font-weight="500" font-family="Inter, Arial, sans-serif">API</text>
 
       <!-- ===== AGENT SANDBOX PROJECT BOX ===== -->
       <rect x="158" y="530" width="264" height="150" rx="14" fill="rgba(236,88,93,0.02)" stroke="#EC585D" stroke-width="2" stroke-dasharray="6 4"/>
@@ -293,67 +293,63 @@
       <text x="293" y="658" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Ephemeral, auto-cleanup</text>
 
       <!-- Arrow: Sandbox workspace -> Run Pipeline -->
-      <line x1="408" y1="644" x2="448" y2="448" stroke="rgba(236,88,93,0.15)" stroke-width="1.5"/>
+      <line x1="408" y1="644" x2="448" y2="323" stroke="rgba(236,88,93,0.15)" stroke-width="1.5"/>
 
-      <!-- ===== COMMON RUN PIPELINE (center, spans both zones) ===== -->
-      <rect x="450" y="140" width="208" height="370" rx="14" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
-      <rect x="450" y="140" width="208" height="38" rx="14" fill="rgba(255,255,255,0.03)"/>
-      <text x="554" y="158" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="700" font-family="Inter, Arial, sans-serif">HCP TERRAFORM</text>
-      <text x="554" y="174" text-anchor="middle" fill="#FFFFFF" font-size="14" font-weight="700" font-family="Inter, Arial, sans-serif">RUN PIPELINE</text>
-      <text x="554" y="188" text-anchor="middle" fill="#82748C" font-size="9" font-family="Inter, Arial, sans-serif">Common to all workspaces</text>
+      <!-- ===== COMMON RUN PIPELINE (center, bottom-aligned with HCP TF Project at y=346) ===== -->
+      <rect x="450" y="140" width="208" height="206" rx="14" fill="rgba(255,255,255,0.015)" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+      <rect x="450" y="140" width="208" height="28" rx="14" fill="rgba(255,255,255,0.03)"/>
+      <text x="554" y="155" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="700" font-family="Inter, Arial, sans-serif">HCP TERRAFORM</text>
+      <text x="554" y="166" text-anchor="middle" fill="#FFFFFF" font-size="11" font-weight="700" font-family="Inter, Arial, sans-serif">RUN PIPELINE</text>
 
-      <rect x="468" y="206" width="172" height="34" rx="7" fill="rgba(98,212,220,0.08)" stroke="rgba(98,212,220,0.25)" stroke-width="1"/>
-      <text x="554" y="228" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">PLAN</text>
+      <rect x="468" y="174" width="172" height="34" rx="7" fill="rgba(98,212,220,0.08)" stroke="rgba(98,212,220,0.25)" stroke-width="1"/>
+      <text x="554" y="196" text-anchor="middle" fill="#62D4DC" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">PLAN</text>
 
-      <line x1="554" y1="240" x2="554" y2="252" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
-      <polygon points="550,248 554,256 558,248" fill="rgba(255,255,255,0.15)"/>
+      <line x1="554" y1="208" x2="554" y2="214" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+      <polygon points="550,211 554,218 558,211" fill="rgba(255,255,255,0.15)"/>
 
-      <rect x="468" y="260" width="172" height="34" rx="7" fill="rgba(255,207,37,0.08)" stroke="rgba(255,207,37,0.25)" stroke-width="1"/>
-      <text x="554" y="282" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">COST ESTIMATION</text>
+      <rect x="468" y="218" width="172" height="34" rx="7" fill="rgba(255,207,37,0.08)" stroke="rgba(255,207,37,0.25)" stroke-width="1"/>
+      <text x="554" y="240" text-anchor="middle" fill="#FFCF25" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">COST ESTIMATION</text>
 
-      <line x1="554" y1="294" x2="554" y2="306" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
-      <polygon points="550,302 554,310 558,302" fill="rgba(255,255,255,0.15)"/>
+      <line x1="554" y1="252" x2="554" y2="258" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+      <polygon points="550,255 554,262 558,255" fill="rgba(255,255,255,0.15)"/>
 
-      <rect x="468" y="314" width="172" height="34" rx="7" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.25)" stroke-width="1"/>
-      <text x="554" y="336" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">POLICY CHECK</text>
+      <rect x="468" y="262" width="172" height="34" rx="7" fill="rgba(167,139,250,0.08)" stroke="rgba(167,139,250,0.25)" stroke-width="1"/>
+      <text x="554" y="284" text-anchor="middle" fill="#A78BFA" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">POLICY CHECK</text>
 
-      <line x1="554" y1="348" x2="554" y2="360" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
-      <polygon points="550,356 554,364 558,356" fill="rgba(255,255,255,0.15)"/>
+      <line x1="554" y1="296" x2="554" y2="302" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+      <polygon points="550,299 554,306 558,299" fill="rgba(255,255,255,0.15)"/>
 
-      <rect x="468" y="368" width="172" height="34" rx="7" fill="rgba(236,88,93,0.08)" stroke="#EC585D" stroke-width="1.5" stroke-dasharray="4 3"/>
-      <text x="554" y="390" text-anchor="middle" fill="#EC585D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">APPLY</text>
-
-      <!-- Separation line crossing through pipeline -->
-      <line x1="450" y1="394" x2="658" y2="394" stroke="rgba(236,88,93,0.15)" stroke-width="1" stroke-dasharray="4 3"/>
+      <rect x="468" y="306" width="172" height="34" rx="7" fill="rgba(236,88,93,0.08)" stroke="#EC585D" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="554" y="328" text-anchor="middle" fill="#EC585D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">APPLY</text>
 
       <!-- ===== CLOUD ACCOUNTS (right side) ===== -->
       <!-- Prod Account -->
-      <rect x="710" y="184" width="220" height="48" rx="10" fill="#121212" stroke="#627EEF" stroke-width="1.5"/>
-      <text x="820" y="206" text-anchor="middle" fill="#627EEF" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">PROD ACCOUNT</text>
-      <text x="820" y="222" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Strict policy, approval required</text>
+      <rect x="710" y="140" width="220" height="48" rx="10" fill="#121212" stroke="#627EEF" stroke-width="1.5"/>
+      <text x="820" y="162" text-anchor="middle" fill="#627EEF" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">PROD ACCOUNT</text>
+      <text x="820" y="178" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Strict policy, approval required</text>
 
       <!-- Non-Prod Account -->
-      <rect x="710" y="252" width="220" height="48" rx="10" fill="#121212" stroke="#627EEF" stroke-width="1.5"/>
-      <text x="820" y="274" text-anchor="middle" fill="#627EEF" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">NON-PROD ACCOUNT</text>
-      <text x="820" y="290" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">UAT + Dev workloads</text>
+      <rect x="710" y="222" width="220" height="48" rx="10" fill="#121212" stroke="#627EEF" stroke-width="1.5"/>
+      <text x="820" y="244" text-anchor="middle" fill="#627EEF" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">NON-PROD ACCOUNT</text>
+      <text x="820" y="260" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">UAT + Dev workloads</text>
 
       <!-- Sandbox Account -->
-      <rect x="710" y="580" width="220" height="48" rx="10" fill="#121212" stroke="#EC585D" stroke-width="1.5" stroke-dasharray="4 3"/>
-      <text x="820" y="602" text-anchor="middle" fill="#EC585D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">SANDBOX ACCOUNT</text>
-      <text x="820" y="618" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Ephemeral, auto-cleanup</text>
+      <rect x="710" y="622" width="220" height="48" rx="10" fill="#121212" stroke="#EC585D" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="820" y="644" text-anchor="middle" fill="#EC585D" font-size="14" font-weight="600" font-family="Inter, Arial, sans-serif">SANDBOX ACCOUNT</text>
+      <text x="820" y="660" text-anchor="middle" fill="#82748C" font-size="10" font-family="Inter, Arial, sans-serif">Ephemeral, auto-cleanup</text>
 
       <!-- ===== ARROWS: Pipeline -> Cloud Accounts ===== -->
-      <!-- Pipeline -> Prod Account -->
-      <line x1="658" y1="234" x2="708" y2="208" stroke="rgba(98,126,239,0.3)" stroke-width="2"/>
-      <polygon points="702,204 712,208 704,214" fill="#627EEF" opacity="0.5"/>
+      <!-- Pipeline -> Prod Account (horizontal at y=164) -->
+      <line x1="658" y1="164" x2="708" y2="164" stroke="rgba(98,126,239,0.3)" stroke-width="2"/>
+      <polygon points="704,160 712,164 704,168" fill="#627EEF" opacity="0.5"/>
 
-      <!-- Pipeline -> Non-Prod Account -->
-      <line x1="658" y1="296" x2="708" y2="276" stroke="rgba(98,126,239,0.3)" stroke-width="2"/>
-      <polygon points="702,272 712,276 704,282" fill="#627EEF" opacity="0.5"/>
+      <!-- Pipeline -> Non-Prod Account (horizontal at y=246) -->
+      <line x1="658" y1="246" x2="708" y2="246" stroke="rgba(98,126,239,0.3)" stroke-width="2"/>
+      <polygon points="704,242 712,246 704,250" fill="#627EEF" opacity="0.5"/>
 
       <!-- Pipeline -> Sandbox Account -->
-      <line x1="658" y1="448" x2="708" y2="604" stroke="rgba(236,88,93,0.25)" stroke-width="2"/>
-      <polygon points="702,600 712,604 704,610" fill="#EC585D" opacity="0.5"/>
+      <line x1="658" y1="323" x2="708" y2="646" stroke="rgba(236,88,93,0.25)" stroke-width="2"/>
+      <polygon points="702,642 712,646 704,652" fill="#EC585D" opacity="0.5"/>
 
       <!-- ===== LEGEND ===== -->
       <rect x="80" y="700" width="860" height="34" rx="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
