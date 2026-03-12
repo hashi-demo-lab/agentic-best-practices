@@ -164,37 +164,40 @@ async function buildPresentation() {
   // --- Slide Header ---
   // Section label
   slide.addText("STRATEGIC IMPACT", {
-    x: px(80), y: px(48), w: 5, h: px(24),
+    x: px(80), y: px(36), w: 5, h: px(24),
     fontSize: 10, fontFace: "Arial", color: C.purple60,
     bold: true, charSpacing: 3, margin: 0,
   });
 
-  // Title — h=px(50) tight to avoid subtitle overlap
+  // Title — h=px(148) for two-line wrapping title with breathing room
+  const titleY = px(58);
+  const titleH = px(148);
   slide.addText("How Resident Technology Services Creates Compounding Value", {
-    x: px(80), y: px(72), w: px(1760), h: px(50),
+    x: px(80), y: titleY, w: px(1760), h: titleH,
     fontSize: 22, fontFace: "Arial Black", color: C.gray100,
     bold: true, margin: 0,
   });
 
-  // Subtitle — y=px(126) clears title bottom at px(72+50)=px(122)
+  // Subtitle — y derived from title position: titleY + titleH + px(10)
+  const subtitleY = titleY + titleH + px(10);
   slide.addText(
     "Each phase builds on the last \u2014 establishing controls, enabling self-service, accelerating delivery, and scaling across the enterprise.",
     {
-      x: px(80), y: px(126), w: px(1760), h: px(30),
+      x: px(80), y: subtitleY, w: px(1760), h: px(30),
       fontSize: 11.5, fontFace: "Arial", color: C.gray70, margin: 0,
     }
   );
 
   // --- Cards ---
   const cardW = px(396);
-  const cardH = px(540);
+  const cardH = px(500);
   const accentH = px(8);
   const cardXOffsets = [22, 462, 902, 1342]; // pixel x-offsets
 
   for (let i = 0; i < cards.length; i++) {
     const c = cards[i];
     const cx = px(80) + px(cardXOffsets[i]);
-    const cy = px(250);
+    const cy = px(310);
 
     // Card background — ROUNDED_RECTANGLE with tinted bg
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
@@ -271,7 +274,7 @@ async function buildPresentation() {
       slide.addImage({
         data: arrowIcon,
         x: px(80) + px(arrowXOffsets[i]) - 0.01,
-        y: px(250) + px(270),
+        y: px(310) + px(250),
         w: 0.22, h: 0.22,
       });
     }
@@ -279,7 +282,7 @@ async function buildPresentation() {
 
   // --- Bottom Callout Bar ---
   slide.addShape(pres.shapes.RECTANGLE, {
-    x: px(80), y: px(840), w: px(1760), h: px(70),
+    x: px(80), y: px(820), w: px(1760), h: px(70),
     fill: { color: "F5F0FF" },
     line: { color: C.purple60, width: 1 },
   });
@@ -288,7 +291,7 @@ async function buildPresentation() {
     { text: "Compounding Returns: ", options: { bold: true, color: C.gray100 } },
     { text: "Each phase amplifies the next \u2014 governance enables self-service, self-service accelerates delivery, and acceleration drives enterprise-wide scale.", options: { color: C.gray70 } },
   ], {
-    x: px(120), y: px(840), w: px(1680), h: px(70),
+    x: px(120), y: px(820), w: px(1680), h: px(70),
     fontSize: 10.5, fontFace: "Arial", valign: "middle", margin: 0,
   });
 

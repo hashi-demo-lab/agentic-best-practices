@@ -1171,25 +1171,29 @@ async function buildPresentation() {
 
   const px7 = (v) => v / 192; // 1920px = 10"
 
-  // Header — title wraps to 2 lines, needs h=px7(130) for clearance
+  // Header — title wraps to 2 lines, needs h=px7(170) for clearance
+  // At fontSize 22 "Arial Black", each line ~0.37" → 2 lines need ≥0.74"
   s7.addText("STRATEGIC IMPACT", {
     x: px7(80), y: px7(40), w: 5, h: px7(20),
     fontSize: 10, fontFace: "Arial", color: "996f00",
     bold: true, charSpacing: 3, margin: 0,
   });
 
+  const s7titleY = px7(64);
+  const s7titleH = px7(170);  // 0.89" — generous for 2-line 22pt title
   s7.addText("How Resident Technology Services Creates Compounding Value", {
-    x: px7(80), y: px7(64), w: px7(1760), h: px7(130),
+    x: px7(80), y: s7titleY, w: px7(1760), h: s7titleH,
     fontSize: 22, fontFace: "Arial", color: C.gray100, bold: true, margin: 0,
   });
 
+  const s7subtitleY = s7titleY + s7titleH + px7(16);  // derived, 0.08" gap
   s7.addText("Each capability unlocks the next \u2014 building momentum across your organization", {
-    x: px7(80), y: px7(200), w: px7(1760), h: px7(30),
+    x: px7(80), y: s7subtitleY, w: px7(1760), h: px7(30),
     fontSize: 11.5, fontFace: "Arial", color: C.gray70, margin: 0,
   });
 
   // Card layout constants — pushed down to accommodate taller header
-  const s7svgTop = px7(280);
+  const s7svgTop = s7subtitleY + px7(60);
   const s7svgLeft = px7(80);
   const s7cardW = px7(396);
   const s7cardH = px7(540);

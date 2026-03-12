@@ -252,7 +252,7 @@ Design: white background, 54px Inter SemiBold title, 1750px horizontal rule, 22p
 
 Every content slide starts with this structure. **Always set the white background** — pptxgenjs defaults may not be white.
 
-**Title wrapping**: At fontSize 22, a single-line title needs h~0.35", but a two-line title (common with longer titles like "How Resident Technology Services Creates Compounding Value") needs h~0.70". Use `h=px(90)` (~0.47") as a safe default that handles most single-line titles with breathing room, or `h=px(130)` (~0.68") for titles you expect to wrap to two lines. The subtitle y position is always computed relative to the title: `title.y + title.h + px(6)` for clearance. Never hardcode subtitle y — derive it from the title dimensions so it adjusts automatically when the title height changes.
+**Title wrapping**: At fontSize 22 in "Arial Black", a single line is ~0.37" tall with leading. Two lines need ~0.74". Use `h=px(90)` (~0.47") for single-line titles, or `h=px(170)` (~0.89") for titles that wrap to two lines — this gives comfortable clearance. Titles over ~45 chars in an 8.6" wide box will wrap. The subtitle y position is always computed relative to the title: `title.y + title.h + px(16)` for clearance. Never hardcode subtitle y — derive it from the title dimensions so it adjusts automatically when the title height changes.
 
 ```javascript
 const slide = pres.addSlide();
@@ -268,10 +268,11 @@ slide.addText("SECTION NAME", {
 
 // Title — h must account for possible text wrapping:
 //   Single-line (short titles):  h = px(90)  ≈ 0.47"
-//   Two-line (long titles):      h = px(130) ≈ 0.68"
-// At fontSize 22, titles over ~45 chars in an 8.6" wide box will wrap.
+//   Two-line (long titles):      h = px(170) ≈ 0.89"
+// At fontSize 22 "Arial Black", each line is ~0.37" with leading.
+// Titles over ~45 chars in an 8.6" wide box will wrap to 2 lines.
 const titleY = 0.6;
-const titleH = px(90);  // increase to px(130) if title may wrap to 2 lines
+const titleH = px(90);  // increase to px(170) if title may wrap to 2 lines
 slide.addText("Slide Title Here", {
   x: 0.7, y: titleY, w: 8.6, h: titleH,
   fontSize: 22, fontFace: "Arial Black",
@@ -279,7 +280,7 @@ slide.addText("Slide Title Here", {
 });
 
 // Subtitle — y derived from title position for automatic clearance
-const subtitleY = titleY + titleH + px(6);
+const subtitleY = titleY + titleH + px(16);
 slide.addText("Supporting description text", {
   x: 0.7, y: subtitleY, w: 8.6, h: 0.3,
   fontSize: 12, fontFace: "Arial",
@@ -287,7 +288,7 @@ slide.addText("Supporting description text", {
 });
 ```
 
-Content area starts at y ≈ 1.4-1.5. If using a larger 26pt title, push subtitle down accordingly and content to y: 1.5-1.65. When a title wraps to two lines (titleH = px(130)), the subtitle and content area shift down proportionally — always derive positions from the title dimensions rather than hardcoding.
+Content area starts at y ≈ 1.4-1.5. If using a larger 26pt title, push subtitle down accordingly and content to y: 1.5-1.65. When a title wraps to two lines (titleH = px(170)), the subtitle and content area shift down proportionally — always derive positions from the title dimensions rather than hardcoding.
 
 ## Key Patterns
 
@@ -503,7 +504,7 @@ These are starting points — adjust dimensions based on content volume. All val
 - Title at x+0.65, desc below
 
 ### 4-Column Compounding Value Cards (Strategic Impact)
-- **Header**: section label y=px(48) h=px(24), title y=px(72) h=px(50) fontSize 22, subtitle y=px(126) h=px(30) — these positions prevent overlap
+- **Header**: section label y=px(40) h=px(20), title y=px(64) h=px(170) for wrapping titles (px(90) if single-line), subtitle derived as titleY+titleH+px(16) — always derive positions, never hardcode
 - Cards: w≈2.06" (px(396)), h≈2.81" (px(540)), gap calculated from x-offsets
 - Use `ROUNDED_RECTANGLE` with `rectRadius: 0.08` and per-card tinted `bgColor`
 - Each card: gradient accent bar (borderRadius=16), step number ("01"), gradient hero title (renderGradientTitle), subtitle, divider LINE, 4 items, divider LINE, outcome text
@@ -608,7 +609,7 @@ slide.addImage({ data: titleImg, x: cx + 0.15, y: cy + 0.4, w: 1.8, h: 0.31 });
 5. **Set `slide.background = { color: C.white }`** on every content slide — don't rely on defaults.
 6. **Coordinates are in inches** — LAYOUT_16x9 is 10" wide × 5.625" tall.
 7. **Content padding** — start content at y≈1.4 (0.8-1.0" below header). Too tight looks cramped.
-8. **Text overflow** — respect the max character counts in the Typography table. Reduce fontSize or increase dimensions if wrapping occurs. **Bounding box overlap check**: for every text element, verify that `y + h` does not exceed the `y` of the next element below it. Leave at least 0.05" clearance. A common mistake is using `h: 0.35` for a title that wraps to two lines — at fontSize 22, a single-line title fits in h~0.35" but a two-line title needs h~0.70". Use `px(90)` (~0.47") as a safe single-line default or `px(130)` (~0.68") for wrapping titles, and always derive the subtitle `y` from `title.y + title.h + px(6)` so it shifts automatically. Keep title `h` proportional to fontSize and line count (single-line ≈ fontSize_pt × 0.018, two-line ≈ fontSize_pt × 0.032).
+8. **Text overflow** — respect the max character counts in the Typography table. Reduce fontSize or increase dimensions if wrapping occurs. **Bounding box overlap check**: for every text element, verify that `y + h` does not exceed the `y` of the next element below it. Leave at least 0.08" clearance. A common mistake is using a height that fits the text tightly but leaves no visual gap — at fontSize 22 "Arial Black", each line including leading is ~0.37", so a single-line title needs at minimum h=0.40" and a two-line title needs h=0.74". Use `px(90)` (~0.47") as a safe single-line default or `px(170)` (~0.89") for wrapping titles, and always derive the subtitle `y` from `title.y + title.h + px(16)` so it shifts automatically with generous clearance.
 9. **Footer clearance** — bottom callout bars at y≈4.5-4.75. Taller content layouts (3.0" pillars) push the callout lower.
 10. **Working directory** — run build scripts from the repo root. The capture script (`scripts/capture-title.mjs`) resolves all asset paths automatically — no workspace setup needed for title/divider slides.
 11. **Title slides are HTML captures** — title slide text lives in the HTML source file, not in `pres.title`. Changing `pres.title` in the build script does NOT update the rendered title slide. To update title text: edit the HTML → recapture via Chrome headless → rebuild PPTX.

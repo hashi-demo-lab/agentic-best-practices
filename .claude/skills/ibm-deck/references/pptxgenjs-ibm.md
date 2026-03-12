@@ -597,25 +597,31 @@ slide.addText("SECTION", {
 
 Four cards in a row, each showing a progression stage with gradient hero title, items, and outcome. Uses ROUNDED_RECTANGLE with per-card tinted backgrounds.
 
-**Slide header** — use these exact positions to prevent title/subtitle overlap:
+**Slide header** — use derived positions to prevent title/subtitle overlap. Choose titleH based on whether the title wraps:
 
 ```javascript
 // Section label
 slide.addText("STRATEGIC IMPACT", {
-  x: px(80), y: px(48), w: 5, h: px(24),
+  x: px(80), y: px(40), w: 5, h: px(20),
   fontSize: 10, fontFace: "Arial", color: accentColor,
   bold: true, charSpacing: 3, margin: 0,
 });
-// Title — keep h tight (px(50) ≈ 0.26") to avoid overlapping subtitle
-slide.addText("Slide Title Here", {
-  x: px(80), y: px(72), w: px(1760), h: px(50),
+// Title — px(90) for single-line, px(170) for two-line wrapping titles
+// At fontSize 22 "Arial Black", each line is ~0.37" — two lines need ≥0.74"
+const titleY = px(64);
+const titleH = px(170);  // use px(90) if title is short/single-line
+slide.addText("How This Service Creates Compounding Value", {
+  x: px(80), y: titleY, w: px(1760), h: titleH,
   fontSize: 22, fontFace: "Arial", color: C.gray100, bold: true, margin: 0,
 });
-// Subtitle — y=px(126) clears title bottom at px(72+50)=px(122)
+// Subtitle — always derive from title position + px(16) gap
+const subtitleY = titleY + titleH + px(16);
 slide.addText("Supporting description text", {
-  x: px(80), y: px(126), w: px(1760), h: px(30),
+  x: px(80), y: subtitleY, w: px(1760), h: px(30),
   fontSize: 11.5, fontFace: "Arial", color: C.gray70, margin: 0,
 });
+// Cards start below subtitle
+const cardTop = subtitleY + px(60);
 ```
 
 **Card layout:**
