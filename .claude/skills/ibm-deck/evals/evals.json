@@ -57,7 +57,8 @@
         {"text": "Uses LINE shapes for dividers inside cards", "type": "code_pattern"},
         {"text": "FaArrowRight icons between cards (3 arrows for 4 cards)", "type": "code_pattern"},
         {"text": "Shadow factory pattern used consistently", "type": "code_pattern"},
-        {"text": "Pixel-to-inch helper function defined (e.g., v / 192)", "type": "code_pattern"}
+        {"text": "Pixel-to-inch helper function defined (e.g., v / 192)", "type": "code_pattern"},
+        {"text": "Slide header title and subtitle do not visually overlap (title.y + title.h <= subtitle.y)", "type": "code_pattern"}
       ]
     },
     {

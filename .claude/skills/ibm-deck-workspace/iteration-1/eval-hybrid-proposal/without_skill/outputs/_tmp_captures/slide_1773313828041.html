@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 1920px; height: 1080px; overflow: hidden;
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: linear-gradient(135deg, #002D9C 0%, #0043CE 35%, #0F62FE 65%, #4589FF 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative;
+  }
+  body::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      linear-gradient(45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(255,255,255,0.03) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.03) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.03) 75%);
+    background-size: 80px 80px;
+    background-position: 0 0, 0 40px, 40px -40px, -40px 0px;
+  }
+  .arc {
+    position: absolute; bottom: -300px; left: -200px;
+    width: 900px; height: 900px;
+    border: 2px solid rgba(255,255,255,0.06);
+    border-radius: 50%;
+  }
+  .arc:nth-child(2) {
+    width: 700px; height: 700px;
+    bottom: -200px; left: -100px;
+    border-color: rgba(255,255,255,0.04);
+  }
+  .ibm-logo {
+    font-size: 48px; font-weight: 700; color: rgba(255,255,255,0.95);
+    letter-spacing: 5px; margin-bottom: 48px;
+  }
+  h1 {
+    font-size: 56px; font-weight: 700; color: #FFFFFF;
+    margin-bottom: 20px;
+  }
+  .message {
+    font-size: 22px; font-weight: 300; color: rgba(255,255,255,0.7);
+    margin-bottom: 64px; text-align: center; max-width: 700px; line-height: 1.6;
+  }
+  .contact-row {
+    display: flex; gap: 64px; align-items: center;
+  }
+  .contact-item {
+    text-align: center;
+  }
+  .contact-label {
+    font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.45);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .contact-value {
+    font-size: 18px; font-weight: 400; color: rgba(255,255,255,0.85);
+  }
+  .divider-v {
+    width: 1px; height: 48px; background: rgba(255,255,255,0.2);
+  }
+</style>
+</head>
+<body>
+  <div class="arc"></div>
+  <div class="arc"></div>
+  <div class="ibm-logo">IBM</div>
+  <h1>Thank You</h1>
+  <div class="message">We look forward to partnering with you on your digital transformation journey.</div>
+  <div class="contact-row">
+    <div class="contact-item">
+      <div class="contact-label">Email</div>
+      <div class="contact-value">services@ibm.com</div>
+    </div>
+    <div class="divider-v"></div>
+    <div class="contact-item">
+      <div class="contact-label">Web</div>
+      <div class="contact-value">ibm.com/services</div>
+    </div>
+    <div class="divider-v"></div>
+    <div class="contact-item">
+      <div class="contact-label">Phone</div>
+      <div class="contact-value">1-800-IBM-7080</div>
+    </div>
+  </div>
+</body>
+</html>

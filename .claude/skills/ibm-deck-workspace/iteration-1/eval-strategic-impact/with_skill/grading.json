@@ -1,0 +1,55 @@
+{
+  "expectations": [
+    {
+      "text": "Output file strategic-impact.pptx exists and is valid",
+      "passed": true,
+      "evidence": "File exists at outputs/strategic-impact.pptx, size 148814 bytes (~145KB), well above 10KB threshold"
+    },
+    {
+      "text": "Uses renderGradientTitle to render gradient hero text as SVG→PNG",
+      "passed": true,
+      "evidence": "Function defined at line 69: `async function renderGradientTitle(text, stops, width = 700, height = 120)` and called at line 272: `const titleImg = await renderGradientTitle(c.title, titleGrad, titleRW, 120)`"
+    },
+    {
+      "text": "Uses ROUNDED_RECTANGLE (not plain RECTANGLE) for card backgrounds",
+      "passed": true,
+      "evidence": "Line 232: `slide.addShape(pres.shapes.ROUNDED_RECTANGLE, { ... rectRadius: 0.08, fill: { color: c.bgColor }, shadow: cardShadow() })`"
+    },
+    {
+      "text": "Each card has a unique tinted background color (not all gray10)",
+      "passed": true,
+      "evidence": "Card bgColor values differ: card 01 = 'F2EEFF' (purple tint), card 02 = 'EDF5FF' (blue tint), card 03 = 'E8FFFE' (teal tint), card 04 = 'DEFBE6' (green tint). Applied via `fill: { color: c.bgColor }`"
+    },
+    {
+      "text": "renderGradientBar called with borderRadius > 0 for rounded card accent bars",
+      "passed": true,
+      "evidence": "Lines 243-248: `const barImg = await renderGradientBar(['#' + c.ac1, '#' + c.ac2, '#' + c.ac3], 396, 8, 16)` — borderRadius parameter is 16"
+    },
+    {
+      "text": "Uses LINE shapes for dividers inside cards",
+      "passed": true,
+      "evidence": "Line 303: `slide.addShape(pres.shapes.LINE, { ... line: { color: c.divColor, width: 0.5 } })` (top divider) and line 328: `slide.addShape(pres.shapes.LINE, { ... line: { color: c.divColor, width: 0.5 } })` (bottom divider)"
+    },
+    {
+      "text": "FaArrowRight icons between cards (3 arrows for 4 cards)",
+      "passed": true,
+      "evidence": "Line 5: `import { FaArrowRight } from 'react-icons/fa'`; Lines 351-365: `if (i < cards.length - 1)` renders arrow icon via `iconToBase64Png(FaArrowRight, '#' + c.arrowColor, 256)` — produces exactly 3 arrows for 4 cards"
+    },
+    {
+      "text": "Shadow factory pattern used consistently",
+      "passed": true,
+      "evidence": "Line 42: `const cardShadow = () => ({ type: 'outer', color: '000000', blur: 8, offset: 2, angle: 135, opacity: 0.08 })` — arrow function factory returning fresh object each call, used at line 239: `shadow: cardShadow()`"
+    },
+    {
+      "text": "Pixel-to-inch helper function defined (e.g., v / 192)",
+      "passed": true,
+      "evidence": "Line 8: `const px = (v) => v / 192; // 1920px = 10\" → 192px per inch`"
+    }
+  ],
+  "summary": {
+    "passed": 9,
+    "failed": 0,
+    "total": 9,
+    "pass_rate": 1.0
+  }
+}

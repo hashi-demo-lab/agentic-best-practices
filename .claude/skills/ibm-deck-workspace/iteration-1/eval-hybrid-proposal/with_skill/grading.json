@@ -1,0 +1,60 @@
+{
+  "expectations": [
+    {
+      "text": "Output file technology-services-proposal.pptx exists and is valid",
+      "passed": true,
+      "evidence": "File exists at 5,272,869 bytes (~5.1MB), well above the 10KB threshold"
+    },
+    {
+      "text": "Slides 1 and 5 use addImage with full-bleed dimensions (w:10, h:5.625) for HTML-captured PNGs",
+      "passed": true,
+      "evidence": "s1.addImage({ path: `${OUTPUTS_DIR}/slide-title.png`, x: 0, y: 0, w: 10, h: 5.625 }) and s5.addImage({ path: `${OUTPUTS_DIR}/slide-closing.png`, x: 0, y: 0, w: 10, h: 5.625 })"
+    },
+    {
+      "text": "Uses capture-title.mjs script (or equivalent HTML capture) for title and closing slides",
+      "passed": true,
+      "evidence": "PNG files slide-title.png and slide-closing.png exist in outputs/ directory and are used as full-bleed images on slides 1 and 5, confirming HTML-captured PNGs are the source for title and closing slides"
+    },
+    {
+      "text": "Challenge slide uses 2×2 grid layout with vertical gradient accent bars",
+      "passed": true,
+      "evidence": "Grid: col = i % 2, row = Math.floor(i / 2) over 4 cards. Vertical bars: const vBar = await renderVerticalGradientBar(ch.gradient, 8, 260); s2.addImage({ data: vBar, x: cx, y: cy, w: 0.08, h: cardH })"
+    },
+    {
+      "text": "Prerequisites slide has a REQUIRED badge (ROUNDED_RECTANGLE with filled accent color and white text)",
+      "passed": true,
+      "evidence": "s4.addShape(pres.shapes.ROUNDED_RECTANGLE, { fill: { color: pr.accent }, rectRadius: 0.05 }) followed by s4.addText('REQUIRED', { color: C.white, bold: true, align: 'center' })"
+    },
+    {
+      "text": "Mandatory/required card has tinted background color and colored border (line property)",
+      "passed": true,
+      "evidence": "fill: { color: isMandatory ? 'E8F7F7' : C.gray10 }, line: isMandatory ? { color: pr.accent, width: 1.5 } : undefined"
+    },
+    {
+      "text": "Shadow factory pattern used consistently",
+      "passed": true,
+      "evidence": "const cardShadow = () => ({ type: 'outer', color: '000000', blur: 8, offset: 2, angle: 135, opacity: 0.08 }); used as cardShadow() at all 3 card creation sites (s2, s3, s4)"
+    },
+    {
+      "text": "No # prefix on pptxgenjs color values",
+      "passed": true,
+      "evidence": "All C tokens use bare hex (e.g., white: 'FFFFFF', blue60: '0F62FE'). All fill/color/line properties use C.xxx or bare hex like 'FFF0F0', 'E8F7F7'. The # prefix only appears in SVG/icon rendering contexts (e.g., '#' + C.red60 passed to iconToBase64Png), not pptxgenjs properties"
+    },
+    {
+      "text": "All async functions are awaited",
+      "passed": true,
+      "evidence": "All 6 iconToBase64Png calls use await, all 3 renderGradientBar calls use await, the 1 renderVerticalGradientBar call uses await, and pres.writeFile uses await"
+    },
+    {
+      "text": "slide.background set to white on content slides",
+      "passed": true,
+      "evidence": "s2.background = { color: C.white } (Challenge), s3.background = { color: C.white } (Value Proposition), s4.background = { color: C.white } (Pre-requisites). Slides 1 and 5 are full-bleed image slides with no background needed"
+    }
+  ],
+  "summary": {
+    "passed": 10,
+    "failed": 0,
+    "total": 10,
+    "pass_rate": 1.0
+  }
+}

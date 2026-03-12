@@ -595,7 +595,30 @@ slide.addText("SECTION", {
 
 ## 4-Column Compounding Value Cards (Strategic Impact)
 
-Four cards in a row, each showing a progression stage with gradient hero title, items, and outcome. Uses ROUNDED_RECTANGLE with per-card tinted backgrounds:
+Four cards in a row, each showing a progression stage with gradient hero title, items, and outcome. Uses ROUNDED_RECTANGLE with per-card tinted backgrounds.
+
+**Slide header** — use these exact positions to prevent title/subtitle overlap:
+
+```javascript
+// Section label
+slide.addText("STRATEGIC IMPACT", {
+  x: px(80), y: px(48), w: 5, h: px(24),
+  fontSize: 10, fontFace: "Arial", color: accentColor,
+  bold: true, charSpacing: 3, margin: 0,
+});
+// Title — keep h tight (px(50) ≈ 0.26") to avoid overlapping subtitle
+slide.addText("Slide Title Here", {
+  x: px(80), y: px(72), w: px(1760), h: px(50),
+  fontSize: 22, fontFace: "Arial", color: C.gray100, bold: true, margin: 0,
+});
+// Subtitle — y=px(126) clears title bottom at px(72+50)=px(122)
+slide.addText("Supporting description text", {
+  x: px(80), y: px(126), w: px(1760), h: px(30),
+  fontSize: 11.5, fontFace: "Arial", color: C.gray70, margin: 0,
+});
+```
+
+**Card layout:**
 
 ```javascript
 const px = (v) => v / 192;

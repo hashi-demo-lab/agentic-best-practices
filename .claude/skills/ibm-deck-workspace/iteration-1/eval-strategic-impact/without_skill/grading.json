@@ -1,0 +1,55 @@
+{
+  "expectations": [
+    {
+      "text": "Output file strategic-impact.pptx exists and is valid",
+      "passed": true,
+      "evidence": "File exists at outputs/strategic-impact.pptx with size 116612 bytes (116KB), well above the 10KB threshold."
+    },
+    {
+      "text": "Uses renderGradientTitle to render gradient hero text as SVG→PNG",
+      "passed": true,
+      "evidence": "Line 102: `async function renderGradientTitle(text, gradientColors, width = 220, height = 52)` defined with sharp SVG→PNG pipeline. Line 173: called via `CARDS.map((c) => renderGradientTitle(c.title, c.gradient, 220, 52))`."
+    },
+    {
+      "text": "Uses ROUNDED_RECTANGLE (not plain RECTANGLE) for card backgrounds",
+      "passed": true,
+      "evidence": "Line 183: `slide.addShape(pptx.ShapeType.roundRect, {` with `rectRadius: 0.1` for card backgrounds. Uses roundRect (PptxGenJS equivalent of ROUNDED_RECTANGLE), not rect/RECTANGLE."
+    },
+    {
+      "text": "Each card has a unique tinted background color (not all gray10)",
+      "passed": true,
+      "evidence": "Four unique tint values defined: card 01 tint='1E1432' (purple), card 02 tint='141E2E' (blue), card 03 tint='14292A' (teal), card 04 tint='2A1418' (red). Applied at line 188: `fill: { color: card.tint }`."
+    },
+    {
+      "text": "renderGradientBar called with borderRadius > 0 for rounded card accent bars",
+      "passed": false,
+      "evidence": "No `renderGradientBar` function exists in the code. Gradient accent bars are rendered inline via `slide.addShape(pptx.ShapeType.roundRect, {...})` at line 194 with rectRadius: 0.1, but without a dedicated renderGradientBar helper."
+    },
+    {
+      "text": "Uses LINE shapes for dividers inside cards",
+      "passed": true,
+      "evidence": "Line 247: `slide.addShape(pptx.ShapeType.line, {` (divider line 1) and line 279: `slide.addShape(pptx.ShapeType.line, {` (divider line 2) inside each card loop."
+    },
+    {
+      "text": "FaArrowRight icons between cards (3 arrows for 4 cards)",
+      "passed": false,
+      "evidence": "No FaArrowRight import or icon usage. Code uses `pptx.ShapeType.rightArrow` native shapes (line 309) with comment '// FaArrowRight style' but does not import or render actual FaArrowRight icons. 3 arrows are drawn (loop condition `i < CARDS.length - 1`)."
+    },
+    {
+      "text": "Shadow factory pattern used consistently",
+      "passed": false,
+      "evidence": "No shadow factory pattern found. No `const cardShadow = () => ({` or similar factory function. No shadow properties are applied to any shapes in the entire script."
+    },
+    {
+      "text": "Pixel-to-inch helper function defined (e.g., v / 192)",
+      "passed": true,
+      "evidence": "Line 24-25: `const DPI = 96; const px = (pixels) => pixels / DPI;` — a pixel-to-inch conversion helper is defined and used throughout the script."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 3,
+    "total": 9,
+    "pass_rate": 0.67
+  }
+}

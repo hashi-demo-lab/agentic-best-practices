@@ -264,14 +264,14 @@ slide.addText("SECTION NAME", {
   bold: true, charSpacing: 3, margin: 0,
 });
 
-// Title (use y: 0.65, h: 0.55 for larger 26pt titles)
+// Title — keep h tight to prevent overlap with subtitle below
 slide.addText("Slide Title Here", {
-  x: 0.7, y: 0.6, w: 8.6, h: 0.45,
+  x: 0.7, y: 0.6, w: 8.6, h: 0.35,
   fontSize: 22, fontFace: "Arial Black",
   color: C.gray100, bold: true, margin: 0,
 });
 
-// Subtitle
+// Subtitle — y must be ≥ title.y + title.h + 0.05
 slide.addText("Supporting description text", {
   x: 0.7, y: 1.0, w: 8.6, h: 0.3,
   fontSize: 12, fontFace: "Arial",
@@ -495,6 +495,7 @@ These are starting points — adjust dimensions based on content volume. All val
 - Title at x+0.65, desc below
 
 ### 4-Column Compounding Value Cards (Strategic Impact)
+- **Header**: section label y=px(48) h=px(24), title y=px(72) h=px(50) fontSize 22, subtitle y=px(126) h=px(30) — these positions prevent overlap
 - Cards: w≈2.06" (px(396)), h≈2.81" (px(540)), gap calculated from x-offsets
 - Use `ROUNDED_RECTANGLE` with `rectRadius: 0.08` and per-card tinted `bgColor`
 - Each card: gradient accent bar (borderRadius=16), step number ("01"), gradient hero title (renderGradientTitle), subtitle, divider LINE, 4 items, divider LINE, outcome text
@@ -599,7 +600,7 @@ slide.addImage({ data: titleImg, x: cx + 0.15, y: cy + 0.4, w: 1.8, h: 0.31 });
 5. **Set `slide.background = { color: C.white }`** on every content slide — don't rely on defaults.
 6. **Coordinates are in inches** — LAYOUT_16x9 is 10" wide × 5.625" tall.
 7. **Content padding** — start content at y≈1.4 (0.8-1.0" below header). Too tight looks cramped.
-8. **Text overflow** — respect the max character counts in the Typography table. Reduce fontSize or increase dimensions if wrapping occurs.
+8. **Text overflow** — respect the max character counts in the Typography table. Reduce fontSize or increase dimensions if wrapping occurs. **Bounding box overlap check**: for every text element, verify that `y + h` does not exceed the `y` of the next element below it. Leave at least 0.05" clearance. A common mistake is using `h: 0.55` for titles — this pushes the box into the subtitle. Keep title `h` proportional to fontSize (≈ fontSize_pt × 0.018).
 9. **Footer clearance** — bottom callout bars at y≈4.5-4.75. Taller content layouts (3.0" pillars) push the callout lower.
 10. **Working directory** — run build scripts from the repo root. The capture script (`scripts/capture-title.mjs`) resolves all asset paths automatically — no workspace setup needed for title/divider slides.
 11. **Title slides are HTML captures** — title slide text lives in the HTML source file, not in `pres.title`. Changing `pres.title` in the build script does NOT update the rendered title slide. To update title text: edit the HTML → recapture via Chrome headless → rebuild PPTX.

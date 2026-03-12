@@ -1,0 +1,60 @@
+{
+  "expectations": [
+    {
+      "text": "Output file technology-services-proposal.pptx exists and is valid",
+      "passed": true,
+      "evidence": "File exists at 5,943,111 bytes (~5.9MB), well above the 10KB threshold."
+    },
+    {
+      "text": "Slides 1 and 5 use addImage with full-bleed dimensions (w:10, h:5.625) for HTML-captured PNGs",
+      "passed": false,
+      "evidence": "Slides 1 and 5 use addImage with w: \"100%\", h: \"100%\" (string percentages) instead of the required numeric values w:10, h:5.625. See lines 911-916 and 933-939."
+    },
+    {
+      "text": "Uses capture-title.mjs script (or equivalent HTML capture) for title and closing slides",
+      "passed": true,
+      "evidence": "Does not reference capture-title.mjs but implements equivalent HTML capture via its own async captureHTML() function (line 255) using Playwright (chromium.launch) at 1920x1080 @2x. Called for title slide (line 887) and closing slide (line 891)."
+    },
+    {
+      "text": "Challenge slide uses 2×2 grid layout with vertical gradient accent bars",
+      "passed": true,
+      "evidence": "2x2 grid via col = i % 2, row = Math.floor(i / 2) (lines 365-366). Vertical accent bars built from two overlapping rects per card (lines 388-403), comment reads 'Left accent bar (gradient effect via two overlapping rects)'."
+    },
+    {
+      "text": "Prerequisites slide has a REQUIRED badge (ROUNDED_RECTANGLE with filled accent color and white text)",
+      "passed": false,
+      "evidence": "REQUIRED badge exists (lines 783-807) with fill: { color: CARBON.blue60 } and white text, but uses pres.ShapeType.rect with rectRadius: 0.14 instead of the ROUNDED_RECTANGLE shape type."
+    },
+    {
+      "text": "Mandatory/required card has tinted background color and colored border (line property)",
+      "passed": true,
+      "evidence": "Line 770: fill: { color: isReq ? \"EDF5FF\" : CARBON.white } provides tinted background. Line 771: line: { color: isReq ? CARBON.blue60 : CARBON.gray20, width: isReq ? 1.5 : 1 } provides colored border."
+    },
+    {
+      "text": "Shadow factory pattern used consistently",
+      "passed": false,
+      "evidence": "No shadow factory function exists. Shadows are defined as inline object literals in at least 3 places (lines 378-384, 564-569, 773-779) with no shared factory or helper function."
+    },
+    {
+      "text": "No # prefix on pptxgenjs color values",
+      "passed": true,
+      "evidence": "All CARBON constants defined without # prefix (e.g., blue60: \"0F62FE\", white: \"FFFFFF\"). Inline colors like \"EDF5FF\" (line 770) and shadow colors \"000000\" (line 383) also lack # prefix."
+    },
+    {
+      "text": "All async functions are awaited",
+      "passed": true,
+      "evidence": "captureHTML() is async and awaited at lines 887 and 891. pres.writeFile() is awaited at line 942. main() is invoked with .catch() error handling at line 946. No missing awaits found."
+    },
+    {
+      "text": "slide.background set to white on content slides",
+      "passed": true,
+      "evidence": "All three content slides set slide.background = { fill: CARBON.white } — challenge slide (line 279), value proposition slide (line 456), prerequisites slide (line 660). CARBON.white = \"FFFFFF\"."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 3,
+    "total": 10,
+    "pass_rate": 0.70
+  }
+}

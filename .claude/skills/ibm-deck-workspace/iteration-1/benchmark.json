@@ -1,0 +1,139 @@
+{
+  "metadata": {
+    "skill_name": "ibm-deck",
+    "skill_path": ".claude/skills/ibm-deck",
+    "timestamp": "2026-03-12T11:10:00Z",
+    "evals_run": [4, 5],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 4,
+      "eval_name": "Strategic Impact Cards",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Output file strategic-impact.pptx exists and is valid", "passed": true, "evidence": "File exists, 145KB"},
+        {"text": "Uses renderGradientTitle to render gradient hero text as SVG→PNG", "passed": true, "evidence": "Function defined and called"},
+        {"text": "Uses ROUNDED_RECTANGLE for card backgrounds", "passed": true, "evidence": "pres.shapes.ROUNDED_RECTANGLE with rectRadius: 0.08"},
+        {"text": "Each card has a unique tinted background color", "passed": true, "evidence": "4 unique bgColor values"},
+        {"text": "renderGradientBar called with borderRadius > 0", "passed": true, "evidence": "borderRadius = 16"},
+        {"text": "Uses LINE shapes for dividers inside cards", "passed": true, "evidence": "pres.shapes.LINE used twice per card"},
+        {"text": "FaArrowRight icons between cards", "passed": true, "evidence": "FaArrowRight imported and used, 3 arrows"},
+        {"text": "Shadow factory pattern used consistently", "passed": true, "evidence": "const cardShadow = () => ({...})"},
+        {"text": "Pixel-to-inch helper function defined", "passed": true, "evidence": "const px = (v) => v / 192"}
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "Strategic Impact Cards",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.67,
+        "passed": 6,
+        "failed": 3,
+        "total": 9,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Output file strategic-impact.pptx exists and is valid", "passed": true, "evidence": "File exists, 114KB"},
+        {"text": "Uses renderGradientTitle to render gradient hero text as SVG→PNG", "passed": true, "evidence": "Function defined with sharp"},
+        {"text": "Uses ROUNDED_RECTANGLE for card backgrounds", "passed": true, "evidence": "Used roundRect shape type"},
+        {"text": "Each card has a unique tinted background color", "passed": true, "evidence": "4 unique tint values"},
+        {"text": "renderGradientBar called with borderRadius > 0", "passed": false, "evidence": "No renderGradientBar function — used inline shape instead"},
+        {"text": "Uses LINE shapes for dividers inside cards", "passed": true, "evidence": "ShapeType.line used for dividers"},
+        {"text": "FaArrowRight icons between cards", "passed": false, "evidence": "Used native rightArrow shape, not FaArrowRight icons"},
+        {"text": "Shadow factory pattern used consistently", "passed": false, "evidence": "No shadow factory — no shadows applied at all"},
+        {"text": "Pixel-to-inch helper function defined", "passed": true, "evidence": "const px = (pixels) => pixels / DPI"}
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "Hybrid Proposal Deck",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 10,
+        "failed": 0,
+        "total": 10,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Output file technology-services-proposal.pptx exists and is valid", "passed": true, "evidence": "File exists, 5.0MB"},
+        {"text": "Slides 1 and 5 use addImage with full-bleed dimensions", "passed": true, "evidence": "w: 10, h: 5.625 on both"},
+        {"text": "Uses capture-title.mjs or equivalent HTML capture", "passed": true, "evidence": "PNGs from capture-title.mjs used"},
+        {"text": "Challenge slide uses 2×2 grid with vertical gradient accent bars", "passed": true, "evidence": "Grid calc + renderVerticalGradientBar"},
+        {"text": "REQUIRED badge with ROUNDED_RECTANGLE", "passed": true, "evidence": "pres.shapes.ROUNDED_RECTANGLE with REQUIRED text"},
+        {"text": "Mandatory card has tinted bg and colored border", "passed": true, "evidence": "E8F7F7 tint + accent border"},
+        {"text": "Shadow factory pattern used consistently", "passed": true, "evidence": "const cardShadow = () => ({...})"},
+        {"text": "No # prefix on pptxgenjs color values", "passed": true, "evidence": "All bare hex in pptxgenjs context"},
+        {"text": "All async functions are awaited", "passed": true, "evidence": "All calls properly awaited"},
+        {"text": "slide.background set to white on content slides", "passed": true, "evidence": "Set on all 3 content slides"}
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "Hybrid Proposal Deck",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.70,
+        "passed": 7,
+        "failed": 3,
+        "total": 10,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Output file technology-services-proposal.pptx exists and is valid", "passed": true, "evidence": "File exists, 5.7MB"},
+        {"text": "Slides 1 and 5 use addImage with full-bleed dimensions", "passed": false, "evidence": "Used w: '100%', h: '100%' strings instead of numeric 10, 5.625"},
+        {"text": "Uses capture-title.mjs or equivalent HTML capture", "passed": true, "evidence": "Custom Playwright capture function"},
+        {"text": "Challenge slide uses 2×2 grid with vertical gradient accent bars", "passed": true, "evidence": "Grid with 2-rect gradient approximation"},
+        {"text": "REQUIRED badge with ROUNDED_RECTANGLE", "passed": false, "evidence": "Used rect with rectRadius instead of ROUNDED_RECTANGLE shape"},
+        {"text": "Mandatory card has tinted bg and colored border", "passed": true, "evidence": "EDF5FF tint + colored border"},
+        {"text": "Shadow factory pattern used consistently", "passed": false, "evidence": "No shadow factory — inline shadow objects"},
+        {"text": "No # prefix on pptxgenjs color values", "passed": true, "evidence": "Bare hex throughout"},
+        {"text": "All async functions are awaited", "passed": true, "evidence": "Async calls awaited"},
+        {"text": "slide.background set to white on content slides", "passed": true, "evidence": "Background set on content slides"}
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0},
+      "time_seconds": {"mean": null, "stddev": null},
+      "tokens": {"mean": null, "stddev": null}
+    },
+    "without_skill": {
+      "pass_rate": {"mean": 0.685, "stddev": 0.02, "min": 0.67, "max": 0.70},
+      "time_seconds": {"mean": null, "stddev": null},
+      "tokens": {"mean": null, "stddev": null}
+    },
+    "delta": {
+      "pass_rate": "+0.315"
+    }
+  },
+  "notes": [
+    "With-skill achieves 100% pass rate on both new evals (19/19 assertions)",
+    "Without-skill achieves 68.5% average (13/19 assertions)",
+    "Key differentiators: shadow factory pattern (0% without skill), renderGradientBar usage (0% without skill), FaArrowRight icons (0% without skill), ROUNDED_RECTANGLE for badges (0% without skill)",
+    "Non-discriminating assertions: file existence, pixel-to-inch helper, async awaiting, no # prefix — pass in both configurations",
+    "The skill's REQUIRED badge pattern and shadow factory are the most impactful guidance"
+  ]
+}
