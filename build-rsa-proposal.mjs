@@ -1127,6 +1127,260 @@ async function buildPresentation() {
   );
 
   // =====================================================================
+  // SLIDE 7: PRE-REQUISITES FOR SUCCESS
+  // =====================================================================
+  const s7 = pres.addSlide();
+  s7.background = { color: C.white };
+
+  s7.addText("PRE-REQUISITES", {
+    x: 0.7,
+    y: 0.35,
+    w: 5,
+    h: 0.3,
+    fontSize: 10,
+    fontFace: "Arial",
+    color: C.purple60,
+    bold: true,
+    charSpacing: 3,
+    margin: 0,
+  });
+
+  s7.addText("Enterprise Readiness for AI-Driven IaC", {
+    x: 0.7,
+    y: 0.6,
+    w: 8.6,
+    h: 0.45,
+    fontSize: 22,
+    fontFace: "Arial Black",
+    color: C.gray100,
+    bold: true,
+    margin: 0,
+  });
+
+  s7.addText(
+    "Key foundations your organization should have in place \u2014 or that your RSA will help establish",
+    {
+      x: 0.7,
+      y: 1.0,
+      w: 8.6,
+      h: 0.3,
+      fontSize: 12,
+      fontFace: "Arial",
+      color: C.gray70,
+      margin: 0,
+    }
+  );
+
+  const prereqs = [
+    {
+      icon: FaCode,
+      iconColor: "#" + C.blue60,
+      accentColor: C.blue60,
+      title: "IaC Maturity",
+      items: [
+        "Git-based Terraform workflow",
+        "Private module registry",
+        "CI/CD for plan & apply",
+        "Documented standards",
+      ],
+    },
+    {
+      icon: FaLock,
+      iconColor: "#" + C.magenta60,
+      accentColor: C.magenta60,
+      title: "Security & Governance",
+      items: [
+        "RBAC via HCP Terraform",
+        "Secrets mgmt (Vault etc.)",
+        "Policy-as-code framework",
+        "Agent isolation capability",
+      ],
+    },
+    {
+      icon: FaLayerGroup,
+      iconColor: "#" + C.green60,
+      accentColor: C.green60,
+      title: "Verification",
+      items: [
+        "Testing practices for IaC",
+        "Dev/sandbox environments",
+        "Observability & audit logging",
+        "Stakeholder alignment",
+      ],
+    },
+    {
+      icon: FaLightbulb,
+      iconColor: "#" + C.teal60,
+      accentColor: C.teal60,
+      title: "AI & Tooling",
+      items: [
+        "Frontier model access (API)",
+        "AI coding agent with skills",
+        "Agentic workflow support",
+        "Prompt & context patterns",
+      ],
+    },
+  ];
+
+  const prW = 2.0;
+  const prH = 2.95;
+  const prGap = 0.27;
+  const prStartX = 0.7;
+  const prStartY = 1.5;
+
+  for (let i = 0; i < prereqs.length; i++) {
+    const px = prStartX + i * (prW + prGap);
+    const pr = prereqs[i];
+
+    const isMandatory = i === prereqs.length - 1;
+
+    // Card background — mandatory card gets tinted bg + border
+    s7.addShape(pres.shapes.RECTANGLE, {
+      x: px,
+      y: prStartY,
+      w: prW,
+      h: prH,
+      fill: { color: isMandatory ? "E8F7F7" : C.gray10 },
+      line: isMandatory ? { color: pr.accentColor, width: 1.5 } : undefined,
+      shadow: cardShadow(),
+    });
+
+    // Top accent bar
+    s7.addShape(pres.shapes.RECTANGLE, {
+      x: px,
+      y: prStartY,
+      w: prW,
+      h: 0.05,
+      fill: { color: pr.accentColor },
+    });
+
+    // REQUIRED badge for mandatory card
+    if (isMandatory) {
+      s7.addShape(pres.shapes.ROUNDED_RECTANGLE, {
+        x: px + prW - 1.15,
+        y: prStartY + 0.15,
+        w: 0.95,
+        h: 0.26,
+        fill: { color: pr.accentColor },
+        rectRadius: 0.05,
+      });
+      s7.addText("REQUIRED", {
+        x: px + prW - 1.15,
+        y: prStartY + 0.15,
+        w: 0.95,
+        h: 0.26,
+        fontSize: 8,
+        fontFace: "Arial",
+        color: C.white,
+        bold: true,
+        align: "center",
+        valign: "middle",
+        charSpacing: 1.5,
+        margin: 0,
+      });
+    }
+
+    // Icon
+    const iconData = await iconToBase64Png(pr.icon, pr.iconColor, 256);
+    s7.addImage({
+      data: iconData,
+      x: px + 0.2,
+      y: prStartY + 0.2,
+      w: 0.36,
+      h: 0.36,
+    });
+
+    // Title
+    s7.addText(pr.title, {
+      x: px + 0.2,
+      y: prStartY + 0.65,
+      w: prW - 0.4,
+      h: 0.35,
+      fontSize: 13,
+      fontFace: "Arial",
+      color: C.gray100,
+      bold: true,
+      margin: 0,
+    });
+
+    // Bullet items
+    const bullets = pr.items.map((item, idx) => ({
+      text: item,
+      options: {
+        bullet: { code: "2022" },
+        breakLine: idx < pr.items.length - 1,
+        fontSize: 10,
+        color: isMandatory ? C.gray100 : C.gray70,
+        paraSpaceAfter: 5,
+      },
+    }));
+
+    s7.addText(bullets, {
+      x: px + 0.2,
+      y: prStartY + 1.05,
+      w: prW - 0.4,
+      h: 1.9,
+      fontFace: "Arial",
+      valign: "top",
+      margin: 0,
+    });
+  }
+
+  // Bottom note bar
+  s7.addShape(pres.shapes.RECTANGLE, {
+    x: 0.7,
+    y: 4.7,
+    w: 8.6,
+    h: 0.5,
+    fill: { color: "F5F0FF" },
+    line: { color: C.purple60, width: 1 },
+  });
+
+  const lightbulbPr = await iconToBase64Png(FaLightbulb, "#" + C.purple60, 256);
+  s7.addImage({
+    data: lightbulbPr,
+    x: 0.9,
+    y: 4.77,
+    w: 0.3,
+    h: 0.3,
+  });
+
+  s7.addText(
+    [
+      {
+        text: "Don\u2019t have all of these in place? ",
+        options: { bold: true, color: C.gray100 },
+      },
+      {
+        text: "That\u2019s exactly what the RSA engagement addresses \u2014 we meet you where you are and build the foundations together.",
+        options: { color: C.gray70 },
+      },
+    ],
+    {
+      x: 1.35,
+      y: 4.7,
+      w: 7.8,
+      h: 0.5,
+      fontSize: 11,
+      fontFace: "Arial",
+      valign: "middle",
+      margin: 0,
+    }
+  );
+
+  // =====================================================================
+  // SLIDE 8: THANK YOU — full-bleed title card
+  // =====================================================================
+  const s8 = pres.addSlide();
+  s8.addImage({
+    path: "playgrounds/IBM/images/slide-rsa-thankyou.png",
+    x: 0,
+    y: 0,
+    w: 10,
+    h: 5.625,
+  });
+
+  // =====================================================================
   // WRITE FILE
   // =====================================================================
   const fileName = "HashiCorp-RSA-Proposal.pptx";
