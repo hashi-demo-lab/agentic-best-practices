@@ -103,10 +103,11 @@ slide.addShape(pres.shapes.RECTANGLE, {
 });
 
 // Rounded rectangle (rectRadius only works with ROUNDED_RECTANGLE, not RECTANGLE)
+// ⚠️ rectRadius is a fraction from 0.0 to 1.0 (proportion of shortest side), NOT absolute inches.
 // ⚠️ Don't pair with rectangular accent overlays — they won't cover rounded corners. Use RECTANGLE instead.
 slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
   x: 1, y: 1, w: 3, h: 2,
-  fill: { color: "FFFFFF" }, rectRadius: 0.1
+  fill: { color: "FFFFFF" }, rectRadius: 0.1  // 10% of shortest side, not 0.1 inches
 });
 
 // With shadow
@@ -130,7 +131,31 @@ Shadow options:
 
 To cast a shadow upward (e.g. on a footer bar), use `angle: 270` with a positive offset — do **not** use a negative offset.
 
-**Note**: Gradient fills are not natively supported. Use a gradient image as a background instead.
+### Gradient Fills — NOT SUPPORTED
+
+**pptxgenjs v4 `fill.type` only supports `'solid'` or `'none'`.** Using `type: "gradient"` with `color1`/`color2` properties silently produces corrupted OOXML that PowerPoint cannot open. There is no `GradientFill` interface in the v4 type definitions.
+
+```javascript
+// ❌ CORRUPTS FILE — PowerPoint will refuse to open it
+slide.addShape(pres.shapes.RECTANGLE, {
+  fill: { type: "gradient", color1: "FF0000", color2: "0000FF" }
+});
+
+// ✅ WORKAROUND: Render gradient as SVG → PNG via sharp, then place as image
+const sharp = require("sharp");
+const gradientSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400">
+  <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#FF0000"/>
+    <stop offset="100%" stop-color="#0000FF"/>
+  </linearGradient></defs>
+  <rect width="800" height="400" fill="url(#g)"/>
+</svg>`;
+const pngBuf = await sharp(Buffer.from(gradientSvg)).png().toBuffer();
+const b64 = "image/png;base64," + pngBuf.toString("base64");
+slide.addImage({ data: b64, x: 1, y: 1, w: 5, h: 2.5 });
+```
+
+This gives visual gradients while keeping other elements (text, shapes) natively editable.
 
 ---
 
@@ -387,14 +412,16 @@ titleSlide.addText("My Title", { placeholder: "title" });
 
 6. **Each presentation needs fresh instance** - don't reuse `pptxgen()` objects
 
-7. **NEVER reuse option objects across calls** - PptxGenJS mutates objects in-place (e.g. converting shadow values to EMU). Sharing one object between multiple calls corrupts the second shape.
+7. **Shadow objects are mutated by pptxgenjs — always use factory functions** - PptxGenJS mutates shadow (and other option) objects in-place, converting values to EMU. Sharing a single shadow object across multiple shapes causes value overflow corruption (the second shape receives already-converted EMU values that get converted again).
    ```javascript
+   // ❌ CORRUPTS — shadow object is mutated after first use
    const shadow = { type: "outer", blur: 6, offset: 2, color: "000000", opacity: 0.15 };
-   slide.addShape(pres.shapes.RECTANGLE, { shadow, ... });  // ❌ second call gets already-converted values
    slide.addShape(pres.shapes.RECTANGLE, { shadow, ... });
+   slide.addShape(pres.shapes.RECTANGLE, { shadow, ... });  // gets already-mutated values
 
+   // ✅ CORRECT — factory function returns fresh object each time
    const makeShadow = () => ({ type: "outer", blur: 6, offset: 2, color: "000000", opacity: 0.15 });
-   slide.addShape(pres.shapes.RECTANGLE, { shadow: makeShadow(), ... });  // ✅ fresh object each time
+   slide.addShape(pres.shapes.RECTANGLE, { shadow: makeShadow(), ... });
    slide.addShape(pres.shapes.RECTANGLE, { shadow: makeShadow(), ... });
    ```
 
@@ -408,6 +435,10 @@ titleSlide.addText("My Title", { placeholder: "title" });
    slide.addShape(pres.shapes.RECTANGLE, { x: 1, y: 1, w: 3, h: 1.5, fill: { color: "FFFFFF" } });
    slide.addShape(pres.shapes.RECTANGLE, { x: 1, y: 1, w: 0.08, h: 1.5, fill: { color: "0891B2" } });
    ```
+
+9. **NEVER use gradient fills** - `fill.type` only supports `'solid'` or `'none'` in v4. Setting `type: "gradient"` with `color1`/`color2` silently produces corrupted OOXML that PowerPoint cannot open. There is no `GradientFill` interface in the v4 type definitions. Use SVG-to-PNG via sharp as a workaround (see [Gradient Fills](#gradient-fills--not-supported) in the Shapes section).
+
+10. **`rectRadius` is a fraction, not inches** - Values range from 0.0 to 1.0 (proportion of the shortest side). Using `rectRadius: 0.5` gives a half-round (pill shape), not a 0.5-inch radius.
 
 ---
 

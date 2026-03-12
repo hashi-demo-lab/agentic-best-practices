@@ -34,6 +34,32 @@ async function iconToBase64Png(IconComponent, color, size = 256) {
   return "image/png;base64," + pngBuffer.toString("base64");
 }
 
+// --- Gradient SVG → PNG helpers (pptxgenjs v4 has no gradient fill support) ---
+async function renderGradientTitle(text, gradientStops, width = 700, height = 120) {
+  const gid = "g" + Math.random().toString(36).slice(2, 8);
+  const stops = gradientStops
+    .map((s) => `<stop offset="${s.offset}%" stop-color="${s.color}"/>`)
+    .join("");
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="0.3">${stops}</linearGradient></defs>
+    <text x="0" y="${height * 0.75}" font-size="${height * 0.82}" font-weight="800" font-family="Arial,Helvetica,sans-serif" fill="url(#${gid})">${text}</text>
+  </svg>`;
+  const buf = await sharp(Buffer.from(svg)).png().toBuffer();
+  return "image/png;base64," + buf.toString("base64");
+}
+
+async function renderGradientBar(colors, width = 396, height = 8, borderRadius = 16) {
+  const gid = "gb" + Math.random().toString(36).slice(2, 8);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="${colors[0]}"/><stop offset="50%" stop-color="${colors[1]}"/><stop offset="100%" stop-color="${colors[2]}"/>
+    </linearGradient></defs>
+    <rect width="${width}" height="${borderRadius > 0 ? borderRadius * 2 : height}" rx="${borderRadius}" ry="${borderRadius}" fill="url(#${gid})"/>
+  </svg>`;
+  const buf = await sharp(Buffer.from(svg)).png().toBuffer();
+  return "image/png;base64," + buf.toString("base64");
+}
+
 // --- IBM Carbon Design Tokens ---
 const C = {
   white: "FFFFFF",
@@ -74,9 +100,9 @@ const footerBarShadow = () => ({
 async function buildPresentation() {
   const pres = new pptxgen();
   pres.layout = "LAYOUT_16x9";
-  pres.author = "HashiCorp Professional Services";
+  pres.author = "HashiCorp Resident Technology Services";
   pres.title =
-    "Resident Solution Architect — AI-Driven Infrastructure";
+    "Resident Technology Services — AI-Driven Infrastructure";
 
   // =====================================================================
   // SLIDE 1: TITLE — full-bleed image from IBM light-theme HTML capture
@@ -144,6 +170,7 @@ async function buildPresentation() {
       icon: FaExclamationTriangle,
       iconColor: "#" + C.red60,
       accentColor: C.red60,
+      gradientColors: ["#A01520", "#DA1E28", "#FF4D55"],
       title: "Security Risks",
       desc: "Overprivileged agents risk infrastructure destruction, secret leakage, and policy violations",
     },
@@ -151,6 +178,7 @@ async function buildPresentation() {
       icon: FaClock,
       iconColor: "#" + C.yellow50,
       accentColor: C.yellow50,
+      gradientColors: ["#8A6800", "#B28600", "#F59E0B"],
       title: "Delivery Bottlenecks",
       desc: "Platform teams are capacity-constrained — module demand outpaces delivery by weeks",
     },
@@ -158,6 +186,7 @@ async function buildPresentation() {
       icon: FaCogs,
       iconColor: "#" + C.purple60,
       accentColor: C.purple60,
+      gradientColors: ["#627EEF", "#8A3FFC", "#D946EF"],
       title: "Workflow Immaturity",
       desc: "Traditional IaC workflows weren't designed for AI velocity — controls can't keep pace",
     },
@@ -165,6 +194,7 @@ async function buildPresentation() {
       icon: FaUsers,
       iconColor: "#" + C.teal60,
       accentColor: C.teal60,
+      gradientColors: ["#007D79", "#009D9A", "#2DD4BF"],
       title: "Skill Gaps",
       desc: "App teams lack infrastructure expertise; platform teams lack AI workflow experience",
     },
@@ -194,14 +224,19 @@ async function buildPresentation() {
       shadow: cardShadow(),
     });
 
-    // Left accent
-    s2.addShape(pres.shapes.RECTANGLE, {
-      x: cx,
-      y: cy,
-      w: 0.06,
-      h: cardH,
-      fill: { color: ch.accentColor },
-    });
+    // Left accent (vertical gradient bar)
+    const vBarGid = "vb" + Math.random().toString(36).slice(2, 8);
+    const vBarSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="8" height="260" viewBox="0 0 8 260">
+  <defs><linearGradient id="${vBarGid}" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="${ch.gradientColors[0]}"/>
+    <stop offset="50%" stop-color="${ch.gradientColors[1]}"/>
+    <stop offset="100%" stop-color="${ch.gradientColors[2]}"/>
+  </linearGradient></defs>
+  <rect width="8" height="260" fill="url(#${vBarGid})"/>
+</svg>`;
+    const vBarBuf = await sharp(Buffer.from(vBarSvg)).png().toBuffer();
+    const vBarData = "image/png;base64," + vBarBuf.toString("base64");
+    s2.addImage({ data: vBarData, x: cx, y: cy, w: 0.08, h: cardH });
 
     // Icon
     const iconData = await iconToBase64Png(ch.icon, ch.iconColor, 256);
@@ -260,7 +295,7 @@ async function buildPresentation() {
     h: 0.3,
   });
   s2.addText(
-    "A Resident Solution Architect helps establish the mature practices and strong controls required for safe AI adoption",
+    "A resident technology services engagement helps establish the mature practices and strong controls required for safe AI adoption",
     {
       x: 1.35,
       y: 4.55,
@@ -276,12 +311,12 @@ async function buildPresentation() {
   );
 
   // =====================================================================
-  // SLIDE 3: RSA VALUE PROPOSITION
+  // SLIDE 3: RESIDENT TECHNOLOGY SERVICES VALUE PROPOSITION
   // =====================================================================
   const s3 = pres.addSlide();
   s3.background = { color: C.white };
 
-  s3.addText("RESIDENT SOLUTION ARCHITECT", {
+  s3.addText("RESIDENT TECHNOLOGY SERVICES", {
     x: 0.7,
     y: 0.35,
     w: 5,
@@ -307,7 +342,7 @@ async function buildPresentation() {
   });
 
   s3.addText(
-    "Embedded with your team, bridging the gap between AI capability and enterprise readiness",
+    "Trusted advisor, bridging the gap between AI capability and enterprise readiness",
     {
       x: 0.7,
       y: 1.15,
@@ -326,6 +361,7 @@ async function buildPresentation() {
       icon: FaShieldAlt,
       iconColor: "#" + C.green60,
       accentColor: C.green60,
+      gradientColors: ["#0E6027", "#198038", "#34D478"],
       title: "Guardrails & Controls",
       items: [
         "RBAC and agent isolation patterns",
@@ -338,6 +374,7 @@ async function buildPresentation() {
       icon: FaRocket,
       iconColor: "#" + C.blue60,
       accentColor: C.blue60,
+      gradientColors: ["#0043CE", "#0F62FE", "#4589FF"],
       title: "Validated Workflows",
       items: [
         "Spec-driven development methodology",
@@ -350,6 +387,7 @@ async function buildPresentation() {
       icon: FaChartLine,
       iconColor: "#" + C.purple60,
       accentColor: C.purple60,
+      gradientColors: ["#627EEF", "#8A3FFC", "#D946EF"],
       title: "Accelerated Outcomes",
       items: [
         "Module delivery: weeks to hours",
@@ -380,14 +418,9 @@ async function buildPresentation() {
       shadow: cardShadow(),
     });
 
-    // Top accent bar
-    s3.addShape(pres.shapes.RECTANGLE, {
-      x: px,
-      y: pillarStartY,
-      w: pillarW,
-      h: 0.05,
-      fill: { color: p.accentColor },
-    });
+    // Top accent bar (gradient)
+    const barImg = await renderGradientBar(p.gradientColors, 400, 8, 0);
+    s3.addImage({ data: barImg, x: px, y: pillarStartY, w: pillarW, h: 0.08 });
 
     // Icon
     const iconData = await iconToBase64Png(p.icon, p.iconColor, 256);
@@ -467,7 +500,7 @@ async function buildPresentation() {
   });
 
   s4.addText(
-    "Your RSA guides implementation of battle-tested workflows with measurable acceleration",
+    "Your resident technology services team guides architecture of battle-tested workflows with measurable acceleration",
     {
       x: 0.7,
       y: 1.0,
@@ -484,6 +517,7 @@ async function buildPresentation() {
   const useCases = [
     {
       accentColor: C.teal60,
+      gradientColors: ["#007D79", "#009D9A", "#2DD4BF"],
       persona: "APPLICATION TEAM",
       title: "Consumer Workflow",
       desc: "Deploy and manage infrastructure using natural language from approved private registry modules",
@@ -495,6 +529,7 @@ async function buildPresentation() {
     },
     {
       accentColor: C.purple60,
+      gradientColors: ["#627EEF", "#8A3FFC", "#D946EF"],
       persona: "PLATFORM TEAM",
       title: "Module Authoring",
       desc: "Generate compliant, tested Terraform modules with spec-driven development and automated validation",
@@ -506,6 +541,7 @@ async function buildPresentation() {
     },
     {
       accentColor: C.magenta60,
+      gradientColors: ["#9F1853", "#D02670", "#FF7EB6"],
       persona: "ECOSYSTEM",
       title: "Provider Lifecycle",
       desc: "Accelerate Terraform provider development with TDD, API validation, and SDK migration support",
@@ -537,14 +573,9 @@ async function buildPresentation() {
       shadow: cardShadow(),
     });
 
-    // Top accent
-    s4.addShape(pres.shapes.RECTANGLE, {
-      x: ux,
-      y: ucStartY,
-      w: ucW,
-      h: 0.05,
-      fill: { color: uc.accentColor },
-    });
+    // Top accent (gradient bar)
+    const barImg4 = await renderGradientBar(uc.gradientColors, 400, 8, 0);
+    s4.addImage({ data: barImg4, x: ux, y: ucStartY, w: ucW, h: 0.08 });
 
     // Persona label
     s4.addText(uc.persona, {
@@ -610,7 +641,7 @@ async function buildPresentation() {
   }
 
   // =====================================================================
-  // SLIDE 5: ENGAGEMENT TIMELINE (3-6 MONTHS)
+  // SLIDE 5: ENGAGEMENT TIMELINE (3 STAGES)
   // =====================================================================
   const s5 = pres.addSlide();
   s5.background = { color: C.white };
@@ -628,7 +659,7 @@ async function buildPresentation() {
     margin: 0,
   });
 
-  s5.addText("Resident Solution Architect: 3\u20136 Months", {
+  s5.addText("Resident Technology Services: 3 Stages", {
     x: 0.7,
     y: 0.6,
     w: 8.6,
@@ -654,25 +685,27 @@ async function buildPresentation() {
     }
   );
 
-  // Timeline phases — 3 wide cards for Month 1, Months 2-4, Months 5-6
+  // Timeline phases — 3 wide cards for Stage 1, Stage 2, Stage 3
   const timelinePhases = [
     {
       num: "1",
       title: "Assess & Establish",
-      subtitle: "MONTH 1",
+      subtitle: "STAGE 1",
       accentColor: C.blue60,
+      gradientColors: ["#0043CE", "#0F62FE", "#4589FF"],
       items: [
         "IaC maturity assessment",
         "Guardrails and governance setup",
         "DevContainer and sandbox config",
-        "First workflow implementation",
+        "Target first use case",
       ],
     },
     {
       num: "2",
       title: "Enable & Accelerate",
-      subtitle: "MONTHS 2 \u2013 4",
+      subtitle: "STAGE 2",
       accentColor: C.teal60,
+      gradientColors: ["#007D79", "#009D9A", "#2DD4BF"],
       items: [
         "Expand to additional use cases",
         "Team enablement workshops",
@@ -683,8 +716,9 @@ async function buildPresentation() {
     {
       num: "3",
       title: "Scale & Handoff",
-      subtitle: "MONTHS 5 \u2013 6",
+      subtitle: "STAGE 3",
       accentColor: C.green60,
+      gradientColors: ["#0E6027", "#198038", "#34D478"],
       items: [
         "Cross-team adoption patterns",
         "Document runbooks and standards",
@@ -714,14 +748,9 @@ async function buildPresentation() {
       shadow: cardShadow(),
     });
 
-    // Top accent bar
-    s5.addShape(pres.shapes.RECTANGLE, {
-      x: tx,
-      y: tlStartY,
-      w: tlW,
-      h: 0.05,
-      fill: { color: tp.accentColor },
-    });
+    // Top accent bar (gradient)
+    const barImg5 = await renderGradientBar(tp.gradientColors, 400, 8, 0);
+    s5.addImage({ data: barImg5, x: tx, y: tlStartY, w: tlW, h: 0.08 });
 
     // Number circle
     s5.addShape(pres.shapes.OVAL, {
@@ -760,7 +789,7 @@ async function buildPresentation() {
       margin: 0,
     });
 
-    // Month label
+    // Stage label
     s5.addText(tp.subtitle, {
       x: tx + 0.2,
       y: tlStartY + 1.1,
@@ -840,11 +869,11 @@ async function buildPresentation() {
   s5.addText(
     [
       {
-        text: "Dedicated RSA: ",
+        text: "Trusted Advisor: ",
         options: { bold: true, color: C.gray100 },
       },
       {
-        text: "Assigned and embedded with your team for the full engagement. Candid feedback, hands-on delivery, and a clear path to scale.",
+        text: "Collaborate with your team for the full engagement. Candid feedback, strategic guidance, and a clear path to scale.",
         options: { color: C.gray70 },
       },
     ],
@@ -917,8 +946,8 @@ async function buildPresentation() {
     {
       icon: FaRocket,
       iconColor: "#" + C.blue60,
-      title: "Implemented Use Case",
-      desc: "At least one AI-powered IaC workflow deployed and operational with your team",
+      title: "Workflow Execution",
+      desc: "Drive AI transformation for IaC with proven workflows",
     },
     {
       icon: FaClipboardCheck,
@@ -1000,6 +1029,7 @@ async function buildPresentation() {
       title: "Speed",
       desc: "Accelerate module delivery and reduce provisioning lead times from days to minutes",
       accent: C.teal60,
+      gradientColors: ["#007D79", "#009D9A", "#2DD4BF"],
     },
     {
       icon: FaShieldAlt,
@@ -1007,6 +1037,7 @@ async function buildPresentation() {
       title: "Risk",
       desc: "Eliminate misconfigurations before they reach production with automated policy enforcement",
       accent: C.blue60,
+      gradientColors: ["#0043CE", "#0F62FE", "#4589FF"],
     },
     {
       icon: FaClipboardCheck,
@@ -1014,6 +1045,7 @@ async function buildPresentation() {
       title: "Cost",
       desc: "Reduce manual review overhead and right-size infrastructure with AI-driven optimization",
       accent: C.green60,
+      gradientColors: ["#0E6027", "#198038", "#34D478"],
     },
   ];
 
@@ -1037,14 +1069,19 @@ async function buildPresentation() {
       shadow: cardShadow(),
     });
 
-    // Left accent
-    s6.addShape(pres.shapes.RECTANGLE, {
-      x: themeStartX,
-      y: ty,
-      w: 0.06,
-      h: themeH,
-      fill: { color: th.accent },
-    });
+    // Left accent (vertical gradient PNG)
+    const vGid = "vg" + Math.random().toString(36).slice(2, 8);
+    const vSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="8" height="200" viewBox="0 0 8 200">
+      <defs><linearGradient id="${vGid}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="${th.gradientColors[0]}"/>
+        <stop offset="50%" stop-color="${th.gradientColors[1]}"/>
+        <stop offset="100%" stop-color="${th.gradientColors[2]}"/>
+      </linearGradient></defs>
+      <rect width="8" height="200" fill="url(#${vGid})"/>
+    </svg>`;
+    const vBuf = await sharp(Buffer.from(vSvg)).png().toBuffer();
+    const vData = "image/png;base64," + vBuf.toString("base64");
+    s6.addImage({ data: vData, x: themeStartX, y: ty, w: 0.08, h: themeH });
 
     // Icon
     const themeIcon = await iconToBase64Png(th.icon, th.iconColor, 256);
@@ -1127,12 +1164,174 @@ async function buildPresentation() {
   );
 
   // =====================================================================
-  // SLIDE 7: PRE-REQUISITES FOR SUCCESS
+  // SLIDE 7: STRATEGIC IMPACT — native editable slide with gradient PNGs
   // =====================================================================
   const s7 = pres.addSlide();
   s7.background = { color: C.white };
 
-  s7.addText("PRE-REQUISITES", {
+  const px7 = (v) => v / 192; // 1920px = 10"
+
+  // Header
+  s7.addText("STRATEGIC IMPACT", {
+    x: px7(80), y: px7(48), w: 5, h: px7(24),
+    fontSize: 10, fontFace: "Arial", color: "996f00",
+    bold: true, charSpacing: 3, margin: 0,
+  });
+
+  s7.addText("How Resident Technology Services Creates Compounding Value", {
+    x: px7(80), y: px7(72), w: px7(1760), h: px7(50),
+    fontSize: 22, fontFace: "Arial", color: C.gray100, bold: true, margin: 0,
+  });
+
+  s7.addText("Each capability unlocks the next \u2014 building momentum across your organization", {
+    x: px7(80), y: px7(126), w: px7(1760), h: px7(30),
+    fontSize: 11.5, fontFace: "Arial", color: C.gray70, margin: 0,
+  });
+
+  // Card layout constants
+  const s7svgTop = px7(240);
+  const s7svgLeft = px7(80);
+  const s7cardW = px7(396);
+  const s7cardH = px7(540);
+  const s7accentH = px7(8);
+  const s7cardXOffsets = [22, 462, 902, 1342];
+
+  const s7cards = [
+    {
+      num: "01", title: "Establish", subtitle: "Guardrails & Controls",
+      items: ["RBAC and agent isolation", "Secrets management", "Policy-as-code enforcement", "Human-in-loop approvals"],
+      outcome: "Zero unreviewed changes\nreach production",
+      ac1: "627EEF", ac2: "8A3FFC", ac3: "D946EF",
+      numColor: "8A3FFC", outcomeColor: "6929C4", divColor: "C4B0FF", bgColor: "F2EEFF", arrowColor: "8A3FFC",
+    },
+    {
+      num: "02", title: "Enable", subtitle: "Self-Service Infra",
+      items: ["Consumer workflow patterns", "Natural language provisioning", "Registry-backed modules", "Guardrailed consumption"],
+      outcome: "Teams provision in minutes,\nnot days",
+      ac1: "007D79", ac2: "009D9A", ac3: "2DD4BF",
+      numColor: "009D9A", outcomeColor: "005D5D", divColor: "A0DCD9", bgColor: "EBF8F7", arrowColor: "009D9A",
+    },
+    {
+      num: "03", title: "Accelerate", subtitle: "Pattern Authoring",
+      items: ["Spec-driven development", "AI-assisted module creation", "Automated test generation", "Cross-team module sharing"],
+      outcome: "Module delivery:\nweeks \u2192 hours",
+      ac1: "0E6027", ac2: "198038", ac3: "34D478",
+      numColor: "198038", outcomeColor: "0E6027", divColor: "A0D4AC", bgColor: "EFF7F0", arrowColor: "198038",
+    },
+    {
+      num: "04", title: "Scale", subtitle: "Organization-Wide",
+      items: ["Cross-team adoption", "Consistent standards everywhere", "Self-sufficient operations", "Measurable ROI"],
+      outcome: "Every team benefits\nfrom every pattern",
+      ac1: "8A6800", ac2: "B28600", ac3: "F59E0B",
+      numColor: "B28600", outcomeColor: "7A5800", divColor: "E0C878", bgColor: "FFF9EC", arrowColor: "B28600",
+    },
+  ];
+
+  for (let i = 0; i < s7cards.length; i++) {
+    const c = s7cards[i];
+    const cx = s7svgLeft + px7(s7cardXOffsets[i]);
+    const cy = s7svgTop + px7(10);
+
+    // Card background
+    s7.addShape(pres.shapes.ROUNDED_RECTANGLE, {
+      x: cx, y: cy, w: s7cardW, h: s7cardH,
+      rectRadius: 0.08, fill: { color: c.bgColor }, shadow: cardShadow(),
+    });
+
+    // Gradient accent bar (PNG)
+    const barImg = await renderGradientBar(["#" + c.ac1, "#" + c.ac2, "#" + c.ac3], 396, 8, 16);
+    s7.addImage({ data: barImg, x: cx, y: cy, w: s7cardW, h: s7accentH });
+
+    // Step number
+    s7.addText(c.num, {
+      x: cx + px7(34), y: cy + px7(36), w: px7(60), h: px7(22),
+      fontSize: 9, fontFace: "Arial", color: c.numColor, bold: true, charSpacing: 2, margin: 0,
+    });
+
+    // Gradient hero title (PNG)
+    const titleGrad = [
+      { offset: 0, color: "#" + c.ac1 },
+      { offset: 50, color: "#" + c.ac2 },
+      { offset: 100, color: "#" + c.ac3 },
+    ];
+    const titleRW = c.title.length > 7 ? 900 : 700;
+    const titleImg = await renderGradientTitle(c.title, titleGrad, titleRW, 120);
+    const titleW = s7cardW - px7(50);
+    const titleH = titleW * (120 / titleRW);
+    s7.addImage({ data: titleImg, x: cx + px7(30), y: cy + px7(78), w: titleW, h: titleH });
+
+    // Subtitle
+    s7.addText(c.subtitle, {
+      x: cx + px7(34), y: cy + px7(158), w: s7cardW - px7(68), h: px7(28),
+      fontSize: 10.5, fontFace: "Arial", color: C.gray70, bold: true, valign: "middle", margin: 0,
+    });
+
+    // Top divider
+    s7.addShape(pres.shapes.LINE, {
+      x: cx + px7(34), y: cy + px7(198), w: s7cardW - px7(68), h: 0,
+      line: { color: c.divColor, width: 0.5 },
+    });
+
+    // Content items — reduced padding and font to prevent wrapping
+    const itemYs = [240, 282, 324, 366];
+    for (let j = 0; j < c.items.length; j++) {
+      s7.addText(c.items[j], {
+        x: cx + px7(20), y: cy + px7(itemYs[j]) - px7(12), w: s7cardW - px7(40), h: px7(28),
+        fontSize: 9, fontFace: "Arial", color: C.gray70, valign: "middle", margin: 0,
+      });
+    }
+
+    // Bottom divider
+    s7.addShape(pres.shapes.LINE, {
+      x: cx + px7(34), y: cy + px7(410), w: s7cardW - px7(68), h: 0,
+      line: { color: c.divColor, width: 0.5 },
+    });
+
+    // Outcome text
+    s7.addText(c.outcome, {
+      x: cx + px7(20), y: cy + px7(430), w: s7cardW - px7(40), h: px7(80),
+      fontSize: 9, fontFace: "Arial", color: c.outcomeColor, bold: true, valign: "top", margin: 0,
+    });
+
+    // Arrow to next card — larger and more visible
+    if (i < s7cards.length - 1) {
+      const arrowXOffsets = [418, 858, 1298];
+      const arrowIcon = await iconToBase64Png(FaArrowRight, "#" + c.arrowColor, 256);
+      s7.addImage({
+        data: arrowIcon,
+        x: s7svgLeft + px7(arrowXOffsets[i]) - 0.01,
+        y: s7svgTop + px7(270),
+        w: 0.22, h: 0.22,
+      });
+    }
+  }
+
+  // Bottom callout bar
+  s7.addShape(pres.shapes.ROUNDED_RECTANGLE, {
+    x: px7(80), y: px7(940), w: px7(1760), h: px7(54),
+    rectRadius: 0.05, fill: { color: "F0FFF4" }, line: { color: C.teal60, width: 0.75 },
+  });
+
+  s7.addText("\u2605", {
+    x: px7(94), y: px7(940), w: px7(30), h: px7(54),
+    fontSize: 13, fontFace: "Arial", color: C.teal60, align: "center", valign: "middle", margin: 0,
+  });
+
+  s7.addText([
+    { text: "Compounding returns", options: { bold: true, color: C.gray100, fontSize: 10.5 } },
+    { text: " \u2014 each stage builds on the last, creating a flywheel of capability that accelerates over time.", options: { color: "393939", fontSize: 10.5 } },
+  ], {
+    x: px7(136), y: px7(940), w: px7(1700), h: px7(54),
+    fontFace: "Arial", valign: "middle", margin: 0,
+  });
+
+  // =====================================================================
+  // SLIDE 8: PRE-REQUISITES FOR SUCCESS
+  // =====================================================================
+  const s8_prereqs = pres.addSlide();
+  s8_prereqs.background = { color: C.white };
+
+  s8_prereqs.addText("PRE-REQUISITES", {
     x: 0.7,
     y: 0.35,
     w: 5,
@@ -1145,7 +1344,7 @@ async function buildPresentation() {
     margin: 0,
   });
 
-  s7.addText("Enterprise Readiness for AI-Driven IaC", {
+  s8_prereqs.addText("Enterprise Readiness for AI-Driven IaC", {
     x: 0.7,
     y: 0.6,
     w: 8.6,
@@ -1157,8 +1356,8 @@ async function buildPresentation() {
     margin: 0,
   });
 
-  s7.addText(
-    "Key foundations your organization should have in place \u2014 or that your RSA will help establish",
+  s8_prereqs.addText(
+    "Key foundations your organization should have in place \u2014 or that resident technology services will help establish",
     {
       x: 0.7,
       y: 1.0,
@@ -1176,6 +1375,7 @@ async function buildPresentation() {
       icon: FaCode,
       iconColor: "#" + C.blue60,
       accentColor: C.blue60,
+      gradientColors: ["#0043CE", "#0F62FE", "#4589FF"],
       title: "IaC Maturity",
       items: [
         "Git-based Terraform workflow",
@@ -1188,6 +1388,7 @@ async function buildPresentation() {
       icon: FaLock,
       iconColor: "#" + C.magenta60,
       accentColor: C.magenta60,
+      gradientColors: ["#9F1853", "#D02670", "#FF7EB6"],
       title: "Security & Governance",
       items: [
         "RBAC via HCP Terraform",
@@ -1200,6 +1401,7 @@ async function buildPresentation() {
       icon: FaLayerGroup,
       iconColor: "#" + C.green60,
       accentColor: C.green60,
+      gradientColors: ["#0E6027", "#198038", "#34D478"],
       title: "Verification",
       items: [
         "Testing practices for IaC",
@@ -1212,10 +1414,11 @@ async function buildPresentation() {
       icon: FaLightbulb,
       iconColor: "#" + C.teal60,
       accentColor: C.teal60,
+      gradientColors: ["#007D79", "#009D9A", "#2DD4BF"],
       title: "AI & Tooling",
       items: [
         "Frontier model access (API)",
-        "AI coding agent with skills",
+        "AI coding agent with skills & subagents",
         "Agentic workflow support",
         "Prompt & context patterns",
       ],
@@ -1235,7 +1438,7 @@ async function buildPresentation() {
     const isMandatory = i === prereqs.length - 1;
 
     // Card background — mandatory card gets tinted bg + border
-    s7.addShape(pres.shapes.RECTANGLE, {
+    s8_prereqs.addShape(pres.shapes.RECTANGLE, {
       x: px,
       y: prStartY,
       w: prW,
@@ -1245,18 +1448,13 @@ async function buildPresentation() {
       shadow: cardShadow(),
     });
 
-    // Top accent bar
-    s7.addShape(pres.shapes.RECTANGLE, {
-      x: px,
-      y: prStartY,
-      w: prW,
-      h: 0.05,
-      fill: { color: pr.accentColor },
-    });
+    // Top accent bar (gradient PNG)
+    const barImg8 = await renderGradientBar(pr.gradientColors, 400, 8, 0);
+    s8_prereqs.addImage({ data: barImg8, x: px, y: prStartY, w: prW, h: 0.08 });
 
     // REQUIRED badge for mandatory card
     if (isMandatory) {
-      s7.addShape(pres.shapes.ROUNDED_RECTANGLE, {
+      s8_prereqs.addShape(pres.shapes.ROUNDED_RECTANGLE, {
         x: px + prW - 1.15,
         y: prStartY + 0.15,
         w: 0.95,
@@ -1264,7 +1462,7 @@ async function buildPresentation() {
         fill: { color: pr.accentColor },
         rectRadius: 0.05,
       });
-      s7.addText("REQUIRED", {
+      s8_prereqs.addText("REQUIRED", {
         x: px + prW - 1.15,
         y: prStartY + 0.15,
         w: 0.95,
@@ -1282,7 +1480,7 @@ async function buildPresentation() {
 
     // Icon
     const iconData = await iconToBase64Png(pr.icon, pr.iconColor, 256);
-    s7.addImage({
+    s8_prereqs.addImage({
       data: iconData,
       x: px + 0.2,
       y: prStartY + 0.2,
@@ -1291,7 +1489,7 @@ async function buildPresentation() {
     });
 
     // Title
-    s7.addText(pr.title, {
+    s8_prereqs.addText(pr.title, {
       x: px + 0.2,
       y: prStartY + 0.65,
       w: prW - 0.4,
@@ -1315,7 +1513,7 @@ async function buildPresentation() {
       },
     }));
 
-    s7.addText(bullets, {
+    s8_prereqs.addText(bullets, {
       x: px + 0.2,
       y: prStartY + 1.05,
       w: prW - 0.4,
@@ -1327,7 +1525,7 @@ async function buildPresentation() {
   }
 
   // Bottom note bar
-  s7.addShape(pres.shapes.RECTANGLE, {
+  s8_prereqs.addShape(pres.shapes.RECTANGLE, {
     x: 0.7,
     y: 4.7,
     w: 8.6,
@@ -1337,7 +1535,7 @@ async function buildPresentation() {
   });
 
   const lightbulbPr = await iconToBase64Png(FaLightbulb, "#" + C.purple60, 256);
-  s7.addImage({
+  s8_prereqs.addImage({
     data: lightbulbPr,
     x: 0.9,
     y: 4.77,
@@ -1345,14 +1543,14 @@ async function buildPresentation() {
     h: 0.3,
   });
 
-  s7.addText(
+  s8_prereqs.addText(
     [
       {
         text: "Don\u2019t have all of these in place? ",
         options: { bold: true, color: C.gray100 },
       },
       {
-        text: "That\u2019s exactly what the RSA engagement addresses \u2014 we meet you where you are and build the foundations together.",
+        text: "That\u2019s exactly what the resident technology services engagement addresses \u2014 we meet you where you are and build the foundations together.",
         options: { color: C.gray70 },
       },
     ],
@@ -1369,10 +1567,10 @@ async function buildPresentation() {
   );
 
   // =====================================================================
-  // SLIDE 8: THANK YOU — full-bleed title card
+  // SLIDE 9: THANK YOU — full-bleed title card
   // =====================================================================
-  const s8 = pres.addSlide();
-  s8.addImage({
+  const s9 = pres.addSlide();
+  s9.addImage({
     path: "playgrounds/IBM/images/slide-rsa-thankyou.png",
     x: 0,
     y: 0,
@@ -1383,7 +1581,7 @@ async function buildPresentation() {
   // =====================================================================
   // WRITE FILE
   // =====================================================================
-  const fileName = "HashiCorp-RSA-Proposal.pptx";
+  const fileName = "HashiCorp-Resident-Technology-Services-Proposal.pptx";
   await pres.writeFile({ fileName });
   console.log(`Created: ${fileName}`);
 }

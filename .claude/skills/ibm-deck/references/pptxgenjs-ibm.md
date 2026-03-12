@@ -536,3 +536,247 @@ slide.addShape(pres.shapes.RECTANGLE, {
   line: { color: C.gray20, width: 0.5 },
 });
 ```
+
+---
+
+## Gradient Hero Title Text
+
+Render large gradient-colored hero text (e.g., "Establish", "Enable", "Accelerate") as SVG→PNG. This is the only way to achieve gradient text in pptxgenjs:
+
+```javascript
+async function renderGradientTitle(text, gradientStops, width = 700, height = 120) {
+  const gid = "g" + Math.random().toString(36).slice(2, 8);
+  const stops = gradientStops
+    .map(s => `<stop offset="${s.offset}%" stop-color="${s.color}"/>`)
+    .join("");
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="0.3">${stops}</linearGradient></defs>
+    <text x="0" y="${height * 0.75}" font-size="${height * 0.82}" font-weight="800"
+      font-family="Arial,Helvetica,sans-serif" fill="url(#${gid})">${text}</text>
+  </svg>`;
+  const buf = await sharp(Buffer.from(svg)).png().toBuffer();
+  return "image/png;base64," + buf.toString("base64");
+}
+
+// Usage — adjust width for text length to avoid clipping
+const titleRW = title.length > 7 ? 900 : 700;
+const titleImg = await renderGradientTitle("Establish", [
+  { offset: 0, color: "#627EEF" },
+  { offset: 50, color: "#8A3FFC" },
+  { offset: 100, color: "#D946EF" },
+], titleRW, 120);
+
+// Preserve aspect ratio when placing
+const titleW = cardW - px(50);
+const titleH = titleW * (120 / titleRW);
+slide.addImage({ data: titleImg, x: cx + px(30), y: cy + px(78), w: titleW, h: titleH });
+```
+
+---
+
+## Pixel-to-Inch Conversion Helper
+
+When translating pixel-based designs (1920×1080) to pptxgenjs inches, use this helper:
+
+```javascript
+const px = (v) => v / 192;  // 1920px = 10" → 192px per inch
+```
+
+This keeps coordinates proportionally accurate when porting from HTML mockups. Use for all positions and dimensions:
+
+```javascript
+slide.addText("SECTION", {
+  x: px(80), y: px(48), w: 5, h: px(24),
+  fontSize: 10, ...
+});
+```
+
+---
+
+## 4-Column Compounding Value Cards (Strategic Impact)
+
+Four cards in a row, each showing a progression stage with gradient hero title, items, and outcome. Uses ROUNDED_RECTANGLE with per-card tinted backgrounds:
+
+```javascript
+const px = (v) => v / 192;
+const cardW = px(396);
+const cardH = px(540);
+const accentH = px(8);
+const cardXOffsets = [22, 462, 902, 1342];  // pixel x-offsets
+
+const cards = [
+  {
+    num: "01", title: "Establish", subtitle: "Guardrails & Controls",
+    items: ["RBAC and agent isolation", "Secrets management", "Policy enforcement", "Human-in-loop approvals"],
+    outcome: "Zero unreviewed changes\nreach production",
+    // Per-card color palette:
+    ac1: "627EEF", ac2: "8A3FFC", ac3: "D946EF",  // gradient triplet
+    numColor: "8A3FFC",       // step number
+    outcomeColor: "6929C4",   // outcome text
+    divColor: "C4B0FF",       // divider lines
+    bgColor: "F2EEFF",        // card tinted background
+    arrowColor: "8A3FFC",     // arrow connector
+  },
+  // ... more cards with unique color palettes
+];
+
+for (let i = 0; i < cards.length; i++) {
+  const c = cards[i];
+  const cx = px(80) + px(cardXOffsets[i]);
+  const cy = px(250);
+
+  // Card background — ROUNDED_RECTANGLE with tinted bg
+  slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
+    x: cx, y: cy, w: cardW, h: cardH,
+    rectRadius: 0.08, fill: { color: c.bgColor }, shadow: cardShadow(),
+  });
+
+  // Gradient accent bar (with borderRadius for rounded card tops)
+  const barImg = await renderGradientBar(
+    ["#" + c.ac1, "#" + c.ac2, "#" + c.ac3], 396, 8, 16
+  );
+  slide.addImage({ data: barImg, x: cx, y: cy, w: cardW, h: accentH });
+
+  // Step number
+  slide.addText(c.num, {
+    x: cx + px(34), y: cy + px(36), w: px(60), h: px(22),
+    fontSize: 9, fontFace: "Arial", color: c.numColor,
+    bold: true, charSpacing: 2, margin: 0,
+  });
+
+  // Gradient hero title (SVG→PNG)
+  const titleGrad = [
+    { offset: 0, color: "#" + c.ac1 },
+    { offset: 50, color: "#" + c.ac2 },
+    { offset: 100, color: "#" + c.ac3 },
+  ];
+  const titleRW = c.title.length > 7 ? 900 : 700;
+  const titleImg = await renderGradientTitle(c.title, titleGrad, titleRW, 120);
+  const titleW = cardW - px(50);
+  const titleH = titleW * (120 / titleRW);
+  slide.addImage({ data: titleImg, x: cx + px(30), y: cy + px(78), w: titleW, h: titleH });
+
+  // Subtitle
+  slide.addText(c.subtitle, {
+    x: cx + px(34), y: cy + px(158), w: cardW - px(68), h: px(28),
+    fontSize: 10.5, fontFace: "Arial", color: C.gray70,
+    bold: true, valign: "middle", margin: 0,
+  });
+
+  // Top divider line
+  slide.addShape(pres.shapes.LINE, {
+    x: cx + px(34), y: cy + px(198), w: cardW - px(68), h: 0,
+    line: { color: c.divColor, width: 0.5 },
+  });
+
+  // Content items
+  const itemYs = [240, 282, 324, 366];
+  for (let j = 0; j < c.items.length; j++) {
+    slide.addText(c.items[j], {
+      x: cx + px(20), y: cy + px(itemYs[j]) - px(12),
+      w: cardW - px(40), h: px(28),
+      fontSize: 9, fontFace: "Arial", color: C.gray70,
+      valign: "middle", margin: 0,
+    });
+  }
+
+  // Bottom divider line
+  slide.addShape(pres.shapes.LINE, {
+    x: cx + px(34), y: cy + px(410), w: cardW - px(68), h: 0,
+    line: { color: c.divColor, width: 0.5 },
+  });
+
+  // Outcome text
+  slide.addText(c.outcome, {
+    x: cx + px(20), y: cy + px(430), w: cardW - px(40), h: px(80),
+    fontSize: 9, fontFace: "Arial", color: c.outcomeColor,
+    bold: true, valign: "top", margin: 0,
+  });
+
+  // Arrow connector to next card
+  if (i < cards.length - 1) {
+    const arrowXOffsets = [418, 858, 1298];
+    const arrowIcon = await iconToBase64Png(FaArrowRight, "#" + c.arrowColor, 256);
+    slide.addImage({
+      data: arrowIcon,
+      x: px(80) + px(arrowXOffsets[i]) - 0.01,
+      y: px(250) + px(270),
+      w: 0.22, h: 0.22,
+    });
+  }
+}
+```
+
+---
+
+## REQUIRED Badge + Mandatory Card Highlighting
+
+For prerequisite/checklist cards where one card needs special emphasis:
+
+```javascript
+const isMandatory = i === prereqs.length - 1;  // last card is required
+
+// Card with conditional styling
+slide.addShape(pres.shapes.RECTANGLE, {
+  x: cx, y: cy, w: cardW, h: cardH,
+  fill: { color: isMandatory ? "E8F7F7" : C.gray10 },  // tinted vs default
+  line: isMandatory ? { color: accentColor, width: 1.5 } : undefined,
+  shadow: cardShadow(),
+});
+
+// REQUIRED badge (only on mandatory card)
+if (isMandatory) {
+  slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
+    x: cx + cardW - 1.15, y: cy + 0.15, w: 0.95, h: 0.26,
+    fill: { color: accentColor }, rectRadius: 0.05,
+  });
+  slide.addText("REQUIRED", {
+    x: cx + cardW - 1.15, y: cy + 0.15, w: 0.95, h: 0.26,
+    fontSize: 8, fontFace: "Arial", color: C.white,
+    bold: true, align: "center", valign: "middle",
+    charSpacing: 1.5, margin: 0,
+  });
+}
+
+// Bullets with conditional emphasis
+const bullets = items.map((item, idx) => ({
+  text: item,
+  options: {
+    bullet: { code: "2022" },
+    breakLine: idx < items.length - 1,
+    fontSize: 10,
+    color: isMandatory ? C.gray100 : C.gray70,  // bolder text on mandatory
+    paraSpaceAfter: 5,
+  },
+}));
+```
+
+---
+
+## Full Hybrid Proposal Structure
+
+A production proposal deck uses the hybrid approach — HTML capture for title/closing, pptxgenjs for content:
+
+```javascript
+async function buildPresentation() {
+  const pres = new pptxgen();
+  pres.layout = "LAYOUT_16x9";
+
+  // Slide 1: Title (HTML capture → full-bleed PNG)
+  const s1 = pres.addSlide();
+  s1.addImage({ path: "images/slide-title.png", x: 0, y: 0, w: 10, h: 5.625 });
+
+  // Slides 2-N: Programmatic content slides
+  const s2 = pres.addSlide();
+  s2.background = { color: C.white };
+  // ... challenge cards, pillars, timelines, etc.
+
+  // Last Slide: Closing (HTML capture → full-bleed PNG)
+  const sN = pres.addSlide();
+  sN.addImage({ path: "images/slide-thankyou.png", x: 0, y: 0, w: 10, h: 5.625 });
+
+  await pres.writeFile({ fileName: "proposal.pptx" });
+}
+```
+
+The hybrid approach gives you premium branded title/closing slides (layered backgrounds, glows, brand fonts) while keeping content slides fully editable and programmatically precise.

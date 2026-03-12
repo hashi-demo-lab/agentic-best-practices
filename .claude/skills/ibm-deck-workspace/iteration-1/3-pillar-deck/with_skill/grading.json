@@ -1,0 +1,34 @@
+{
+  "expectations": [
+    {
+      "text": "Output file migration-strategy.pptx exists and is valid",
+      "passed": true,
+      "evidence": "Line 75: outputPath = path.join(__dirname, 'migration-strategy.pptx'); Line 351: await pres.writeFile({ fileName: outputPath }). The file writes to the correct name using pptxgenjs writeFile."
+    },
+    {
+      "text": "Uses shadow factory pattern (not shared shadow objects)",
+      "passed": true,
+      "evidence": "Lines 41-44: const cardShadow = () => ({ type: 'outer', color: '000000', blur: 8, offset: 2, angle: 135, opacity: 0.08 }); Arrow function returns a fresh object each invocation. Used at line 222: shadow: cardShadow()."
+    },
+    {
+      "text": "No # prefix on pptxgenjs color values (fill, color, line properties)",
+      "passed": true,
+      "evidence": "Color tokens defined at lines 23-38 without '#' prefix (e.g., blue60: '0F62FE', gray100: '161616'). All pptxgenjs properties use these tokens directly. '#' is only used when passing colors to renderIconSvg/sharp SVG rendering (e.g., line 229: '#' + p.accent), which is correct since SVG requires '#' prefix."
+    },
+    {
+      "text": "Uses renderGradientBar for accent bars with h >= 0.08",
+      "passed": true,
+      "evidence": "Lines 47-62: renderGradientBar function defined. Used at line 90 (title bar: h: 0.08), line 225 (pillar accent bars: h: 0.08), line 300 (closing bar: h: 0.08). All have h >= 0.08."
+    },
+    {
+      "text": "All async functions are awaited",
+      "passed": true,
+      "evidence": "All async calls are properly awaited: line 90 (await renderGradientBar), line 225 (await renderGradientBar), line 229 (await iconToBase64Png), line 261 (await iconToBase64Png), line 279 (await iconToBase64Png), line 300 (await renderGradientBar), line 351 (await pres.writeFile). Main function called with .catch at line 355."
+    },
+    {
+      "text": "slide.background set to white on content slides",
+      "passed": true,
+      "evidence": "Line 87: s1.background = { color: C.white }; Line 143: s2.background = { color: C.white }; Line 297: s3.background = { color: C.white }. All three slides have white backgrounds."
+    }
+  ]
+}

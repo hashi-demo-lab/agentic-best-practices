@@ -1,0 +1,13 @@
+{
+  "eval_id": 2,
+  "eval_name": "4-slide-proposal",
+  "prompt": "Build an IBM-branded proposal deck with 4 slides using pptxgenjs and Carbon Design System. The deck is for 'Digital Transformation Services'. Slide 1: title. Slide 2: 4 challenge cards in a 2x2 grid with left gradient accent bars and icons. Slide 3: timeline with 3 phase cards and arrow connectors. Slide 4: outcomes with a bottom callout bar.",
+  "assertions": [
+    {"text": "Output .pptx file exists and is valid"},
+    {"text": "Uses renderVerticalGradientBar for left accent bars"},
+    {"text": "Uses FaArrowRight icons (not LINE shapes) for timeline arrows"},
+    {"text": "Callout bar uses matching tint color from Tint Color Guide"},
+    {"text": "Font sizes are 9pt or larger throughout"},
+    {"text": "Shadow factory pattern used consistently"}
+  ]
+}

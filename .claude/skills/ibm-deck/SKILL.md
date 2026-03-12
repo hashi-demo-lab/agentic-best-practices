@@ -55,7 +55,7 @@ ibm-deck/
 npm install pptxgenjs react react-dom react-icons sharp
 
 # 2. Capture title slide (single command — no workspace setup needed)
-node .claude/skills/ibm-deck/scripts/capture-title.mjs \
+node <skill-dir>/scripts/capture-title.mjs \
   --line1 "Deck Title" --line2 "Second Line" \
   --subtitle "Subtitle Text" \
   --output images/slide-title.png
@@ -107,6 +107,20 @@ const C = {
 };
 ```
 
+### Gradient Color Triplets (dark → mid → light)
+
+For SVG → PNG gradient bars and gradient text. Use with `#` prefix (SVG context):
+
+| Accent | Dark | Mid | Light |
+|--------|------|-----|-------|
+| red60 | `#A01520` | `#DA1E28` | `#FF4D55` |
+| yellow50 | `#8A6800` | `#B28600` | `#F59E0B` |
+| purple60 | `#627EEF` | `#8A3FFC` | `#D946EF` |
+| teal60 | `#007D79` | `#009D9A` | `#2DD4BF` |
+| green60 | `#0E6027` | `#198038` | `#34D478` |
+| blue60 | `#0043CE` | `#0F62FE` | `#4589FF` |
+| magenta60 | `#9F1853` | `#D02670` | `#FF7EB6` |
+
 ## Typography
 
 | Element | Font | Size | Weight | Color | Max ~chars |
@@ -116,9 +130,14 @@ const C = {
 | Subtitle | Arial | 12-13pt | Regular | gray70 | 90 |
 | Card title | Arial | 14-16pt | Bold | gray100 | 35 |
 | Body / bullets | Arial | 11-12pt | Regular | gray70 | 60 per line |
+| Card body (narrow) | Arial | 9-10pt | Regular | gray70 | 40 per line |
 | Card description | Arial | 12pt | Regular | gray70 | 120 |
+| Step numbers | Arial | 9pt | Bold + charSpacing:2 | accent | 5 |
+| Callout bar text | Arial | 10.5-11pt | Mixed | gray70/100 | 90 |
 | Metric number | Arial Black | 24-36pt | Bold | accent | 15 |
-| Metric label | Arial | 8-9pt | Bold + charSpacing:2 | gray50 | 20 |
+| Metric label | Arial | 9pt | Bold + charSpacing:2 | gray50 | 20 |
+
+**Minimum 9pt for any text** — anything smaller is unreadable when projected. Section labels and step numbers that were 7-8pt in early builds were invisible on projectors.
 
 Use `"Arial"` and `"Arial Black"` as fontFace values — universally available in PowerPoint. The HTML title/divider templates use **Inter** (the HashiCorp CY26 Kit brand font), loaded from `assets/fonts/inter.css`. IBM Plex Sans is available in `assets/fonts/` for IBM-branded variants.
 
@@ -144,7 +163,7 @@ await pres.writeFile({ fileName: "output.pptx" });
 Premium title slides use the bundled capture script — a single command that loads the HC CY26 Kit HTML template, substitutes your text, captures via Chrome headless at 2x, and outputs a 3840×2160 PNG. No workspace setup or symlinks needed.
 
 ```bash
-node .claude/skills/ibm-deck/scripts/capture-title.mjs \
+node <skill-dir>/scripts/capture-title.mjs \
   --line1 "Deck Title" \
   --line2 "Second Line" \
   --subtitle "Subtitle Text" \
@@ -220,7 +239,7 @@ s1.addText("Organization Name", {
 Section dividers use the same capture script with `--type divider`:
 
 ```bash
-node .claude/skills/ibm-deck/scripts/capture-title.mjs \
+node <skill-dir>/scripts/capture-title.mjs \
   --type divider \
   --line1 "Section Title" \
   --subtitle "Section subtitle" \
@@ -277,7 +296,7 @@ const cardShadow = () => ({
 });
 ```
 
-### Card with Left Accent Bar
+### Card with Left Accent Bar (Gradient)
 
 ```javascript
 slide.addShape(pres.shapes.RECTANGLE, {
@@ -286,13 +305,12 @@ slide.addShape(pres.shapes.RECTANGLE, {
   shadow: cardShadow(),  // fresh instance every call
 });
 
-slide.addShape(pres.shapes.RECTANGLE, {
-  x: cx, y: cy, w: 0.06, h: cardH,
-  fill: { color: accentColor },
-});
+// Gradient left accent (w: 0.08 minimum for projection visibility)
+const vBar = await renderVerticalGradientBar(gradientColors, 8, 260);
+slide.addImage({ data: vBar, x: cx, y: cy, w: 0.08, h: cardH });
 ```
 
-### Card with Top Accent Bar
+### Card with Top Accent Bar (Gradient)
 
 ```javascript
 slide.addShape(pres.shapes.RECTANGLE, {
@@ -300,11 +318,84 @@ slide.addShape(pres.shapes.RECTANGLE, {
   fill: { color: C.gray10 }, shadow: cardShadow(),
 });
 
-slide.addShape(pres.shapes.RECTANGLE, {
-  x: px, y: py, w: pillarW, h: 0.05,
-  fill: { color: accentColor },
+// Gradient top accent (h: 0.08 minimum for projection visibility)
+const bar = await renderGradientBar(gradientColors, 400, 8, 0);
+slide.addImage({ data: bar, x: px, y: py, w: pillarW, h: 0.08 });
+```
+
+### Arrow Icons Between Cards
+
+LINE shapes with `endArrowType: "triangle"` are too thin to see when projected. Use FaArrowRight icon images instead:
+
+```javascript
+import { FaArrowRight } from "react-icons/fa";
+
+const arrowImg = await iconToBase64Png(FaArrowRight, "#" + arrowColor, 256);
+slide.addImage({
+  data: arrowImg,
+  x: arrowX,  // midpoint between cards
+  y: arrowY,  // vertically centered on cards
+  w: 0.22,
+  h: 0.22,
 });
 ```
+
+### Gradient Hero Title Text
+
+Render large gradient-colored text (e.g., card hero titles like "Establish", "Enable") as SVG→PNG. This is the only way to get gradient text in pptxgenjs:
+
+```javascript
+const titleGrad = [
+  { offset: 0, color: "#627EEF" },
+  { offset: 50, color: "#8A3FFC" },
+  { offset: 100, color: "#D946EF" },
+];
+const titleRW = title.length > 7 ? 900 : 700;  // wider SVG for longer text
+const titleImg = await renderGradientTitle(title, titleGrad, titleRW, 120);
+const titleW = cardW - px(50);
+const titleH = titleW * (120 / titleRW);  // preserve aspect ratio
+slide.addImage({ data: titleImg, x: cx + px(30), y: cy + px(78), w: titleW, h: titleH });
+```
+
+Adjust `titleRW` based on text length to avoid clipping — longer words need a wider SVG canvas.
+
+### REQUIRED / MANDATORY Badge
+
+A filled pill-shaped badge used to flag mandatory items on prerequisite or checklist cards:
+
+```javascript
+// Filled accent badge
+slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
+  x: cx + cardW - 1.15, y: cy + 0.15, w: 0.95, h: 0.26,
+  fill: { color: accentColor }, rectRadius: 0.05,
+});
+slide.addText("REQUIRED", {
+  x: cx + cardW - 1.15, y: cy + 0.15, w: 0.95, h: 0.26,
+  fontSize: 8, fontFace: "Arial", color: C.white,
+  bold: true, align: "center", valign: "middle", charSpacing: 1.5, margin: 0,
+});
+```
+
+For mandatory card highlighting, combine a tinted background + colored border:
+
+```javascript
+slide.addShape(pres.shapes.RECTANGLE, {
+  x: cx, y: cy, w: cardW, h: cardH,
+  fill: { color: "E8F7F7" },  // tinted bg instead of gray10
+  line: { color: accentColor, width: 1.5 },  // accent border
+  shadow: cardShadow(),
+});
+```
+
+### Pixel-to-Inch Conversion Helper
+
+For precise positioning when translating pixel-based designs to pptxgenjs inches:
+
+```javascript
+const px = (v) => v / 192;  // 1920px = 10 inches → 192px per inch
+```
+
+This is useful when porting layouts from 1920×1080 HTML slides to pptxgenjs. Use it for all coordinates to maintain exact proportions.
 
 ### Bullet Lists
 
@@ -403,17 +494,119 @@ These are starting points — adjust dimensions based on content volume. All val
 - Icon: 0.38×0.38 at x+0.15
 - Title at x+0.65, desc below
 
+### 4-Column Compounding Value Cards (Strategic Impact)
+- Cards: w≈2.06" (px(396)), h≈2.81" (px(540)), gap calculated from x-offsets
+- Use `ROUNDED_RECTANGLE` with `rectRadius: 0.08` and per-card tinted `bgColor`
+- Each card: gradient accent bar (borderRadius=16), step number ("01"), gradient hero title (renderGradientTitle), subtitle, divider LINE, 4 items, divider LINE, outcome text
+- Arrow connectors (FaArrowRight) between cards
+- Start: x=px(102), y=px(250) — use `px = v / 192` helper
+- Custom colors per card: `bgColor`, `divColor`, `outcomeColor`, `numColor`, `arrowColor`
+
+### 4-Column Prerequisite / Checklist Cards
+- Cards: w=2.0, h=2.95, gap=0.27
+- Start: x=0.7, y=1.5
+- Last card (or flagged card): tinted bg + colored border + REQUIRED badge
+- Badge: ROUNDED_RECTANGLE filled with accent, white "REQUIRED" text, 8pt, charSpacing:1.5
+- Mandatory card text uses `gray100` instead of `gray70` for emphasis
+
+## Gradient Fills — NOT SUPPORTED in pptxgenjs v4
+
+pptxgenjs v4 `fill.type` only supports `'solid'` or `'none'`. Using `type: "gradient"` with `color1`/`color2` silently produces **corrupted OOXML** — the PPTX will not open in PowerPoint or Keynote. There is no `GradientFill` interface in the v4 type definitions.
+
+### Workaround: SVG → PNG via sharp
+
+Render gradient elements as SVG, convert to PNG, and embed as images. This gives visual gradients while keeping surrounding text/shapes natively editable.
+
+```javascript
+import sharp from "sharp";
+
+// Gradient accent bar (e.g., top of a card)
+async function renderGradientBar(colors, width = 396, height = 8, borderRadius = 16) {
+  const gid = "g" + Math.random().toString(36).slice(2, 8);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <defs>
+      <linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="${colors[0]}"/>
+        <stop offset="50%" stop-color="${colors[1]}"/>
+        <stop offset="100%" stop-color="${colors[2]}"/>
+      </linearGradient>
+    </defs>
+    <rect width="${width}" height="${borderRadius > 0 ? borderRadius * 2 : height}" rx="${borderRadius}" fill="url(#${gid})"/>
+  </svg>`;
+  const buf = await sharp(Buffer.from(svg)).png().toBuffer();
+  return "image/png;base64," + buf.toString("base64");
+}
+
+// Vertical gradient bar (e.g., left accent on cards)
+async function renderVerticalGradientBar(colors, width = 8, height = 260) {
+  const gid = "vb" + Math.random().toString(36).slice(2, 8);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${colors[0]}"/>
+      <stop offset="50%" stop-color="${colors[1]}"/>
+      <stop offset="100%" stop-color="${colors[2]}"/>
+    </linearGradient></defs>
+    <rect width="${width}" height="${height}" fill="url(#${gid})"/>
+  </svg>`;
+  const buf = await sharp(Buffer.from(svg)).png().toBuffer();
+  return "image/png;base64," + buf.toString("base64");
+}
+
+// Gradient text (e.g., hero titles)
+async function renderGradientTitle(text, stops, width = 700, height = 120) {
+  const gid = "g" + Math.random().toString(36).slice(2, 8);
+  const stopsSvg = stops.map(s => `<stop offset="${s.offset}%" stop-color="${s.color}"/>`).join("");
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="0.3">${stopsSvg}</linearGradient></defs>
+    <text x="0" y="${height * 0.75}" font-size="${height * 0.82}" font-weight="800"
+      font-family="Arial,Helvetica,sans-serif" fill="url(#${gid})">${text}</text>
+  </svg>`;
+  const buf = await sharp(Buffer.from(svg)).png().toBuffer();
+  return "image/png;base64," + buf.toString("base64");
+}
+
+// Usage — horizontal top accent bar (h: 0.08 minimum for projection visibility)
+const barImg = await renderGradientBar(["#627EEF", "#8A3FFC", "#D946EF"], 400, 8, 0);
+slide.addImage({ data: barImg, x: cx, y: cy, w: cardW, h: 0.08 });
+
+// Usage — vertical left accent bar (w: 0.08 minimum for projection visibility)
+const vBarImg = await renderVerticalGradientBar(["#627EEF", "#8A3FFC", "#D946EF"], 8, 260);
+slide.addImage({ data: vBarImg, x: cx, y: cy, w: 0.08, h: cardH });
+
+// Usage — gradient hero title text
+const titleImg = await renderGradientTitle("Establish", [
+  { offset: 0, color: "#627EEF" },
+  { offset: 50, color: "#8A3FFC" },
+  { offset: 100, color: "#D946EF" },
+], 700, 120);
+slide.addImage({ data: titleImg, x: cx + 0.15, y: cy + 0.4, w: 1.8, h: 0.31 });
+```
+
+**Key details**:
+- When `borderRadius > 0`, the SVG `<rect>` height must be `borderRadius * 2` (taller than the bar) so rounded corners clip correctly within the viewBox. When `borderRadius = 0`, use the actual `height` value — otherwise `borderRadius * 2 = 0` produces an invisible zero-height rect.
+- Minimum visible size when projected: **0.08"** for both horizontal bar height and vertical bar width. Values of 0.05-0.06" are nearly invisible on projectors.
+
+### rectRadius
+
+`rectRadius` on `ROUNDED_RECTANGLE` is a **fraction from 0.0 to 1.0** (not absolute inches). Values above 1.0 produce invalid OOXML.
+
 ## Critical Rules
 
 1. **No "#" prefix on pptxgenjs colors** — see Color Rules table above.
 2. **Always `await` async functions** — `iconToBase64Png()` returns a Promise. Missing `await` silently breaks images.
-3. **Never reuse shadow/option objects** — always use `() => ({...})` factory functions. Never write shadow objects inline.
-4. **Set `slide.background = { color: C.white }`** on every content slide — don't rely on defaults.
-5. **Coordinates are in inches** — LAYOUT_16x9 is 10" wide × 5.625" tall.
-6. **Content padding** — start content at y≈1.4 (0.8-1.0" below header). Too tight looks cramped.
-7. **Text overflow** — respect the max character counts in the Typography table. Reduce fontSize or increase dimensions if wrapping occurs.
-8. **Footer clearance** — bottom callout bars at y≈4.5-4.75. Taller content layouts (3.0" pillars) push the callout lower.
-9. **Working directory** — run build scripts from the repo root. The capture script (`scripts/capture-title.mjs`) resolves all asset paths automatically — no workspace setup needed for title/divider slides.
+3. **Never reuse shadow/option objects** — always use `() => ({...})` factory functions. pptxgenjs **mutates** shadow objects in place during XML generation, converting values to EMU units. On the second use, these already-converted values get converted again, producing values that overflow INT32 and corrupt the PPTX. Never write shadow objects inline.
+4. **No gradient fills** — `fill.type` only supports `'solid'` or `'none'` in v4. Use the SVG → PNG workaround above for gradients.
+5. **Set `slide.background = { color: C.white }`** on every content slide — don't rely on defaults.
+6. **Coordinates are in inches** — LAYOUT_16x9 is 10" wide × 5.625" tall.
+7. **Content padding** — start content at y≈1.4 (0.8-1.0" below header). Too tight looks cramped.
+8. **Text overflow** — respect the max character counts in the Typography table. Reduce fontSize or increase dimensions if wrapping occurs.
+9. **Footer clearance** — bottom callout bars at y≈4.5-4.75. Taller content layouts (3.0" pillars) push the callout lower.
+10. **Working directory** — run build scripts from the repo root. The capture script (`scripts/capture-title.mjs`) resolves all asset paths automatically — no workspace setup needed for title/divider slides.
+11. **Title slides are HTML captures** — title slide text lives in the HTML source file, not in `pres.title`. Changing `pres.title` in the build script does NOT update the rendered title slide. To update title text: edit the HTML → recapture via Chrome headless → rebuild PPTX.
+12. **Capture from the directory containing assets** — HTML title slides use relative paths to `media/` and `fonts/` folders. Always `cd` into the directory where `media/` and `fonts/` exist, then run Chrome headless from there. Copying the HTML elsewhere without its assets produces a blank white background. **Verify PNG file size after every capture** — the HC CY26 Kit background layers (gradient base, left glow, right glow, arc lines) produce a 3840×2160 PNG around **2–3MB**. If the file is under 2MB, the backgrounds rendered partially or at reduced quality — recapture. Under 200KB means assets failed to load entirely. Compare against a known-good reference if available (e.g., extract `image-1-1.png` from a working PPTX via `unzip` and check its size).
+13. **Output filename matches branding** — when rebranding a deck, also update the `fileName` in `pres.writeFile()` to match the new name.
+14. **Always rebuild after text changes** — after any edit to the build script, run `node build-<deck>.mjs` to regenerate. Never leave stale PPTX builds.
+15. **Case-matching when rebranding** — when replacing branded terms across a deck, match the case of each occurrence: `UPPERCASE` section labels stay uppercase, `Title Case` stays title case, `lowercase` body text stays lowercase.
 
 ## Tint Color Guide
 
@@ -437,17 +630,18 @@ Your first render is almost never pixel-perfect. Text wraps differently than you
 ### Step 1: Convert to Images
 
 ```bash
-python .claude/skills/pptx/scripts/office/soffice.py --headless --convert-to pdf output.pptx
+soffice --headless --convert-to pdf output.pptx
 pdftoppm -jpeg -r 150 output.pdf slide
 ```
 
 This produces `slide-1.jpg`, `slide-2.jpg`, etc.
 
-### Step 2: Visual Inspection via Subagent
+### Step 2: Visual Inspection via Subagent(s)
 
-Use a subagent with fresh eyes — you wrote the code and will see what you expect, not what's actually rendered. The subagent catches what you miss.
+Use subagents with fresh eyes — you wrote the code and will see what you expect, not what's actually rendered. Subagents catch what you miss.
 
-Spawn a subagent with this prompt, listing every slide image:
+For decks with 6+ slides, spawn **multiple subagents in parallel** (e.g., slides 1-3, 4-6, 7-9) to speed up inspection. Each subagent gets a subset of slide images:
+
 
 ```
 Visually inspect these slides. Assume there are issues — find them.
@@ -481,7 +675,7 @@ For each issue found:
 2. Rebuild the PPTX
 3. Re-convert to images:
    ```bash
-   python .claude/skills/pptx/scripts/office/soffice.py --headless --convert-to pdf output.pptx
+   soffice --headless --convert-to pdf output.pptx
    pdftoppm -jpeg -r 150 output.pdf slide
    ```
 4. **Spawn a new subagent** to inspect the fixed slides — don't inspect them yourself. You made the fix and will assume it worked; a subagent with fresh eyes catches regressions.

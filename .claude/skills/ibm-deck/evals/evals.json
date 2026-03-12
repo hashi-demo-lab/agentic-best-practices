@@ -1,0 +1,82 @@
+{
+  "skill_name": "ibm-deck",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a 3-slide IBM Carbon deck about cloud migration strategy. Slide 1 should be a title slide, slide 2 should have 3 pillar cards (Assess, Migrate, Optimize) with gradient top accent bars and icons, and slide 3 should be a closing slide. Use Carbon design tokens throughout. Output as migration-strategy.pptx.",
+      "expected_output": "A valid .pptx file with 3 slides: title (full-bleed image or programmatic), 3-pillar content slide with gradient accent bars and icons, and a closing slide. All using Carbon tokens, shadow factories, correct hex format.",
+      "files": [],
+      "assertions": [
+        {"text": "Output file migration-strategy.pptx exists and is valid", "type": "file_exists"},
+        {"text": "Uses shadow factory pattern (not shared shadow objects)", "type": "code_pattern"},
+        {"text": "No # prefix on pptxgenjs color values", "type": "code_pattern"},
+        {"text": "Uses renderGradientBar for accent bars with h >= 0.08", "type": "code_pattern"},
+        {"text": "All async functions are awaited", "type": "code_pattern"},
+        {"text": "slide.background set to white on content slides", "type": "code_pattern"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I need to build an IBM-branded proposal deck with 4 slides using pptxgenjs and Carbon Design System. The deck is for 'Digital Transformation Services'. Slide 1: title. Slide 2: 4 challenge cards in a 2x2 grid with left gradient accent bars and icons. Slide 3: timeline with 3 phase cards and arrow connectors. Slide 4: outcomes with a bottom callout bar. Make sure everything uses proper Carbon tokens.",
+      "expected_output": "A valid .pptx with 4 slides using IBM Carbon styling. Challenge cards with vertical gradient left accents, timeline with arrow icons (not LINE shapes), callout bar with tint colors. All Carbon tokens applied correctly.",
+      "files": [],
+      "assertions": [
+        {"text": "Output .pptx file exists and is valid", "type": "file_exists"},
+        {"text": "Uses renderVerticalGradientBar for left accent bars", "type": "code_pattern"},
+        {"text": "Uses FaArrowRight icons (not LINE shapes) for timeline arrows", "type": "code_pattern"},
+        {"text": "Callout bar uses matching tint color from Tint Color Guide", "type": "code_pattern"},
+        {"text": "Font sizes are 9pt or larger throughout", "type": "code_pattern"},
+        {"text": "Shadow factory pattern used consistently", "type": "code_pattern"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Build me a simple 2-slide IBM Carbon PPTX. First slide is a programmatic title (no HTML capture needed). Second slide has 3 metric callout cards showing KPIs with gradient top accent bars. Use the green/teal/blue Carbon accent colors. The deck should be called 'Q4-Performance-Review.pptx'.",
+      "expected_output": "A valid Q4-Performance-Review.pptx with programmatic title slide and 3 metric cards with gradient top accents in green/teal/blue. Correct Carbon tokens, no corrupted OOXML.",
+      "files": [],
+      "assertions": [
+        {"text": "Output file Q4-Performance-Review.pptx exists", "type": "file_exists"},
+        {"text": "Programmatic title slide (no HTML capture)", "type": "code_pattern"},
+        {"text": "Uses gradient color triplets from the skill's table", "type": "code_pattern"},
+        {"text": "renderGradientBar called with borderRadius=0 and rect height uses actual height (not borderRadius*2=0)", "type": "code_pattern"},
+        {"text": "Metric numbers use Arial Black 24-36pt", "type": "code_pattern"},
+        {"text": "No gradient fill objects (only solid fills + SVG workaround)", "type": "code_pattern"}
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Build a single-slide IBM Carbon deck called 'strategic-impact.pptx'. The slide shows 4 compounding value cards in a horizontal row. Each card has: a gradient accent bar at the top (with borderRadius for rounded cards), a step number ('01', '02', '03', '04'), a gradient hero title rendered as SVG→PNG (e.g., 'Establish', 'Enable', 'Accelerate', 'Scale'), a subtitle, a divider line, 4 bullet items, another divider, and outcome text. Cards use ROUNDED_RECTANGLE with per-card tinted backgrounds. FaArrowRight connectors between cards. Include a bottom callout bar with rich text. Use a pixel-to-inch conversion helper.",
+      "expected_output": "A valid strategic-impact.pptx with 1 content slide containing 4 compounding value cards in a row. Each card uses ROUNDED_RECTANGLE with tinted bg, gradient accent bar (borderRadius > 0), renderGradientTitle for hero text, step numbers, divider lines, and outcome text. Arrow connectors between cards.",
+      "files": [],
+      "assertions": [
+        {"text": "Output file strategic-impact.pptx exists and is valid", "type": "file_exists"},
+        {"text": "Uses renderGradientTitle to render gradient hero text as SVG→PNG", "type": "code_pattern"},
+        {"text": "Uses ROUNDED_RECTANGLE (not plain RECTANGLE) for card backgrounds", "type": "code_pattern"},
+        {"text": "Each card has a unique tinted background color (not all gray10)", "type": "code_pattern"},
+        {"text": "renderGradientBar called with borderRadius > 0 for rounded card accent bars", "type": "code_pattern"},
+        {"text": "Uses LINE shapes for dividers inside cards", "type": "code_pattern"},
+        {"text": "FaArrowRight icons between cards (3 arrows for 4 cards)", "type": "code_pattern"},
+        {"text": "Shadow factory pattern used consistently", "type": "code_pattern"},
+        {"text": "Pixel-to-inch helper function defined (e.g., v / 192)", "type": "code_pattern"}
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Build a 5-slide IBM Carbon proposal deck using the hybrid approach. Title: 'Technology Services Proposal'. Slide 1: HTML capture title slide using the bundled capture-title.mjs script — embed as full-bleed PNG. Slide 2: 'The Challenge' with 4 risk/challenge cards in a 2×2 grid, each with left vertical gradient accent bars and icons. Slide 3: 'Value Proposition' with 3 pillar cards showing what the service delivers. Slide 4: 'Pre-requisites' with 4 narrow columns — the last card should be highlighted as REQUIRED with a filled badge, tinted background, and colored border. Slide 5: HTML capture closing/thank-you slide as full-bleed PNG. Output as 'technology-services-proposal.pptx'.",
+      "expected_output": "A valid 5-slide PPTX using hybrid approach: HTML-captured title and closing slides (full-bleed PNGs) plus 3 programmatic content slides. Challenge slide with 2×2 grid and vertical gradient bars. Value pillar slide with 3 columns. Prerequisites slide with 4 narrow columns including a REQUIRED badge on the last card.",
+      "files": [],
+      "assertions": [
+        {"text": "Output file technology-services-proposal.pptx exists and is valid", "type": "file_exists"},
+        {"text": "Slides 1 and 5 use addImage with full-bleed dimensions (w:10, h:5.625) for HTML-captured PNGs", "type": "code_pattern"},
+        {"text": "Uses capture-title.mjs script (or equivalent HTML capture) for title and closing slides", "type": "code_pattern"},
+        {"text": "Challenge slide uses 2×2 grid layout with vertical gradient accent bars", "type": "code_pattern"},
+        {"text": "Prerequisites slide has a REQUIRED badge (ROUNDED_RECTANGLE with filled accent color and white text)", "type": "code_pattern"},
+        {"text": "Mandatory/required card has tinted background color and colored border (line property)", "type": "code_pattern"},
+        {"text": "Shadow factory pattern used consistently", "type": "code_pattern"},
+        {"text": "No # prefix on pptxgenjs color values", "type": "code_pattern"},
+        {"text": "All async functions are awaited", "type": "code_pattern"},
+        {"text": "slide.background set to white on content slides", "type": "code_pattern"}
+      ]
+    }
+  ]
+}
