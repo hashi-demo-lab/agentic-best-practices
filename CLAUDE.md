@@ -69,16 +69,29 @@ node playgrounds/build-pptx.mjs
 - Filter chain: deepglow (stdDeviation=45), softglow (22), glow (8), crisp (no filter)
 - Dividers use 7 arcs; title uses 11 arcs for more dramatic effect
 
-### Website / Editorial Sync
+### Publishing (Editorial / Website Sync)
 
-The learning pathway editorial HTML is also published to the submodule:
+After editing `playgrounds/learning-pathway-editorial.html`, publish to all three locations:
 
 ```bash
-# After editing playgrounds/learning-pathway-editorial.html:
+# 1. Copy to static/ and submodule
+cp playgrounds/learning-pathway-editorial.html playgrounds/static/learning-pathway-editorial.html
 cp playgrounds/learning-pathway-editorial.html terraform-agentic-workflows/.foundations/design/sdd-workflow-playground.html
+
+# 2. Commit and push the submodule first
+cd terraform-agentic-workflows
+git add .foundations/design/sdd-workflow-playground.html
+git commit -m "Update editorial HTML"
+git push
+cd ..
+
+# 3. Commit and push the parent repo (includes updated submodule pointer)
+git add playgrounds/learning-pathway-editorial.html playgrounds/static/learning-pathway-editorial.html terraform-agentic-workflows
+git commit -m "Update editorial HTML"
+git push
 ```
 
-Always copy the latest editorial HTML to the submodule before committing.
+**Important**: Always commit and push the submodule *before* the parent repo, so the parent's submodule pointer references a pushed commit.
 
 ### Quick Verification
 

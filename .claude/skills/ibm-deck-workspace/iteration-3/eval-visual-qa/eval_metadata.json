@@ -1,0 +1,32 @@
+{
+  "eval_id": 0,
+  "eval_name": "visual-qa",
+  "prompt": "Build a 5-slide IBM Carbon PPTX proposing HashiCorp Professional Services for AI-driven Terraform infrastructure. Title slide with HC CY26 Kit background, a section divider, and 3 content slides: AI capabilities (3-column pillars with 4 bullets each), implementation approach (3-phase timeline with 4 bullets each), and expected outcomes (4 stacked cards with descriptions plus 4 metric callouts). Make sure every slide passes visual QA with no text overflow or overlapping elements.",
+  "assertions": [
+    {
+      "id": "visual-qa-ran",
+      "text": "Agent performed visual QA by converting PPTX to images and inspecting them",
+      "type": "manual"
+    },
+    {
+      "id": "no-text-overflow",
+      "text": "No text is clipped or cut off at card/box boundaries in any slide",
+      "type": "manual"
+    },
+    {
+      "id": "no-overlaps",
+      "text": "No elements overlap (callout bars don't collide with content above)",
+      "type": "manual"
+    },
+    {
+      "id": "fix-verify-cycle",
+      "text": "Agent completed at least one fix-and-verify cycle (fixed issues then re-checked)",
+      "type": "manual"
+    },
+    {
+      "id": "pptx-generated",
+      "text": "A valid .pptx file is generated",
+      "type": "script"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "skill_name": "ibm-deck",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "Create a 3-slide IBM Carbon styled PPTX about cloud security best practices. Include a title slide, a challenges slide with 4 risk cards in a 2x2 grid, and a recommendations slide with 3 columns of best practices.",
+      "expected_output": "A .pptx file with 3 slides using IBM Carbon tokens (white bg, gray-10 cards, blue-60/teal-60/etc accents), proper slide headers, card layouts with accent bars, and bullet lists",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "Build a 4-slide IBM-branded proposal deck for DevOps consulting services. Include a title slide, a value proposition slide, metric callouts showing time savings (e.g. weeks to hours), and a phased engagement timeline with 3 phases.",
+      "expected_output": "A .pptx file with 4 slides using IBM Carbon styling, metric callout cards with big numbers, timeline phase cards with numbered circles, and callout bars",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Generate a 2-slide IBM deck about API gateway features using Carbon design tokens. One title slide and one content slide with 3 feature cards showing icons and bullet lists.",
+      "expected_output": "A .pptx file with 2 slides - a simple title and a content slide with 3 pillar-style cards using Carbon gray-10 backgrounds and accent colors",
+      "files": []
+    }
+  ]
+}

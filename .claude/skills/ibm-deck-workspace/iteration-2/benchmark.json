@@ -1,0 +1,78 @@
+{
+  "skill_name": "ibm-deck",
+  "iteration": 2,
+  "configurations": [
+    {
+      "name": "with_skill",
+      "label": "With ibm-deck skill",
+      "results": [
+        {
+          "eval_id": 0,
+          "eval_name": "title-capture",
+          "pass_rate": 1.0,
+          "passed": 3,
+          "total": 3,
+          "tokens": 30880,
+          "duration_seconds": 99.4
+        },
+        {
+          "eval_id": 1,
+          "eval_name": "proposal-deck",
+          "pass_rate": 1.0,
+          "passed": 5,
+          "total": 5,
+          "tokens": 32964,
+          "duration_seconds": 134.3
+        }
+      ],
+      "aggregate": {
+        "mean_pass_rate": 1.0,
+        "stddev_pass_rate": 0.0,
+        "mean_tokens": 31922,
+        "mean_duration_seconds": 116.85
+      }
+    },
+    {
+      "name": "without_skill",
+      "label": "Without skill (baseline)",
+      "results": [
+        {
+          "eval_id": 0,
+          "eval_name": "title-capture",
+          "pass_rate": 0.33,
+          "passed": 1,
+          "total": 3,
+          "tokens": 17668,
+          "duration_seconds": 113.9
+        },
+        {
+          "eval_id": 1,
+          "eval_name": "proposal-deck",
+          "pass_rate": 0.4,
+          "passed": 2,
+          "total": 5,
+          "tokens": 26366,
+          "duration_seconds": 194.5
+        }
+      ],
+      "aggregate": {
+        "mean_pass_rate": 0.365,
+        "stddev_pass_rate": 0.05,
+        "mean_tokens": 22017,
+        "mean_duration_seconds": 154.2
+      }
+    }
+  ],
+  "delta": {
+    "pass_rate": "+63.5%",
+    "tokens": "+45% (more tokens due to reading skill + references)",
+    "duration": "-24% faster (skill guidance reduces trial-and-error)"
+  },
+  "analyst_observations": [
+    "Both with-skill runs achieved 100% pass rate on all assertions including title background capture",
+    "Without-skill agents defaulted to dark #161616 backgrounds — confirming the skill provides essential brand compliance",
+    "Title PNG size is a strong discriminating assertion: with-skill produces 2.4-2.5MB PNGs vs 0KB for baseline",
+    "With-skill agents completed faster despite using more tokens — skill guidance eliminated wasted iteration",
+    "The capture-title.mjs single-command approach worked reliably in both test cases — no agent skipped HTML capture this time (contrast with iteration-1 where both agents skipped the manual 4-step workflow)"
+  ]
+}

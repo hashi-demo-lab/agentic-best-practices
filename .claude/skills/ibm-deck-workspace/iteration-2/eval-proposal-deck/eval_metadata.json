@@ -1,0 +1,32 @@
+{
+  "eval_id": 1,
+  "eval_name": "proposal-deck",
+  "prompt": "Build a 5-slide IBM Carbon Design System PPTX proposing HashiCorp Professional Services for AI-driven Terraform infrastructure. Title slide with HC CY26 Kit background, a section divider, and 3 content slides covering: AI capabilities overview, implementation approach, and expected outcomes.",
+  "assertions": [
+    {
+      "id": "title-bg-capture",
+      "text": "Title slide uses capture-title.mjs with HC CY26 Kit background (not programmatic fallback)",
+      "type": "manual"
+    },
+    {
+      "id": "divider-captured",
+      "text": "Section divider uses capture-title.mjs with --type divider",
+      "type": "manual"
+    },
+    {
+      "id": "title-png-size",
+      "text": "Captured title PNG is larger than 500KB",
+      "type": "script"
+    },
+    {
+      "id": "five-slides",
+      "text": "Output PPTX contains exactly 5 slides",
+      "type": "script"
+    },
+    {
+      "id": "pptx-generated",
+      "text": "A valid .pptx file is generated",
+      "type": "script"
+    }
+  ]
+}
