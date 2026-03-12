@@ -1,0 +1,17 @@
+{
+  "eval_id": 5,
+  "eval_name": "hybrid-proposal-deck",
+  "prompt": "Build a 5-slide IBM Carbon proposal deck using the hybrid approach. Title: 'Technology Services Proposal'. Slide 1: HTML capture title slide using the bundled capture-title.mjs script — embed as full-bleed PNG. Slide 2: 'The Challenge' with 4 risk/challenge cards in a 2×2 grid, each with left vertical gradient accent bars and icons. Slide 3: 'Value Proposition' with 3 pillar cards showing what the service delivers. Slide 4: 'Pre-requisites' with 4 narrow columns — the last card should be highlighted as REQUIRED with a filled badge, tinted background, and colored border. Slide 5: HTML capture closing/thank-you slide as full-bleed PNG. Output as 'technology-services-proposal.pptx'.",
+  "assertions": [
+    {"text": "Output file technology-services-proposal.pptx exists and is valid", "type": "file_exists"},
+    {"text": "Slides 1 and 5 use addImage with full-bleed dimensions (w:10, h:5.625) for HTML-captured PNGs", "type": "code_pattern"},
+    {"text": "Uses capture-title.mjs script (or equivalent HTML capture) for title and closing slides", "type": "code_pattern"},
+    {"text": "Challenge slide uses 2×2 grid layout with vertical gradient accent bars", "type": "code_pattern"},
+    {"text": "Prerequisites slide has a REQUIRED badge (ROUNDED_RECTANGLE with filled accent color and white text)", "type": "code_pattern"},
+    {"text": "Mandatory/required card has tinted background color and colored border (line property)", "type": "code_pattern"},
+    {"text": "Shadow factory pattern used consistently", "type": "code_pattern"},
+    {"text": "No # prefix on pptxgenjs color values", "type": "code_pattern"},
+    {"text": "All async functions are awaited", "type": "code_pattern"},
+    {"text": "slide.background set to white on content slides", "type": "code_pattern"}
+  ]
+}

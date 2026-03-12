@@ -1,0 +1,17 @@
+{
+  "eval_id": 4,
+  "eval_name": "strategic-impact-cards",
+  "prompt": "Build a single-slide IBM Carbon deck called 'strategic-impact.pptx'. The slide shows 4 compounding value cards in a horizontal row. Each card has: a gradient accent bar at the top (with borderRadius for rounded cards), a step number ('01', '02', '03', '04'), a gradient hero title rendered as SVG→PNG (e.g., 'Establish', 'Enable', 'Accelerate', 'Scale'), a subtitle, a divider line, 4 bullet items, another divider, and outcome text. Cards use ROUNDED_RECTANGLE with per-card tinted backgrounds. FaArrowRight connectors between cards. Include a bottom callout bar with rich text. Use a pixel-to-inch conversion helper.",
+  "assertions": [
+    {"text": "Output file strategic-impact.pptx exists and is valid", "type": "file_exists"},
+    {"text": "Uses renderGradientTitle to render gradient hero text as SVG→PNG", "type": "code_pattern"},
+    {"text": "Uses ROUNDED_RECTANGLE (not plain RECTANGLE) for card backgrounds", "type": "code_pattern"},
+    {"text": "Each card has a unique tinted background color (not all gray10)", "type": "code_pattern"},
+    {"text": "renderGradientBar called with borderRadius > 0 for rounded card accent bars", "type": "code_pattern"},
+    {"text": "Uses LINE shapes for dividers inside cards", "type": "code_pattern"},
+    {"text": "FaArrowRight icons between cards (3 arrows for 4 cards)", "type": "code_pattern"},
+    {"text": "Shadow factory pattern used consistently", "type": "code_pattern"},
+    {"text": "Pixel-to-inch helper function defined (e.g., v / 192)", "type": "code_pattern"},
+    {"text": "Slide header title and subtitle do not visually overlap (title.y + title.h <= subtitle.y)", "type": "code_pattern"}
+  ]
+}
