@@ -164,35 +164,35 @@ async function buildPresentation() {
   // ===== SLIDE HEADER =====
   // Section label (uppercase, accented, letter-spaced)
   slide.addText("STRATEGIC IMPACT", {
-    x: px(80), y: px(48), w: 5, h: px(24),
+    x: px(80), y: px(38), w: 5, h: px(24),
     fontSize: 10, fontFace: "Arial", color: C.purple60,
     bold: true, charSpacing: 3, margin: 0,
   });
 
-  // Title — h = px(50) ≈ 0.26", keeps it tight to avoid subtitle overlap
-  // title.y + title.h = px(72) + px(50) = px(122)
+  // Title — single line at 20pt to avoid wrapping with long text
+  // title.y + title.h = px(62) + px(44) = px(106)
   slide.addText("Compounding Value Through Structured Enablement", {
-    x: px(80), y: px(72), w: px(1760), h: px(50),
-    fontSize: 22, fontFace: "Arial Black", color: C.gray100,
+    x: px(80), y: px(62), w: px(1760), h: px(44),
+    fontSize: 20, fontFace: "Arial Black", color: C.gray100,
     bold: true, margin: 0,
   });
 
-  // Subtitle — y = px(126) > px(122) = title bottom, so no overlap
-  slide.addText("Each phase builds on the last — security, speed, operational maturity, and enterprise scale compound over time", {
-    x: px(80), y: px(126), w: px(1760), h: px(30),
+  // Subtitle — y = px(110) > px(106) = title bottom, so no overlap (4px clearance)
+  slide.addText("Each phase builds on the last \u2014 security, speed, operational maturity, and enterprise scale compound over time", {
+    x: px(80), y: px(110), w: px(1760), h: px(28),
     fontSize: 11.5, fontFace: "Arial", color: C.gray70, margin: 0,
   });
 
   // ===== 4-COLUMN COMPOUNDING VALUE CARDS =====
   const cardW = px(396);
-  const cardH = px(540);
+  const cardH = px(580);  // taller cards to fill vertical space
   const accentH = px(8);
   const cardXOffsets = [22, 462, 902, 1342]; // pixel x-offsets
 
   for (let i = 0; i < cards.length; i++) {
     const c = cards[i];
     const cx = px(80) + px(cardXOffsets[i]);
-    const cy = px(250);
+    const cy = px(210);
 
     // Card background — ROUNDED_RECTANGLE with per-card tinted bg
     slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
@@ -225,10 +225,10 @@ async function buildPresentation() {
     const titleH = titleW * (120 / titleRW);
     slide.addImage({ data: titleImg, x: cx + px(30), y: cy + px(78), w: titleW, h: titleH });
 
-    // Subtitle
+    // Subtitle — 10pt to prevent wrapping on longer subtitles like "Enterprise Transformation"
     slide.addText(c.subtitle, {
-      x: cx + px(34), y: cy + px(158), w: cardW - px(68), h: px(28),
-      fontSize: 10.5, fontFace: "Arial", color: C.gray70,
+      x: cx + px(34), y: cy + px(158), w: cardW - px(50), h: px(28),
+      fontSize: 10, fontFace: "Arial", color: C.gray70,
       bold: true, valign: "middle", margin: 0,
     });
 
@@ -238,8 +238,8 @@ async function buildPresentation() {
       line: { color: c.divColor, width: 0.5 },
     });
 
-    // Content items — 4 bullet items
-    const itemYs = [240, 282, 324, 366];
+    // Content items — 4 bullet items (pushed down slightly for taller cards)
+    const itemYs = [250, 296, 342, 388];
     for (let j = 0; j < c.items.length; j++) {
       slide.addText(c.items[j], {
         x: cx + px(20), y: cy + px(itemYs[j]) - px(12),
@@ -251,13 +251,13 @@ async function buildPresentation() {
 
     // Bottom divider line
     slide.addShape(pres.shapes.LINE, {
-      x: cx + px(34), y: cy + px(410), w: cardW - px(68), h: 0,
+      x: cx + px(34), y: cy + px(440), w: cardW - px(68), h: 0,
       line: { color: c.divColor, width: 0.5 },
     });
 
     // Outcome text
     slide.addText(c.outcome, {
-      x: cx + px(20), y: cy + px(430), w: cardW - px(40), h: px(80),
+      x: cx + px(20), y: cy + px(460), w: cardW - px(40), h: px(90),
       fontSize: 9, fontFace: "Arial", color: c.outcomeColor,
       bold: true, valign: "top", margin: 0,
     });
@@ -269,16 +269,16 @@ async function buildPresentation() {
       slide.addImage({
         data: arrowIcon,
         x: px(80) + px(arrowXOffsets[i]) - 0.01,
-        y: px(250) + px(270),
+        y: px(210) + px(290),
         w: 0.22, h: 0.22,
       });
     }
   }
 
   // ===== BOTTOM CALLOUT BAR =====
-  // Cards end at cy + cardH = px(250) + px(540) = px(790) ≈ 4.11"
-  // Place callout bar below with some breathing room
-  const calloutY = px(820);
+  // Cards end at cy + cardH = px(210) + px(580) = px(790) ≈ 4.11"
+  // Place callout bar with good breathing room, centered in remaining space
+  const calloutY = px(860);
   slide.addShape(pres.shapes.RECTANGLE, {
     x: 0.7, y: calloutY, w: 8.6, h: 0.55,
     fill: { color: "F5F0FF" }, // purple tint

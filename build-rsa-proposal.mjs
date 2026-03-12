@@ -127,7 +127,7 @@ async function buildPresentation() {
     x: 0.7,
     y: 0.35,
     w: 5,
-    h: 0.3,
+    h: 0.2,
     fontSize: 10,
     fontFace: "Arial",
     color: C.red60,
@@ -141,7 +141,7 @@ async function buildPresentation() {
     x: 0.7,
     y: 0.6,
     w: 8.6,
-    h: 0.45,
+    h: 0.4,
     fontSize: 22,
     fontFace: "Arial Black",
     color: C.gray100,
@@ -154,7 +154,7 @@ async function buildPresentation() {
     "Enterprises need expert guidance to capture value while managing risk",
     {
       x: 0.7,
-      y: 1.0,
+      y: 1.05,
       w: 8.6,
       h: 0.3,
       fontSize: 12,
@@ -320,7 +320,7 @@ async function buildPresentation() {
     x: 0.7,
     y: 0.35,
     w: 5,
-    h: 0.3,
+    h: 0.2,
     fontSize: 10,
     fontFace: "Arial",
     color: C.teal60,
@@ -331,9 +331,9 @@ async function buildPresentation() {
 
   s3.addText("What Your Dedicated Expert Delivers", {
     x: 0.7,
-    y: 0.65,
+    y: 0.6,
     w: 8.6,
-    h: 0.55,
+    h: 0.45,
     fontSize: 26,
     fontFace: "Arial Black",
     color: C.gray100,
@@ -345,7 +345,7 @@ async function buildPresentation() {
     "Trusted advisor, bridging the gap between AI capability and enterprise readiness",
     {
       x: 0.7,
-      y: 1.15,
+      y: 1.1,
       w: 8.6,
       h: 0.35,
       fontSize: 13,
@@ -478,7 +478,7 @@ async function buildPresentation() {
     x: 0.7,
     y: 0.35,
     w: 5,
-    h: 0.3,
+    h: 0.2,
     fontSize: 10,
     fontFace: "Arial",
     color: C.green60,
@@ -491,7 +491,7 @@ async function buildPresentation() {
     x: 0.7,
     y: 0.6,
     w: 8.6,
-    h: 0.45,
+    h: 0.4,
     fontSize: 22,
     fontFace: "Arial Black",
     color: C.gray100,
@@ -503,7 +503,7 @@ async function buildPresentation() {
     "Your resident technology services team guides architecture of battle-tested workflows with measurable acceleration",
     {
       x: 0.7,
-      y: 1.0,
+      y: 1.05,
       w: 8.6,
       h: 0.3,
       fontSize: 12,
@@ -650,7 +650,7 @@ async function buildPresentation() {
     x: 0.7,
     y: 0.35,
     w: 5,
-    h: 0.3,
+    h: 0.2,
     fontSize: 10,
     fontFace: "Arial",
     color: C.blue60,
@@ -663,7 +663,7 @@ async function buildPresentation() {
     x: 0.7,
     y: 0.6,
     w: 8.6,
-    h: 0.45,
+    h: 0.4,
     fontSize: 22,
     fontFace: "Arial Black",
     color: C.gray100,
@@ -675,7 +675,7 @@ async function buildPresentation() {
     "A phased engagement that builds capability progressively \u2014 from assessment to autonomous operation",
     {
       x: 0.7,
-      y: 1.0,
+      y: 1.05,
       w: 8.6,
       h: 0.3,
       fontSize: 12,
@@ -899,7 +899,7 @@ async function buildPresentation() {
     x: 0.7,
     y: 0.35,
     w: 5,
-    h: 0.3,
+    h: 0.2,
     fontSize: 10,
     fontFace: "Arial",
     color: C.green60,
@@ -912,7 +912,7 @@ async function buildPresentation() {
     x: 0.7,
     y: 0.6,
     w: 8.6,
-    h: 0.45,
+    h: 0.4,
     fontSize: 22,
     fontFace: "Arial Black",
     color: C.gray100,
@@ -924,7 +924,7 @@ async function buildPresentation() {
     "Measurable outcomes delivered across governance, velocity, and team capability",
     {
       x: 0.7,
-      y: 1.0,
+      y: 1.05,
       w: 8.6,
       h: 0.3,
       fontSize: 12,
@@ -1171,25 +1171,25 @@ async function buildPresentation() {
 
   const px7 = (v) => v / 192; // 1920px = 10"
 
-  // Header
+  // Header — title wraps to 2 lines, needs h=px7(130) for clearance
   s7.addText("STRATEGIC IMPACT", {
-    x: px7(80), y: px7(48), w: 5, h: px7(24),
+    x: px7(80), y: px7(40), w: 5, h: px7(20),
     fontSize: 10, fontFace: "Arial", color: "996f00",
     bold: true, charSpacing: 3, margin: 0,
   });
 
   s7.addText("How Resident Technology Services Creates Compounding Value", {
-    x: px7(80), y: px7(72), w: px7(1760), h: px7(50),
+    x: px7(80), y: px7(64), w: px7(1760), h: px7(130),
     fontSize: 22, fontFace: "Arial", color: C.gray100, bold: true, margin: 0,
   });
 
   s7.addText("Each capability unlocks the next \u2014 building momentum across your organization", {
-    x: px7(80), y: px7(126), w: px7(1760), h: px7(30),
+    x: px7(80), y: px7(200), w: px7(1760), h: px7(30),
     fontSize: 11.5, fontFace: "Arial", color: C.gray70, margin: 0,
   });
 
-  // Card layout constants
-  const s7svgTop = px7(240);
+  // Card layout constants — pushed down to accommodate taller header
+  const s7svgTop = px7(280);
   const s7svgLeft = px7(80);
   const s7cardW = px7(396);
   const s7cardH = px7(540);
@@ -1335,7 +1335,7 @@ async function buildPresentation() {
     x: 0.7,
     y: 0.35,
     w: 5,
-    h: 0.3,
+    h: 0.2,
     fontSize: 10,
     fontFace: "Arial",
     color: C.purple60,
@@ -1348,7 +1348,7 @@ async function buildPresentation() {
     x: 0.7,
     y: 0.6,
     w: 8.6,
-    h: 0.45,
+    h: 0.4,
     fontSize: 22,
     fontFace: "Arial Black",
     color: C.gray100,
@@ -1360,7 +1360,7 @@ async function buildPresentation() {
     "Key foundations your organization should have in place \u2014 or that resident technology services will help establish",
     {
       x: 0.7,
-      y: 1.0,
+      y: 1.05,
       w: 8.6,
       h: 0.3,
       fontSize: 12,

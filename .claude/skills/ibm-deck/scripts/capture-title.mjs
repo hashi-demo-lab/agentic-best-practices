@@ -94,13 +94,20 @@ try {
   mkdirSync(outDir, { recursive: true });
 
   // Capture with Chrome headless at 2x
+  // --virtual-time-budget gives Chrome time to load background images
+  // before taking the screenshot. Without this, large PNGs (5MB glow-right)
+  // may not finish loading, producing a "chopped" background.
   const absOutput = resolve(outputPath);
-  const cmd = [
+  const MIN_SIZE_KB = 2000; // HC CY26 Kit backgrounds produce 2-3MB PNGs
+  const MAX_RETRIES = 3;
+
+  const buildCmd = (budget) => [
     `"${CHROME_PATH}"`,
     "--headless",
     "--disable-gpu",
     "--disable-software-rasterizer",
     "--allow-file-access-from-files",
+    `--virtual-time-budget=${budget}`,
     `--screenshot=${absOutput}`,
     "--window-size=1920,1080",
     "--force-device-scale-factor=2",
@@ -112,18 +119,30 @@ try {
   if (line2) console.log(`  Line 2: ${line2}`);
   if (subtitle) console.log(`  Subtitle: ${subtitle}`);
 
-  execSync(cmd, { stdio: "pipe" });
-
-  // Verify output
   const { statSync } = await import("fs");
-  const stats = statSync(absOutput);
-  const sizeKB = Math.round(stats.size / 1024);
-  console.log(`  \u2713 Saved to ${absOutput} (${sizeKB} KB)`);
+  let sizeKB = 0;
 
-  if (sizeKB < 100) {
-    console.warn(
-      "  \u26a0 File seems small — background images may not have loaded."
-    );
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const budget = 5000 * attempt; // 5s, 10s, 15s
+    execSync(buildCmd(budget), { stdio: "pipe" });
+
+    const stats = statSync(absOutput);
+    sizeKB = Math.round(stats.size / 1024);
+
+    if (sizeKB >= MIN_SIZE_KB) {
+      console.log(`  \u2713 Saved to ${absOutput} (${sizeKB} KB)`);
+      break;
+    }
+
+    if (attempt < MAX_RETRIES) {
+      console.warn(
+        `  \u26a0 Attempt ${attempt}: ${sizeKB} KB < ${MIN_SIZE_KB} KB — backgrounds may not have loaded. Retrying with longer budget...`
+      );
+    } else {
+      console.warn(
+        `  \u26a0 Final attempt: ${sizeKB} KB — background images may be incomplete. Check media/ assets.`
+      );
+    }
   }
 } finally {
   rmSync(tempDir, { recursive: true, force: true });
